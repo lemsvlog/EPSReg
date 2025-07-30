@@ -107,45 +107,26 @@
 
 	  .glow-banner {
   text-align: center;
-  padding: 22px 16px;
-  background-color: #300000;
-  animation: alertBG 1s infinite;
-  border-bottom: 4px solid red;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  padding: 20px;
+  background: linear-gradient(to right, red, darkred);
+  animation: vibrate 0.1s infinite;
 }
 
 .glow-text {
   font-size: 2em;
-  font-weight: 900;
-  margin: 0;
-  color: #fff;
-  text-transform: uppercase;
-  animation: alertGlow 1s infinite ease-in-out;
-  letter-spacing: 1px;
-  text-shadow:
-    0 0 5px #fff,
-    0 0 10px #ff0000,
-    0 0 15px #ffa500,
-    0 0 20px #ffff00;
+  font-weight: bold;
+  color: yellow;
+  text-shadow: 0 0 5px #000, 0 0 10px #ff0;
 }
 
-@keyframes alertGlow {
-  0%   { color: #fff; text-shadow: 0 0 5px red, 0 0 15px orange; transform: scale(1); }
-  50%  { color: #ffe600; text-shadow: 0 0 10px yellow, 0 0 20px red; transform: scale(1.05); }
-  100% { color: #fff; text-shadow: 0 0 5px red, 0 0 15px orange; transform: scale(1); }
+@keyframes vibrate {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-2px); }
+  50%  { transform: translateX(2px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }
 
-@keyframes alertBG {
-  0%   { background-color: #300000; }
-  50%  { background-color: #6b0000; }
-  100% { background-color: #300000; }
-}
-
-@media (max-width: 767px) {
-  .glow-text {
-    font-size: 1.4em;
-  }
-}
 
 
   </style>
