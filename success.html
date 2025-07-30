@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registration Success | EPS-TOPIK</title>
+  <link rel="icon" type="image/x-icon" href="images-dmw_ol.ico">
+  <link rel="stylesheet" href="css-custom.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  <style>
+    body, html { min-height: 100%; background-color: #fcfcfd; }
+    .success-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex: 1;
+      min-height: 55vh;
+      width: 100%;
+    }
+    .success-card {
+      background: #f4fffa;
+      border: 2px solid #30c988;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px #b1f9e6b0;
+      width: 50vw;
+      max-width: 700px;
+      min-width: 290px;
+      padding: 2.2rem 2.7rem 2rem 2.7rem;
+      text-align: center;
+      margin: 36px auto 0 auto;
+      transition: all 0.2s;
+    }
+    .success-check {
+      font-size: 2.2em;
+      color: #28b463;
+      margin-bottom: 7px;
+    }
+    .success-title {
+      font-size: 1.4em;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: #28b463;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .success-detail {
+      font-size: 1.08em;
+      color: #28502b;
+      background: #f8fefa;
+      border-radius: 9px;
+      padding: 18px 18px 12px 24px;
+      margin-bottom: 16px;
+      text-align: left;
+      line-height: 1.62;
+      word-break: break-word;
+      box-shadow: 0 0 0 1px #e5f7ea;
+      display: inline-block;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .highlight {
+      background: #edfff4;
+      border-radius: 3px;
+      padding: 1px 7px;
+      font-weight: 600;
+      color: #199c5b;
+      font-size: 1em;
+      margin: 0 2px;
+    }
+    .info-note {
+      font-size: 1em;
+      color: #2b3e52;
+      background: #f7f9fb;
+      border-radius: 4px;
+      padding: 10px 16px;
+      text-align: left;
+      margin-bottom: 8px;
+      border: 0;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .back-btn {
+      margin-top: 13px;
+      font-size: 1.05em;
+      border-radius: 6px;
+      padding: 8px 36px;
+    }
+    @media (max-width: 900px) {
+      .success-card {
+        width: 98vw;
+        max-width: 99vw;
+        padding: 1rem 0.6rem 1.2rem 0.6rem;
+      }
+      .success-detail {
+        padding: 12px 4px 8px 7px;
+        font-size: .98em;
+      }
+      .info-note { padding: 7px 4px 7px 5px;}
+    }
+    .navbar { background: transparent; box-shadow: none; border: 0;}
+    .navbar-brand img { width: 60px; }
+    .atnt { display: inline-block; }
+    .logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
+    .img-hero {
+      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg');
+      height: 50%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    .hero-text { color: #faf9f9; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <a class="navbar-brand" href="#"><img src="logo.png" width="60"></a>
+  <div class="atnt">
+    <p class="logos">Department of</p>
+    <p class="logos">Migrant</p>
+    <p class="logos">Workers</p>
+  </div>
+</nav>
+<section class="upper">
+  <div class="img-hero">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="hero-text">
+            <h1 class="mt-2 mb-0 ubuntu text-white">EPS - TOPIK TEST</h1>
+            <h5 class="my-0 ubuntu">Online Registration</h5>
+            <p class="my-0 ubuntu fw-light">Manufacturing Industry under Point-based System</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUCCESS CARD (CENTERED) -->
+<div class="success-wrap">
+  <div class="success-card">
+    <div class="success-check"><i class="fa fa-check-circle"></i></div>
+    <div class="success-title">Registration Successful</div>
+    <div class="success-detail" id="successDetail"></div>
+    <div class="info-note">
+      <b>Note:</b> Use your <span class="highlight" style="color:#218de7;">email address</span> and <span class="highlight" style="color:#218de7;">password</span> to log in to the EPS-TOPIK portal.
+    </div>
+    <a href="index.html" class="btn btn-outline-primary back-btn">Back to Registration</a>
+  </div>
+</div>
+<script>
+  // Read data from localStorage
+  const fullname = localStorage.getItem('reg_fullname') || '-';
+  const email = localStorage.getItem('reg_email') || '-';
+  const idnum = localStorage.getItem('reg_id') || '-';
+
+  // Friendly registration message
+  document.getElementById('successDetail').innerHTML =
+    `Congratulations! <span class="highlight">You are now registered</span> for <span class="highlight">EPS-TOPIK</span>.<br>
+    <b>Full Name:</b> <span class="highlight">${fullname}</span><br>
+    <b>Email:</b> <span class="highlight">${email}</span><br>
+    <b>Application No.:</b> <span class="highlight">${idnum}</span>`;
+</script>
+</body>
+</html>

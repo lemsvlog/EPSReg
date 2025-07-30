@@ -1,0 +1,55 @@
+.ubuntu {
+    font-family: 'Ubuntu', sans-serif;
+}
+.form-control, .form-select, .btn, .alert, .input-group-text {
+    border-radius: 0 0 !important;
+}
+.form-control:focus, .form-select:focus {
+    color: #000 !important;
+    border-color: rgba(56, 122, 218, 0.5) !important;
+    box-shadow: 0 0 0 0.10rem rgba(13, 110, 253, 0.25) !important;
+}
+.form-control::-moz-placeholder {
+    color: #6c757d !important;
+    opacity: 0.8 !important;
+    font-weight: 300 !important;
+}
+.form-control::placeholder, .form-select::placeholder {
+    color: #6c757d !important;
+    opacity: 0.8 !important;
+    font-weight: 300 !important;
+}
+.text-details {
+    color: rgba(86, 101, 115,0.9) !important;
+    background-color: rgba(252, 243, 207, 0.5) !important;
+    margin-top: 0 !important;
+    padding: 2px 5px;
+    border-bottom: 3px solid rgba(252, 243, 207, 0.9);
+}
+.form-control, .form-select {
+    border: 1px solid rgba(13,110,253,0.3) !important;
+}
+.uppercase {
+    text-transform: uppercase;
+}
+.lowercase {
+    text-transform: lowercase !important;
+}
+.form-control::file-selector-button {
+    color: #ffffff !important;
+    background-color: #0d6efd !important;
+    pointer-events: none;
+    border-color: #0d6efd !important;
+}
+label {
+    color: #616264;
+}
+.personal {
+    border-radius: 31% 45% 0% 2% / 0% 4% 37% 20%;
+}
+.others {
+    border-radius: 34% 33% 34% 32% / 2% 2% 2% 2%;
+}
+hr.dashed {
+    border-top: 1px dashed red;
+}
