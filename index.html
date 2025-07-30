@@ -104,36 +104,47 @@
  
 }
 
-.glow-banner {
+
+	  .glow-banner {
   text-align: center;
-  padding: 20px;
-  background-color: #fff3cd;
-  border-bottom: 2px solid #ffecb5;
+  padding: 22px 16px;
+  background-color: #300000;
+  animation: alertBG 1s infinite;
+  border-bottom: 4px solid red;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
 }
 
 .glow-text {
-  font-size: 1.8em;
-  font-weight: bold;
+  font-size: 2em;
+  font-weight: 900;
   margin: 0;
   color: #fff;
-  animation: glow 2s infinite;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  animation: alertGlow 1s infinite ease-in-out;
+  letter-spacing: 1px;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #ff0000,
+    0 0 15px #ffa500,
+    0 0 20px #ffff00;
 }
 
-/* Make it responsive */
+@keyframes alertGlow {
+  0%   { color: #fff; text-shadow: 0 0 5px red, 0 0 15px orange; transform: scale(1); }
+  50%  { color: #ffe600; text-shadow: 0 0 10px yellow, 0 0 20px red; transform: scale(1.05); }
+  100% { color: #fff; text-shadow: 0 0 5px red, 0 0 15px orange; transform: scale(1); }
+}
+
+@keyframes alertBG {
+  0%   { background-color: #300000; }
+  50%  { background-color: #6b0000; }
+  100% { background-color: #300000; }
+}
+
 @media (max-width: 767px) {
   .glow-text {
     font-size: 1.4em;
   }
-}
-
-@keyframes glow {
-  0%   { text-shadow: 0 0 10px red, 0 0 20px red; }
-  25%  { text-shadow: 0 0 10px orange, 0 0 20px orange; }
-  50%  { text-shadow: 0 0 10px green, 0 0 20px green; }
-  75%  { text-shadow: 0 0 10px blue, 0 0 20px blue; }
-  100% { text-shadow: 0 0 10px red, 0 0 20px red; }
 }
 
 
@@ -143,7 +154,7 @@
 
 <div class="glow-banner">
   <h3 class="glow-text">
-    THIS IS FOR PRACTICE REGISTRATION ONLY. THIS IS NOT AN OFFICIAL REGISTRATION
+    THIS IS FOR PRACTICE REGISTRATION ONLY. THIS IS NOT AN OFFICIAL REGISTRATION FORM.
   </h3>
 </div>
 	
