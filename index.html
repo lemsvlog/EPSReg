@@ -105,24 +105,49 @@
 }
 
 
-	  .glow-banner {
+.glow-banner {
   text-align: center;
   padding: 20px;
   background-color: #8b0000;
+  animation: flicker 0.15s infinite alternate, vibrate 0.1s infinite;
+  border-bottom: 3px solid #ff0000;
 }
 
 .glow-text {
   font-size: 2em;
   font-weight: bold;
   color: white;
-  animation: flicker 0.2s infinite alternate;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: flickerText 0.15s infinite alternate;
   text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
 }
 
 @keyframes flicker {
-  from { opacity: 1; }
-  to   { opacity: 0.3; }
+  0% { opacity: 1; background-color: #8b0000; }
+  100% { opacity: 0.6; background-color: #a30000; }
 }
+
+@keyframes flickerText {
+  0% { text-shadow: 0 0 3px #ff0000, 0 0 6px #ff0000; }
+  100% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333; }
+}
+
+@keyframes vibrate {
+  0% { transform: translate(0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(-1px, -1px); }
+  60% { transform: translate(1px, 1px); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+@media (max-width: 767px) {
+  .glow-text {
+    font-size: 1.4em;
+  }
+}
+
 
 
 
@@ -132,7 +157,7 @@
 
 <div class="glow-banner">
   <h3 class="glow-text">
-    THIS IS FOR PRACTICE REGISTRATION ONLY. THIS IS NOT AN OFFICIAL REGISTRATION FORM.
+    PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM
   </h3>
 </div>
 	
