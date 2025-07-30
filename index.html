@@ -108,23 +108,20 @@
 	  .glow-banner {
   text-align: center;
   padding: 20px;
-  background: linear-gradient(to right, red, darkred);
-  animation: vibrate 0.1s infinite;
+  background-color: #8b0000;
 }
 
 .glow-text {
   font-size: 2em;
   font-weight: bold;
-  color: yellow;
-  text-shadow: 0 0 5px #000, 0 0 10px #ff0;
+  color: white;
+  animation: flicker 0.2s infinite alternate;
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
 }
 
-@keyframes vibrate {
-  0%   { transform: translateX(0); }
-  25%  { transform: translateX(-2px); }
-  50%  { transform: translateX(2px); }
-  75%  { transform: translateX(-2px); }
-  100% { transform: translateX(0); }
+@keyframes flicker {
+  from { opacity: 1; }
+  to   { opacity: 0.3; }
 }
 
 
