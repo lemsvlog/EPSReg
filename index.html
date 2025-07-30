@@ -16,23 +16,12 @@
     .logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
     .img-hero { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg'); height: 50%; background-position: center; background-repeat: no-repeat; background-size: cover; }
     .hero-text { color: #faf9f9; }
-
-    /* Radio/Checkbox tap target */
-    .form-check-input:checked[type=radio], .form-check-input:checked[type=checkbox] {
-      background-color: #0d6efd !important;
-      border-color: #0d6efd !important;
-    }
-    .inline-radio .form-check {
-      display: inline-block;
-      margin-right: 15px;
-    }
+    .inline-radio .form-check { display: inline-block; margin-right: 15px; }
     .affirm-box { background: #fffbe7; border: 2px solid #ffe082; border-radius: 10px; padding: 22px 18px 18px 18px; margin-bottom: 18px; }
     .affirm-checkbox { accent-color: #ffc107; width: 1.2em; height: 1.2em; margin-right: 12px; margin-top: 4px; }
     .affirm-text { font-size: 1em; color: #5b4a1b; font-weight: 500; vertical-align: middle; }
     .survey-box { width: 100%; }
     .survey-box input[type="text"] { width: 100% !important; min-width: 0; max-width: 100%; }
-
-    /* Responsive tweaks */
     @media (max-width: 991px) {
       .row > [class^="col-"], .row > [class*=" col-"] {
         flex: 0 0 100%;
@@ -54,12 +43,6 @@
       }
       .survey-box ol li input.form-control {
         max-width: 100% !important;
-      }
-      .photo-id-right {
-        position: static !important;
-        margin: 0 auto 1rem auto !important;
-        display: block;
-        text-align: center;
       }
     }
     @media (max-width: 767px) {
@@ -119,254 +102,242 @@
   <div class="container mt-2">
     <h2 class="mt-2 py-2 ubuntu">Registration</h2>
     <form id="EPSforms" class="forms5 p-2" autocomplete="off">
-      <!-- Row: Category, EPS before, Roster, Venue (all inline on desktop, stacked on mobile) -->
+      <!-- Bordered box: Manufacturing Category to Test Venue -->
       <div class="border rounded p-3 mb-3 bg-white" style="border-width:2px !important; box-shadow:0 2px 8px #eaeaea;">
-  <div class="row mb-2">
-    <div class="col-lg-12 d-flex flex-wrap align-items-stretch gap-2">
-      <!-- Manufacturing Category -->
-      <div class="me-2 mb-2" style="min-width: 210px;">
-        <label class="mb-1 fw-semibold">Manufacturing Category</label><br>
-        <span class="inline-radio">
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="cat" value="Assembly" id="cat_assembly" required>
-            <label class="form-check-label" for="cat_assembly">Assembly</label>
+        <div class="row mb-2">
+          <div class="col-lg-12 d-flex flex-wrap align-items-stretch gap-2">
+            <!-- Manufacturing Category -->
+            <div class="me-2 mb-2" style="min-width: 210px;">
+              <label class="mb-1 fw-semibold">Manufacturing Category</label><br>
+              <span class="inline-radio">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="cat" value="Assembly" id="cat_assembly" required>
+                  <label class="form-check-label" for="cat_assembly">Assembly</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="cat" value="Others" id="cat_others">
+                  <label class="form-check-label" for="cat_others">Others</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="cat" value="Measurement" id="cat_measurement">
+                  <label class="form-check-label" for="cat_measurement">Measurement</label>
+                </div>
+              </span>
+            </div>
+            <!-- Worked under EPS before? -->
+            <div class="me-2 mb-2" style="min-width: 230px;">
+              <label class="mb-1 fw-semibold">Worked under EPS before?</label><br>
+              <span class="inline-radio">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="eps_before" value="No" id="eps_no" required>
+                  <label class="form-check-label" for="eps_no">Never</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="eps_before" value="Less than 5 years" id="eps_less">
+                  <label class="form-check-label" for="eps_less">Less than 5 years</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="eps_before" value="More than 5 years" id="eps_more">
+                  <label class="form-check-label" for="eps_more">More than 5 years</label>
+                </div>
+              </span>
+            </div>
+            <!-- Active Roster/EPS Application -->
+            <div class="me-2 mb-2" style="min-width: 190px;">
+              <label class="mb-1 fw-semibold">Active Roster/EPS Application</label><br>
+              <span class="inline-radio">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="active_roster" value="Yes" id="roster_yes" required>
+                  <label class="form-check-label" for="roster_yes">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="active_roster" value="No" id="roster_no">
+                  <label class="form-check-label" for="roster_no">No</label>
+                </div>
+              </span>
+            </div>
+            <!-- Test Venue -->
+            <div class="mb-2">
+              <label class="mb-1 fw-semibold">Test Venue</label><br>
+              <div class="form-check">
+                <input type="radio" class="form-check-input" name="test_venue" value="Manila" id="venue_manila" checked required>
+                <label class="form-check-label" for="venue_manila">Manila</label>
+              </div>
+              <div class="form-check">
+                <input type="radio" class="form-check-input" name="test_venue" value="La Union" id="venue_launion">
+                <label class="form-check-label" for="venue_launion">La Union</label>
+              </div>
+            </div>
           </div>
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="cat" value="Others" id="cat_others">
-            <label class="form-check-label" for="cat_others">Others</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="cat" value="Measurement" id="cat_measurement">
-            <label class="form-check-label" for="cat_measurement">Measurement</label>
-          </div>
-        </span>
-      </div>
-      <!-- Worked under EPS before? -->
-      <div class="me-2 mb-2" style="min-width: 230px;">
-        <label class="mb-1 fw-semibold">Worked under EPS before?</label><br>
-        <span class="inline-radio">
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="eps_before" value="No" id="eps_no" required>
-            <label class="form-check-label" for="eps_no">Never</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="eps_before" value="Less than 5 years" id="eps_less">
-            <label class="form-check-label" for="eps_less">Less than 5 years</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="eps_before" value="More than 5 years" id="eps_more">
-            <label class="form-check-label" for="eps_more">More than 5 years</label>
-          </div>
-        </span>
-      </div>
-      <!-- Active Roster/EPS Application -->
-      <div class="me-2 mb-2" style="min-width: 190px;">
-        <label class="mb-1 fw-semibold">Active Roster/EPS Application</label><br>
-        <span class="inline-radio">
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="active_roster" value="Yes" id="roster_yes" required>
-            <label class="form-check-label" for="roster_yes">Yes</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input type="radio" class="form-check-input" name="active_roster" value="No" id="roster_no">
-            <label class="form-check-label" for="roster_no">No</label>
-          </div>
-        </span>
-      </div>
-      <!-- Test Venue -->
-      <div class="mb-2">
-        <label class="mb-1 fw-semibold">Test Venue</label><br>
-        <div class="form-check">
-          <input type="radio" class="form-check-input" name="test_venue" value="Manila" id="venue_manila" checked required>
-          <label class="form-check-label" for="venue_manila">Manila</label>
         </div>
-        <div class="form-check">
-          <input type="radio" class="form-check-input" name="test_venue" value="La Union" id="venue_launion">
-          <label class="form-check-label" for="venue_launion">La Union</label>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-
-      <!-- Rest of the form, unchanged -->
+      <!-- Border box: Personal Info -->
       <div class="border rounded p-3 mb-3 bg-white" style="border-width:2px !important; box-shadow:0 2px 8px #eaeaea;">
-  <!-- 1st row: Name fields -->
-  <div class="row mb-2">
-    <div class="col-md-3">
-      <label for="lname">Last Name</label>
-      <input type="text" class="form-control" id="lname" name="lname" required>
-    </div>
-    <div class="col-md-3">
-      <label for="fname">First Name</label>
-      <input type="text" class="form-control" id="fname" name="fname" required>
-    </div>
-    <div class="col-md-3">
-      <label for="mname">Middle Name</label>
-      <input type="text" class="form-control" id="mname" name="mname">
-    </div>
-    <div class="col-md-3">
-      <label for="suffix">Suffix Name</label>
-      <input type="text" class="form-control" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
-    </div>
-  </div>
+        <div class="row mb-2">
+          <div class="col-md-3">
+            <label for="lname">Last Name</label>
+            <input type="text" class="form-control" id="lname" name="lname" required>
+          </div>
+          <div class="col-md-3">
+            <label for="fname">First Name</label>
+            <input type="text" class="form-control" id="fname" name="fname" required>
+          </div>
+          <div class="col-md-3">
+            <label for="mname">Middle Name</label>
+            <input type="text" class="form-control" id="mname" name="mname">
+          </div>
+          <div class="col-md-3">
+            <label for="suffix">Suffix Name</label>
+            <input type="text" class="form-control" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-3">
+            <label for="sex">Sex</label>
+            <select class="form-select" id="sex" name="sex" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="bdate">Birthdate</label>
+            <input type="date" class="form-control" id="bdate" name="bdate" required>
+          </div>
+          <div class="col-md-3">
+            <label for="passport">Passport Number</label>
+            <input type="text" class="form-control" id="passport" name="passport" required>
+          </div>
+          <div class="col-md-3">
+            <label for="passport_validity">Passport Validity</label>
+            <input type="date" class="form-control" id="passport_validity" name="passport_validity" required>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <div class="col-md-4">
+            <label for="mobile">Mobile Number</label>
+            <input type="text" class="form-control" id="mobile" name="mobile" required>
+          </div>
+          <div class="col-md-4">
+            <label for="province">Province <small>(Present Address)</small></label>
+            <select id="province" class="form-select uppercase" name="province" required>
+              <option value="">Select a province</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4">
+            <label for="city">City</label>
+            <select id="city" class="form-select uppercase" name="city" required>
+              <option value="">Select a city</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="password">Create Password</label>
+            <input type="password" class="form-control" id="password" name="password" autocomplete="new-password" required>
+            <input type="checkbox" id="show_password"> <small>Show Password</small>
+          </div>
+          <div class="col-md-4">
+            <label for="repassword">Re-type Password</label>
+            <input type="password" class="form-control" id="repassword" name="repassword" autocomplete="new-password" required>
+          </div>
+        </div>
+      </div>
 
-  <!-- 2nd row: Sex, Birthdate, Passport No, Validity -->
-  <div class="row mb-2">
-    <div class="col-md-3">
-      <label for="sex">Sex</label>
-      <select class="form-select" id="sex" name="sex" required>
-        <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <label for="bdate">Birthdate</label>
-      <input type="date" class="form-control" id="bdate" name="bdate" required>
-    </div>
-    <div class="col-md-3">
-      <label for="passport">Passport Number</label>
-      <input type="text" class="form-control" id="passport" name="passport" required>
-    </div>
-    <div class="col-md-3">
-      <label for="passport_validity">Passport Validity</label>
-      <input type="date" class="form-control" id="passport_validity" name="passport_validity" required>
-    </div>
-  </div>
-
-  <!-- 3rd row: Email, Mobile, Province -->
-  <div class="row mb-2">
-    <div class="col-md-4">
-      <label for="email">Email Address</label>
-      <input type="email" class="form-control" id="email" name="email" required>
-    </div>
-    <div class="col-md-4">
-      <label for="mobile">Mobile Number</label>
-      <input type="text" class="form-control" id="mobile" name="mobile" required>
-    </div>
-    <div class="col-md-4">
-      <label for="province">Province <small>(Present Address)</small></label>
-      <select id="province" class="form-select uppercase" name="province" required>
-        <option value="">Select a province</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- 4th row: City, Create Password, Retype Password -->
-  <div class="row mb-2">
-    <div class="col-md-4">
-      <label for="city">City</label>
-      <select id="city" class="form-select uppercase" name="city" required>
-        <option value="">Select a city</option>
-      </select>
-    </div>
-    <div class="col-md-4">
-      <label for="password">Create Password</label>
-      <input type="password" class="form-control" id="password" name="password" autocomplete="new-password" required>
-      <input type="checkbox" id="show_password"> <small>Show Password</small>
-    </div>
-    <div class="col-md-4">
-      <label for="repassword">Re-type Password</label>
-      <input type="password" class="form-control" id="repassword" name="repassword" autocomplete="new-password" required>
-    </div>
-  </div>
-</div>
-
-	  
-	  
       <!-- PHOTO, SURVEY & AFFIRM BOX -->
       <div class="row my-2">
-  <!-- ID PICTURE -->
-  <div class="col-md-6">
-    <!-- WARNING -->
-    <div id="app_size" style="margin-bottom:4px;"></div>
-    <div class="border border-warning rounded p-3 mb-2" style="background: #fffbe7; position: relative; min-height:240px;">
-      <b class="mb-2 d-block"><i class="fa fa-id-card"></i> ID Picture</b>
-      <div class="photo-id-right" style="position: absolute; top: 18px; right: 16px;">
-        <center>
-          <img id="idphoto_preview" src="id_photo.jpg" alt="ID Photo"
-            style="width:130px; height:150px; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px;">
-          <br>
-          <label for="appPhoto"
-            class="btn btn-sm btn-warning d-block mx-auto my-2"
-            style="max-width:170px; cursor:pointer; font-size:0.96em;">
-            <i class="fa fa-info-circle"></i> Click photo to upload/change
-          </label>
-        </center>
-        <input type="file" id="appPhoto" name="appPhoto" style="display:none;" accept="image/*">
+        <!-- ID PICTURE -->
+        <div class="col-md-6">
+          <!-- WARNING -->
+          <div id="app_size" style="margin-bottom:4px;"></div>
+          <div class="border border-warning rounded p-3 mb-2" style="background: #fffbe7; position: relative; min-height:240px;">
+            <b class="mb-2 d-block"><i class="fa fa-id-card"></i> ID Picture</b>
+            <ol style="font-size:small; padding-left: 1.1em; margin-top:0; margin-bottom:0;">
+              <li>Passport Size 3.5cm(w) X 4.5cm(h); 13Kb o mas mababa</li>
+              <li>Kinuha sa loob ng 3 buwan</li>
+              <li>Hindi nanggaling sa isang selfie picture</li>
+              <li>Naka office attire (naka blazer)</li>
+              <li>Hindi malabo at naka pure white na background</li>
+              <li>Hindi nakasuot ng kulay puting damit</li>
+              <li>Hindi edited at walang borderline</li>
+              <li>Kita ang dalawang tenga</li>
+              <li>Hindi pwede ang graduation picture</li>
+              <li>Walang name o name plate</li>
+              <li>Hindi naka-side-view ang kuha</li>
+              <li>Walang salamin at head dress (maliban sa hijab)</li>
+            </ol>
+            <div class="photo-id-right" style="margin: 0 auto 1rem auto; display: block; text-align: center;">
+              <img id="idphoto_preview" src="id_photo.jpg" alt="ID Photo"
+                style="width:130px; height:150px; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px;">
+              <br>
+              <label for="appPhoto"
+                class="btn btn-sm btn-warning d-block mx-auto my-2"
+                style="max-width:170px; cursor:pointer; font-size:0.96em;">
+                <i class="fa fa-info-circle"></i> Click photo to upload/change
+              </label>
+              <input type="file" id="appPhoto" name="appPhoto" style="display:none;" accept="image/*">
+            </div>
+          </div>
+        </div>
+        <!-- PASAPORTE -->
+        <div class="col-md-6">
+          <div id="passport_size" style="margin-bottom:4px;"></div>
+          <div class="border border-warning rounded p-3 mb-2 d-flex flex-row flex-wrap align-items-start" style="background: #fffbe7; min-height:240px;">
+            <!-- IMAGE COLUMN -->
+            <div style="flex:1; min-width:210px;">
+              <b class="mb-2 d-block"><i class="fa fa-passport"></i> PASAPORTE</b>
+              <ol style="font-size:small; padding-left: 1.1em;">
+                <li>Malinis at maayos na scanned copy (bio/data page lamang)</li>
+                <li>Panatilihin ang pagiging kulay asul ng pasaporte</li>
+                <li>Siguraduhin na malinaw at nababasa ang mga nakalagay na information</li>
+                <li>JPG Format lang</li>
+                <li>Size: 600 pixels (width) x 400 pixels (height); 100Kb o mas mababa lamang</li>
+              </ol>
+            </div>
+            <div class="flex-shrink-0" style="margin-right:24px;">
+              <img id="passport_preview" src="passport_photo.jpg" alt="Passport"
+                style="width:600px; height:400px; max-width:100%; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px; display:block;">
+              <label for="ppPhoto"
+                class="btn btn-sm btn-warning d-block mx-auto my-2"
+                style="max-width:220px; cursor:pointer; font-size:0.96em;">
+                <i class="fa fa-info-circle"></i> Click photo to upload / change
+              </label>
+              <input type="file" id="ppPhoto" name="ppPhoto" style="display:none;" accept="image/*">
+            </div>
+          </div>
+        </div>
       </div>
-      <ol style="font-size:small; padding-left: 1.1em; margin-top:0; margin-bottom:0;">
-        <li>Passport Size 3.5cm(w) X 4.5cm(h); 13Kb o mas mababa</li>
-        <li>Kinuha sa loob ng 3 buwan</li>
-        <li>Hindi nanggaling sa isang selfie picture</li>
-        <li>Naka office attire (naka blazer)</li>
-        <li>Hindi malabo at naka pure white na background</li>
-        <li>Hindi nakasuot ng kulay puting damit</li>
-        <li>Hindi edited at walang borderline</li>
-        <li>Kita ang dalawang tenga</li>
-        <li>Hindi pwede ang graduation picture</li>
-        <li>Walang name o name plate</li>
-        <li>Hindi naka-side-view ang kuha</li>
-        <li>Walang salamin at head dress (maliban sa hijab)</li>
-      </ol>
-    </div>
-  </div>
-  <!-- PASAPORTE -->
-  <div class="col-md-6">
-    <div id="passport_size" style="margin-bottom:4px;"></div>
-    <div class="border border-warning rounded p-3 mb-2 d-flex flex-row flex-wrap align-items-start" style="background: #fffbe7; min-height:240px;">
-      <!-- IMAGE COLUMN -->
-      <div style="flex:1; min-width:210px;">
-        <b class="mb-2 d-block"><i class="fa fa-passport"></i> PASAPORTE</b>
-        <ol style="font-size:small; padding-left: 1.1em;">
-          <li>Malinis at maayos na scanned copy (bio/data page lamang)</li>
-          <li>Panatilihin ang pagiging kulay asul ng pasaporte</li>
-          <li>Siguraduhin na malinaw at nababasa ang mga nakalagay na information</li>
-          <li>JPG Format lang</li>
-          <li>Size: 600 pixels (width) x 400 pixels (height); 100Kb o mas mababa lamang</li>
+
+      <!-- SURVEY SECTION -->
+      <div class="survey-box" style="margin-top:8px; margin-bottom:18px;">
+        <div style="font-size:1.45em; font-weight:600; margin-bottom:20px;">Survey Question</div>
+        <ol style="padding-left: 1.1em;">
+          <li class="mb-3">
+            <b style="font-size:1.09em;">How did you prepare for EPS-TOPIK Examination?</b><br>
+            <div class="form-check form-check-inline" style="margin-right:22px;">
+              <input type="radio" name="prep" value="Self-study" id="prep_self" class="form-check-input" required>
+              <label for="prep_self" class="form-check-label">Self-study</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" name="prep" value="Training Center / School" id="prep_school" class="form-check-input">
+              <label for="prep_school" class="form-check-label">Training Center / School</label>
+            </div>
+          </li>
+          <li class="mb-3">
+            <b style="font-size:1.05em;">Name of the Training Center / School <span style="font-weight:400;">(Write NA if self-study)</span></b><br>
+            <input type="text" class="form-control mt-1" name="school" required style="max-width:600px;">
+          </li>
+          <li>
+            <b style="font-size:1.05em;">City / Municipality (Location of Training Center / School)</b><br>
+            <input type="text" class="form-control mt-1" name="school_location" required style="max-width:600px;">
+          </li>
         </ol>
       </div>
-      <div class="flex-shrink-0" style="margin-right:24px;">
-        <img id="passport_preview" src="passport_photo.jpg" alt="Passport"
-          style="width:600px; height:400px; max-width:100%; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px; display:block;">
-        <label for="ppPhoto"
-          class="btn btn-sm btn-warning d-block mx-auto my-2"
-          style="max-width:220px; cursor:pointer; font-size:0.96em;">
-          <i class="fa fa-info-circle"></i> Click photo to upload / change
-        </label>
-        <input type="file" id="ppPhoto" name="ppPhoto" style="display:none;" accept="image/*">
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SURVEY SECTION (ilagay mo ito DITO, sa labas na ng row, after ng passport and id photo) -->
-<div class="survey-box" style="margin-top:8px; margin-bottom:18px;">
-  <div style="font-size:1.45em; font-weight:600; margin-bottom:20px;">Survey Question</div>
-  <ol style="padding-left: 1.1em;">
-    <li class="mb-3">
-      <b style="font-size:1.09em;">How did you prepare for EPS-TOPIK Examination?</b><br>
-      <div class="form-check form-check-inline" style="margin-right:22px;">
-        <input type="radio" name="prep" value="Self-study" id="prep_self" class="form-check-input" required>
-        <label for="prep_self" class="form-check-label">Self-study</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input type="radio" name="prep" value="Training Center / School" id="prep_school" class="form-check-input">
-        <label for="prep_school" class="form-check-label">Training Center / School</label>
-      </div>
-    </li>
-    <li class="mb-3">
-      <b style="font-size:1.05em;">Name of the Training Center / School <span style="font-weight:400;">(Write NA if self-study)</span></b><br>
-      <input type="text" class="form-control mt-1" name="school" required style="max-width:600px;">
-    </li>
-    <li>
-      <b style="font-size:1.05em;">City / Municipality (Location of Training Center / School)</b><br>
-      <input type="text" class="form-control mt-1" name="school_location" required style="max-width:600px;">
-    </li>
-  </ol>
-</div>
 
       <!-- AFFIRM BOX -->
       <div class="affirm-box d-flex" style="max-width:100vw; width:100%; margin-left:auto; margin-right:auto; align-items: flex-start;">
@@ -384,7 +355,7 @@
     </form>
   </div>
 </section>
-<!-- OFFLINE Province/City Data + Offline JS Logic -->
+<!-- Add your JS logic for province/city here, unchanged -->
 <script src="3.6.0-jquery.min.js"></script>
 <script>
   $(function() {
