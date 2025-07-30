@@ -9,7 +9,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
- 
+ body {
+  padding-top: 10vh; /* 10% of viewport height */
+}
     body, html, .forms5 { height: 100%; background-color: #fcfcfd; }
     .spinner, .spinner2, .spinner3 { display: none; }
     .forms2 { background-color: rgba(255,255,255,0.0896); }
@@ -106,46 +108,80 @@
 
 
 .glow-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10vh; /* 10% of viewport height */
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #300000;
+  animation: alertBG 1s infinite;
+  border-bottom: 3px solid red;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.7);
   text-align: center;
-  padding: 20px;
-  background-color: #8b0000;
-  animation: flicker 0.15s infinite alternate, vibrate 0.1s infinite;
-  border-bottom: 3px solid #ff0000;
 }
 
 .glow-text {
-  font-size: 2em;
-  font-weight: bold;
-  color: white;
+  font-size: 1.3em;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  animation: flickerText 0.15s infinite alternate;
-  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+  animation: alertGlow 1s infinite ease-in-out;
+  letter-spacing: 0.5px;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 6px #ff0000,
+    0 0 10px #ffa500,
+    0 0 12px #ffff00;
 }
 
-@keyframes flicker {
-  0% { opacity: 1; background-color: #8b0000; }
-  100% { opacity: 0.6; background-color: #a30000; }
+@keyframes alertGlow {
+  0%   {
+    color: #fff;
+    text-shadow: 0 0 4px red, 0 0 10px orange;
+    transform: scale(1);
+  }
+  50%  {
+    color: #ffe600;
+    text-shadow: 0 0 8px yellow, 0 0 14px red;
+    transform: scale(1.02);
+  }
+  100% {
+    color: #fff;
+    text-shadow: 0 0 4px red, 0 0 10px orange;
+    transform: scale(1);
+  }
 }
 
-@keyframes flickerText {
-  0% { text-shadow: 0 0 3px #ff0000, 0 0 6px #ff0000; }
-  100% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333; }
-}
-
-@keyframes vibrate {
-  0% { transform: translate(0); }
-  20% { transform: translate(-1px, 1px); }
-  40% { transform: translate(-1px, -1px); }
-  60% { transform: translate(1px, 1px); }
-  80% { transform: translate(1px, -1px); }
-  100% { transform: translate(0); }
+@keyframes alertBG {
+  0%   { background-color: #300000; }
+  50%  { background-color: #5a0000; }
+  100% { background-color: #300000; }
 }
 
 @media (max-width: 767px) {
   .glow-text {
-    font-size: 1.4em;
+    font-size: 1.05em;
   }
+}
+
+@media (max-width: 767px) {
+  .glow-banner {
+    height: 10vh; /* ensure same 10% height on mobile */
+  }
+  .glow-text {
+    font-size: 1.2em; /* slightly larger so it fills the height better */
+    line-height: 1.2;  /* make sure it doesn't overflow */
+  }
+}
+
+/* Push content below the banner */
+body {
+  padding-top: 10vh; /* always leave space for the fixed banner */
 }
 
 
