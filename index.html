@@ -171,6 +171,11 @@
   }
 }
 
+.uppercase {
+  text-transform: uppercase !important;
+}
+
+
 
 
   </style>
@@ -275,30 +280,30 @@
         </div>
       </div>
 
-      <!-- Border box: Personal Info -->
+        <!-- Border box: Personal Info -->
       <div class="border rounded p-3 mb-3 bg-white" style="border-width:2px !important; box-shadow:0 2px 8px #eaeaea;">
         <div class="row mb-2">
           <div class="col-md-3">
             <label for="lname">Last Name</label>
-            <input type="text" class="form-control" id="lname" name="lname" required>
+            <input type="text" class="form-control uppercase" id="lname" name="lname" required>
           </div>
           <div class="col-md-3">
             <label for="fname">First Name</label>
-            <input type="text" class="form-control" id="fname" name="fname" required>
+            <input type="text" class="form-control uppercase" id="fname" name="fname" required>
           </div>
           <div class="col-md-3">
             <label for="mname">Middle Name</label>
-            <input type="text" class="form-control" id="mname" name="mname">
+            <input type="text" class="form-control uppercase" id="mname" name="mname">
           </div>
           <div class="col-md-3">
             <label for="suffix">Suffix Name</label>
-            <input type="text" class="form-control" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
+            <input type="text" class="form-control uppercase" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
           </div>
         </div>
         <div class="row mb-2">
           <div class="col-md-3">
             <label for="sex">Sex</label>
-            <select class="form-select" id="sex" name="sex" required>
+            <select class="form-select uppercase" id="sex" name="sex" required>
               <option value="">Select</option>
               <option>Male</option>
               <option>Female</option>
@@ -306,15 +311,15 @@
           </div>
           <div class="col-md-3">
             <label for="bdate">Birthdate</label>
-            <input type="date" class="form-control" id="bdate" name="bdate" required>
+            <input type="date" class="form-control uppercase" id="bdate" name="bdate" required>
           </div>
           <div class="col-md-3">
             <label for="passport">Passport Number</label>
-            <input type="text" class="form-control" id="passport" name="passport" required>
+            <input type="text" class="form-control uppercase" id="passport" name="passport" required>
           </div>
           <div class="col-md-3">
             <label for="passport_validity">Passport Validity</label>
-            <input type="date" class="form-control" id="passport_validity" name="passport_validity" required>
+            <input type="date" class="form-control uppercase" id="passport_validity" name="passport_validity" required>
           </div>
         </div>
         <div class="row mb-2">
@@ -324,7 +329,7 @@
           </div>
           <div class="col-md-4">
             <label for="mobile">Mobile Number</label>
-            <input type="text" class="form-control" id="mobile" name="mobile" required>
+            <input type="text" class="form-control uppercase" id="mobile" name="mobile" required>
           </div>
           <div class="col-md-4">
             <label for="province">Province <small>(Present Address)</small></label>
@@ -629,6 +634,22 @@
       window.location.href = 'success.html';
     });
   }); // END $(function(){ ... })
+  
+  $(function(){
+  // Auto-uppercase for all input[type="text"] with .uppercase class
+  $(document).on('input', 'input[type="text"].uppercase', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  // Also handle selects if needed (like province/city)
+  $(document).on('change', 'select.uppercase', function() {
+    // For display only, select options do not need to be uppercased.
+    // If you want: change the displayed value to uppercase.
+    $(this).find('option').each(function() {
+      $(this).text($(this).text().toUpperCase());
+    });
+  });
+});
 </script>
 	
 </body>
