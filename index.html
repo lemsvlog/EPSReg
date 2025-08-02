@@ -107,7 +107,7 @@
 }
 
 .glow-banner {
-  position: fixed; /* Ito ang nagpapanatiling nakalutang ang banner */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -121,7 +121,6 @@
   border-bottom: 2px solid #d2b48c;
   box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
   text-align: center;
-  /* Ang position: relative; ay tinanggal dito upang hindi ma-override ang position: fixed; */
 }
 
 .glow-text {
@@ -176,21 +175,7 @@
   text-transform: uppercase !important;
 }
 
-/* Bagong CSS para sa visitor counter */
-.visitor-counter {
-  position: absolute;
-  bottom: 2px;
-  right: 5px;
-  font-size: 0.55em; /* Mas maliit */
-  color: #FFD700; /* Kulay yellow */
-  text-shadow: none; /* Walang glow */
-  opacity: 0.8; /* Medyo diskreto */
-  z-index: 10000; /* Siguraduhing nasa ibabaw */
-}
-.visitor-counter a {
-  color: inherit; /* Panatilihin ang kulay ng counter text */
-  text-decoration: none; /* Alisin ang underline */
-}
+
 
 
   </style>
@@ -198,12 +183,12 @@
 <body>
 
 <div class="glow-banner">
-  <h3 class="glow-text" style="margin-bottom:0;">
+  <h3 class="glow-text">
     ⚠️PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM⚠️
   </h3>
-  <!-- Ito na po ang counter mo, inilagay sa ibaba at kanan ng banner -->
-  
 </div>
+	 <center> <a href='http://www.freevisitorcounters.com'>Free counter</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=a56d04048d5d12a7cf78791761878ce20183b678'></script>
+<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1372512/t/5"></script></center>
 	
 <section class="upper">
   <div class="img-hero">
@@ -212,7 +197,6 @@
         <div class="col-md-9">
           <div class="hero-text">
             <h1 class="mt-2 mb-0 ubuntu text-white">EPS - TOPIK TEST</h1>
-		  
             <h5 class="my-0 ubuntu">Online Registration</h5>
             <p class="my-0 ubuntu fw-light">Manufacturing Industry under Point-based System</p>
           </div>
@@ -510,7 +494,7 @@
   "Bulacan": ["Angat","Balagtas","Baliuag","Bocaue","Bulacan","Bustos","Calumpit","Doña Remedios Trinidad","Guiguinto","Hagonoy","Malolos City","Marilao","Meycauayan City","Norzagaray","Obando","Pandi","Paombong","Plaridel","Pulilan","San Ildefonso","San Jose del Monte City","San Miguel","San Rafael","Santa Maria"],
   "Cagayan": ["Abulug","Alcala","Allacapan","Amulung","Aparri","Baggao","Ballesteros","Buguey","Calayan","Camalaniugan","Claveria","Enrile","Gattaran","Gonzaga","Iguig","Lal-lo","Lasam","Pamplona","Peñablanca","Piat","Rizal","Sanchez-Mira","Santa Ana","Santa Praxedes","Santa Teresita","Santo Niño","Solana","Tuao","Tuguegarao City"],
   "Camarines Norte": ["Basud","Capalonga","Daet","Jose Panganiban","Labo","Mercedes","Paracale","San Lorenzo Ruiz","San Vicente","Santa Elena","Talisay","Vinzons"],
-  "Camarines Sur": ["Baao","Balatan","Bato","Bombon","Buhi","Bula","Cabusao","Calabanga","Camaligan","Canaman","Caramoan","Del Gallego","Gainza","Garchitorene","Goa","Iriga City","Lagonoy","Libmanan","Lupi","Magarao","Milaor","Minalabac","Nabua","Naga City","Ocampo","Pamplona","Pasacao","Pili","Presentacion","Ragay","Sagñay","San Fernando","San Jose","Sipocot","Siruma","Tigaon","Tinambac"],
+  "Camarines Sur": ["Baao","Balatan","Bato","Bombon","Buhi","Bula","Cabusao","Calabanga","Camaligan","Canaman","Caramoan","Del Gallego","Gainza","Garchitorena","Goa","Iriga City","Lagonoy","Libmanan","Lupi","Magarao","Milaor","Minalabac","Nabua","Naga City","Ocampo","Pamplona","Pasacao","Pili","Presentacion","Ragay","Sagñay","San Fernando","San Jose","Sipocot","Siruma","Tigaon","Tinambac"],
   "Camiguin": ["Catarman","Guinsiliban","Mahinog","Mambajao","Sagay"],
   "Capiz": ["Cuartero","Dao","Dumalag","Dumarao","Ivisan","Jamindan","Ma-ayon","Mambusao","Panay","Panitan","Pilar","Pontevedra","Pres. Roxas","Roxas City","Sapian","Sigma","Tapaz"],
   "Catanduanes": ["Bagamanoc","Baras","Bato","Caramoran","Gigmoto","Pandan","Panganiban","San Andres","San Miguel","Viga","Virac"],
@@ -606,7 +590,7 @@
       if (size > 13.312) {
         msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
       } else if (size < 9.216) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.`;
+        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
       }
       $('#app_size').html(msg);
     });
@@ -625,7 +609,7 @@
       if (size > 100) {
         msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
       } else if (size < 50) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.`;
+        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
       }
       $('#passport_size').html(msg);
     });
@@ -658,7 +642,7 @@
   }); // END $(function(){ ... })
   
   $(function(){
-  // Auto-uppercase for all input[type="text"].uppercase
+  // Auto-uppercase for all input[type="text"] with .uppercase class
   $(document).on('input', 'input[type="text"].uppercase', function() {
     this.value = this.value.toUpperCase();
   });
