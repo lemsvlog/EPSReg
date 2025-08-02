@@ -121,6 +121,8 @@
   border-bottom: 2px solid #d2b48c;
   box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
   text-align: center;
+  /* Added position: relative for absolute positioning of counter */
+  position: relative;
 }
 
 .glow-text {
@@ -175,26 +177,6 @@
   text-transform: uppercase !important;
 }
 
-	  .visitor-counter-wrap {
-  width: 100%;
-  background: #f5f5dc;
-  text-align: right;
-  padding: 0 1.2em 0.2em 0;
-  font-size: 0.89em;
-  border-radius: 0 0 10px 10px;
-  float: right;
-  box-sizing: border-box;
-}
-
-@media (max-width: 767px) {
-  .visitor-counter-wrap {
-    text-align: center;
-    padding: 0 0 0.4em 0;
-    font-size: 0.92em;
-    float: none;
-  }
-}
-
 
 
 
@@ -203,15 +185,14 @@
 <body>
 
 <div class="glow-banner">
-  <div style="width:100%;">
-    <h3 class="glow-text" style="margin-bottom:0;">
-      ⚠️PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM⚠️
-    </h3>
-    <div class="visitor-counter-wrap">
-      <a href='http://www.freevisitorcounters.com' style="font-size:0.9em;color:#4e3b00;text-decoration:none;">Free counter</a>
-      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=a56d04048d5d12a7cf78791761878ce20183b678'></script>
-      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1372512/t/5"></script>
-    </div>
+  <h3 class="glow-text">
+    ⚠️PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM⚠️
+  </h3>
+  <!-- Ito na po ang counter mo, inilagay sa ibaba at kanan ng banner -->
+  <div style="position: absolute; bottom: 2px; right: 5px; font-size: 0.65em; color: #b8860b; text-shadow: none; opacity: 0.7;">
+    <a href='http://www.freevisitorcounters.com' style="color: inherit; text-decoration: none;">Free counter</a>
+    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=a56d04048d5d12a7cf78791761878ce20183b678'></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1372512/t/5"></script>
   </div>
 </div>
 
