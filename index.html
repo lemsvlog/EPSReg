@@ -107,7 +107,7 @@
 }
 
 .glow-banner {
-  position: fixed;
+  position: fixed; /* Ito ang nagpapanatiling nakalutang ang banner */
   top: 0;
   left: 0;
   width: 100%;
@@ -121,8 +121,7 @@
   border-bottom: 2px solid #d2b48c;
   box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
   text-align: center;
-  /* Added position: relative for absolute positioning of counter */
-  position: relative;
+  /* Ang position: relative; ay tinanggal dito upang hindi ma-override ang position: fixed; */
 }
 
 .glow-text {
@@ -177,7 +176,21 @@
   text-transform: uppercase !important;
 }
 
-
+/* Bagong CSS para sa visitor counter */
+.visitor-counter {
+  position: absolute;
+  bottom: 2px;
+  right: 5px;
+  font-size: 0.55em; /* Mas maliit */
+  color: #FFD700; /* Kulay yellow */
+  text-shadow: none; /* Walang glow */
+  opacity: 0.8; /* Medyo diskreto */
+  z-index: 10000; /* Siguraduhing nasa ibabaw */
+}
+.visitor-counter a {
+  color: inherit; /* Panatilihin ang kulay ng counter text */
+  text-decoration: none; /* Alisin ang underline */
+}
 
 
   </style>
@@ -185,12 +198,12 @@
 <body>
 
 <div class="glow-banner">
-  <h3 class="glow-text">
+  <h3 class="glow-text" style="margin-bottom:0;">
     ⚠️PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM⚠️
   </h3>
   <!-- Ito na po ang counter mo, inilagay sa ibaba at kanan ng banner -->
-  <div style="position: absolute; bottom: 2px; right: 5px; font-size: 0.65em; color: #b8860b; text-shadow: none; opacity: 0.7;">
-    <a href='http://www.freevisitorcounters.com' style="color: inherit; text-decoration: none;">Free counter</a>
+  <div class="visitor-counter">
+    <a href='http://www.freevisitorcounters.com'>Free counter</a>
     <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=a56d04048d5d12a7cf78791761878ce20183b678'></script>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1372512/t/5"></script>
   </div>
@@ -596,7 +609,7 @@
       if (size > 13.312) {
         msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
       } else if (size < 9.216) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
+        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.`;
       }
       $('#app_size').html(msg);
     });
@@ -648,7 +661,7 @@
   }); // END $(function(){ ... })
   
   $(function(){
-  // Auto-uppercase for all input[type="text"] with .uppercase class
+  // Auto-uppercase for all input[type="text"].uppercase
   $(document).on('input', 'input[type="text"].uppercase', function() {
     this.value = this.value.toUpperCase();
   });
