@@ -663,38 +663,91 @@
 </script>
 <footer style="
   max-width: 390px;
-  margin: 50px auto 24px auto;
-  background: linear-gradient(135deg, #fff8e1 93%, #ffe0b2 100%);
+  margin: 60px auto 32px auto;
+  background: linear-gradient(135deg, #fff8e1 95%, #ffe0b2 100%);
   border-radius: 26px;
-  box-shadow: 0 7px 34px #ffe0826a inset, 0 10px 28px #e2ac1c30;
-  padding: 28px 20px 16px 20px;
+  box-shadow: 0 9px 32px #e2ac1c2a inset, 0 14px 30px #e2ac1c20;
+  padding: 40px 20px 17px 20px;
   text-align: center;
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #916c0d;
   position: relative;
+  overflow: visible;
 ">
-  <span style="
-    display: inline-block; 
-    background: #fff; 
-    box-shadow: 0 2px 10px #e2ac1c55 inset, 0 1.5px 0 #fffbe7;
-    border-radius: 8px; 
-    padding: 4px 10px 2px 10px; 
-    margin-bottom: 8px;
-    transform: rotate(-4deg) scale(1.03);
+  <!-- 3D Cube Korean Flag Badge -->
+  <div style="
+    position: absolute;
+    top: -46px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    width: 64px;
+    height: 64px;
+    perspective: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   ">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg" 
-         alt="Korean Flag" style="width:33px; vertical-align:middle;"/>
-  </span>
-  <div style="font-weight:650; font-size:1.09em; margin-bottom:3px;">
+    <div style="
+      width: 48px;
+      height: 48px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(25deg) rotateY(-18deg) scale(1.13);
+      box-shadow: 0 6px 24px #c9ae7a48;
+      transition: transform 0.18s;
+    ">
+      <!-- Front (Flag) -->
+      <div style="
+        position: absolute;
+        width: 48px; height: 48px;
+        background: #fff;
+        border-radius: 7px;
+        box-shadow: 0 1.5px 6px #e2ac1c26;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateZ(24px);
+        overflow: hidden;
+      ">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg"
+             alt="Korean Flag"
+             style="width: 43px; height: 31px; object-fit: contain; display: block;">
+      </div>
+      <!-- Top -->
+      <div style="
+        position: absolute;
+        width: 48px; height: 48px;
+        background: linear-gradient(120deg, #f5e8bc 80%, #f9ecc2 100%);
+        border-radius: 7px 7px 12px 12px;
+        box-shadow: 0 6px 16px #fff8e1;
+        opacity:0.93;
+        transform: rotateX(90deg) translateZ(24px);
+      "></div>
+      <!-- Right Side -->
+      <div style="
+        position: absolute;
+        width: 48px; height: 48px;
+        background: linear-gradient(100deg, #ffe082 40%, #fff4e1 120%);
+        border-radius: 0 9px 9px 0 / 0 14px 14px 0;
+        opacity:0.92;
+        transform: rotateY(90deg) translateZ(24px);
+        box-shadow: 0 6px 18px #ffe08255;
+      "></div>
+    </div>
+  </div>
+
+  <!-- Footer Content -->
+  <div style="margin-top:10px; font-weight:650; font-size:1.11em; margin-bottom:3px; letter-spacing:0.02em;">
     &copy; All rights reserved 2025
   </div>
-  <div style="font-size:0.99em; margin-bottom:6px;">
+  <div style="font-size:0.98em; margin-bottom:7px;">
     Contact: 
     <a href="mailto:Lemsvlog@gmail.com" style="color:#e2ac1c; font-weight:600; text-decoration:none;">
       <i class="fa fa-envelope" style="margin-right:5px; color:#e2ac1c;"></i>Lemsvlog@gmail.com
     </a>
   </div>
-  <div style="font-size:0.93em; color:#bda965; margin-top:5px;">
+  <div style="font-size:0.93em; color:#bda965;">
     Created by <span style="font-weight:600;">VizKor KLC Team</span>
   </div>
 </footer>
