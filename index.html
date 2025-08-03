@@ -674,27 +674,27 @@
   position: relative;
   overflow: visible;
 ">
-  <!-- 3D Cube Korean Flag Badge -->
+  <!-- 3D Cube Korean Flag Badge (Upper Right) -->
   <div style="
     position: absolute;
-    top: -46px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: -28px;
+    right: -28px;
     z-index: 12;
     width: 64px;
     height: 64px;
     perspective: 300px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-end;
+    pointer-events: none;
   ">
     <div style="
       width: 48px;
       height: 48px;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(25deg) rotateY(-18deg) scale(1.13);
-      box-shadow: 0 6px 24px #c9ae7a48;
+      transform: rotateX(25deg) rotateY(-22deg) scale(1.16);
+      box-shadow: 0 6px 24px #c9ae7a38;
       transition: transform 0.18s;
     ">
       <!-- Front (Flag) -->
@@ -702,8 +702,8 @@
         position: absolute;
         width: 48px; height: 48px;
         background: #fff;
-        border-radius: 7px;
-        box-shadow: 0 1.5px 6px #e2ac1c26;
+        border-radius: 8px;
+        box-shadow: 0 1.5px 7px #e2ac1c1a;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -719,9 +719,9 @@
         position: absolute;
         width: 48px; height: 48px;
         background: linear-gradient(120deg, #f5e8bc 80%, #f9ecc2 100%);
-        border-radius: 7px 7px 12px 12px;
+        border-radius: 8px 8px 16px 16px;
         box-shadow: 0 6px 16px #fff8e1;
-        opacity:0.93;
+        opacity:0.92;
         transform: rotateX(90deg) translateZ(24px);
       "></div>
       <!-- Right Side -->
@@ -729,10 +729,10 @@
         position: absolute;
         width: 48px; height: 48px;
         background: linear-gradient(100deg, #ffe082 40%, #fff4e1 120%);
-        border-radius: 0 9px 9px 0 / 0 14px 14px 0;
-        opacity:0.92;
+        border-radius: 0 14px 14px 0 / 0 16px 16px 0;
+        opacity:0.91;
         transform: rotateY(90deg) translateZ(24px);
-        box-shadow: 0 6px 18px #ffe08255;
+        box-shadow: 0 6px 18px #ffe08266;
       "></div>
     </div>
   </div>
