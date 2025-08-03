@@ -663,25 +663,27 @@
 </script>
 <footer style="
   max-width: 390px;
-  margin: 60px auto 32px auto;
-  background: linear-gradient(135deg, #fff8e1 95%, #ffe0b2 100%);
-  border-radius: 26px;
-  box-shadow: 0 9px 32px #e2ac1c2a inset, 0 14px 30px #e2ac1c20;
-  padding: 40px 20px 17px 20px;
+  margin: 62px auto 24px auto;
+  background: rgba(255, 248, 225, 0.97);
+  border-radius: 22px 28px 18px 18px;
+  box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
+  padding: 36px 20px 20px 20px;
   text-align: center;
   font-family: 'Segoe UI', Arial, sans-serif;
-  color: #916c0d;
+  color: #9e7b18;
+  letter-spacing: 0.02em;
+  font-size: 1em;
   position: relative;
   overflow: visible;
 ">
-  <!-- 3D Cube Korean Flag Badge (Upper Right) -->
+  <!-- 3D Cube Korean Flag Badge (shifted 5cm from right) -->
   <div style="
     position: absolute;
-    top: -28px;
-    right: -28px;
-    z-index: 12;
-    width: 64px;
-    height: 64px;
+    top: -12px;
+    right: 50px; /* approx 5cm = 50px (adjust if needed) */
+    z-index: 10;
+    width: 44px;
+    height: 44px;
     perspective: 300px;
     display: flex;
     align-items: flex-start;
@@ -689,65 +691,65 @@
     pointer-events: none;
   ">
     <div style="
-      width: 48px;
-      height: 48px;
+      width: 38px;
+      height: 38px;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(25deg) rotateY(-22deg) scale(1.16);
-      box-shadow: 0 6px 24px #c9ae7a38;
-      transition: transform 0.18s;
+      transform: rotateX(18deg) rotateY(-13deg) scale(1.12);
+      box-shadow: 0 2.5px 12px #e2ac1c22;
+      transition: transform 0.2s;
     ">
       <!-- Front (Flag) -->
       <div style="
         position: absolute;
-        width: 48px; height: 48px;
+        width: 38px; height: 38px;
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 1.5px 7px #e2ac1c1a;
+        box-shadow: 0 1px 4px #e2ac1c15;
         display: flex;
         align-items: center;
         justify-content: center;
-        transform: translateZ(24px);
+        transform: translateZ(19px);
         overflow: hidden;
       ">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg"
              alt="Korean Flag"
-             style="width: 43px; height: 31px; object-fit: contain; display: block;">
+             style="width: 33px; height: 23px; object-fit: contain; display: block;">
       </div>
       <!-- Top -->
       <div style="
         position: absolute;
-        width: 48px; height: 48px;
-        background: linear-gradient(120deg, #f5e8bc 80%, #f9ecc2 100%);
-        border-radius: 8px 8px 16px 16px;
-        box-shadow: 0 6px 16px #fff8e1;
+        width: 38px; height: 38px;
+        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        border-radius: 11px 11px 16px 16px;
+        box-shadow: 0 3px 11px #fff8e1;
         opacity:0.92;
-        transform: rotateX(90deg) translateZ(24px);
+        transform: rotateX(90deg) translateZ(19px);
       "></div>
       <!-- Right Side -->
       <div style="
         position: absolute;
-        width: 48px; height: 48px;
-        background: linear-gradient(100deg, #ffe082 40%, #fff4e1 120%);
-        border-radius: 0 14px 14px 0 / 0 16px 16px 0;
-        opacity:0.91;
-        transform: rotateY(90deg) translateZ(24px);
-        box-shadow: 0 6px 18px #ffe08266;
+        width: 38px; height: 38px;
+        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        border-radius: 0 13px 13px 0 / 0 15px 15px 0;
+        opacity:0.90;
+        transform: rotateY(90deg) translateZ(19px);
+        box-shadow: 0 4px 13px #ffe0824c;
       "></div>
     </div>
   </div>
 
   <!-- Footer Content -->
-  <div style="margin-top:10px; font-weight:650; font-size:1.11em; margin-bottom:3px; letter-spacing:0.02em;">
+  <div style="margin-top:8px; font-weight:650; font-size:1.13em; margin-bottom:3px;">
     &copy; All rights reserved 2025
   </div>
-  <div style="font-size:0.98em; margin-bottom:7px;">
+  <div style="font-size:0.99em; margin-bottom:7px;">
     Contact: 
     <a href="mailto:Lemsvlog@gmail.com" style="color:#e2ac1c; font-weight:600; text-decoration:none;">
       <i class="fa fa-envelope" style="margin-right:5px; color:#e2ac1c;"></i>Lemsvlog@gmail.com
     </a>
   </div>
-  <div style="font-size:0.93em; color:#bda965;">
+  <div style="font-size:0.94em; color:#bda965;">
     Created by <span style="font-weight:600;">VizKor KLC Team</span>
   </div>
 </footer>
