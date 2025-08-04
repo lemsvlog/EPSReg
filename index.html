@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -658,6 +659,7 @@
 
 		<br><br><br><br>
 
+<br><br><br><br>
 <footer style="
   max-width: 390px;
   margin: 62px auto 24px auto;
@@ -674,7 +676,7 @@
   overflow: visible;
 ">
 
-  <!-- 3D Cube PH Flag Badge (left side, 5cm/50px from left) -->
+  <!-- PH flag 3D badge (left) -->
   <div style="
     position: absolute;
     top: -12px;
@@ -737,7 +739,41 @@
     </div>
   </div>
 
-  <!-- 3D Cube Korean Flag Badge (right side, 5cm/50px from right) -->
+  <!-- LOGO (centered) -->
+  <!-- LOGO (centered, bigger, more 3D) -->
+<div style="
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%) rotateY(-14deg) rotateX(10deg) scale(1.15);
+  z-index: 12;
+  width: 62px;
+  height: 62px;
+  background: linear-gradient(120deg,#fffbe9 72%,#fffde4 100%);
+  border-radius: 19px;
+  box-shadow: 0 6px 30px #e2ac1c45, 0 1px 16px #c2a35222 inset, 0 0 0 6px #ffe08280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3.5px solid #f2e5a3;
+  pointer-events: none;
+  transition: box-shadow .3s, transform .25s;
+">
+  <img src="vizkor.png"
+       alt="VIZKOR Logo"
+       style="
+         width: 48px;
+         height: 48px;
+         object-fit: contain;
+         display: block;
+         filter:
+           drop-shadow(0 3px 8px #c59e3777)
+           drop-shadow(0 0 6px #ffe08244);
+         ">
+</div>
+
+
+  <!-- KR flag 3D badge (right) -->
   <div style="
     position: absolute;
     top: -12px;
