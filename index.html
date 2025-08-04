@@ -10,15 +10,31 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
  body {
-  padding-top: 4vh; /* 10% of viewport height */
+  padding-top: 4vh; /* Keeping padding-top at 4vh as per your request */
 }
     body, html, .forms5 { height: 100%; background-color: #fcfcfd; }
     .spinner, .spinner2, .spinner3 { display: none; }
     .forms2 { background-color: rgba(255,255,255,0.0896); }
     .atnt { display: inline-block; }
     .logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
-    .img-hero { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg'); height: 50%; background-position: center; background-repeat: no-repeat; background-size: cover; }
-    .hero-text { color: #faf9f9; }
+    
+    /* Reverted EPS-TOPIK TEST section (Hero Section) to original success.html styles */
+    .img-hero {
+      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg');
+      height: 50%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    
+    .hero-text { 
+        color: #faf9f9; /* Original color */
+        /* Reverting to default margins/padding, relying on Bootstrap's mt-2, mb-0 etc. */
+    }
+    /* Removed specific h1, h5, p styles within .hero-text to revert to original success.html appearance */
+    /* Original success.html did not have custom CSS rules for these, relying on global/bootstrap */
+
+
     .inline-radio .form-check { display: inline-block; margin-right: 15px; }
     .affirm-box { background: #fffbe7; border: 2px solid #ffe082; border-radius: 10px; padding: 22px 18px 18px 18px; margin-bottom: 18px; }
     .affirm-checkbox { accent-color: #ffc107; width: 1.2em; height: 1.2em; margin-right: 12px; margin-top: 4px; }
@@ -135,7 +151,7 @@
 .glow-text {
   font-size: 0.85em;
   font-weight: 700;
-  margin: 0 0 2px 0;   /* 2px lang sa ilalim, walang margin sa taas at gilid */
+  margin: 0 0 0 0;   /* Removed margin-bottom here */
   color: #4e3b00;
   text-transform: uppercase;
   animation: alertGlow 1s infinite ease-in-out;
@@ -172,7 +188,7 @@
 
 @media (max-width: 767px) {
   .glow-banner {
-    height: 9vh; /* Adjusted for mobile too */
+    height: auto; /* Adjusted for mobile too */
   }
   .glow-text {
     font-size: 0.8em;
@@ -190,7 +206,7 @@
   margin-bottom: 0;     /* no space sa baba */
   font-size: 0.69em;    /* optional: adjust kung gusto mo mas maliit/larger */
   color: #7c4a00;
-  line-height: .5;
+  line-height: 1; /* Fixed line height for consistency within this wrapper */
 }
 
 .counter-display-digital-small {
@@ -209,7 +225,7 @@
 
 /* Make sure the main content is pushed down enough by the fixed banner */
 body {
-  padding-top: vh; /* Match the height of the glow-banner */
+  padding-top: 4vh; /* Match the height of the glow-banner */
 }
 
   </style>
@@ -243,6 +259,7 @@ body {
 </section>
 <br>
 <section>
+
 
 	
 	 
@@ -450,7 +467,7 @@ body {
         <!-- PASAPORTE -->
         <div class="col-md-6">
           <div id="passport_size" style="margin-bottom:4px;"></div>
-          <div class="border border-warning rounded p-3 mb-2 d-flex flex-row flex-wrap align-items-start" style="background: #fffbe7; min-height:240px;">
+          <div class="border border-warning rounded p-3 mb-2" style="background: #fffbe7; min-height:240px;">
             <!-- IMAGE COLUMN -->
             <div style="flex:1; min-width:210px;">
               <b class="mb-2 d-block"><i class="fa fa-passport"></i> PASAPORTE</b>
@@ -671,7 +688,64 @@ body {
     });
     // SUBMIT HANDLER for REGISTRATION
     $('#EPSforms').on('submit', function(e) {
-      e.preventDefault();
+      e.preventDefault(); // Prevent default form submission
+
+      // --- START VALIDATION ---
+
+      // 1. Birthday: Only applicants 18 to 38 years old are allowed.
+      const bdateInput = $('#bdate').val();
+      if (bdateInput) {
+        const bdate = new Date(bdateInput);
+        const today = new Date();
+        let age = today.getFullYear() - bdate.getFullYear();
+        const m = today.getMonth() - bdate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < bdate.getDate())) {
+            age--; // Adjust age if birthday hasn't occurred yet this year
+        }
+
+        if (age < 18 || age > 38) {
+          alert('Registration not allowed: Only applicants 18 to 38 years old are allowed.');
+          return false;
+        }
+      } else {
+        alert('Please enter your Birthdate.');
+        return false;
+      }
+
+      // 2. Passport Validity: Passport must have at least 1 year of validity remaining from the current date.
+      const passportValidityInput = $('#passport_validity').val();
+      if (passportValidityInput) {
+        const passportValidityDate = new Date(passportValidityInput);
+        const today = new Date();
+        const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+
+        if (passportValidityDate < oneYearFromNow) {
+          alert('Registration not allowed: Passport must have at least 1 year of validity remaining from the current date.');
+          return false;
+        }
+      } else {
+        alert('Please enter Passport Validity date.');
+        return false;
+      }
+
+      // 3. Password & Re-type Password: Must match.
+      const password = $('#password').val();
+      const repassword = $('#repassword').val();
+      if (password !== repassword) {
+        alert('Registration not allowed: Password and Re-type Password must match.');
+        return false;
+      }
+
+      // 4. Mobile Number: Must be exactly 11 digits and contain only numbers.
+      const mobileNumber = $('#mobile').val();
+      if (!/^\d{11}$/.test(mobileNumber)) {
+        alert('Registration not allowed: Mobile Number must be exactly 11 digits and contain only numbers.');
+        return false;
+      }
+
+      // --- END VALIDATION ---
+
+      // If all validations pass, proceed with data saving and redirection
       // Gather info
       let lname = $('#lname').val().trim();
       let fname = $('#fname').val().trim();
@@ -679,7 +753,7 @@ body {
       let fullname = fname + ' ' + mname + ' ' + lname;
       let email = $('#email').val().trim();
 
-      // -- START: Success Counter for Application No. --
+      // -- START: Application Number generation (global counter) --
       let successCount = localStorage.getItem('successCount');
       if (!successCount) {
         successCount = 1;
@@ -687,16 +761,33 @@ body {
         successCount = parseInt(successCount) + 1;
       }
       localStorage.setItem('successCount', successCount);
+      let idStr = String(successCount).padStart(6, '0'); // Always 6 digits for app number
+      // -- END: Application Number generation --
 
-      // Format Application No. (always 5 digits, leading zeros)
-      let idStr = String(successCount).padStart(5, '0');
-      // -- END: Success Counter for Application No. --
+      // --- START: Save all registration data to reg_list in localStorage ---
+      let regList = JSON.parse(localStorage.getItem('reg_list') || '[]');
+      let newRegistration = {
+          id: idStr, // Use the generated application number as unique ID
+          fullname: fullname,
+          sex: $('input[name="sex"]:checked').val(),
+          bdate: $('#bdate').val(),
+          passport: $('#passport').val(),
+          passport_validity: $('#passport_validity').val(),
+          email: $('#email').val(),
+          mobile: $('#mobile').val(),
+          province: $('#province').val(),
+          city: $('#city').val(),
+          password: $('#password').val() // Storing for practice, remind user about security
+      };
+      regList.push(newRegistration);
+      localStorage.setItem('reg_list', JSON.stringify(regList));
+      // --- END: Save all registration data ---
 
-      // Save to localStorage for success.html
+      // Save most recent data for success.html (redundant with reg_list but for previous success.html logic)
       localStorage.setItem('reg_fullname', fullname);
       localStorage.setItem('reg_email', email);
       localStorage.setItem('reg_id', idStr);
-
+      
       // Redirect to success page
       window.location.href = 'success.html';
     });
@@ -712,6 +803,34 @@ body {
         $(this).text($(this).text().toUpperCase());
       });
     });
+
+    // Passport Number Validation with Warning Message
+    $('#passport').on('input', function() {
+        const passportInput = $(this);
+        const passportValue = passportInput.val().trim();
+        const passportLength = passportValue.length;
+        let warningMessage = '';
+
+        // Check if length exceeds 9
+        if (passportLength > 9) {
+            warningMessage = 'Passport Number cannot exceed 9 digits.';
+            passportInput.val(passportValue.substring(0, 9)); // Truncate if too long
+        } else if (passportLength < 9) {
+            warningMessage = 'Passport Number must be 9 digits.';
+        }
+        
+        // Display warning message dynamically
+        let $warningSpan = passportInput.next('.passport-warning');
+        if ($warningSpan.length === 0) {
+            $warningSpan = $('<span>').addClass('passport-warning text-danger d-block mt-1').insertAfter(passportInput);
+        }
+        $warningSpan.text(warningMessage);
+    });
+
+    // Mobile Number Validation with maxlength
+    // The HTML maxlength handles this visually, but JS confirms on submit.
+    $('#mobile').attr('maxlength', '11');
+
   });
 </script>
 
