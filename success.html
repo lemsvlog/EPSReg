@@ -9,7 +9,19 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
-    body, html { min-height: 100%; background-color: #fcfcfd; }
+    body {
+      padding-top: 6vh;
+      background-color: #fcfcfd;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
     .success-wrap {
       display: flex;
       justify-content: center;
@@ -99,10 +111,6 @@
       }
       .info-note { padding: 7px 4px 7px 5px;}
     }
-    .navbar { background: transparent; box-shadow: none; border: 0;}
-    .navbar-brand img { width: 60px; }
-    .atnt { display: inline-block; }
-    .logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
     .img-hero {
       background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg');
       height: 50%;
@@ -112,7 +120,8 @@
     }
     .hero-text { color: #faf9f9; }
 
-.glow-banner {
+    /* Glow banner (use index.html's style for consistency) */
+    .glow-banner {
       position: fixed;
       top: 0;
       left: 0;
@@ -122,91 +131,355 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #fff3cd; /* beige tone */
-      animation: alertBG 1.5s infinite;
-      border-bottom: 2px solid #ffc107;
-      box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
+      background-color: #f5f5dc;
+      animation: alertBG 1s infinite;
+      border-bottom: 2px solid #d2b48c;
+      box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
       text-align: center;
     }
-
     .glow-text {
-      font-size: 1.1em;
+      font-size: 0.85em;
       font-weight: 700;
       margin: 0;
-      color: #7c4a00;
+      color: #4e3b00;
       text-transform: uppercase;
-      animation: alertGlow 1.5s infinite ease-in-out;
-      letter-spacing: 0.5px;
+      animation: alertGlow 1s infinite ease-in-out;
+      letter-spacing: 0.4px;
       text-shadow:
-        0 0 4px #fff6d1,
-        0 0 6px #ffc107,
-        0 0 8px #ffbb33;
+        0 0 2px #fff8dc,
+        0 0 4px #f4a460,
+        0 0 6px #ffd700;
     }
-
     @keyframes alertGlow {
-      0%   { color: #7c4a00; text-shadow: 0 0 3px #ffcc00, 0 0 6px #ffb300; transform: scale(1); }
-      50%  { color: #996600; text-shadow: 0 0 6px #ffe082, 0 0 12px #ffb300; transform: scale(1.03); }
-      100% { color: #7c4a00; text-shadow: 0 0 3px #ffcc00, 0 0 6px #ffb300; transform: scale(1); }
+      0% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
+      50% { color: #b8860b; text-shadow: 0 0 6px #ffd700, 0 0 10px #daa520; transform: scale(1.02);}
+      100% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
     }
-
     @keyframes alertBG {
-      0%   { background-color: #fff3cd; }
-      50%  { background-color: #ffe9a6; }
-      100% { background-color: #fff3cd; }
+      0%   { background-color: #f5f5dc; }
+      50%  { background-color: #f0e68c; }
+      100% { background-color: #f5f5dc; }
     }
+    @media (max-width: 767px) {
+      .glow-banner {
+        height: 6vh;
+      }
+      .glow-text {
+        font-size: 0.8em;
+        line-height: 1.1;
+      }
+    }
+    /* --- Footer style: match index.html --- */
+    footer {
+      max-width: 600px;
+      margin: 62px auto 24px auto;
+      background: rgba(255, 248, 225, 0.97);
+      border-radius: 22px 28px 18px 18px;
+      box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
+      padding: 36px 20px 20px 20px;
+      text-align: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #9e7b18;
+      letter-spacing: 0.02em;
+      font-size: 1em;
+      position: relative;
+      overflow: visible;
+    }
+	
+.ord-number {
+  font-size: 1.7em;
+  font-weight: 800;
+  color: #572500;
+  letter-spacing: 0;        /* Remove extra spacing */
+  vertical-align: middle;
+  display: inline-block;
+}
 
-    body {
-      padding-top: 6vh; /* to avoid overlap with fixed banner */
-    }
+.th-highlight {
+  font-size: 0.55em;        /* Smaller, so it looks like a superscript */
+  font-weight: 800;
+  color: #030303;
+  vertical-align: super;
+  letter-spacing: 0;        /* Remove spacing between t and h */
+  margin-left: -2px;        /* Tighten gap with number */
+  margin-right: 0;          /* No extra space on the right */
+  position: relative;
+  top: -2px;                /* Fine-tune position */
+}
+
+
   </style>
 </head>
 <body>
-<div class="glow-banner">
-    <h3 class="glow-text">⚠️ PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM ⚠️</h3>
+  <div class="glow-banner">
+    <h6 class="glow-text">⚠️ Not an official registration. Practice only. ⚠️</h6>
   </div>
-</nav>
-<section class="upper">
-  <div class="img-hero">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-9">
-          <div class="hero-text">
-            <h1 class="mt-2 mb-0 ubuntu text-white">EPS - TOPIK TEST</h1>
-            <h5 class="my-0 ubuntu">Online Registration</h5>
-            <p class="my-0 ubuntu fw-light">Manufacturing Industry under Point-based System</p>
+  <div class="main-content">
+    <section class="upper">
+      <div class="img-hero">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9">
+              <div class="hero-text">
+                <h1 class="mt-2 mb-0 ubuntu text-white">EPS - TOPIK TEST</h1>
+                <h5 class="my-0 ubuntu">Online Registration</h5>
+                <p class="my-0 ubuntu fw-light">Manufacturing Industry under Point-based System</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+    <!-- SUCCESS CARD (CENTERED) -->
+    <div class="success-wrap">
+      <div class="success-card">
+        <div class="success-check"><i class="fa fa-check-circle"></i></div>
+        <div class="success-title">Registration Successful<br>CONGRATULATION!</div>
+        <div class="success-detail" id="successDetail"></div>
+        <div class="info-note">
+          <b>Note:</b> Use your <span class="highlight" style="color:#218de7;">email address</span> and <span class="highlight" style="color:#218de7;">password</span> to log in to the EPS-TOPIK portal.
+        </div>
+        <a href="index.html" class="btn btn-outline-primary back-btn">Back to Registration</a>
+        <a href="https://eps.dmw.gov.ph/" class="btn btn-outline-primary back-btn">Login To My Account</a>
+      </div>
     </div>
   </div>
-</section>
 
-<!-- SUCCESS CARD (CENTERED) -->
-<div class="success-wrap">
-  <div class="success-card">
-    <div class="success-check"><i class="fa fa-check-circle"></i></div>
-    <div class="success-title">Registration Successful</div>
-    <div class="success-detail" id="successDetail"></div>
-    <div class="info-note">
-      <b>Note:</b> Use your <span class="highlight" style="color:#218de7;">email address</span> and <span class="highlight" style="color:#218de7;">password</span> to log in to the EPS-TOPIK portal.
-    </div>
-    <a href="index.html" class="btn btn-outline-primary back-btn">Back to Registration</a>
-<a href="https://eps.dmw.gov.ph/" class="btn btn-outline-primary back-btn">Login To My Account</a>
-  </div>
-</div>
 <script>
   // Read data from localStorage
   const fullname = localStorage.getItem('reg_fullname') || '-';
   const email = localStorage.getItem('reg_email') || '-';
   const idnum = localStorage.getItem('reg_id') || '-';
 
-  // Friendly registration message
+  // Remove leading zeros for display
+  const numDisplay = Number(idnum).toString();
+
+  // Function to get the ordinal suffix (th, st, nd, rd)
+  function getOrdinal(n) {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
+  }
+
+  const ordinalSuffix = getOrdinal(Number(idnum));
+
   document.getElementById('successDetail').innerHTML =
-    `Congratulations! <span class="highlight">You are now registered</span> for <span class="highlight">EPS-TOPIK</span>.<br>
-	<br>
-    <b>Full Name:</b> <span class="highlight">${fullname}</span><br>
-    <b>Email:</b> <span class="highlight">${email}</span><br>
-    <b>Application No.:</b> <span class="highlight">${idnum}</span>`;
+    `<div style="text-align:center; margin-bottom:3px;">
+      
+      <span style="font-size:0.98em; color:#444; display:block; font-weight:500; margin-top:2px;">
+        You are the <span class="ord-number">${numDisplay}<span class="th-highlight">${ordinalSuffix}</span></span> person successfully registered for the <span class="highlight">EPS-TOPIK</span>.
+      </span><br>
+    </div>
+    <div style="margin-top:6px;">
+      <b>Full Name:</b> <span class="highlight">${fullname}</span><br>
+      <b>Email:</b> <span class="highlight">${email}</span><br>
+      <b>Application No.:</b> <span class="highlight">${idnum}</span><br>
+    </div>`;
 </script>
+
+
+
+
+
+  <!-- FOOTER STARTS HERE (same layout and width as index.html) -->
+  		
+<br><br><br><br>
+<br><br><br><br>
+<footer style="
+  width: 390px;
+  margin: 0 auto 0 auto; /* centers, no bottom margin */
+  background: rgba(255, 248, 225, 0.97);
+  border-radius: 22px 28px 0 0;
+  box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
+  text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #9e7b18;
+  letter-spacing: 0.02em;
+  font-size: 1em;
+  position: relative;
+  overflow: visible;
+
+">
+
+  <!-- PH flag 3D badge (left) -->
+  <div style="
+    position: absolute;
+    top: -12px;
+    left: 50px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    perspective: 300px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    pointer-events: none;
+  ">
+    <div style="
+      width: 38px;
+      height: 38px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(18deg) rotateY(13deg) scale(1.12);
+      box-shadow: 0 2.5px 12px #e2ac1c22;
+      transition: transform 0.2s;
+    ">
+      <!-- Front (PH Flag) -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #e2ac1c15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateZ(19px);
+        overflow: hidden;
+      ">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg"
+             alt="Philippines Flag"
+             style="width: 33px; height: 23px; object-fit: contain; display: block;">
+      </div>
+      <!-- Top -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        border-radius: 11px 11px 16px 16px;
+        box-shadow: 0 3px 11px #fff8e1;
+        opacity:0.92;
+        transform: rotateX(90deg) translateZ(19px);
+      "></div>
+      <!-- Left Side -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        border-radius: 13px 0 0 13px / 15px 0 0 15px;
+        opacity:0.90;
+        transform: rotateY(-90deg) translateZ(19px);
+        box-shadow: 0 4px 13px #ffe0824c;
+      "></div>
+    </div>
+  </div>
+
+  <!-- LOGO (centered) -->
+  <div style="
+  position: absolute;
+  top: -53.7px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(180deg, #b8ffbb 60%, #58f58c 40%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 3px #ffe08238;
+  pointer-events: none;
+  border: 1px solid #f5e3b0;
+">
+  <img src="vizkor.png"
+       alt="VIZKOR Logo"
+       style="
+         width: 85px;
+         height: 85px;
+         object-fit: contain;
+         display: block;
+         background: none;
+         border: none;
+       ">
+</div>
+
+
+
+
+  <!-- KR flag 3D badge (right) -->
+  <div style="
+    position: absolute;
+    top: -12px;
+    right: 50px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    perspective: 300px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    pointer-events: none;
+  ">
+    <div style="
+      width: 38px;
+      height: 38px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(18deg) rotateY(-13deg) scale(1.12);
+      box-shadow: 0 2.5px 12px #e2ac1c22;
+      transition: transform 0.2s;
+    ">
+      <!-- Front (KR Flag) -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #e2ac1c15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateZ(19px);
+        overflow: hidden;
+      ">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg"
+             alt="Korean Flag"
+             style="width: 33px; height: 23px; object-fit: contain; display: block;">
+      </div>
+      <!-- Top -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        border-radius: 11px 11px 16px 16px;
+        box-shadow: 0 3px 11px #fff8e1;
+        opacity:0.92;
+        transform: rotateX(90deg) translateZ(19px);
+      "></div>
+      <!-- Right Side -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        border-radius: 0 13px 13px 0 / 0 15px 15px 0;
+        opacity:0.90;
+        transform: rotateY(90deg) translateZ(19px);
+        box-shadow: 0 4px 13px #ffe0824c;
+      "></div>
+    </div>
+  </div>
+
+  <!-- Footer Content -->
+  <div style="margin-top:8px; font-weight:650; font-size:1.13em; margin-bottom:3px;">
+    &copy; All rights reserved 2025
+  </div>
+  <div style="font-size:0.99em; margin-bottom:7px;">
+    Contact: 
+    <a href="mailto:Lemsvlog@gmail.com" style="color:#e2ac1c; font-weight:600; text-decoration:none;">
+      <i class="fa fa-envelope" style="margin-right:5px; color:#e2ac1c;"></i>Lemsvlog@gmail.com
+    </a>
+  </div>
+  <div style="font-size:0.94em; color:#bda965;">
+    Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
+  </div>
+</footer>
+
+
+
+
+
+  
+  
 </body>
 </html>
