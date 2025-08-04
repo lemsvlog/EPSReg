@@ -10,7 +10,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
  body {
-  padding-top: 6vh; /* 10% of viewport height */
+  padding-top: 4vh; /* 10% of viewport height */
 }
     body, html, .forms5 { height: 100%; background-color: #fcfcfd; }
     .spinner, .spinner2, .spinner3 { display: none; }
@@ -111,9 +111,11 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 6vh; /* 4% of viewport height */
+  height: auto;                 /* Sakto lang sa content */
+  padding: 4px 0 3px 0;         /* Maliit na padding top/bottom */
   z-index: 9999;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #f5f5dc;
@@ -122,11 +124,18 @@
   box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
   text-align: center;
 }
+@media (max-width: 991px), (max-width: 767px), (max-width: 600px) {
+  .glow-banner {
+    height: auto !important;
+    padding: 3px 0 2px 0 !important; /* Even smaller padding for mobile */
+  }
+}
+
 
 .glow-text {
   font-size: 0.85em;
   font-weight: 700;
-  margin: 0;
+  margin: 0 0 2px 0;   /* 2px lang sa ilalim, walang margin sa taas at gilid */
   color: #4e3b00;
   text-transform: uppercase;
   animation: alertGlow 1s infinite ease-in-out;
@@ -135,8 +144,8 @@
     0 0 2px #fff8dc,
     0 0 4px #f4a460,
     0 0 6px #ffd700;
+  line-height: 1; /* Optional: para di dikit na dikit */
 }
-
 @keyframes alertGlow {
   0% {
     color: #4e3b00;
@@ -163,7 +172,7 @@
 
 @media (max-width: 767px) {
   .glow-banner {
-    height: 6vh;
+    height: 9vh; /* Adjusted for mobile too */
   }
   .glow-text {
     font-size: 0.8em;
@@ -175,8 +184,33 @@
   text-transform: uppercase !important;
 }
 
+/* NEW CSS for the hit counter inside the floating banner */
+.glow-counter-wrapper {
+  margin-top: 0px;      /* no space sa taas */
+  margin-bottom: 0;     /* no space sa baba */
+  font-size: 0.69em;    /* optional: adjust kung gusto mo mas maliit/larger */
+  color: #7c4a00;
+  line-height: .5;
+}
 
+.counter-display-digital-small {
+  font-family: 'Consolas', 'Monaco', monospace; /* Digital/fixed-width font */
+  font-weight: bold;
+  color: #28a745; /* Green color for the numbers */
+  background-color: #e6ffe6; /* Light green background */
+  padding: 2px 5px;
+  border-radius: 3px;
+  border: 1px solid #1a8a3a;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  letter-spacing: 1px;
+  display: inline-block;
+  vertical-align: middle; /* Align with text */
+}
 
+/* Make sure the main content is pushed down enough by the fixed banner */
+body {
+  padding-top: vh; /* Match the height of the glow-banner */
+}
 
   </style>
 </head>
@@ -186,6 +220,10 @@
   <h6 class="glow-text">
     ⚠️ Not an official registration. Practice only. ⚠️
   </h6>
+  <!-- NEW HIT COUNTER ROW -->
+  <div class="glow-counter-wrapper">
+    views <span id="sessionHitCounterDisplay" class="counter-display-digital-small">000000</span>
+  </div>
 </div>
 	
 <section class="upper">
@@ -640,33 +678,41 @@
       let mname = $('#mname').val().trim();
       let fullname = fname + ' ' + mname + ' ' + lname;
       let email = $('#email').val().trim();
-      // Generate random ID (pad with leading zeros)
-      let randomID = Math.floor(Math.random() * 100) + 1;
-      let idStr = String(randomID).padStart(5, '0');
-      // Save to localStorage
+
+      // -- START: Success Counter for Application No. --
+      let successCount = localStorage.getItem('successCount');
+      if (!successCount) {
+        successCount = 1;
+      } else {
+        successCount = parseInt(successCount) + 1;
+      }
+      localStorage.setItem('successCount', successCount);
+
+      // Format Application No. (always 5 digits, leading zeros)
+      let idStr = String(successCount).padStart(5, '0');
+      // -- END: Success Counter for Application No. --
+
+      // Save to localStorage for success.html
       localStorage.setItem('reg_fullname', fullname);
       localStorage.setItem('reg_email', email);
       localStorage.setItem('reg_id', idStr);
+
       // Redirect to success page
       window.location.href = 'success.html';
     });
-  }); // END $(function(){ ... })
-  
-  $(function(){
-  // Auto-uppercase for all input[type="text"] with .uppercase class
-  $(document).on('input', 'input[type="text"].uppercase', function() {
-    this.value = this.value.toUpperCase();
   });
 
-  // Also handle selects if needed (like province/city)
-  $(document).on('change', 'select.uppercase', function() {
-    // For display only, select options do not need to be uppercased.
-    // If you want: change the displayed value to uppercase.
-    $(this).find('option').each(function() {
-      $(this).text($(this).text().toUpperCase());
+  // Auto-uppercase for all input[type="text"].uppercase class
+  $(function(){
+    $(document).on('input', 'input[type="text"].uppercase', function() {
+      this.value = this.value.toUpperCase();
+    });
+    $(document).on('change', 'select.uppercase', function() {
+      $(this).find('option').each(function() {
+        $(this).text($(this).text().toUpperCase());
+      });
     });
   });
-});
 </script>
 
 		
@@ -860,11 +906,36 @@
   <div style="font-size:0.94em; color:#bda965;">
     Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
   </div>
+	
 </footer>
 
+<!-- Hit Counter JavaScript, still using sessionPageHits key -->
+<script>
+    // Session-based Hit Counter logic
+    if (typeof(Storage) !== "undefined") {
+        let sessionHits = sessionStorage.getItem("sessionPageHits"); 
+        if (sessionHits) {
+            sessionHits = parseInt(sessionHits) + 1;
+        } else {
+            sessionHits = 1;
+        }
+        sessionStorage.setItem("sessionPageHits", sessionHits);
 
-
-
+        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
+        if (counterDisplayElement) {
+            // Format the number to 6 digits with leading zeros
+            const formattedHits = String(sessionHits).padStart(7, '0009');
+            counterDisplayElement.textContent = formattedHits;
+        }
+    } else {
+        // Fallback kung hindi suportado ang sessionStorage
+        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
+        if (counterDisplayElement) {
+            counterDisplayElement.textContent = "N/A"; 
+            counterDisplayElement.parentNode.style.display = 'none'; 
+        }
+    }
+</script>
 
 	
 </body>
