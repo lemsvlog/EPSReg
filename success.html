@@ -255,11 +255,16 @@
   const numDisplay = Number(idnum).toString();
 
   // Function to get the ordinal suffix (th, st, nd, rd)
-  function getOrdinal(n) {
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return s[(v - 20) % 10] || s[v] || s[0];
+ function getOrdinal(n) {
+  if (n % 100 >= 11 && n % 100 <= 13) return 'th';
+  switch (n % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
   }
+}
+
 
   const ordinalSuffix = getOrdinal(Number(idnum));
 
