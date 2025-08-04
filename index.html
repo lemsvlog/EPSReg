@@ -183,9 +183,9 @@
 <body>
 
 <div class="glow-banner">
-  <h3 class="glow-text">
-    ⚠️PRACTICE REGISTRATION ONLY. NOT AN OFFICIAL FORM.⚠️
-  </h3>
+  <h6 class="glow-text">
+    ⚠️ Not an official registration. Practice only. ⚠️
+  </h6>
 </div>
 	
 <section class="upper">
@@ -304,28 +304,41 @@
             <input type="text" class="form-control uppercase" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
           </div>
         </div>
+		
         <div class="row mb-2">
-          <div class="col-md-3">
-            <label for="sex">Sex</label>
-            <select class="form-select uppercase" id="sex" name="sex" required>
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="bdate">Birthdate</label>
-            <input type="date" class="form-control uppercase" id="bdate" name="bdate" required>
-          </div>
-          <div class="col-md-3">
-            <label for="passport">Passport Number</label>
-            <input type="text" class="form-control uppercase" id="passport" name="passport" required>
-          </div>
-          <div class="col-md-3">
-            <label for="passport_validity">Passport Validity</label>
-            <input type="date" class="form-control uppercase" id="passport_validity" name="passport_validity" required>
-          </div>
-        </div>
+		
+  <!-- SEX (radio na mukhang input) -->
+  <div class="col-md-3 d-flex flex-column">
+  <label class="mb-1 fw-semibold" style="margin-bottom:4px;">Sex</label>
+  <div class="d-flex justify-content-center align-items-center border rounded px-2 sex-field-box" style="height:38px; background:#fff;">
+    <div class="form-check form-check-inline mb-0 me-3">
+      <input type="radio" class="form-check-input" name="sex" value="Male" id="sex_male" required>
+      <label class="form-check-label" for="sex_male" style="font-weight: 500;">Male</label>
+    </div>
+    <div class="form-check form-check-inline mb-0">
+      <input type="radio" class="form-check-input" name="sex" value="Female" id="sex_female">
+      <label class="form-check-label" for="sex_female" style="font-weight: 500;">Female</label>
+    </div>
+  </div>
+</div>
+
+  <!-- BIRTHDATE -->
+  <div class="col-md-3">
+    <label for="bdate" class="mb-1 fw-semibold">Birthdate</label>
+    <input type="date" class="form-control uppercase" id="bdate" name="bdate" required>
+  </div>
+  <!-- PASSPORT NUMBER -->
+  <div class="col-md-3">
+    <label for="passport" class="mb-1 fw-semibold">Passport Number</label>
+    <input type="text" class="form-control uppercase" id="passport" name="passport" required>
+  </div>
+  <!-- PASSPORT VALIDITY -->
+  <div class="col-md-3">
+    <label for="passport_validity" class="mb-1 fw-semibold">Passport Validity</label>
+    <input type="date" class="form-control uppercase" id="passport_validity" name="passport_validity" required>
+  </div>
+</div>
+
         <div class="row mb-2">
           <div class="col-md-4">
             <label for="email">Email Address</label>
@@ -656,8 +669,8 @@
 });
 </script>
 
-		<br><br><br><br>
-
+		
+<br><br><br><br>
 <br><br><br><br>
 <footer style="
   max-width: 390px;
@@ -741,26 +754,26 @@
   <!-- LOGO (centered) -->
   <div style="
   position: absolute;
-  top: -75px;
+  top: -53.7px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 12;
-  width: 120px;
-  height: 120px;
-  background: linear-gradient(135deg, #fffbe6 68%, #ffe08221 100%);
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(180deg, #b8ffbb 60%, #58f58c 40%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px #ffe08238;
+  box-shadow: 0 2px 3px #ffe08238;
   pointer-events: none;
-  border: 3px solid #f5e3b0;
+  border: 1px solid #f5e3b0;
 ">
   <img src="vizkor.png"
        alt="VIZKOR Logo"
        style="
-         width: 80px;
-         height: 80px;
+         width: 85px;
+         height: 85px;
          object-fit: contain;
          display: block;
          background: none;
