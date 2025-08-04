@@ -657,6 +657,7 @@
 </script>
 
 		<br><br><br><br>
+
 <footer style="
   max-width: 390px;
   margin: 62px auto 24px auto;
@@ -672,11 +673,75 @@
   position: relative;
   overflow: visible;
 ">
-  <!-- 3D Cube Korean Flag Badge (shifted 5cm from right) -->
+
+  <!-- 3D Cube PH Flag Badge (left side, 5cm/50px from left) -->
   <div style="
     position: absolute;
     top: -12px;
-    right: 50px; /* approx 5cm = 50px (adjust if needed) */
+    left: 50px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    perspective: 300px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    pointer-events: none;
+  ">
+    <div style="
+      width: 38px;
+      height: 38px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(18deg) rotateY(13deg) scale(1.12);
+      box-shadow: 0 2.5px 12px #e2ac1c22;
+      transition: transform 0.2s;
+    ">
+      <!-- Front (PH Flag) -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #e2ac1c15;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateZ(19px);
+        overflow: hidden;
+      ">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg"
+             alt="Philippines Flag"
+             style="width: 33px; height: 23px; object-fit: contain; display: block;">
+      </div>
+      <!-- Top -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        border-radius: 11px 11px 16px 16px;
+        box-shadow: 0 3px 11px #fff8e1;
+        opacity:0.92;
+        transform: rotateX(90deg) translateZ(19px);
+      "></div>
+      <!-- Left Side -->
+      <div style="
+        position: absolute;
+        width: 38px; height: 38px;
+        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        border-radius: 13px 0 0 13px / 15px 0 0 15px;
+        opacity:0.90;
+        transform: rotateY(-90deg) translateZ(19px);
+        box-shadow: 0 4px 13px #ffe0824c;
+      "></div>
+    </div>
+  </div>
+
+  <!-- 3D Cube Korean Flag Badge (right side, 5cm/50px from right) -->
+  <div style="
+    position: absolute;
+    top: -12px;
+    right: 50px;
     z-index: 10;
     width: 44px;
     height: 44px;
@@ -695,7 +760,7 @@
       box-shadow: 0 2.5px 12px #e2ac1c22;
       transition: transform 0.2s;
     ">
-      <!-- Front (Flag) -->
+      <!-- Front (KR Flag) -->
       <div style="
         position: absolute;
         width: 38px; height: 38px;
@@ -749,6 +814,7 @@
     Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
   </div>
 </footer>
+
 
 
 
