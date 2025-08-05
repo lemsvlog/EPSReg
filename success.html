@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css-custom.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
-  <link href="VIZKOR.css" rel="stylesheet">
+ <link href="VIZKOR.css" rel="stylesheet">
 </head>
 <body>
   <div class="glow-banner">
@@ -45,7 +45,42 @@
     </div>
   </div>
 
+<script>
+  // Read data from localStorage
+  const fullname = localStorage.getItem('reg_fullname') || '-';
+  const email = localStorage.getItem('reg_email') || '-';
+  const idnum = localStorage.getItem('reg_id') || '-';
 
+  // Remove leading zeros for display
+  const numDisplay = Number(idnum).toString();
+
+  // Function to get the ordinal suffix (th, st, nd, rd)
+ function getOrdinal(n) {
+  if (n % 100 >= 11 && n % 100 <= 13) return 'th';
+  switch (n % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
+  }
+}
+
+
+  const ordinalSuffix = getOrdinal(Number(idnum));
+
+  document.getElementById('successDetail').innerHTML =
+    `<div style="text-align:center; margin-bottom:3px;">
+      
+      <span style="font-size:0.98em; color:#444; display:block; font-weight:500; margin-top:2px;">
+        You are the <span class="ord-number" style="color:#99a340;">${numDisplay}<span class="th-highlight" style="color:#99a340;">${ordinalSuffix}</span></span> person successfully registered for the <span class="highlight">EPS-TOPIK</span>.
+      </span><br>
+    </div>
+    <div style="margin-top:6px;">
+      <b>Full Name:</b> <span style="color:#218de7;" class="highlight">${fullname}</span><br>
+      <b>Email:</b> <span style="color:#218de7;" class="highlight">${email}</span><br>
+      <b>Application No.:</b> <span style="color:#218de7;" class="highlight">${idnum}</span><br>
+    </div>`;
+</script>
 
 
 
@@ -244,6 +279,6 @@
     Created by <span style="font-weight:600; color:#A9D6E5;">VIZKOR KLC Team</span>
   </div>
 </footer>
-<script src="VIZKOR.js"></script>
+
 </body>
 </html>
