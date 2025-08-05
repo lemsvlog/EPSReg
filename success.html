@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Registration Practice</title>
-  <link rel="icon" type="image/x-icon" href="images-dmw_ol.ico">
+  <link rel="icon" type="image/x-xicon" href="images-dmw_ol.ico">
   <link rel="stylesheet" href="css-custom.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
     body {
-      padding-top: 6vh;
-      background-color: #fcfcfd;
-      min-height: 100vh;
+      padding-top: 3vh;
+      background-color: #F0F2F5; /* Light, cool gray body background */
+      min-height: 3vh;
       display: flex;
       flex-direction: column;
     }
@@ -31,10 +31,10 @@
       width: 100%;
     }
     .success-card {
-      background: #f4fffa;
-      border: 2px solid #30c988;
+      background: rgba(249,249,249,0.97); /* Off-white for card background */
+      border: 2px solid #4A90E2; /* Medium blue border */
       border-radius: 14px;
-      box-shadow: 0 2px 16px #b1f9e6b0;
+      box-shadow: 0 10px 38px rgba(74, 144, 226, 0.4), 0 2px 0 rgba(42, 77, 105, 0.15); /* Blue shadows */
       width: 50vw;
       max-width: 700px;
       min-width: 290px;
@@ -45,45 +45,49 @@
     }
     .success-check {
       font-size: 2.2em;
-      color: #28b463;
+      color: #228B22; /* Forest Green for checkmark (indicating success) */
       margin-bottom: 7px;
     }
     .success-title {
       font-size: 1.4em;
       font-weight: 700;
       letter-spacing: 0.6px;
-      color: #28b463;
+      color: #2A4D69; /* Darker blue for success title */
       margin-bottom: 18px;
       text-transform: uppercase;
     }
     .success-detail {
       font-size: 1.08em;
-      color: #28502b;
-      background: #f8fefa;
+      color: #000000; /* Black for general text */
+      background: #F9F9F9; /* Off-white background */
       border-radius: 9px;
       padding: 18px 18px 12px 24px;
       margin-bottom: 16px;
       text-align: left;
       line-height: 1.62;
       word-break: break-word;
-      box-shadow: 0 0 0 1px #e5f7ea;
+      box-shadow: 0 0 0 1px #BDD7E0; /* Light blue-grey border/shadow */
       display: inline-block;
       width: 100%;
       max-width: 1200px;
     }
     .highlight {
-      background: #edfff4;
+      background: #E0E6E9; /* Light blue-grey highlight background */
       border-radius: 3px;
       padding: 1px 7px;
       font-weight: 600;
-      color: #199c5b;
+      color: #2A4D69; /* Darker blue for highlighted text */
       font-size: 1em;
       margin: 0 2px;
     }
+    /* Specific override for highlight color within the info-note, as per the original HTML structure */
+    .info-note .highlight {
+      color: #4A90E2 !important; /* Medium blue for email/password highlight */
+    }
     .info-note {
       font-size: 1em;
-      color: #2b3e52;
-      background: #f7f9fb;
+      color: #000000; /* Black for info note text */
+      background: #F9F9F9; /* Off-white background */
       border-radius: 4px;
       padding: 10px 16px;
       text-align: left;
@@ -93,12 +97,21 @@
       margin-left: auto;
       margin-right: auto;
     }
-    .back-btn {
+    .btn-outline-primary.back-btn { /* Apply new button styling */
       margin-top: 13px;
       font-size: 1.05em;
       border-radius: 6px;
       padding: 8px 36px;
+      background-color: transparent;
+      border-color: #2A4D69; /* Dark Navy border */
+      color: #2A4D69; /* Dark Navy text */
+      transition: all 0.2s;
     }
+    .btn-outline-primary.back-btn:hover {
+      background-color: #2A4D69; /* Dark Navy background on hover */
+      color: #FFFFFF; /* White text on hover */
+    }
+
     @media (max-width: 900px) {
       .success-card {
         width: 98vw;
@@ -112,53 +125,53 @@
       .info-note { padding: 7px 4px 7px 5px;}
     }
     .img-hero {
-      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg');
+      background-image: linear-gradient(135deg, #223056 0%, #10192a 100%); /* Deep navy gradient */
       height: 50%;
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
     }
-    .hero-text { color: #faf9f9; }
+    .hero-text { color: #F9F9F9; } /* Off-white for hero text */
 
-    /* Glow banner (use index.html's style for consistency) */
+    /* Glow banner (Professional Theme) */
     .glow-banner {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 6vh;
+      height: 3vh;
       z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #f5f5dc;
+      background-color: #4A90E2; /* Medium blue */
       animation: alertBG 1s infinite;
-      border-bottom: 2px solid #d2b48c;
-      box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
+      border-bottom: 2px solid #2A4D69; /* Darker blue */
+      box-shadow: 0 0 8px rgba(74, 144, 226, 0.7); /* Blue shadow */
       text-align: center;
     }
     .glow-text {
       font-size: 0.85em;
       font-weight: 700;
       margin: 0;
-      color: #4e3b00;
+      color: #F9F9F9; /* Off-white text */
       text-transform: uppercase;
       animation: alertGlow 1s infinite ease-in-out;
       letter-spacing: 0.4px;
       text-shadow:
-        0 0 2px #fff8dc,
-        0 0 4px #f4a460,
-        0 0 6px #ffd700;
+        0 0 2px #FFFFFF, /* White shadow */
+        0 0 4px #A9D6E5, /* Light blue shadow */
+        0 0 6px #BDD7E0; /* Lighter blue shadow */
     }
     @keyframes alertGlow {
-      0% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
-      50% { color: #b8860b; text-shadow: 0 0 6px #ffd700, 0 0 10px #daa520; transform: scale(1.02);}
-      100% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
+      0% { color: #F9F9F9; text-shadow: 0 0 2px #FFFFFF, 0 0 6px #A9D6E5; transform: scale(1);}
+      50% { color: #BDD7E0; text-shadow: 0 0 6px #4A90E2, 0 0 10px #2A4D69; transform: scale(1.02);} /* Blue glow */
+      100% { color: #F9F9F9; text-shadow: 0 0 2px #FFFFFF, 0 0 6px #A9D6E5; transform: scale(1);}
     }
     @keyframes alertBG {
-      0%   { background-color: #f5f5dc; }
-      50%  { background-color: #f0e68c; }
-      100% { background-color: #f5f5dc; }
+      0%   { background-color: #4A90E2; } /* Medium blue */
+      50%  { background-color: #2A4D69; } /* Darker blue */
+      100% { background-color: #4A90E2; }
     }
     @media (max-width: 767px) {
       .glow-banner {
@@ -169,45 +182,99 @@
         line-height: 1.1;
       }
     }
-    /* --- Footer style: match index.html --- */
+    /* --- Footer style: Professional Theme --- */
     footer {
       max-width: 600px;
       margin: 62px auto 24px auto;
-      background: rgba(255, 248, 225, 0.97);
+      background: rgba(16, 42, 74, 0.97); /* Translucent dark navy */
       border-radius: 22px 28px 18px 18px;
-      box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
+      box-shadow: 0 9px 24px rgba(74, 144, 226, 0.2), 0 2.5px 0 rgba(42, 77, 105, 0.1), 0 0.5px 22px rgba(16, 42, 74, 0.1) inset; /* Blue shadows */
       padding: 36px 20px 20px 20px;
       text-align: center;
       font-family: 'Segoe UI', Arial, sans-serif;
-      color: #9e7b18;
+      color: #A9D6E5; /* Light blue text */
       letter-spacing: 0.02em;
       font-size: 1em;
       position: relative;
       overflow: visible;
     }
-	
+
 .ord-number {
   font-size: 1.7em;
   font-weight: 800;
-  color: #572500;
-  letter-spacing: 0;        /* Remove extra spacing */
+  color: #2A4D69; /* Dark Navy for ordinal number */
+  letter-spacing: 0;
   vertical-align: middle;
   display: inline-block;
 }
 
 .th-highlight {
-  font-size: 0.55em;        /* Smaller, so it looks like a superscript */
+  font-size: 0.55em;
   font-weight: 800;
-  color: #030303;
+  color: #000000; /* Black for 'th' suffix */
   vertical-align: super;
-  letter-spacing: 0;        /* Remove spacing between t and h */
-  margin-left: -2px;        /* Tighten gap with number */
-  margin-right: 0;          /* No extra space on the right */
+  letter-spacing: 0;
+  margin-left: -2px;
+  margin-right: 0;
   position: relative;
-  top: -2px;                /* Fine-tune position */
+  top: -2px;
 }
 
+  /* PH flag 3D badge (left) - adjusted to light blue/grey accents */
+  footer > div:first-child > div {
+    box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.15) !important;
+  }
+  footer > div:first-child > div > div:nth-child(2) { /* Top */
+    background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%) !important;
+    box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5) !important;
+  }
+  footer > div:first-child > div > div:nth-child(3) { /* Left Side */
+    background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%) !important;
+    border-radius: 13px 0 0 13px / 15px 0 0 15px; /* Keep original border-radius from HTML */
+    box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3) !important;
+  }
 
+  /* LOGO (centered) - adjusted to blue gradient */
+  footer > div:nth-child(2) {
+    background: linear-gradient(180deg, #A9D6E5 60%, #4A90E2 40%) !important;
+    box-shadow: 0 2px 3px rgba(74, 144, 226, 0.2) !important;
+    border: 1px solid #2A4D69 !important; /* Darker navy border */
+  }
+
+  /* KR flag 3D badge (right) - adjusted to light blue/grey accents */
+  footer > div:nth-child(3) > div {
+    box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.15) !important;
+  }
+  footer > div:nth-child(3) > div > div:nth-child(2) { /* Top */
+    background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%) !important;
+    box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5) !important;
+  }
+  footer > div:nth-child(3) > div > div:nth-child(3) { /* Right Side */
+    background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%) !important;
+    border-radius: 0 13px 13px 0 / 0 15px 15px 0; /* Keep original border-radius from HTML */
+    box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3) !important;
+  }
+
+  /* Footer Content Text */
+  footer div {
+    color: #A9D6E5; /* Light blue text for general footer text */
+  }
+  footer div:first-of-type { /* For the copyright text */
+      color: #A9D6E5; /* Keep it light blue */
+  }
+  footer a {
+    color: #A9D6E5 !important; /* Light blue for links */
+    text-decoration: none;
+  }
+  footer a i {
+    color: #A9D6E5 !important; /* Light blue for icon */
+  }
+  footer div:last-child { /* Created by VIZKOR KLC Team text */
+    color: #BDD7E0; /* Lighter blue-grey for this specific text */
+  }
+  footer div:last-child span {
+    color: #A9D6E5; /* Ensure the span inside is light blue */
+  }
   </style>
 </head>
 <body>
@@ -237,7 +304,7 @@
         <div class="success-title">Registration Successful<br>CONGRATULATION!</div>
         <div class="success-detail" id="successDetail"></div>
         <div class="info-note">
-          <b>Note:</b> Use your <span class="highlight" style="color:#218de7;">email address</span> and <span class="highlight" style="color:#218de7;">password</span> to log in to the EPS-TOPIK portal.
+          <b>Note:</b> Use your <span class="highlight" style="color:#218de7;">EMAIL ADDRESS</span> and <span class="highlight" style="color:#218de7;">PASSWORD</span> to log in to the EPS-TOPIK portal.
         </div>
         <a href="index.html" class="btn btn-outline-primary back-btn">Back to Registration</a>
         <a href="https://eps.dmw.gov.ph/" class="btn btn-outline-primary back-btn">Login To My Account</a>
@@ -272,13 +339,13 @@
     `<div style="text-align:center; margin-bottom:3px;">
       
       <span style="font-size:0.98em; color:#444; display:block; font-weight:500; margin-top:2px;">
-        You are the <span class="ord-number">${numDisplay}<span class="th-highlight">${ordinalSuffix}</span></span> person successfully registered for the <span class="highlight">EPS-TOPIK</span>.
+        You are the <span class="ord-number" style="color:#99a340;">${numDisplay}<span class="th-highlight" style="color:#99a340;">${ordinalSuffix}</span></span> person successfully registered for the <span class="highlight">EPS-TOPIK</span>.
       </span><br>
     </div>
     <div style="margin-top:6px;">
-      <b>Full Name:</b> <span class="highlight">${fullname}</span><br>
-      <b>Email:</b> <span class="highlight">${email}</span><br>
-      <b>Application No.:</b> <span class="highlight">${idnum}</span><br>
+      <b>Full Name:</b> <span style="color:#218de7;" class="highlight">${fullname}</span><br>
+      <b>Email:</b> <span style="color:#218de7;" class="highlight">${email}</span><br>
+      <b>Application No.:</b> <span style="color:#218de7;" class="highlight">${idnum}</span><br>
     </div>`;
 </script>
 
@@ -293,12 +360,12 @@
 <footer style="
   width: 390px;
   margin: 0 auto 0 auto; /* centers, no bottom margin */
-  background: rgba(255, 248, 225, 0.97);
+  background: rgba(16, 42, 74, 0.97); /* Dark Navy Blue background */
   border-radius: 22px 28px 0 0;
-  box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
+  box-shadow: 0 9px 24px rgba(74, 144, 226, 0.2), 0 2.5px 0 rgba(42, 77, 105, 0.1), 0 0.5px 22px rgba(16, 42, 74, 0.1) inset; /* Blue shadows */
   text-align: center;
   font-family: 'Segoe UI', Arial, sans-serif;
-  color: #9e7b18;
+  color: #A9D6E5; /* Light Blue text */
   letter-spacing: 0.02em;
   font-size: 1em;
   position: relative;
@@ -326,7 +393,7 @@
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(18deg) rotateY(13deg) scale(1.12);
-      box-shadow: 0 2.5px 12px #e2ac1c22;
+      box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.22); /* Blue shadow */
       transition: transform 0.2s;
     ">
       <!-- Front (PH Flag) -->
@@ -335,7 +402,7 @@
         width: 38px; height: 38px;
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 1px 4px #e2ac1c15;
+        box-shadow: 0 1px 4px rgba(74, 144, 226, 0.15); /* Blue shadow */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -350,9 +417,9 @@
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%); /* Light blue gradient */
         border-radius: 11px 11px 16px 16px;
-        box-shadow: 0 3px 11px #fff8e1;
+        box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5); /* Light blue shadow */
         opacity:0.92;
         transform: rotateX(90deg) translateZ(19px);
       "></div>
@@ -360,11 +427,11 @@
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%); /* Light blue gradient */
         border-radius: 13px 0 0 13px / 15px 0 0 15px;
         opacity:0.90;
         transform: rotateY(-90deg) translateZ(19px);
-        box-shadow: 0 4px 13px #ffe0824c;
+        box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3); /* Blue shadow */
       "></div>
     </div>
   </div>
@@ -378,14 +445,14 @@
   z-index: 12;
   width: 90px;
   height: 90px;
-  background: linear-gradient(180deg, #b8ffbb 60%, #58f58c 40%);
+  background: linear-gradient(180deg, #A9D6E5 60%, #4A90E2 40%); /* Blue gradient */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 3px #ffe08238;
+  box-shadow: 0 2px 3px rgba(74, 144, 226, 0.2); /* Blue shadow */
   pointer-events: none;
-  border: 1px solid #f5e3b0;
+  border: 1px solid #2A4D69; /* Dark Navy border */
 ">
   <img src="vizkor.png"
        alt="VIZKOR Logo"
@@ -422,7 +489,7 @@
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(18deg) rotateY(-13deg) scale(1.12);
-      box-shadow: 0 2.5px 12px #e2ac1c22;
+      box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.22); /* Blue shadow */
       transition: transform 0.2s;
     ">
       <!-- Front (KR Flag) -->
@@ -431,7 +498,7 @@
         width: 38px; height: 38px;
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 1px 4px #e2ac1c15;
+        box-shadow: 0 1px 4px rgba(74, 144, 226, 0.15); /* Blue shadow */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -446,9 +513,9 @@
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
+        background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%); /* Light blue gradient */
         border-radius: 11px 11px 16px 16px;
-        box-shadow: 0 3px 11px #fff8e1;
+        box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5); /* Light blue shadow */
         opacity:0.92;
         transform: rotateX(90deg) translateZ(19px);
       "></div>
@@ -456,11 +523,11 @@
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
+        background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%); /* Light blue gradient */
         border-radius: 0 13px 13px 0 / 0 15px 15px 0;
         opacity:0.90;
         transform: rotateY(90deg) translateZ(19px);
-        box-shadow: 0 4px 13px #ffe0824c;
+        box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3); /* Blue shadow */
       "></div>
     </div>
   </div>
@@ -471,20 +538,14 @@
   </div>
   <div style="font-size:0.99em; margin-bottom:7px;">
     Contact: 
-    <a href="mailto:Lemsvlog@gmail.com" style="color:#e2ac1c; font-weight:600; text-decoration:none;">
-      <i class="fa fa-envelope" style="margin-right:5px; color:#e2ac1c;"></i>Lemsvlog@gmail.com
+    <a href="mailto:Lemsvlog@gmail.com" style="color:#A9D6E5; font-weight:600; text-decoration:none;">
+      <i class="fa fa-envelope" style="margin-right:5px; color:#A9D6E5;"></i>Lemsvlog@gmail.com
     </a>
   </div>
-  <div style="font-size:0.94em; color:#bda965;">
-    Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
+  <div style="font-size:0.94em; color:#BDD7E0;">
+    Created by <span style="font-weight:600; color:#A9D6E5;">VIZKOR KLC Team</span>
   </div>
 </footer>
 
-
-
-
-
-  
-  
 </body>
 </html>
