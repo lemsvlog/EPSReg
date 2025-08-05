@@ -288,6 +288,7 @@ if (suffix) fullname += ' ' + suffix; // idikit kung meron
 
       // Save most recent data for success.html (redundant with reg_list but for previous success.html logic)
       localStorage.setItem('reg_fullname', fullname);
+     localStorage.setItem('reg_suffix', suffix);
       localStorage.setItem('reg_email', email);
       localStorage.setItem('reg_id', idStr);
       
@@ -372,4 +373,5 @@ const suffix = document.getElementById('suffix').value.trim();
       <b>Email:</b> <span style="color:#218de7;" class="highlight">${email}</span><br>
       <b>Application No.:</b> <span style="color:#218de7;" class="highlight">${idnum}</span><br>
     </div>`;
+
 
