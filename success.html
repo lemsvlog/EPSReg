@@ -546,6 +546,26 @@
     Created by <span style="font-weight:600; color:#A9D6E5;">VIZKOR KLC Team</span>
   </div>
 </footer>
+  <script>
+// Disable right-click
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+});
+
+// Disable certain keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  // Disable Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+P, F12
+  if (
+    (e.ctrlKey && (e.key.toLowerCase() === 'u' || e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'c' || e.key.toLowerCase() === 'p')) ||
+    (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j')) ||
+    (e.key === 'F12')
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
+</script>
+
 
 </body>
 </html>
