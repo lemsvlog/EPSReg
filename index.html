@@ -9,160 +9,241 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
   <style>
- body {
-  padding-top: 6vh; /* Keeping padding-top at 4vh as per your request */
+ /* General Body and Form Background */
+body {
+  padding-top: 3vh;
+  background-color: #F0F2F5; /* Light, cool gray for body background */
 }
-    body, html, .forms5 { height: 100%; background-color: #fcfcfd; }
-    .spinner, .spinner2, .spinner3 { display: none; }
-    .forms2 { background-color: rgba(255,255,255,0.0896); }
-    .atnt { display: inline-block; }
-    .logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
-    
-    /* Reverted EPS-TOPIK TEST section (Hero Section) to original success.html styles */
-    .img-hero {
-      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('upper.jpg');
-      height: 50%;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-    
-    .hero-text { 
-        color: #faf9f9; /* Original color */
-        /* Reverting to default margins/padding, relying on Bootstrap's mt-2, mb-0 etc. */
-    }
-    /* Removed specific h1, h5, p styles within .hero-text to revert to original success.html appearance */
-    /* Original success.html did not have custom CSS rules for these, relying on global/bootstrap */
+body, html, .forms5 { height: 100%; background-color: #F0F2F5; } /* Light, cool gray for body background */
+.spinner, .spinner2, .spinner3 { display: none; }
+.forms2 { background-color: rgba(255,255,255,0.0896); } /* Keep as translucent white if used for specific elements */
+.atnt { display: inline-block; }
+.logos { font-size: 11px; margin: 0 !important; padding: 0 !important; }
 
+/* Hero Section - Deep Blue Theme */
+.img-hero {
+  background-image: linear-gradient(135deg, #223056 0%, #10192a 100%); /* Deep navy gradient */
+  height: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
-    .inline-radio .form-check { display: inline-block; margin-right: 15px; }
-    .affirm-box { background: #fffbe7; border: 2px solid #ffe082; border-radius: 10px; padding: 22px 18px 18px 18px; margin-bottom: 18px; }
-    .affirm-checkbox { accent-color: #ffc107; width: 1.2em; height: 1.2em; margin-right: 12px; margin-top: 4px; }
-    .affirm-text { font-size: 1em; color: #5b4a1b; font-weight: 500; vertical-align: middle; }
-    .survey-box { width: 100%; }
-    .survey-box input[type="text"] { width: 100% !important; min-width: 0; max-width: 100%; }
-    @media (max-width: 991px) {
-      .row > [class^="col-"], .row > [class*=" col-"] {
-        flex: 0 0 100%;
-        max-width: 100%;
-      }
-      .d-flex.flex-wrap.align-items-stretch.gap-2 > div {
-        min-width: 100% !important;
-        margin-right: 0 !important;
-      }
-      .d-flex.flex-wrap.align-items-stretch.gap-2 {
-        flex-direction: column !important;
-        gap: 0.5rem !important;
-      }
-      .survey-box,
-      .affirm-box {
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-        font-size: 1em;
-      }
-      .survey-box ol li input.form-control {
-        max-width: 100% !important;
-      }
-    }
-    @media (max-width: 767px) {
-      .photo-id-right img#idphoto_preview {
-        width: 110px !important;
-        height: 130px !important;
-      }
-      #passport_preview {
-        width: 100% !important;
-        height: auto !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
-        max-width: 100% !important;
-      }
-      .border-warning.p-3.mb-2.d-flex {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-      }
-      .border-warning.p-3.mb-2.d-flex > div {
-        margin-right: 0 !important;
-        width: 100% !important;
-      }
-    }
-    @media (max-width: 600px) {
-      .form-check-input, .affirm-checkbox { width: 1.6em; height: 1.6em; }
-      .form-check-label, .affirm-text { font-size: 1.1em; }
-      .survey-box ol li { font-size: 1.1em; }
-    }
-	
-	@media (max-width: 991px) {
+.hero-text {
+    color: #F9F9F9; /* Off-white text for contrast on dark hero */
+}
+
+.inline-radio .form-check { display: inline-block; margin-right: 15px; }
+
+/* Affirmation/Warning Boxes */
+.affirm-box {
+  background: #E0E6E9; /* Light blue-grey background */
+  border: 2px solid #4A90E2; /* Medium blue border */
+  border-radius: 10px; padding: 22px 18px 18px 18px; margin-bottom: 18px;
+}
+.affirm-checkbox { accent-color: #4A90E2; width: 1.2em; height: 1.2em; margin-right: 12px; margin-top: 4px; } /* Medium blue accent */
+.affirm-text { font-size: 1em; color: #000000; font-weight: 500; vertical-align: middle; } /* Black text */
+.survey-box { width: 100%; }
+.survey-box input[type="text"] { width: 100% !important; min-width: 0; max-width: 100%; }
+
+/* General Form Elements */
+label { /* Form labels */
+  color: #2A4D69; /* Dark Navy for labels */
+}
+small { /* Small text elements like 'Present Address', 'Show Password' */
+  color: #000000; /* Black text */
+}
+.form-control, .form-select {
+  border-color: #BDD7E0; /* Light blue border for inputs */
+  color: #000000; /* All text in form fields should be black */
+}
+.form-control:focus, .form-select:focus {
+  border-color: #4A90E2; /* Accent blue on focus */
+  box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+}
+.form-check-input:checked {
+  background-color: #4A90E2; /* Accent blue for checked radio/checkbox */
+  border-color: #4A90E2;
+}
+.form-check-label {
+  color: #000000; /* Black for radio labels */
+}
+
+/* Registration Title */
+.container h2.ubuntu {
+  color: #2A4D69; /* Dark Navy for the main registration title */
+}
+
+/* Bordered box for form sections (Manufacturing Category, Personal Info) */
+.border.rounded.p-3.mb-3.bg-white {
+  background-color: #FFFFFF; /* Keep white for contrast */
+  border-width: 2px !important; /* Ensure border-width is applied */
+  border-color: #BDD7E0 !important; /* Light blue-grey border */
+  box-shadow: 0 2px 8px rgba(16, 42, 74, 0.1); /* Navy shadow */
+}
+
+/* Photo/Passport warning boxes */
+.border.border-warning.rounded.p-3.mb-2 {
+  background: #E0E6E9; /* Light blue-grey background */
+  border-color: #4A90E2 !important; /* Medium blue border */
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1); /* Blue shadow */
+}
+.border.border-warning b {
+  color: #000000; /* Black for bold text in warning boxes */
+}
+.border.border-warning ol li {
+  color: #000000; /* Black for list items */
+}
+.btn.btn-sm.btn-warning {
+  background-color: #4A90E2; /* Medium blue button */
+  border-color: #4A90E2;
+  color: #FFFFFF; /* White text */
+}
+.btn.btn-sm.btn-warning:hover {
+  background-color: #2A4D69; /* Darker blue on hover */
+  border-color: #2A4D69;
+}
+
+/* Survey section specific text */
+.survey-box ol li b, .survey-box ol li span {
+  color: #000000; /* Black for survey question text */
+}
+.survey-box > div { /* For "Survey Question" title */
+  color: #000000; /* Black text */
+}
+
+/* Submit button */
+.btn-primary {
+  background-color: #2A4D69; /* Dark Navy button */
+  border-color: #2A4D69;
+}
+.btn-primary:hover {
+  background-color: #102A4A; /* Even darker navy on hover */
+  border-color: #102A4A;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .row > [class^="col-"], .row > [class*=" col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .d-flex.flex-wrap.align-items-stretch.gap-2 > div {
+    min-width: 100% !important;
+    margin-right: 0 !important;
+  }
+  .d-flex.flex-wrap.align-items-stretch.gap-2 {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  .survey-box,
+  .affirm-box {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    font-size: 1em;
+  }
+  .survey-box ol li input.form-control {
+    max-width: 100% !important;
+  }
+}
+@media (max-width: 767px) {
+  .photo-id-right img#idphoto_preview {
+    width: 110px !important;
+    height: 130px !important;
+  }
+  #passport_preview {
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+  }
+  .border-warning.p-3.mb-2.d-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .border-warning.p-3.mb-2.d-flex > div {
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+}
+@media (max-width: 600px) {
+  .form-check-input, .affirm-checkbox { width: 1.6em; height: 1.6em; }
+  .form-check-label, .affirm-text { font-size: 1.1em; }
+  .survey-box ol li { font-size: 1.1em; }
+}
+
+@media (max-width: 991px) {
   /* 1. Spacing for radio label and radio bilog */
   .form-check-input[type="radio"] {
-    margin-right: 9px !important; /* dagdag space bilog to label */
+    margin-right: 9px !important;
   }
   .form-check-label {
-    margin-right: 15px !important; /* space sa right ng label para di dikit sa next radio */
+    margin-right: 15px !important;
   }
 
   /* 2. Spacing for form fields */
   .form-control,
   .form-select {
-    margin-bottom: 16px !important; /* dagdag space sa bawat fill-in box */
+    margin-bottom: 16px !important;
   }
-  /* optional: remove bottom margin sa pinakahuling form-group */
   .row.mb-2:last-child .form-control,
   .row.mb-2:last-child .form-select {
     margin-bottom: 0 !important;
   }
 }
 @media (max-width: 991px) {
-  /* Dagdag space sa baba ng City fill-up box at Show Password checkbox */
   #city {
-    margin-bottom: 28px !important; /* adjust value as needed */
+    margin-bottom: 28px !important;
   }
   #show_password {
-    margin-bottom: 28px !important; /* adjust value as needed */
+    margin-bottom: 28px !important;
   }
- 
 }
+
+/* Top Alert Banner - Blue Theme */
 .glow-banner {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 6vh;
+  height: 3vh;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f5dc;
+  background-color: #4A90E2; /* Medium blue */
   animation: alertBG 1s infinite;
-  border-bottom: 2px solid #d2b48c;
-  box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
+  border-bottom: 2px solid #2A4D69; /* Darker blue */
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.7); /* Blue shadow */
   text-align: center;
 }
 .glow-text {
   font-size: 0.85em;
   font-weight: 700;
   margin: 0;
-  color: #4e3b00;
+  color: #F9F9F9; /* Off-white text */
   text-transform: uppercase;
   animation: alertGlow 1s infinite ease-in-out;
   letter-spacing: 0.4px;
   text-shadow:
-    0 0 2px #fff8dc,
-    0 0 4px #f4a460,
-    0 0 6px #ffd700;
+    0 0 2px #FFFFFF, /* White shadow */
+    0 0 4px #A9D6E5, /* Light blue shadow */
+    0 0 6px #BDD7E0; /* Lighter blue shadow */
 }
 @keyframes alertGlow {
-  0% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
-  50% { color: #b8860b; text-shadow: 0 0 6px #ffd700, 0 0 10px #daa520; transform: scale(1.02);}
-  100% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
+  0% { color: #F9F9F9; text-shadow: 0 0 2px #FFFFFF, 0 0 6px #A9D6E5; transform: scale(1);}
+  50% { color: #BDD7E0; text-shadow: 0 0 6px #4A90E2, 0 0 10px #2A4D69; transform: scale(1.02);} /* Blue glow */
+  100% { color: #F9F9F9; text-shadow: 0 0 2px #FFFFFF, 0 0 6px #A9D6E5; transform: scale(1);}
 }
 @keyframes alertBG {
-  0%   { background-color: #f5f5dc; }
-  50%  { background-color: #f0e68c; }
-  100% { background-color: #f5f5dc; }
+  0%   { background-color: #4A90E2; } /* Medium blue */
+  50%  { background-color: #2A4D69; } /* Darker blue */
+  100% { background-color: #4A90E2; }
 }
 @media (max-width: 767px) {
   .glow-banner {
-    height: 6vh;
+    height: 4vh;
   }
   .glow-text {
     font-size: 0.8em;
@@ -170,45 +251,225 @@
   }
 }
 
-
-/* NEW CSS for the hit counter inside the floating banner */
+/* Hit Counter */
 .glow-counter-wrapper {
-  margin-top: 0px;      /* no space sa taas */
-  margin-bottom: 0;     /* no space sa baba */
-  font-size: 0.69em;    /* optional: adjust kung gusto mo mas maliit/larger */
-  color: #7c4a00;
-  line-height: 1; /* Fixed line height for consistency within this wrapper */
+  margin-top: 0px;
+  margin-bottom: 0;
+  font-size: 0.69em;
+  color: #A9D6E5; /* Light blue */
+  line-height: 1;
 }
-
 .counter-display-digital-small {
-  font-family: 'Consolas', 'Monaco', monospace; /* Digital/fixed-width font */
+  font-family: 'Consolas', 'Monaco', monospace;
   font-weight: bold;
-  color: #28a745; /* Green color for the numbers */
-  background-color: #e6ffe6; /* Light green background */
+  color: #28a745; /* Green color for the numbers (kept for distinct counter) */
+  background-color: #E6FFE6; /* Light green background */
   padding: 2px 5px;
   border-radius: 3px;
   border: 1px solid #1a8a3a;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
   letter-spacing: 1px;
   display: inline-block;
-  vertical-align: middle; /* Align with text */
+  vertical-align: middle;
 }
 
-/* Make sure the main content is pushed down enough by the fixed banner */
-body {
-  padding-top: 4vh; /* Match the height of the glow-banner */
+/* Pre-Entry Modal - Blue Theme */
+#preEntryModal {
+  position: fixed; z-index: 11000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+#preEntryModal .modal-dim-gold { /* Changed to blue-grey dimming */
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(120deg, #E0E6E9 40%, #A9D6E580 100%); /* Light blue-grey gradient */
+  z-index: -1;
+  backdrop-filter: blur(3px);
+}
+.practice-modal-card-gold { /* Changed to navy-friendly card */
+  background: rgba(249,249,249,0.97); /* Off-white card */
+  border-radius: 24px;
+  box-shadow: 0 10px 38px rgba(74, 144, 226, 0.4), 0 2px 0 rgba(42, 77, 105, 0.15); /* Blue shadows */
+  padding: 2.2em 2.4em 2em 2.4em;
+  color: #2A4D69; /* Darker blue text */
+  text-align: center;
+  min-width: 320px;
+  max-width: 96vw;
+  position: relative;
+  animation: goldPopIn 0.82s cubic-bezier(0.32, 0.71, 0.51, 1.53);
+  border: 2.5px solid #4A90E2; /* Medium blue border */
+  backdrop-filter: blur(3px);
+}
+/* No change to @keyframes goldPopIn structure, but colors will be affected by card style */
+@keyframes goldPopIn {
+  0% { opacity: 0; transform: scale(0.93) translateY(40px);}
+  70% { opacity: 1; transform: scale(1.06) translateY(-9px);}
+  100% { opacity: 1; transform: scale(1) translateY(0);}
+}
+.icon-circle-gold { /* Changed to blue accent icon */
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #4A90E2 65%, #E0E6E9 100%); /* Blue gradient */
+  border: 4px solid #F9F9F9; /* Off-white border */
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4), 0 1px 7px rgba(42, 77, 105, 0.15); /* Blue shadows */
+  display: flex; align-items: center; justify-content: center;
+  margin: -46px auto 12px auto;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  top: -32px;
+}
+.icon-circle-gold .fa-exclamation-circle {
+  font-size: 2em;
+  color: #fff;
+  filter: drop-shadow(0 2px 7px rgba(169, 214, 229, 0.6)); /* Light blue drop shadow */
+}
+.practice-modal-title-gold { /* Changed to navy blue title */
+  margin-top: 35px;
+  font-size: 1.36em;
+  font-weight: bold;
+  color: #2A4D69; /* Darker blue */
+  margin-bottom: 0.18em;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 13px rgba(74, 144, 226, 0.2), 0 1px 0 #F9F9F9; /* Blue shadow */
+}
+.practice-modal-message-gold { /* Changed to navy blue message text */
+  color: #2A4D69; /* Darker blue */
+  font-size: 1.10em;
+  margin: 0.72em 0 1.7em 0;
+  line-height: 1.7;
+  font-weight: 500;
+}
+.practice-modal-message-gold span { /* Span inside message */
+  color: #2A4D69 !important; /* Ensure dark blue color for the span */
+}
+.practice-modal-btn-gold { /* Changed to navy blue button */
+  margin-top: 0.7em;
+  background: linear-gradient(90deg, #4A90E2 60%, #A9D6E5 120%); /* Blue gradient */
+  color: #F9F9F9; /* Off-white text */
+  font-weight: 700;
+  border: none;
+  border-radius: 14px;
+  padding: 0.82em 2.6em;
+  font-size: 1.13em;
+  box-shadow: 0 2px 18px rgba(74, 144, 226, 0.7); /* Blue shadow */
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  transition: background 0.18s, box-shadow 0.15s, transform 0.11s;
+}
+.practice-modal-btn-gold:hover, .practice-modal-btn-gold:focus { /* Blue hover effect */
+  background: linear-gradient(90deg, #A9D6E5 60%, #4A90E2 110%);
+  color: #102A4A; /* Dark navy text on hover */
+  box-shadow: 0 7px 25px rgba(74, 144, 226, 0.6), 0 0 0 2.5px #F9F9F9; /* Blue shadows */
+  transform: scale(1.045);
+}
+@media (max-width: 480px) {
+  .practice-modal-card-gold {padding: 1.1em 0.4em 1.0em 0.4em; min-width:0; font-size:0.97em;}
+  .icon-circle-gold {width: 48px; height: 48px; font-size: 0.88em; top: -20px;}
+  .practice-modal-title-gold {margin-top: 19px; font-size: 1em;}
+  .practice-modal-btn-gold {font-size: 1em; padding: 0.56em 1.2em;}
+}
+
+/* Footer styles (changed to navy theme) */
+footer {
+  max-width: 390px;
+  margin: 62px auto 24px auto;
+  background: rgba(16, 42, 74, 0.97); /* Translucent dark navy */
+  border-radius: 22px 28px 18px 18px;
+  box-shadow: 0 9px 24px rgba(74, 144, 226, 0.2), 0 2.5px 0 rgba(42, 77, 105, 0.1), 0 0.5px 22px rgba(16, 42, 74, 0.1) inset; /* Blue shadows */
+  padding: 36px 20px 20px 20px;
+  text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #A9D6E5; /* Light blue text */
+  letter-spacing: 0.02em;
+  font-size: 1em;
+  position: relative;
+  overflow: visible;
+}
+
+/* PH flag 3D badge (left) - adjusted to light blue/grey accents */
+footer > div:first-child > div {
+  box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.15) !important;
+}
+footer > div:first-child > div > div:nth-child(2) { /* Top */
+  background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%) !important;
+  box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5) !important;
+}
+footer > div:first-child > div > div:nth-child(3) { /* Left Side */
+  background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%) !important;
+  box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3) !important;
+}
+
+/* LOGO (centered) - adjusted to blue gradient */
+footer > div:nth-child(2) {
+  background: linear-gradient(180deg, #A9D6E5 60%, #4A90E2 40%) !important;
+  box-shadow: 0 2px 3px rgba(74, 144, 226, 0.2) !important;
+  border: 1px solid #2A4D69 !important; /* Darker navy border */
+}
+
+/* KR flag 3D badge (right) - adjusted to light blue/grey accents */
+footer > div:nth-child(3) > div {
+  box-shadow: 0 2.5px 12px rgba(74, 144, 226, 0.15) !important;
+}
+footer > div:nth-child(3) > div > div:nth-child(2) { /* Top */
+  background: linear-gradient(112deg, #E0E6E9 80%, #A9D6E5 100%) !important;
+  box-shadow: 0 3px 11px rgba(224, 230, 233, 0.5) !important;
+}
+footer > div:nth-child(3) > div > div:nth-child(3) { /* Right Side */
+  background: linear-gradient(128deg, #A9D6E5 52%, #E0E6E9 130%) !important;
+  box-shadow: 0 4px 13px rgba(74, 144, 226, 0.3) !important;
+}
+
+/* Footer Content Text */
+footer a {
+  color: #A9D6E5 !important; /* Light blue for links */
+  text-decoration: none;
+}
+footer a i {
+  color: #A9D6E5 !important; /* Light blue for icon */
+}
+footer div:last-child { /* Created by text */
+  color: #BDD7E0; /* Lighter blue-grey */
+}
+
+/* Passport number warning message */
+.passport-warning.text-danger {
+  color: #dc3545 !important; /* Keep default Bootstrap red for danger warnings */
 }
 
   </style>
+
 </head>
 <body>
+
+<!-- COOL GLASSY PRACTICE NOTICE MODAL -->
+<div id="preEntryModal">
+  <div class="practice-modal-card-gold">
+    <div class="icon-circle-gold">
+      <i class="fa fa-exclamation-circle"></i>
+    </div>
+    <h2 class="practice-modal-title-gold">Practice Registration Only</h2>
+   <p class="practice-modal-message-gold" style="color:#a0852c;">
+  <b>Reminder lang!</b><br>
+  Pang-practice lang po itong page na ito.<br>
+  <span style="color:#000; font-weight:600;">Hindi ito official registration para sa EPS-TOPIK.</span>
+</p>
+
+    <button id="confirmEntryBtn" class="practice-modal-btn-gold">I Understand</button>
+  </div>
+  <div class="modal-dim-gold"></div>
+</div>
+
+
 
 <div class="glow-banner">
   <h6 class="glow-text">
     ⚠️ Not an official registration. Practice only. ⚠️
   </h6>
 </div>
-	
+
 <section class="upper">
   <div class="img-hero">
     <div class="container">
@@ -462,7 +723,7 @@ body {
 
       <!-- SURVEY SECTION -->
       <div class="survey-box" style="margin-top:8px; margin-bottom:18px;">
-        <div style="font-size:1.45em; font-weight:600; margin-bottom:20px;">Survey Question</div>
+        <div style="font-size:1.45em; font-weight:600; margin-bottom:20px; color: #000000;">Survey Question</div>
         <ol style="padding-left: 1.1em;">
           <li class="mb-3">
             <b style="font-size:1.09em;">How did you prepare for EPS-TOPIK Examination?</b><br>
@@ -802,24 +1063,58 @@ body {
 </script>
 
 		
-<br><br><br><br>
-<br><br><br><br>
-<footer style="
-  max-width: 390px;
-  margin: 62px auto 24px auto;
-  background: rgba(255, 248, 225, 0.97);
-  border-radius: 22px 28px 18px 18px;
-  box-shadow: 0 9px 24px #ffe08235, 0 2.5px 0 #e2ac1c1b, 0 0.5px 22px #e6c96c17 inset;
-  padding: 36px 20px 20px 20px;
-  text-align: center;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: #9e7b18;
-  letter-spacing: 0.02em;
-  font-size: 1em;
-  position: relative;
-  overflow: visible;
-">
+<!-- Hit Counter JavaScript, still using sessionPageHits key -->
+<script>
+    // Session-based Hit Counter logic
+    if (typeof(Storage) !== "undefined") {
+        let sessionHits = sessionStorage.getItem("sessionPageHits"); 
+        if (sessionHits) {
+            sessionHits = parseInt(sessionHits) + 1;
+        } else {
+            sessionHits = 1;
+        }
+        sessionStorage.setItem("sessionPageHits", sessionHits);
 
+        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
+        if (counterDisplayElement) {
+            // Format the number to 6 digits with leading zeros
+            const formattedHits = String(sessionHits).padStart(7, '0');
+            counterDisplayElement.textContent = formattedHits;
+        }
+    } else {
+        // Fallback kung hindi suportado ang sessionStorage
+        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
+        if (counterDisplayElement) {
+            counterDisplayElement.textContent = "N/A"; 
+            counterDisplayElement.parentNode.style.display = 'none'; 
+        }
+    }
+</script>
+
+<script>
+  // Prevent background scroll while modal is open
+  document.body.style.overflow = 'hidden';
+  document.getElementById('confirmEntryBtn').onclick = function() {
+    document.getElementById('preEntryModal').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  // // If you want ONCE per session only (uncomment below, comment above)
+  // if (sessionStorage.getItem('practiceNoticeConfirmed')) {
+  //   document.getElementById('preEntryModal').style.display = 'none';
+  //   document.body.style.overflow = '';
+  // }
+  // document.getElementById('confirmEntryBtn').onclick = function() {
+  //   document.getElementById('preEntryModal').style.display = 'none';
+  //   document.body.style.overflow = '';
+  //   sessionStorage.setItem('practiceNoticeConfirmed', 'yes');
+  // };
+</script>
+
+ 		
+<br><br><br><br>
+<br><br><br><br>
+<footer>
   <!-- PH flag 3D badge (left) -->
   <div style="
     position: absolute;
@@ -840,7 +1135,6 @@ body {
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(18deg) rotateY(13deg) scale(1.12);
-      box-shadow: 0 2.5px 12px #e2ac1c22;
       transition: transform 0.2s;
     ">
       <!-- Front (PH Flag) -->
@@ -849,7 +1143,6 @@ body {
         width: 38px; height: 38px;
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 1px 4px #e2ac1c15;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -864,9 +1157,7 @@ body {
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
         border-radius: 11px 11px 16px 16px;
-        box-shadow: 0 3px 11px #fff8e1;
         opacity:0.92;
         transform: rotateX(90deg) translateZ(19px);
       "></div>
@@ -874,11 +1165,9 @@ body {
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
         border-radius: 13px 0 0 13px / 15px 0 0 15px;
         opacity:0.90;
         transform: rotateY(-90deg) translateZ(19px);
-        box-shadow: 0 4px 13px #ffe0824c;
       "></div>
     </div>
   </div>
@@ -892,14 +1181,11 @@ body {
   z-index: 12;
   width: 90px;
   height: 90px;
-  background: linear-gradient(180deg, #b8ffbb 60%, #58f58c 40%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 3px #ffe08238;
   pointer-events: none;
-  border: 1px solid #f5e3b0;
 ">
   <img src="vizkor.png"
        alt="VIZKOR Logo"
@@ -936,7 +1222,6 @@ body {
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(18deg) rotateY(-13deg) scale(1.12);
-      box-shadow: 0 2.5px 12px #e2ac1c22;
       transition: transform 0.2s;
     ">
       <!-- Front (KR Flag) -->
@@ -945,7 +1230,6 @@ body {
         width: 38px; height: 38px;
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 1px 4px #e2ac1c15;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -960,9 +1244,7 @@ body {
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(112deg, #fffbe7 80%, #ffe082 100%);
         border-radius: 11px 11px 16px 16px;
-        box-shadow: 0 3px 11px #fff8e1;
         opacity:0.92;
         transform: rotateX(90deg) translateZ(19px);
       "></div>
@@ -970,11 +1252,9 @@ body {
       <div style="
         position: absolute;
         width: 38px; height: 38px;
-        background: linear-gradient(128deg, #ffe082 52%, #fff8e1 130%);
         border-radius: 0 13px 13px 0 / 0 15px 15px 0;
         opacity:0.90;
         transform: rotateY(90deg) translateZ(19px);
-        box-shadow: 0 4px 13px #ffe0824c;
       "></div>
     </div>
   </div>
@@ -985,44 +1265,14 @@ body {
   </div>
   <div style="font-size:0.99em; margin-bottom:7px;">
     Contact: 
-    <a href="mailto:Lemsvlog@gmail.com" style="color:#e2ac1c; font-weight:600; text-decoration:none;">
-      <i class="fa fa-envelope" style="margin-right:5px; color:#e2ac1c;"></i>Lemsvlog@gmail.com
+    <a href="mailto:Lemsvlog@gmail.com" style="text-decoration:none;">
+      <i class="fa fa-envelope" style="margin-right:5px;"></i>Lemsvlog@gmail.com
     </a>
   </div>
-  <div style="font-size:0.94em; color:#bda965;">
+  <div style="font-size:0.94em;">
     Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
   </div>
-	
 </footer>
 
-<!-- Hit Counter JavaScript, still using sessionPageHits key -->
-<script>
-    // Session-based Hit Counter logic
-    if (typeof(Storage) !== "undefined") {
-        let sessionHits = sessionStorage.getItem("sessionPageHits"); 
-        if (sessionHits) {
-            sessionHits = parseInt(sessionHits) + 1;
-        } else {
-            sessionHits = 1;
-        }
-        sessionStorage.setItem("sessionPageHits", sessionHits);
-
-        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
-        if (counterDisplayElement) {
-            // Format the number to 6 digits with leading zeros
-            const formattedHits = String(sessionHits).padStart(7, '0');
-            counterDisplayElement.textContent = formattedHits;
-        }
-    } else {
-        // Fallback kung hindi suportado ang sessionStorage
-        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
-        if (counterDisplayElement) {
-            counterDisplayElement.textContent = "N/A"; 
-            counterDisplayElement.parentNode.style.display = 'none'; 
-        }
-    }
-</script>
-
-	
 </body>
 </html>
