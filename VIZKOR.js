@@ -251,11 +251,10 @@
 
       // If all validations pass, proceed with data saving and redirection
       // Gather info
-      let lname = $('#lname').val().trim();
-      let fname = $('#fname').val().trim();
-      let mname = $('#mname').val().trim();
-      let fullname = fname + ' ' + mname + ' ' + lname;
-      let email = $('#email').val().trim();
+  let suffix = $('#suffix').val().trim();
+let fullname = fname + ' ' + mname + ' ' + lname;
+if (suffix) fullname += ' ' + suffix; // idikit kung meron
+
 
       // -- START: Application Number generation (global counter) --
       let successCount = localStorage.getItem('successCount');
@@ -373,3 +372,4 @@ const suffix = document.getElementById('suffix').value.trim();
       <b>Email:</b> <span style="color:#218de7;" class="highlight">${email}</span><br>
       <b>Application No.:</b> <span style="color:#218de7;" class="highlight">${idnum}</span><br>
     </div>`;
+
