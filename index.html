@@ -1043,7 +1043,7 @@ body {
         const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
         if (counterDisplayElement) {
             // Format the number to 6 digits with leading zeros
-            const formattedHits = String(sessionHits).padStart(7, '0009');
+            const formattedHits = String(sessionHits).padStart(7, '0');
             counterDisplayElement.textContent = formattedHits;
         }
     } else {
