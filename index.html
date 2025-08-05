@@ -470,5 +470,12 @@
             Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
          </div>
       </footer>
+      <script>document.addEventListener('contextmenu', e => e.preventDefault());
+document.onkeydown = function(e) {
+  if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'c' || e.key === 'a')) {
+    return false;
+  }
+};
+</script>
    </body>
 </html>
