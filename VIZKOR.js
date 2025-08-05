@@ -337,3 +337,38 @@
 
   });
 
+
+  // Read data from localStorage
+  const fullname = localStorage.getItem('reg_fullname') || '-';
+  const email = localStorage.getItem('reg_email') || '-';
+  const idnum = localStorage.getItem('reg_id') || '-';
+
+  // Remove leading zeros for display
+  const numDisplay = Number(idnum).toString();
+
+  // Function to get the ordinal suffix (th, st, nd, rd)
+ function getOrdinal(n) {
+  if (n % 100 >= 11 && n % 100 <= 13) return 'th';
+  switch (n % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
+  }
+}
+
+
+  const ordinalSuffix = getOrdinal(Number(idnum));
+
+  document.getElementById('successDetail').innerHTML =
+    `<div style="text-align:center; margin-bottom:3px;">
+      
+      <span style="font-size:0.98em; color:#444; display:block; font-weight:500; margin-top:2px;">
+        You are the <span class="ord-number" style="color:#99a340;">${numDisplay}<span class="th-highlight" style="color:#99a340;">${ordinalSuffix}</span></span> person successfully registered for the <span class="highlight">EPS-TOPIK</span>.
+      </span><br>
+    </div>
+    <div style="margin-top:6px;">
+      <b>Full Name:</b> <span style="color:#218de7;" class="highlight">${fullname}</span><br>
+      <b>Email:</b> <span style="color:#218de7;" class="highlight">${email}</span><br>
+      <b>Application No.:</b> <span style="color:#218de7;" class="highlight">${idnum}</span><br>
+    </div>`;
