@@ -975,11 +975,17 @@ footer div:last-child { /* Created by text */
 
       // If all validations pass, proceed with data saving and redirection
       // Gather info
-      let lname = $('#lname').val().trim();
-      let fname = $('#fname').val().trim();
-      let mname = $('#mname').val().trim();
-      let fullname = fname + ' ' + mname + ' ' + lname;
-      let email = $('#email').val().trim();
+     // ...before submit
+let lname = $('#lname').val().trim();
+let fname = $('#fname').val().trim();
+let mname = $('#mname').val().trim();
+let suffix = $('#suffix').val().trim();
+let fullname = fname + ' ' + mname + ' ' + lname;
+if (suffix) {
+  fullname += ' ' + suffix.toUpperCase();
+}
+let email = $('#email').val().trim();
+
 
       // -- START: Application Number generation (global counter) --
       let successCount = localStorage.getItem('successCount');
