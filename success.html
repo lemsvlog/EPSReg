@@ -47,9 +47,10 @@
 
 <script>
   // Read data from localStorage
-  const fullname = localStorage.getItem('reg_fullname') || '-';
-  const email = localStorage.getItem('reg_email') || '-';
-  const idnum = localStorage.getItem('reg_id') || '-';
+const fullname = localStorage.getItem('reg_fullname') || '-';
+const email = localStorage.getItem('reg_email') || '-';
+const idnum = localStorage.getItem('reg_id') || '-';
+const suffix = localStorage.getItem('reg_suffix') || '-';
 
   // Remove leading zeros for display
   const numDisplay = Number(idnum).toString();
