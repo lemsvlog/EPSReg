@@ -121,17 +121,14 @@
   }
  
 }
-
 .glow-banner {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: auto;                 /* Sakto lang sa content */
-  padding: 7px 0 3px 0;         /* Maliit na padding top/bottom */
+  height: 6vh;
   z-index: 9999;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #f5f5dc;
@@ -140,18 +137,10 @@
   box-shadow: 0 0 8px rgba(222, 184, 135, 0.7);
   text-align: center;
 }
-@media (max-width: 991px), (max-width: 767px), (max-width: 600px) {
-  .glow-banner {
-    height: auto !important;
-    padding: 7px 0 2px 0 !important; /* Even smaller padding for mobile */
-  }
-}
-
-
 .glow-text {
   font-size: 0.85em;
   font-weight: 700;
-  margin: 0 0 0 0;   /* Removed margin-bottom here */
+  margin: 0;
   color: #4e3b00;
   text-transform: uppercase;
   animation: alertGlow 1s infinite ease-in-out;
@@ -160,35 +149,20 @@
     0 0 2px #fff8dc,
     0 0 4px #f4a460,
     0 0 6px #ffd700;
-  line-height: 1; /* Optional: para di dikit na dikit */
 }
 @keyframes alertGlow {
-  0% {
-    color: #4e3b00;
-    text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460;
-    transform: scale(1);
-  }
-  50% {
-    color: #b8860b;
-    text-shadow: 0 0 6px #ffd700, 0 0 10px #daa520;
-    transform: scale(1.02);
-  }
-  100% {
-    color: #4e3b00;
-    text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460;
-    transform: scale(1);
-  }
+  0% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
+  50% { color: #b8860b; text-shadow: 0 0 6px #ffd700, 0 0 10px #daa520; transform: scale(1.02);}
+  100% { color: #4e3b00; text-shadow: 0 0 2px #fff8dc, 0 0 6px #f4a460; transform: scale(1);}
 }
-
 @keyframes alertBG {
   0%   { background-color: #f5f5dc; }
   50%  { background-color: #f0e68c; }
   100% { background-color: #f5f5dc; }
 }
-
 @media (max-width: 767px) {
   .glow-banner {
-    height: auto; /* Adjusted for mobile too */
+    height: 6vh;
   }
   .glow-text {
     font-size: 0.8em;
@@ -196,9 +170,6 @@
   }
 }
 
-.uppercase {
-  text-transform: uppercase !important;
-}
 
 /* NEW CSS for the hit counter inside the floating banner */
 .glow-counter-wrapper {
