@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EPS REGISTRATION PRACTICE</title>
   <link rel="icon" type="image/x-icon" href="images-dmw_ol.ico">
-  <link rel="stylesheet" href="css-custom.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css-custom.css">
   <style>
  /* General Body and Form Background */
 body {
@@ -147,11 +147,11 @@ small { /* Small text elements like 'Present Address', 'Show Password' */
   }
 }
 @media (max-width: 767px) {
-  .photo-id-right img#idphoto_preview {
+  .photo-id-right img#picture {
     width: 110px !important;
     height: 130px !important;
   }
-  #passport_preview {
+  #Passport_picture {
     width: 100% !important;
     height: auto !important;
     min-width: 0 !important;
@@ -196,7 +196,7 @@ small { /* Small text elements like 'Present Address', 'Show Password' */
   #city {
     margin-bottom: 28px !important;
   }
-  #show_password {
+  #showPword, #showPword1 {
     margin-bottom: 28px !important;
   }
 }
@@ -304,7 +304,6 @@ small { /* Small text elements like 'Present Address', 'Show Password' */
   border: 2.5px solid #4A90E2; /* Medium blue border */
   backdrop-filter: blur(3px);
 }
-/* No change to @keyframes goldPopIn structure, but colors will be affected by card style */
 @keyframes goldPopIn {
   0% { opacity: 0; transform: scale(0.93) translateY(40px);}
   70% { opacity: 1; transform: scale(1.06) translateY(-9px);}
@@ -438,9 +437,7 @@ footer div:last-child { /* Created by text */
 .passport-warning.text-danger {
   color: #dc3545 !important; /* Keep default Bootstrap red for danger warnings */
 }
-
   </style>
-
 </head>
 <body>
 
@@ -461,16 +458,11 @@ footer div:last-child { /* Created by text */
     All information entered on this registration form is not saved or stored.
   </span>
 </span>
-
-
 </p>
-
     <button id="confirmEntryBtn" class="practice-modal-btn-gold">I Understand</button>
   </div>
   <div class="modal-dim-gold"></div>
 </div>
-
-
 
 <div class="glow-banner">
   <h6 class="glow-text">
@@ -494,173 +486,189 @@ footer div:last-child { /* Created by text */
   </div>
 </section>
 <br>
+
 <section>
-
-
-	
-	 
-	
   <div class="container mt-2">
     <h2 class="mt-2 py-2 ubuntu">REGISTRATION</h2>
+
+    <!-- Keep IDs and names aligned with DMW -->
     <form id="EPSforms" class="forms5 p-2" autocomplete="off">
+
       <!-- Bordered box: Manufacturing Category to Test Venue -->
       <div class="border rounded p-3 mb-3 bg-white" style="border-width:2px !important; box-shadow:0 2px 8px #eaeaea;">
         <div class="row mb-2">
           <div class="col-lg-12 d-flex flex-wrap align-items-stretch gap-2">
-            <!-- Manufacturing Category -->
+
+            <!-- Manufacturing Category (DMW-compatible) -->
             <div class="me-2 mb-2" style="min-width: 210px;">
               <label class="mb-1 fw-semibold">Manufacturing Category</label><br>
               <span class="inline-radio">
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="cat" value="Assembly" id="cat_assembly" required>
-                  <label class="form-check-label" for="cat_assembly">Assembly</label>
+                  <input type="radio" class="form-check-input" name="job_category" value="1" id="assemble" required>
+                  <label class="form-check-label" for="assemble">Assembly</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="cat" value="joining" id="cat_joining">
-                  <label class="form-check-label" for="cat_joining">Joining</label>
+                  <input type="radio" class="form-check-input" name="job_category" value="2" id="join">
+                  <label class="form-check-label" for="join">Joining</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="cat" value="Measurement" id="cat_measurement">
-                  <label class="form-check-label" for="cat_measurement">Measurement</label>
+                  <input type="radio" class="form-check-input" name="job_category" value="3" id="measures">
+                  <label class="form-check-label" for="measures">Measurement</label>
                 </div>
               </span>
             </div>
-            <!-- Worked under EPS before? -->
+
+            <!-- Worked under EPS before? (DMW-compatible) -->
             <div class="me-2 mb-2" style="min-width: 230px;">
               <label class="mb-1 fw-semibold">Worked in South Korea under EPS before?</label><br>
               <span class="inline-radio">
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="eps_before" value="No" id="eps_no" required>
-                  <label class="form-check-label" for="eps_no">Never</label>
+                  <input type="radio" class="form-check-input" name="stay_in_korea" value="3" id="never" required>
+                  <label class="form-check-label" for="never">Never</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="eps_before" value="Less than 5 years" id="eps_less">
-                  <label class="form-check-label" for="eps_less">Less than 5 years</label>
+                  <input type="radio" class="form-check-input" name="stay_in_korea" value="1" id="less_5years">
+                  <label class="form-check-label" for="less_5years">Less than 5 years</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="eps_before" value="More than 5 years" id="eps_more">
-                  <label class="form-check-label" for="eps_more">More than 5 years</label>
+                  <input type="radio" class="form-check-input" name="stay_in_korea" value="2" id="more_5years">
+                  <label class="form-check-label" for="more_5years">More than 5 years</label>
                 </div>
               </span>
             </div>
-            <!-- Active Roster/EPS Application -->
+
+            <!-- Active Roster/EPS Application (DMW-compatible) -->
             <div class="me-2 mb-2" style="min-width: 190px;">
               <label class="mb-1 fw-semibold">Active Roster/EPS Application</label><br>
               <span class="inline-radio">
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="active_roster" value="Yes" id="roster_yes" required>
-                  <label class="form-check-label" for="roster_yes">Yes</label>
+                  <input type="radio" class="form-check-input" name="old_status" value="1" id="active_yes" required>
+                  <label class="form-check-label" for="active_yes">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input type="radio" class="form-check-input" name="active_roster" value="No" id="roster_no">
-                  <label class="form-check-label" for="roster_no">No</label>
+                  <input type="radio" class="form-check-input" name="old_status" value="2" id="active_no">
+                  <label class="form-check-label" for="active_no">No</label>
                 </div>
               </span>
             </div>
-            <!-- Test Venue -->
-           <div class="mb-2">
-  <label class="mb-1 fw-semibold">Test Venue</label><br>
-  <span class="inline-radio">
-    <div class="form-check form-check-inline">
-      <input type="radio" class="form-check-input" name="test_venue" value="Manila" id="venue_manila" checked required>
-      <label class="form-check-label" for="venue_manila">Manila</label>
-    </div>
-    <div class="form-check form-check-inline">
-      <input type="radio" class="form-check-input" name="test_venue" value="La Union" id="venue_launion">
-      <label class="form-check-label" for="venue_launion">La Union</label>
-    </div>
-  </span>
-</div>
+
+            <!-- Test Venue (DMW-compatible) -->
+            <div class="mb-2">
+              <label class="mb-1 fw-semibold">Test Venue</label><br>
+              <span class="inline-radio">
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="venue" value="1" id="manila" checked required>
+                  <label class="form-check-label" for="manila">Manila</label>
+                </div>
+                <!-- optional extra venue (bookmarklet only clicks 'manila', safe to leave as is) -->
+                <div class="form-check form-check-inline">
+                  <input type="radio" class="form-check-input" name="venue" value="99" id="launion">
+                  <label class="form-check-label" for="launion">La Union</label>
+                </div>
+              </span>
+            </div>
+
           </div>
         </div>
       </div>
 
-        <!-- Border box: Personal Info -->
+      <!-- Personal Info (DMW-compatible IDs) -->
       <div class="border rounded p-3 mb-3 bg-white" style="border-width:2px !important; box-shadow:0 2px 8px #eaeaea;">
         <div class="row mb-2">
           <div class="col-md-3">
-            <label for="lname">Last Name</label>
-            <input type="text" class="form-control uppercase" id="lname" name="lname" required>
+            <label for="lname" class="fw-bold">Last Name</label>
+            <input type="text" class="form-control uppercase" id="lname" name="lastname" required>
           </div>
           <div class="col-md-3">
-            <label for="fname">First Name</label>
-            <input type="text" class="form-control uppercase" id="fname" name="fname" required>
+            <label for="fname" class="fw-bold">First Name</label>
+            <input type="text" class="form-control uppercase" id="fname" name="firstname" required>
           </div>
           <div class="col-md-3">
-            <label for="mname">Middle Name</label>
-            <input type="text" class="form-control uppercase" id="mname" name="mname">
+            <label for="mname" class="fw-bold">Middle Name</label>
+            <input type="text" class="form-control uppercase" id="mname" name="middlename">
           </div>
           <div class="col-md-3">
-            <label for="suffix">Suffix Name</label>
-            <input type="text" class="form-control uppercase" id="suffix" name="suffix" placeholder="EX: JR, SR, I, II ETC...">
+            <label for="sname" class="fw-bold">Suffix Name</label>
+            <input type="text" class="form-control uppercase" id="sname" name="suffixname" placeholder="EX: JR, SR, I, II ETC...">
           </div>
         </div>
-		
-        <div class="row mb-2">
-		
-  <!-- SEX (radio na mukhang input) -->
-  <div class="col-md-3 d-flex flex-column">
-  <label class="mb-1 fw-semibold" style="margin-bottom:4px;">Sex</label>
-  <div class="d-flex justify-content-center align-items-center border rounded px-2 sex-field-box" style="height:38px; background:#fff;">
-    <div class="form-check form-check-inline mb-0 me-3">
-      <input type="radio" class="form-check-input" name="sex" value="Male" id="sex_male" required>
-      <label class="form-check-label" for="sex_male" style="font-weight: 500;">Male</label>
-    </div>
-    <div class="form-check form-check-inline mb-0">
-      <input type="radio" class="form-check-input" name="sex" value="Female" id="sex_female">
-      <label class="form-check-label" for="sex_female" style="font-weight: 500;">Female</label>
-    </div>
-  </div>
-</div>
-
-  <!-- BIRTHDATE -->
-  <div class="col-md-3">
-    <label for="bdate" class="mb-1 fw-semibold">Birthdate</label>
-    <input type="date" class="form-control uppercase" id="bdate" name="bdate" required>
-  </div>
-  <!-- PASSPORT NUMBER -->
-  <div class="col-md-3">
-    <label for="passport" class="mb-1 fw-semibold">Passport Number</label>
-    <input type="text" class="form-control uppercase" id="passport" name="passport" required>
-  </div>
-  <!-- PASSPORT VALIDITY -->
-  <div class="col-md-3">
-    <label for="passport_validity" class="mb-1 fw-semibold">Passport Validity</label>
-    <input type="date" class="form-control uppercase" id="passport_validity" name="passport_validity" required>
-  </div>
-</div>
 
         <div class="row mb-2">
+          <!-- Sex (DMW-compatible) -->
+          <div class="col-md-3 d-flex flex-column">
+            <label class="mb-1 fw-semibold" style="margin-bottom:4px;">Sex</label>
+            <div class="d-flex justify-content-center align-items-center border rounded px-2" style="height:38px; background:#fff;">
+              <div class="form-check form-check-inline mb-0 me-3">
+                <input type="radio" class="form-check-input" name="sex" value="MALE" id="smale" required>
+                <label class="form-check-label" for="smale" style="font-weight: 500;">Male</label>
+              </div>
+              <div class="form-check form-check-inline mb-0">
+                <input type="radio" class="form-check-input" name="sex" value="FEMALE" id="sfemale">
+                <label class="form-check-label" for="sfemale" style="font-weight: 500;">Female</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Birthdate (DMW-compatible) -->
+          <div class="col-md-3">
+            <label for="bdate" class="mb-1 fw-semibold">Birthdate</label>
+            <input type="date" class="form-control uppercase" id="bdate" name="birthdate" required>
+          </div>
+
+          <!-- Passport Number (DMW-compatible) -->
+          <div class="col-md-3">
+            <label for="pport" class="mb-1 fw-semibold">Passport Number</label>
+            <input type="text" class="form-control uppercase" id="pport" name="passport" maxlength="9" required>
+          </div>
+
+          <!-- Passport Validity (DMW-compatible) -->
+          <div class="col-md-3">
+            <label for="pvalidity" class="mb-1 fw-semibold">Passport Validity</label>
+            <input type="date" class="form-control uppercase" id="pvalidity" name="passportvalidity" required>
+          </div>
+        </div>
+
+        <div class="row mb-2">
           <div class="col-md-4">
-            <label for="email">Email Address</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+            <label for="email" class="fw-bold">Email Address</label>
+            <input type="email" class="form-control lowercase" id="email" name="email" required>
           </div>
           <div class="col-md-4">
-            <label for="mobile">Mobile Number</label>
-            <input type="text" class="form-control uppercase" id="mobile" name="mobile" required>
+            <label for="contact" class="fw-bold">Mobile Number</label>
+            <input type="text" class="form-control" id="contact" name="contact" maxlength="11" required>
           </div>
           <div class="col-md-4">
-            <label for="province">Province <small>(Present Address)</small></label>
+            <label for="province" class="fw-bold">Province <small>(Present Address)</small></label>
             <select id="province" class="form-select uppercase" name="province" required>
               <option value="">Select a province</option>
             </select>
           </div>
         </div>
+
         <div class="row mb-2">
           <div class="col-md-4">
-            <label for="city">City</label>
+            <label for="city" class="fw-bold">City</label>
             <select id="city" class="form-select uppercase" name="city" required>
               <option value="">Select a city</option>
             </select>
           </div>
+
+          <!-- Passwords (DMW-compatible IDs) -->
           <div class="col-md-4">
-            <label for="password">Create Password</label>
-            <input type="password" class="form-control" id="password" name="password" autocomplete="new-password" required>
-            <input type="checkbox" id="show_password"> <small>Show Password</small>
+            <label for="pword" class="fw-bold">Create Password</label>
+            <input type="password" class="form-control" id="pword" name="accesskey" autocomplete="new-password" maxlength="25" required>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="showPword" data-target="pword">
+              <label class="form-check-label" for="showPword"><small>Show Password</small></label>
+            </div>
           </div>
           <div class="col-md-4">
-            <label for="repassword">Re-type Password</label>
-            <input type="password" class="form-control" id="repassword" name="repassword" autocomplete="new-password" required>
+            <label for="pword1" class="fw-bold">Re-type Password</label>
+            <input type="password" class="form-control" id="pword1" autocomplete="new-password" maxlength="25" required>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="showPword1" data-target="pword1">
+              <label class="form-check-label" for="showPword1"><small>Show Password</small></label>
+            </div>
           </div>
         </div>
       </div>
@@ -669,7 +677,6 @@ footer div:last-child { /* Created by text */
       <div class="row my-2">
         <!-- ID PICTURE -->
         <div class="col-md-6">
-          <!-- WARNING -->
           <div id="app_size" style="margin-bottom:4px;"></div>
           <div class="border border-warning rounded p-3 mb-2" style="background: #fffbe7; position: relative; min-height:240px;">
             <b class="mb-2 d-block"><i class="fa fa-id-card"></i> ID Picture</b>
@@ -688,423 +695,91 @@ footer div:last-child { /* Created by text */
               <li>Walang salamin at head dress (maliban sa hijab)</li>
             </ol>
             <div class="photo-id-right" style="margin: 0 auto 1rem auto; display: block; text-align: center;">
-              <img id="idphoto_preview" src="id_photo.jpg" alt="ID Photo"
-                style="width:130px; height:150px; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px;">
+              <img id="picture" src="id_photo.jpg" alt="ID Photo"
+                   style="width:130px; height:150px; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px;">
               <br>
               <label for="appPhoto"
-                class="btn btn-sm btn-warning d-block mx-auto my-2"
-                style="max-width:170px; cursor:pointer; font-size:0.96em;">
+                     class="btn btn-sm btn-warning d-block mx-auto my-2"
+                     style="max-width:170px; cursor:pointer; font-size:0.96em;">
                 <i class="fa fa-info-circle"></i> Click photo to upload/change
               </label>
-              <input type="file" id="appPhoto" name="appPhoto" style="display:none;" accept="image/*">
+              <input type="file" id="appPhoto" name="id_image" style="display:none;" accept="image/*">
             </div>
           </div>
         </div>
-        <!-- PASAPORTE -->
+
+        <!-- PASSPORT -->
         <div class="col-md-6">
           <div id="passport_size" style="margin-bottom:4px;"></div>
           <div class="border border-warning rounded p-3 mb-2" style="background: #fffbe7; min-height:240px;">
-            <!-- IMAGE COLUMN -->
-            <div style="flex:1; min-width:210px;">
-              <b class="mb-2 d-block"><i class="fa fa-passport"></i> PASAPORTE</b>
-              <ol style="font-size:small; padding-left: 1.1em;">
-                <li>Malinis at maayos na scanned copy (bio/data page lamang)</li>
-                <li>Panatilihin ang pagiging kulay asul ng pasaporte</li>
-                <li>Siguraduhin na malinaw at nababasa ang mga nakalagay na information</li>
-                <li>JPG Format lang</li>
-                <li>Size: 600 pixels (width) x 400 pixels (height); 100Kb o mas mababa lamang</li>
-              </ol>
-            </div>
-            <div class="flex-shrink-0" style="margin-right:24px;">
-              <img id="passport_preview" src="passport_photo.jpg" alt="Passport"
-                style="width:600px; height:400px; max-width:100%; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px; display:block;">
+            <b class="mb-2 d-block"><i class="fa fa-passport"></i> PASAPORTE</b>
+            <ol style="font-size:small; padding-left: 1.1em;">
+              <li>Malinis at maayos na scanned copy (bio/data page lamang)</li>
+              <li>Panatilihin ang pagiging kulay asul ng pasaporte</li>
+              <li>Siguraduhin na malinaw at nababasa ang mga nakalagay na information</li>
+              <li>JPG Format lang</li>
+              <li>Size: 600 pixels (width) x 400 pixels (height); 100Kb o mas mababa lamang</li>
+            </ol>
+            <div class="text-center">
+              <img id="Passport_picture" src="passport_photo.jpg" alt="Passport"
+                   style="width:600px; height:400px; max-width:100%; object-fit:cover; border:1px solid #ccc; background:#fafafa; border-radius:7px; display:block; margin: 0 auto;">
               <label for="ppPhoto"
-                class="btn btn-sm btn-warning d-block mx-auto my-2"
-                style="max-width:220px; cursor:pointer; font-size:0.96em;">
+                     class="btn btn-sm btn-warning d-block mx-auto my-2"
+                     style="max-width:220px; cursor:pointer; font-size:0.96em;">
                 <i class="fa fa-info-circle"></i> Click photo to upload / change
               </label>
-              <input type="file" id="ppPhoto" name="ppPhoto" style="display:none;" accept="image/*">
+              <input type="file" id="ppPhoto" name="passport_image" style="display:none;" accept="image/*">
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SURVEY SECTION -->
+      <!-- SURVEY SECTION (DMW-compatible IDs) -->
       <div class="survey-box" style="margin-top:8px; margin-bottom:18px;">
         <div style="font-size:1.45em; font-weight:600; margin-bottom:20px; color: #000000;">Survey Question</div>
         <ol style="padding-left: 1.1em;">
           <li class="mb-3">
             <b style="font-size:1.09em;">How did you prepare for EPS-TOPIK Examination?</b><br>
             <div class="form-check form-check-inline" style="margin-right:22px;">
-              <input type="radio" name="prep" value="Self-study" id="prep_self" class="form-check-input" required>
-              <label for="prep_self" class="form-check-label">Self-study</label>
+              <input type="radio" name="exam_prep" value="1" id="sstudy" class="form-check-input" required>
+              <label for="sstudy" class="form-check-label">Self-study</label>
             </div>
             <div class="form-check form-check-inline">
-              <input type="radio" name="prep" value="Training Center / School" id="prep_school" class="form-check-input">
-              <label for="prep_school" class="form-check-label">Training Center / School</label>
+              <input type="radio" name="exam_prep" value="2" id="tcs" class="form-check-input">
+              <label for="tcs" class="form-check-label">Training Center / School</label>
             </div>
           </li>
           <li class="mb-3">
             <b style="font-size:1.05em;">Name of the Training Center / School <span style="font-weight:400;">(Write NA if self-study)</span></b><br>
-            <input type="text" class="form-control mt-1" name="school" required style="max-width:600px;">
+            <input type="text" class="form-control mt-1" id="tcenter" name="tcenter" required style="max-width:600px;">
           </li>
           <li>
             <b style="font-size:1.05em;">City / Municipality (Location of Training Center / School)</b><br>
-            <input type="text" class="form-control mt-1" name="school_location" required style="max-width:600px;">
+            <input type="text" class="form-control mt-1" id="cm" name="tcenter_location" required style="max-width:600px;">
           </li>
         </ol>
       </div>
 
-      <!-- AFFIRM BOX -->
+      <!-- AFFIRM BOX (DMW-compatible agree checkbox ID) -->
       <div class="affirm-box d-flex" style="max-width:100vw; width:100%; margin-left:auto; margin-right:auto; align-items: flex-start;">
-        <input type="checkbox" id="affirm" class="affirm-checkbox" required style="margin-top:2px; margin-right:12px;">
-        <label for="affirm" class="affirm-text mb-0" style="text-align:left; flex:1;">
+        <input type="checkbox" id="flexCheckDefault" class="affirm-checkbox" required style="margin-top:2px; margin-right:12px;">
+        <label for="flexCheckDefault" class="affirm-text mb-0" style="text-align:left; flex:1;">
           I hereby declare that the details I have submitted are accurate and truthful to the best of my knowledge. I fully understand that providing false or misleading information may lead to exclusion from current or future job application processes related to employment in South Korea.
         </label>
       </div>
+
       <!-- Register Button -->
       <div style="width: 100%; text-align: center; margin: 16px 0;">
         <button type="submit" class="btn btn-primary" id="EPSsubmit" style="width:1.5in; min-width: 60px; display:inline-block;">
           Register
         </button>
       </div>
+
     </form>
   </div>
 </section>
-<!-- Add your JS logic for province/city here, unchanged -->
+
 <script src="3.6.0-jquery.min.js"></script>
-<script>
-  $(function() {
-    // Province/City data for offline dropdown
-    const provinceCities = {
-  "Abra": ["Bangued","Boliney","Bucay","Bucloc","Daguioman","Danglas","Dolores","La Paz","Lacub","Lagangilang","Lagayan","Langiden","Licuan-Baay","Luba","Malibcong","Manabo","Peñarrubia","Pidigan","Pilar","Sallapadan","San Isidro","San Juan","San Quintin","Tayum","Tineg","Tubo","Villaviciosa"],
-  "Agusan del Norte": ["Buenavista","Butuan City","Cabadbaran City","Carmen","Jabonga","Kitcharao","Las Nieves","Magallanes","Nasipit","Remedios T. Romualdez","Santiago","Tubay"],
-  "Agusan del Sur": ["Bayugan City","Bunawan","Esperanza","La Paz","Loreto","Prosperidad","Rosario","San Francisco","San Luis","Santa Josefa","Sibagat","Talacogon","Trento","Veruela"],
-  "Aklan": ["Altavas","Balete","Banga","Batan","Buruanga","Ibajay","Kalibo","Lezo","Libacao","Madalag","Makato","Malay","Malinao","Nabas","New Washington","Numancia","Tangalan"],
-  "Albay": ["Bacacay","Camalig","Daraga","Guinobatan","Jovellar","Legazpi City","Libon","Ligao City","Malilipot","Malinao","Manito","Oas","Pio Duran","Polangui","Rapu-Rapu","Santo Domingo","Tabaco City","Tiwi"],
-  "Antique": ["Anini-y","Barbaza","Belison","Bugasong","Caluya","Culasi","Hamtic","Laua-an","Libertad","Pandan","Patnongon","San Jose","San Remigio","Sebaste","Sibalom","Tibiao","Tobias Fornier","Valderrama"],
-  "Apayao": ["Calanasan","Conner","Flora","Kabugao","Luna","Pudtol","Santa Marcela"],
-  "Aurora": ["Baler","Casiguran","Dilasag","Dinalungan","Dingalan","Dipaculao","Maria Aurora","San Luis"],
-  "Basilan": ["Akbar","Al-Barka","Hadji Mohammad Ajul","Hadji Muhtamad","Isabela City","Lamitan City","Lantawan","Maluso","Sumisip","Tabuan-Lasa","Tipo-Tipo","Tuburan","Ungkaya Pukan"],
-  "Bataan": ["Abucay","Bagac","Balanga City","Dinalupihan","Hermosa","Limay","Mariveles","Morong","Orani","Orion","Pilar","Samal"],
-  "Batanes": ["Basco","Itbayat","Ivana","Mahatao","Sabtang","Uyugan"],
-  "Batangas": ["Agoncillo","Alitagtag","Balayan","Balete","Batangas City","Bauan","Calaca","Calatagan","Cuenca","Ibaan","Laurel","Lemery","Lian","Lipa City","Lobo","Mabini","Malvar","Mataasnakahoy","Nasugbu","Padre Garcia","Rosario","San Jose","San Juan","San Luis","San Nicolas","San Pascual","Santa Teresita","Santo Tomas City","Taal","Talisay","Tanauan City","Taysan","Tingloy","Tuy"],
-  "Benguet": ["Atok","Bakun","Bokod","Buguias","Itogon","Kabayan","Kapangan","Kibungan","La Trinidad","Mankayan","Sablan","Tuba","Tublay"],
-  "Biliran": ["Almeria","Biliran","Cabucgayan","Caibiran","Culaba","Kawayan","Maripipi","Naval"],
-  "Bohol": ["Alicia","Anda","Antequera","Baclayon","Balilihan","Batuan","Bien Unido","Bilar","Buenavista","Calape","Candijay","Carmen","Catigbian","Clarin","Corella","Cortes","Dagohoy","Danao","Dauis","Dimiao","Duero","Garcia Hernandez","Getafe","Guindulman","Inabanga","Jagna","Jetafe","Lila","Loay","Loboc","Loon","Mabini","Maribojoc","Panglao","Pilar","Pres. Carlos P. Garcia (Pitogo)","Sagbayan","San Isidro","San Miguel","Sevilla","Sierra Bullones","Sikatuna","Tagbilaran City","Talibon","Trinidad","Tubigon","Ubay","Valencia"],
-  "Bukidnon": ["Baungon","Cabanglasan","Damulog","Dangcagan","Don Carlos","Impasug-ong","Kadingilan","Kalilangan","Kibawe","Kitaotao","Lantapan","Libona","Malaybalay City","Malitbog","Manolo Fortich","Maramag","Pangantucan","Quezon","San Fernando","Sumilao","Talakag","Valencia City"],
-  "Bulacan": ["Angat","Balagtas","Baliuag","Bocaue","Bulacan","Bustos","Calumpit","Doña Remedios Trinidad","Guiguinto","Hagonoy","Malolos City","Marilao","Meycauayan City","Norzagaray","Obando","Pandi","Paombong","Plaridel","Pulilan","San Ildefonso","San Jose del Monte City","San Miguel","San Rafael","Santa Maria"],
-  "Cagayan": ["Abulug","Alcala","Allacapan","Amulung","Aparri","Baggao","Ballesteros","Buguey","Calayan","Camalaniugan","Claveria","Enrile","Gattaran","Gonzaga","Iguig","Lal-lo","Lasam","Pamplona","Peñablanca","Piat","Rizal","Sanchez-Mira","Santa Ana","Santa Praxedes","Santa Teresita","Santo Niño","Solana","Tuao","Tuguegarao City"],
-  "Camarines Norte": ["Basud","Capalonga","Daet","Jose Panganiban","Labo","Mercedes","Paracale","San Lorenzo Ruiz","San Vicente","Santa Elena","Talisay","Vinzons"],
-  "Camarines Sur": ["Baao","Balatan","Bato","Bombon","Buhi","Bula","Cabusao","Calabanga","Camaligan","Canaman","Caramoan","Del Gallego","Gainza","Garchitorena","Goa","Iriga City","Lagonoy","Libmanan","Lupi","Magarao","Milaor","Minalabac","Nabua","Naga City","Ocampo","Pamplona","Pasacao","Pili","Presentacion","Ragay","Sagñay","San Fernando","San Jose","Sipocot","Siruma","Tigaon","Tinambac"],
-  "Camiguin": ["Catarman","Guinsiliban","Mahinog","Mambajao","Sagay"],
-  "Capiz": ["Cuartero","Dao","Dumalag","Dumarao","Ivisan","Jamindan","Ma-ayon","Mambusao","Panay","Panitan","Pilar","Pontevedra","Pres. Roxas","Roxas City","Sapian","Sigma","Tapaz"],
-  "Catanduanes": ["Bagamanoc","Baras","Bato","Caramoran","Gigmoto","Pandan","Panganiban","San Andres","San Miguel","Viga","Virac"],
-  "Cavite": ["Alfonso","Amadeo","Bacoor City","Carmona","Cavite City","Dasmariñas City","General Emilio Aguinaldo","General Trias City","GMA","Imus City","Indang","Kawit","Magallanes","Maragondon","Mendez","Naic","Noveleta","Rosario","Silang","Tagaytay City","Tanza","Ternate","Trece Martires City"],
-  "Cebu": ["Alcantara","Alcoy","Alegria","Aloguinsan","Argao","Asturias","Badian","Balamban","Bantayan","Barili","Bogo City","Boljoon","Borbon","Carcar City","Carmen","Catmon","Cebu City","Compostela","Consolacion","Cordova","Daanbantayan","Dalaguete","Danao City","Dumanjug","Ginatilan","Lapu-Lapu City","Liloan","Madridejos","Malabuyoc","Mandaue City","Medellin","Minglanilla","Moalboal","Naga City","Oslob","Pilar","Pinamungajan","Poro","Ronda","Samboan","San Fernando","San Francisco","San Remigio","Santa Fe","Santander","Sibonga","Sogod","Tabogon","Tabuelan","Talisay City","Toledo City","Tuburan","Tudela"],
-  "Cotabato": ["Alamada","Aleosan","Antipas","Arakan","Banisilan","Carmen","Kabacan","Kidapawan City","Libungan","M'lang","Magpet","Makilala","Matalam","Midsayap","Pigcawayan","Pikit","President Roxas","Tulunan"],
-  "Davao de Oro": ["Compostela","Laak","Mabini","Maco","Mahayag","Monkayo","Montevista","Nabunturan","New Bataan","Pantukan"],
-  "Davao del Norte": ["Asuncion","Braulio E. Dujali","Carmen","Kapalong","New Corella","Panabo City","Samal City","San Isidro","Santo Tomas","Tagum City","Talaingod"],
-  "Davao del Sur": ["Bansalan","Davao City","Digos City","Hagonoy","Kiblawan","Magsaysay","Malalag","Matanao","Padada","Santa Cruz","Sulop"],
-  "Davao Occidental": ["Don Marcelino","Jose Abad Santos","Malita","Santa Maria","Sarangani"],
-  "Davao Oriental": ["Baganga","Banaybanay","Boston","Caraga","Cateel","Governor Generoso","Lupon","Manay","Mati City","San Isidro","Tarragona"],
-  "Dinagat Islands": ["Basilisa","Cagdianao","Dinagat","Libjo","Loreto","San Jose","Tubajon"],
-  "Eastern Samar": ["Arteche","Balangiga","Balangkayan","Borongan City","Can-avid","Dolores","General MacArthur","Giporlos","Guiuan","Hernani","Jipapad","Lawaan","Llorente","Maslog","Maydolong","Mercedes","Oras","Quinapondan","Salcedo","San Julian","San Policarpo","Sulat","Taft"],
-  "Guimaras": ["Buenavista","Jordan","Nueva Valencia","San Lorenzo","Sibunag"],
-  "Ifugao": ["Aguinaldo","Alfonso Lista","Asipulo","Banaue","Hingyon","Hungduan","Kiangan","Lagawe","Lamut","Mayoyao","Tinoc"],
-  "Ilocos Norte": ["Adams","Bacarra","Badoc","Bangui","Banna","Batac City","Burgos","Carasi","Currimao","Dingras","Dumalneg","Laoag City","Marcos","Nueva Era","Pagudpud","Paoay","Pasuquin","Piddig","Pinili","San Nicolas","Sarrat","Solsona","Vintar"],
-  "Ilocos Sur": ["Alilem","Banayoyo","Bantay","Burgos","Cabugao","Candon City","Caoayan","Cervantes","Galimuyod","Gregorio del Pilar","Lidlidda","Magsingal","Nagbukel","Narvacan","Quirino","Salcedo","San Emilio","San Esteban","San Ildefonso","San Juan","San Vicente","Santa","Santa Catalina","Santa Cruz","Santa Lucia","Santa Maria","Santiago","Santo Domingo","Sigay","Sinait","Sugpon","Suyo","Tagudin","Vigan City"],
-  "Iloilo": ["Ajuy","Alimodian","Anilao","Badiangan","Balasan","Banate","Barotac Nuevo","Barotac Viejo","Batad","Bingawan","Cabatuan","Calinog","Carles","Concepcion","Dingle","Duenas","Dumangas","Estancia","Guimbal","Igbaras","Iloilo City","Janiuay","Lambunao","Leganes","Lemery","Leon","Maasin","Miagao","Mina","New Lucena","Oton","Passi City","Pavia","Pototan","San Dionisio","San Enrique","San Joaquin","San Miguel","San Rafael","Santa Barbara","Sara","Tigbauan","Tubungan","Zarraga"],
-  "Isabela": ["Alicia","Angadanan","Aurora","Benito Soliven","Burgos","Cabagan","Cabatuan","Cauayan City","Cordon","Delfin Albano","Dinapigue","Divilacan","Echague","Gamu","Ilagan City","Jones","Luna","Maconacon","Mallig","Naguilian","Palanan","Quezon","Quirino","Ramon","Reina Mercedes","Roxas","San Agustin","San Guillermo","San Isidro","San Manuel","San Mariano","San Mateo","San Pablo","Santa Maria","Santiago City","Santo Tomas","Tumauini"],
-  "Kalinga": ["Balbalan","Lubuagan","Pasil","Pinukpuk","Rizal","Tabuk City","Tanudan","Tinglayan"],
-  "La Union": ["Agoo","Aringay","Bacnotan","Bagulin","Balaoan","Bangar","Bauang","Burgos","Caba","Luna","Naguilian","Pugo","Rosario","San Fernando City","San Gabriel","San Juan","Santo Tomas","Santol","Sudipen","Tubao"],
-  "Laguna": ["Alaminos","Bay","Biñan City","Cabuyao City","Calamba City","Calauan","Cavinti","Famy","Kalayaan","Liliw","Los Baños","Luisiana","Lumban","Mabitac","Magdalena","Majayjay","Nagcarlan","Paete","Pagsanjan","Pakil","Pangil","Pila","Rizal","San Pablo City","San Pedro City","Santa Cruz","Santa Maria","Santa Rosa City","Siniloan","Victoria"],
-  "Lanao del Norte": ["Bacolod","Baloi","Baroy","Iligan City","Kapatagan","Kauswagan","Kolambugan","Lala","Linamon","Magsaysay","Maigo","Matungao","Munai","Nunungan","Pantao Ragat","Pantar","Poona Piagapo","Salvador","Sapad","Sultan Naga Dimaporo","Tagoloan","Tangcal","Tubod"],
-  "Lanao del Sur": ["Amai Manabilang","Bacolod-Kalawi","Balabagan","Balindong","Bayang","Binidayan","Buadiposo-Buntong","Bubong","Butig","Calanogas","Ditsaan-Ramain","Ganassi","Kapai","Kapatagan","Lumba-Bayabao","Lumbaca-Unayan","Lumbatan","Lumbayanague","Madalum","Madamba","Maguing","Malabang","Marantao","Marawi City","Masiu","Masiu","Mulondo","Pagayawan","Piagapo","Poona Bayabao","Pualas","Saguiaran","Sultan Dumalondong","Tagoloan II","Tamparan","Taraka","Tubaran","Tugaya","Wao"],
-  "Leyte": ["Abuyog","Alangalang","Albuera","Babatngon","Barugo","Bato","Baybay City","Burauen","Calubian","Capoocan","Carigara","Dagami","Dulag","Hilongos","Hindang","Inopacan","Isabel","Jaro","Javier","Julita","Kananga","La Paz","Leyte","MacArthur","Mahaplag","Matag-ob","Matalom","Mayorga","Merida","Ormoc City","Palo","Palompon","Pastrana","San Isidro","San Miguel","Santa Fe","Tabango","Tabontabon","Tacloban City","Tanauan","Tolosa","Tunga","Villaba"],
-  "Maguindanao": ["Ampatuan","Barira","Buldon","Buluan","Cotabato City","Datu Abdullah Sangki","Datu Anggal Midtimbang","Datu Blah T. Sinsuat","Datu Hoffer Ampatuan","Datu Montawal","Datu Odin Sinsuat","Datu Paglas","Datu Piang","Datu Salibo","Datu Saudi-Ampatuan","Datu Unsay","Gen. S.K. Pendatun","Guindulungan","Kabuntalan","Mamasapano","Mangudadatu","Matanog","Northern Kabuntalan","Pagalungan","Paglat","Pandag","Parang","Rajah Buayan","Shariff Aguak","Shariff Saydona Mustapha","South Upi","Sultan Kudarat","Sultan Mastura","Sultan sa Barongis","Talayan","Talitay","Upi"],
-  "Marinduque": ["Boac","Buenavista","Gasan","Mogpog","Santa Cruz","Torrijos"],
-  "Masbate": ["Aroroy","Baleno","Balud","Batuan","Cataingan","Cawayan","Claveria","Dimasalang","Esperanza","Mandaon","Masbate City","Milagros","Mobo","Monreal","Palanas","Pio V. Corpuz","Placer","San Fernando","San Jacinto","San Pascual","Uson"],
-  "Metro Manila": ["Caloocan","Las Piñas","Makati","Malabon","Mandaluyong","Manila","Marikina","Muntinlupa","Navotas","Parañaque","Pasay","Pasig","Pateros","Quezon City","San Juan","Taguig","Valenzuela"],
-  "Misamis Occidental": ["Aloran","Baliangao","Bonifacio","Calamba","Clarin","Concepcion","Don Victoriano Chiongbian","Jimenez","Lopez Jaena","Oroquieta City","Ozamiz City","Panaon","Plaridel","Sapang Dalaga","Sinacaban","Tangub City","Tudela"],
-  "Misamis Oriental": ["Alubijid","Balingasag","Balingoan","Binuangan","Cagayan de Oro City","Claveria","El Salvador City","Gingoog City","Gitagum","Initao","Jasaan","Kinoguitan","Lagonglong","Laguitas","Lugait","Magsaysay","Manticao","Medina","Naawan","Opol","Salay","Sugbongcogon","Tagoloan","Talisayan","Villanueva"],
-  "Mountain Province": ["Barlig","Bauko","Besao","Bontoc","Sabangan","Sadanga","Sagada","Tadian"],
-  "Negros Occidental": ["Bacolod City","Bago City","Binalbagan","Cadiz City","Calatrava","Candoni","Cauayan","Enrique B. Magalona","Escalante City","Himamaylan City","Hinigaran","Hinoba-an","Ilog","Isabela","Kabankalan City","La Carlota City","La Castellana","Manapla","Moises Padilla","Murcia","Pontevedra","Pulupandan","Sagay City","Salvador Benedicto","San Carlos City","San Enrique","Silay City","Sipalay City","Talisay City","Toboso","Valladolid","Victorias City"],
-  "Negros Oriental": ["Amlan","Ayungon","Bacong","Bais City","Basay","Bayawan City","Bindoy","Canlaon City","Dauin","Dumaguete City","Guihulngan City","Jimalalud","La Libertad","Mabinay","Manjuyod","Pamplona","San Jose","Santa Catalina","Siaton","Sibulan","Tanjay City","Tayasan","Valencia","Vallehermoso","Zamboanguita"],
-  "Northern Samar": ["Allen","Biri","Bobon","Capul","Catarman","Catubig","Gamay","Laoang","Lapinig","Las Navas","Lavezares","Lope de Vega","Mapanas","Mondragon","Palapag","Pambujan","Rosario","San Antonio","San Isidro","San Jose","San Roque","San Vicente","Silvino Lobos","Victoria"],
-  "Nueva Ecija": ["Aliaga","Bongabon","Cabanatuan City","Cabiao","Carranglan","Cuyapo","Gabaldon","Gapan City","General Mamerto Natividad","General Tinio","Guimba","Jaen","Laur","Licab","Llanera","Lupao","Muñoz City","Nampicuan","Palayan City","Pantabangan","Peñaranda","Quezon","Rizal","San Antonio","San Isidro","San Jose City","San Leonardo","Santa Rosa","Santo Domingo","Science City of Muñoz","Talavera","Talugtug","Zaragoza"],
-  "Nueva Vizcaya": ["Alfonso Castañeda","Ambaguio","Aritao","Bagabag","Bambang","Bayombong","Diadi","Dupax del Norte","Dupax del Sur","Kasibu","Kayapa","Quezon","Santa Fe","Solano","Villaverde"],
-  "Occidental Mindoro": ["Abra de Ilog","Calintaan","Looc","Lubang","Magsaysay","Mamburao","Paluan","Rizal","Sablayan","San Jose","Santa Cruz"],
-  "Oriental Mindoro": ["Baco","Bansud","Bongabong","Bulalacao","Calapan City","Gloria","Mansalay","Naujan","Pinamalayan","Pola","Puerto Galera","Roxas","San Teodoro","Socorro","Victoria"],
-  "Palawan": ["Aborlan","Agutaya","Araceli","Balabac","Bataraza","Brooke's Point","Busuanga","Cagayancillo","Coron","Culion","Cuyo","Dumaran","El Nido","Kalayaan","Linapacan","Magsaysay","Narra","Puerto Princesa City","Quezon","Rizal","Roxas","San Vicente","Sofronio Española","Taytay"],
-  "Pampanga": ["Angeles City","Apalit","Arayat","Bacolor","Candaba","Floridablanca","Guagua","Lubao","Mabalacat City","Macabebe","Magalang","Masantol","Mexico","Minalin","Porac","San Fernando City","San Luis","San Simon","Santa Ana","Santa Rita","Santo Tomas","Sasmuan"],
-  "Pangasinan": ["Agno","Aguilar","Alaminos City","Alcala","Anda","Asingan","Balungao","Bani","Basista","Bautista","Bayambang","Binalonan","Binmaley","Bolinao","Bugallon","Burgos","Calasiao","Dagupan City","Dasol","Infanta","Labrador","Laoac","Lingayen","Mabini","Malasiqui","Manaoag","Mangaldan","Mangatarem","Mapandan","Natividad","Pozorrubio","Rosales","San Carlos City","San Fabian","San Jacinto","San Manuel","San Nicolas","San Quintin","Santa Barbara","Santa Maria","Santo Tomas","Sison","Sual","Tayug","Umingan","Urbiztondo","Urdaneta City","Villasis"],
-  "Quezon": ["Agdangan","Alabat","Atimonan","Buenavista","Burdeos","Calauag","Candelaria","Catanauan","Dolores","General Luna","General Nakar","Guinayangan","Gumaca","Infanta","Jomalig","Lopez","Lucban","Lucena City","Macalelon","Mauban","Mulanay","Padre Burgos","Pagbilao","Panukulan","Patnanungan","Perez","Pitogo","Plaridel","Polillo","Quezon","Real","Sampaloc","San Andres","San Antonio","San Francisco","San Narciso","Sariaya","Tagkawayan","Tayabas City","Tiaong","Unisan"],
-  "Quirino": ["Aglipay","Cabarroguis","Diffun","Maddela","Nagtipunan","Saguday"],
-  "Rizal": ["Angono","Antipolo City","Baras","Binangonan","Cainta","Cardona","Jala-Jala","Morong","Pililla","Rodriguez (Montalban)","San Mateo","Tanay","Taytay","Teresa"],
-  "Romblon": ["Alcantara","Banton","Cajidiocan","Calatrava","Concepcion","Corcuera","Ferrol","Looc","Magdiwang","Odiongan","Romblon","San Agustin","San Andres","San Fernando","San Jose","Santa Fe","Santa Maria"],
-  "Samar": ["Almagro","Basey","Calbayog City","Calbiga","Catbalogan City","Daram","Gandara","Hinabangan","Jiabong","Marabut","Matuguinao","Motiong","Pagsanghan","Paranas","Pinabacdao","San Jorge","San Jose de Buan","San Sebastian","Santa Margarita","Santa Rita","Santo Niño","Talalora","Tarangnan","Villareal","Zumarraga"],
-  "Sarangani": ["Alabel","Glan","Kiamba","Maasim","Maitum","Malapatan","Malungon"],
-  "Siquijor": ["Enrique Villanueva","Larena","Lazi","Maria","San Juan","Siquijor"],
-  "Sorsogon": ["Barcelona","Bulan","Bulusan","Casiguran","Castilla","Donsol","Gubat","Irosin","Juban","Magallanes","Matnog","Pilar","Prieto Diaz","Santa Magdalena","Sorsogon City"],
-  "South Cotabato": ["Banga","General Santos City","Koronadal City","Lake Sebu","Norala","Polomolok","Santo Niño","Surallah","Tampakan","Tantangan","T'boli","Tupi"],
-  "Southern Leyte": ["Anahawan","Bontoc","Hinunangan","Hinundayan","Libagon","Liloan","Limasawa","Maasin City","Macrohon","Malitbog","Padre Burgos","Pintuyan","Saint Bernard","San Francisco","San Juan","San Ricardo","Silago","Sogod","Tomas Oppus"],
-  "Sultan Kudarat": ["Bagumbayan","Columbio","Esperanza","Isulan","Kalamansig","Lambayong","Lebak","Lutayan","Palimbang","President Quirino","Senator Ninoy Aquino","Tacurong City"],
-  "Sulu": ["Banguingui","Hadji Panglima Tahil","Indanan","Jolo","Kalingalan Caluang","Lugus","Luuk","Maimbung","Old Panamao","Omar","Pandami","Panglima Estino","Pangutaran","Parang","Pata","Patikul","Siasi","Talipao","Tapul","Tongkil"],
-  "Surigao del Norte": ["Alegria","Bacuag","Burgos","Claver","Dapa","Del Carmen","General Luna","Gigaquit","Mainit","Malimono","Pilar","Placer","San Benito","San Francisco","San Isidro","Santa Monica","Sison","Socorro","Surigao City","Tagana-an","Tubod"],
-  "Surigao del Sur": ["Barobo","Bayabas","Bislig City","Cagwait","Cantilan","Carmen","Carrascal","Cortes","Hinatuan","Lanuza","Lianga","Lingig","Madrid","Marihatag","San Agustin","San Miguel","Tagbina","Tago","Tandag City"],
-  "Tarlac": ["Anao","Bamban","Camiling","Capas","Concepcion","Gerona","La Paz","Mayantoc","Moncada","Paniqui","Pura","Ramos","San Clemente","San Jose","San Manuel","Santa Ignacia","Tarlac City","Victoria"],
-  "Tawi-Tawi": ["Bongao","Languyan","Mapun","Panglima Sugala","Sapa-Sapa","Sibutu","Simunul","Sitangkai","South Ubian","Tandubas","Turtle Islands"],
-  "Zambales": ["Botolan","Cabangan","Candelaria","Castillejos","Iba","Masinloc","Olongapo City","Palauig","San Antonio","San Felipe","San Marcelino","San Narciso","Santa Cruz","Subic"],
-  "Zamboanga del Norte": ["Bacungan (Leon T. Postigo)","Baliguian","Dapitan City","Dipolog City","Godod","Gutalac","Jose Dalman","Kalawit","Katipunan","La Libertad","Labason","Liloy","Manukan","Mutia","Piñan","Polanco","Pres. Manuel A. Roxas","Rizal","Salug","Sergio Osmeña Sr.","Siayan","Sibuco","Sibutad","Sindangan","Siocon","Sirawai","Tampilisan"],
-  "Zamboanga del Sur": ["Aurora","Bayog","Dimataling","Dinas","Dumalinao","Dumingag","Guipos","Josefina","Kumalarang","Labangan","Lakewood","Lapuyan","Mahayag","Margosatubig","Midsalip","Molave","Pagadian City","Pitogo","Ramon Magsaysay","San Miguel","San Pablo","Sominot","Tabina","Tambulig","Tigbao","Tukuran","Vincenzo A. Sagun","Zamboanga City"],
-  "Zamboanga Sibugay": ["Alicia","Buug","Diplahan","Imelda","Ipil","Kabasalan","Mabuhay","Malangas","Naga","Olutanga","Payao","Roseller Lim","Siay","Talusan","Titay","Tungawan"]
-};
-    // Populate province dropdown
-    let $province = $('#province');
-    let $city = $('#city');
-    $province.append(
-      Object.keys(provinceCities).sort().map(p => `<option value="${p}">${p}</option>`)
-    );
-    $province.on('change', function() {
-      let cities = provinceCities[this.value] || [];
-      $city.html('<option value="">Select a city</option>' +
-        cities.map(c => `<option value="${c}">${c}</option>`).join('')
-      );
-    });
-    // Show password toggle
-    $('#show_password').on('change', function() {
-      let type = this.checked ? 'text' : 'password';
-      $('#password, #repassword').attr('type', type);
-    });
-    // ID photo upload preview and size check (offline)
-    $('#appPhoto').on('change', function() {
-      const file = this.files[0];
-      if (!file) return;
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        $('#idphoto_preview').attr('src', e.target.result);
-      };
-      reader.readAsDataURL(file);
-      // size check
-      let size = (file.size / 1024).toFixed(2);
-      let msg = '';
-      if (size > 13.312) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
-      } else if (size < 9.216) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
-      }
-      $('#app_size').html(msg);
-    });
-    // Passport photo upload preview and size check (offline)
-    $('#ppPhoto').on('change', function() {
-      const file = this.files[0];
-      if (!file) return;
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        $('#passport_preview').attr('src', e.target.result);
-      };
-      reader.readAsDataURL(file);
-      // size check
-      let size = (file.size / 1024).toFixed(2);
-      let msg = '';
-      if (size > 90) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
-      } else if (size < 50) {
-        msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
-      }
-      $('#passport_size').html(msg);
-    });
-    // Allow clicking image to upload (only attach once)
-    $('#idphoto_preview').off('click').on('click', function() {
-      $('#appPhoto').click();
-    });
-    $('#passport_preview').off('click').on('click', function() {
-      $('#ppPhoto').click();
-    });
-    // SUBMIT HANDLER for REGISTRATION
-    $('#EPSforms').on('submit', function(e) {
-      e.preventDefault(); // Prevent default form submission
-
-      // --- START VALIDATION ---
-
-      // 1. Birthday: Only applicants 18 to 38 years old are allowed.
-      const bdateInput = $('#bdate').val();
-      if (bdateInput) {
-        const bdate = new Date(bdateInput);
-        const today = new Date();
-        let age = today.getFullYear() - bdate.getFullYear();
-        const m = today.getMonth() - bdate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < bdate.getDate())) {
-            age--; // Adjust age if birthday hasn't occurred yet this year
-        }
-
-        if (age < 18 || age > 38) {
-          alert('Registration not allowed: Only applicants 18 to 38 years old are allowed.');
-          return false;
-        }
-      } else {
-        alert('Please enter your Birthdate.');
-        return false;
-      }
-
-      // 2. Passport Validity: Passport must have at least 1 year of validity remaining from the current date.
-      const passportValidityInput = $('#passport_validity').val();
-      if (passportValidityInput) {
-        const passportValidityDate = new Date(passportValidityInput);
-        const today = new Date();
-        const oneYearFromNow = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
-
-        if (passportValidityDate < oneYearFromNow) {
-          alert('Registration not allowed: Passport must have at least 1 year of validity remaining from the current date.');
-          return false;
-        }
-      } else {
-        alert('Please enter Passport Validity date.');
-        return false;
-      }
-
-      // 3. Password & Re-type Password: Must match.
-      const password = $('#password').val();
-      const repassword = $('#repassword').val();
-      if (password !== repassword) {
-        alert('Registration not allowed: Password and Re-type Password must match.');
-        return false;
-      }
-
-      // 4. Mobile Number: Must be exactly 11 digits and contain only numbers.
-      const mobileNumber = $('#mobile').val();
-      if (!/^\d{11}$/.test(mobileNumber)) {
-        alert('Registration not allowed: Mobile Number must be exactly 11 digits and contain only numbers.');
-        return false;
-      }
-
-      // --- END VALIDATION ---
-
-      // If all validations pass, proceed with data saving and redirection
-      // Gather info
-     // ...before submit
-let lname = $('#lname').val().trim();
-let fname = $('#fname').val().trim();
-let mname = $('#mname').val().trim();
-let suffix = $('#suffix').val().trim();
-let fullname = fname + ' ' + mname + ' ' + lname;
-if (suffix) {
-  fullname += ' ' + suffix.toUpperCase();
-}
-let email = $('#email').val().trim();
-
-
-      // -- START: Application Number generation (global counter) --
-      let successCount = localStorage.getItem('successCount');
-      if (!successCount) {
-        successCount = 1;
-      } else {
-        successCount = parseInt(successCount) + 1;
-      }
-      localStorage.setItem('successCount', successCount);
-      let idStr = String(successCount).padStart(6, '0'); // Always 6 digits for app number
-      // -- END: Application Number generation --
-
-      // --- START: Save all registration data to reg_list in localStorage ---
-      let regList = JSON.parse(localStorage.getItem('reg_list') || '[]');
-      let newRegistration = {
-          id: idStr, // Use the generated application number as unique ID
-          fullname: fullname,
-          sex: $('input[name="sex"]:checked').val(),
-          bdate: $('#bdate').val(),
-          passport: $('#passport').val(),
-          passport_validity: $('#passport_validity').val(),
-          email: $('#email').val(),
-          mobile: $('#mobile').val(),
-          province: $('#province').val(),
-          city: $('#city').val(),
-          password: $('#password').val() // Storing for practice, remind user about security
-      };
-      regList.push(newRegistration);
-      localStorage.setItem('reg_list', JSON.stringify(regList));
-      // --- END: Save all registration data ---
-
-      // Save most recent data for success.html (redundant with reg_list but for previous success.html logic)
-      localStorage.setItem('reg_fullname', fullname);
-      localStorage.setItem('reg_email', email);
-      localStorage.setItem('reg_id', idStr);
-      
-      // Redirect to success page
-      window.location.href = 'success.html';
-    });
-  });
-
-  // Auto-uppercase for all input[type="text"].uppercase class
-  $(function(){
-    $(document).on('input', 'input[type="text"].uppercase', function() {
-      this.value = this.value.toUpperCase();
-    });
-    $(document).on('change', 'select.uppercase', function() {
-      $(this).find('option').each(function() {
-        $(this).text($(this).text().toUpperCase());
-      });
-    });
-
-    // Passport Number Validation with Warning Message
-    $('#passport').on('input', function() {
-        const passportInput = $(this);
-        const passportValue = passportInput.val().trim();
-        const passportLength = passportValue.length;
-        let warningMessage = '';
-
-        // Check if length exceeds 9
-        if (passportLength > 9) {
-            warningMessage = 'Passport Number cannot exceed 9 digits.';
-            passportInput.val(passportValue.substring(0, 9)); // Truncate if too long
-        } else if (passportLength < 9) {
-            warningMessage = 'Passport Number must be 9 digits.';
-        }
-        
-        // Display warning message dynamically
-        let $warningSpan = passportInput.next('.passport-warning');
-        if ($warningSpan.length === 0) {
-            $warningSpan = $('<span>').addClass('passport-warning text-danger d-block mt-1').insertAfter(passportInput);
-        }
-        $warningSpan.text(warningMessage);
-    });
-
-    // Mobile Number Validation with maxlength
-    // The HTML maxlength handles this visually, but JS confirms on submit.
-    $('#mobile').attr('maxlength', '11');
-
-  });
-</script>
-
-		
-<!-- Hit Counter JavaScript, still using sessionPageHits key -->
-<script>
-    // Session-based Hit Counter logic
-    if (typeof(Storage) !== "undefined") {
-        let sessionHits = sessionStorage.getItem("sessionPageHits"); 
-        if (sessionHits) {
-            sessionHits = parseInt(sessionHits) + 1;
-        } else {
-            sessionHits = 1;
-        }
-        sessionStorage.setItem("sessionPageHits", sessionHits);
-
-        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
-        if (counterDisplayElement) {
-            // Format the number to 6 digits with leading zeros
-            const formattedHits = String(sessionHits).padStart(7, '0');
-            counterDisplayElement.textContent = formattedHits;
-        }
-    } else {
-        // Fallback kung hindi suportado ang sessionStorage
-        const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
-        if (counterDisplayElement) {
-            counterDisplayElement.textContent = "N/A"; 
-            counterDisplayElement.parentNode.style.display = 'none'; 
-        }
-    }
-</script>
-
 <script>
   // Prevent background scroll while modal is open
   document.body.style.overflow = 'hidden';
@@ -1112,22 +787,271 @@ let email = $('#email').val().trim();
     document.getElementById('preEntryModal').style.display = 'none';
     document.body.style.overflow = '';
   };
-
-  // // If you want ONCE per session only (uncomment below, comment above)
-  // if (sessionStorage.getItem('practiceNoticeConfirmed')) {
-  //   document.getElementById('preEntryModal').style.display = 'none';
-  //   document.body.style.overflow = '';
-  // }
-  // document.getElementById('confirmEntryBtn').onclick = function() {
-  //   document.getElementById('preEntryModal').style.display = 'none';
-  //   document.body.style.overflow = '';
-  //   sessionStorage.setItem('practiceNoticeConfirmed', 'yes');
-  // };
 </script>
 
- 		
-<br><br><br><br>
-<br><br><br><br>
+<script>
+  $(function() {
+
+    // -------- Province/City data (names -> cities) ----------
+    const provinceCities = {
+      "Abra": ["Bangued","Boliney","Bucay","Bucloc","Daguioman","Danglas","Dolores","La Paz","Lacub","Lagangilang","Lagayan","Langiden","Licuan-Baay","Luba","Malibcong","Manabo","Peñarrubia","Pidigan","Pilar","Sallapadan","San Isidro","San Juan","San Quintin","Tayum","Tineg","Tubo","Villaviciosa"],
+      "Agusan del Norte": ["Buenavista","Butuan City","Cabadbaran City","Carmen","Jabonga","Kitcharao","Las Nieves","Magallanes","Nasipit","Remedios T. Romualdez","Santiago","Tubay"],
+      "Agusan del Sur": ["Bayugan City","Bunawan","Esperanza","La Paz","Loreto","Prosperidad","Rosario","San Francisco","San Luis","Santa Josefa","Sibagat","Talacogon","Trento","Veruela"],
+      "Aklan": ["Altavas","Balete","Banga","Batan","Buruanga","Ibajay","Kalibo","Lezo","Libacao","Madalag","Makato","Malay","Malinao","Nabas","New Washington","Numancia","Tangalan"],
+      "Albay": ["Bacacay","Camalig","Daraga","Guinobatan","Jovellar","Legazpi City","Libon","Ligao City","Malilipot","Malinao","Manito","Oas","Pio Duran","Polangui","Rapu-Rapu","Santo Domingo","Tabaco City","Tiwi"],
+      "Antique": ["Anini-y","Barbaza","Belison","Bugasong","Caluya","Culasi","Hamtic","Laua-an","Libertad","Pandan","Patnongon","San Jose","San Remigio","Sebaste","Sibalom","Tibiao","Tobias Fornier","Valderrama"],
+      "Apayao": ["Calanasan","Conner","Flora","Kabugao","Luna","Pudtol","Santa Marcela"],
+      "Aurora": ["Baler","Casiguran","Dilasag","Dinalungan","Dingalan","Dipaculao","Maria Aurora","San Luis"],
+      "Basilan": ["Akbar","Al-Barka","Hadji Mohammad Ajul","Hadji Muhtamad","Isabela City","Lamitan City","Lantawan","Maluso","Sumisip","Tabuan-Lasa","Tipo-Tipo","Tuburan","Ungkaya Pukan"],
+      "Bataan": ["Abucay","Bagac","Balanga City","Dinalupihan","Hermosa","Limay","Mariveles","Morong","Orani","Orion","Pilar","Samal"],
+      "Batanes": ["Basco","Itbayat","Ivana","Mahatao","Sabtang","Uyugan"],
+      "Batangas": ["Agoncillo","Alitagtag","Balayan","Balete","Batangas City","Bauan","Calaca","Calatagan","Cuenca","Ibaan","Laurel","Lemery","Lian","Lipa City","Lobo","Mabini","Malvar","Mataasnakahoy","Nasugbu","Padre Garcia","Rosario","San Jose","San Juan","San Luis","San Nicolas","San Pascual","Santa Teresita","Santo Tomas City","Taal","Talisay","Tanauan City","Taysan","Tingloy","Tuy"],
+      "Benguet": ["Atok","Bakun","Bokod","Buguias","Itogon","Kabayan","Kapangan","Kibungan","La Trinidad","Mankayan","Sablan","Tuba","Tublay"],
+      "Biliran": ["Almeria","Biliran","Cabucgayan","Caibiran","Culaba","Kawayan","Maripipi","Naval"],
+      "Bohol": ["Alicia","Anda","Antequera","Baclayon","Balilihan","Batuan","Bien Unido","Bilar","Buenavista","Calape","Candijay","Carmen","Catigbian","Clarin","Corella","Cortes","Dagohoy","Danao","Dauis","Dimiao","Duero","Garcia Hernandez","Getafe","Guindulman","Inabanga","Jagna","Jetafe","Lila","Loay","Loboc","Loon","Mabini","Maribojoc","Panglao","Pilar","Pres. Carlos P. Garcia (Pitogo)","Sagbayan","San Isidro","San Miguel","Sevilla","Sierra Bullones","Sikatuna","Tagbilaran City","Talibon","Trinidad","Tubigon","Ubay","Valencia"],
+      "Bukidnon": ["Baungon","Cabanglasan","Damulog","Dangcagan","Don Carlos","Impasug-ong","Kadingilan","Kalilangan","Kibawe","Kitaotao","Lantapan","Libona","Malaybalay City","Malitbog","Manolo Fortich","Maramag","Pangantucan","Quezon","San Fernando","Sumilao","Talakag","Valencia City"],
+      "Bulacan": ["Angat","Balagtas","Baliuag","Bocaue","Bulacan","Bustos","Calumpit","Doña Remedios Trinidad","Guiguinto","Hagonoy","Malolos City","Marilao","Meycauayan City","Norzagaray","Obando","Pandi","Paombong","Plaridel","Pulilan","San Ildefonso","San Jose del Monte City","San Miguel","San Rafael","Santa Maria"],
+      "Cagayan": ["Abulug","Alcala","Allacapan","Amulung","Aparri","Baggao","Ballesteros","Buguey","Calayan","Camalaniugan","Claveria","Enrile","Gattaran","Gonzaga","Iguig","Lal-lo","Lasam","Pamplona","Peñablanca","Piat","Rizal","Sanchez-Mira","Santa Ana","Santa Praxedes","Santa Teresita","Santo Niño","Solana","Tuao","Tuguegarao City"],
+      "Camarines Norte": ["Basud","Capalonga","Daet","Jose Panganiban","Labo","Mercedes","Paracale","San Lorenzo Ruiz","San Vicente","Santa Elena","Talisay","Vinzons"],
+      "Camarines Sur": ["Baao","Balatan","Bato","Bombon","Buhi","Bula","Cabusao","Calabanga","Camaligan","Canaman","Caramoan","Del Gallego","Gainza","Garchitorena","Goa","Iriga City","Lagonoy","Libmanan","Lupi","Magarao","Milaor","Minalabac","Nabua","Naga City","Ocampo","Pamplona","Pasacao","Pili","Presentacion","Ragay","Sagñay","San Fernando","San Jose","Sipocot","Siruma","Tigaon","Tinambac"],
+      "Camiguin": ["Catarman","Guinsiliban","Mahinog","Mambajao","Sagay"],
+      "Capiz": ["Cuartero","Dao","Dumalag","Dumarao","Ivisan","Jamindan","Ma-ayon","Mambusao","Panay","Panitan","Pilar","Pontevedra","Pres. Roxas","Roxas City","Sapian","Sigma","Tapaz"],
+      "Catanduanes": ["Bagamanoc","Baras","Bato","Caramoran","Gigmoto","Pandan","Panganiban","San Andres","San Miguel","Viga","Virac"],
+      "Cavite": ["Alfonso","Amadeo","Bacoor City","Carmona","Cavite City","Dasmariñas City","General Emilio Aguinaldo","General Trias City","GMA","Imus City","Indang","Kawit","Magallanes","Maragondon","Mendez","Naic","Noveleta","Rosario","Silang","Tagaytay City","Tanza","Ternate","Trece Martires City"],
+      "Cebu": ["Alcantara","Alcoy","Alegria","Aloguinsan","Argao","Asturias","Badian","Balamban","Bantayan","Barili","Bogo City","Boljoon","Borbon","Carcar City","Carmen","Catmon","Cebu City","Compostela","Consolacion","Cordova","Daanbantayan","Dalaguete","Danao City","Dumanjug","Ginatilan","Lapu-Lapu City","Liloan","Madridejos","Malabuyoc","Mandaue City","Medellin","Minglanilla","Moalboal","Naga City","Oslob","Pilar","Pinamungajan","Poro","Ronda","Samboan","San Fernando","San Francisco","San Remigio","Santa Fe","Santander","Sibonga","Sogod","Tabogon","Tabuelan","Talisay City","Toledo City","Tuburan","Tudela"],
+      "Cotabato": ["Alamada","Aleosan","Antipas","Arakan","Banisilan","Carmen","Kabacan","Kidapawan City","Libungan","M'lang","Magpet","Makilala","Matalam","Midsayap","Pigcawayan","Pikit","President Roxas","Tulunan"],
+      "Davao de Oro": ["Compostela","Laak","Mabini","Maco","Mahayag","Monkayo","Montevista","Nabunturan","New Bataan","Pantukan"],
+      "Davao del Norte": ["Asuncion","Braulio E. Dujali","Carmen","Kapalong","New Corella","Panabo City","Samal City","San Isidro","Santo Tomas","Tagum City","Talaingod"],
+      "Davao del Sur": ["Bansalan","Davao City","Digos City","Hagonoy","Kiblawan","Magsaysay","Malalag","Matanao","Padada","Santa Cruz","Sulop"],
+      "Davao Occidental": ["Don Marcelino","Jose Abad Santos","Malita","Santa Maria","Sarangani"],
+      "Davao Oriental": ["Baganga","Banaybanay","Boston","Caraga","Cateel","Governor Generoso","Lupon","Manay","Mati City","San Isidro","Tarragona"],
+      "Dinagat Islands": ["Basilisa","Cagdianao","Dinagat","Libjo","Loreto","San Jose","Tubajon"],
+      "Eastern Samar": ["Arteche","Balangiga","Balangkayan","Borongan City","Can-avid","Dolores","General MacArthur","Giporlos","Guiuan","Hernani","Jipapad","Lawaan","Llorente","Maslog","Maydolong","Mercedes","Oras","Quinapondan","Salcedo","San Julian","San Policarpo","Sulat","Taft"],
+      "Guimaras": ["Buenavista","Jordan","Nueva Valencia","San Lorenzo","Sibunag"],
+      "Ifugao": ["Aguinaldo","Alfonso Lista","Asipulo","Banaue","Hingyon","Hungduan","Kiangan","Lagawe","Lamut","Mayoyao","Tinoc"],
+      "Ilocos Norte": ["Adams","Bacarra","Badoc","Bangui","Banna","Batac City","Burgos","Carasi","Currimao","Dingras","Dumalneg","Laoag City","Marcos","Nueva Era","Pagudpud","Paoay","Pasuquin","Piddig","Pinili","San Nicolas","Sarrat","Solsona","Vintar"],
+      "Ilocos Sur": ["Alilem","Banayoyo","Bantay","Burgos","Cabugao","Candon City","Caoayan","Cervantes","Galimuyod","Gregorio del Pilar","Lidlidda","Magsingal","Nagbukel","Narvacan","Quirino","Salcedo","San Emilio","San Esteban","San Ildefonso","San Juan","San Vicente","Santa","Santa Catalina","Santa Cruz","Santa Lucia","Santa Maria","Santiago","Santo Domingo","Sigay","Sinait","Sugpon","Suyo","Tagudin","Vigan City"],
+      "Iloilo": ["Ajuy","Alimodian","Anilao","Badiangan","Balasan","Banate","Barotac Nuevo","Barotac Viejo","Batad","Bingawan","Cabatuan","Calinog","Carles","Concepcion","Dingle","Duenas","Dumangas","Estancia","Guimbal","Igbaras","Iloilo City","Janiuay","Lambunao","Leganes","Lemery","Leon","Maasin","Miagao","Mina","New Lucena","Oton","Passi City","Pavia","Pototan","San Dionisio","San Enrique","San Joaquin","San Miguel","San Rafael","Santa Barbara","Sara","Tigbauan","Tubungan","Zarraga"],
+      "Isabela": ["Alicia","Angadanan","Aurora","Benito Soliven","Burgos","Cabagan","Cabatuan","Cauayan City","Cordon","Delfin Albano","Dinapigue","Divilacan","Echague","Gamu","Ilagan City","Jones","Luna","Maconacon","Mallig","Naguilian","Palanan","Quezon","Quirino","Ramon","Reina Mercedes","Roxas","San Agustin","San Guillermo","San Isidro","San Manuel","San Mariano","San Mateo","San Pablo","Santa Maria","Santiago City","Santo Tomas","Tumauini"],
+      "Kalinga": ["Balbalan","Lubuagan","Pasil","Pinukpuk","Rizal","Tabuk City","Tanudan","Tinglayan"],
+      "La Union": ["Agoo","Aringay","Bacnotan","Bagulin","Balaoan","Bangar","Bauang","Burgos","Caba","Luna","Naguilian","Pugo","Rosario","San Fernando City","San Gabriel","San Juan","Santo Tomas","Santol","Sudipen","Tubao"],
+      "Laguna": ["Alaminos","Bay","Biñan City","Cabuyao City","Calamba City","Calauan","Cavinti","Famy","Kalayaan","Liliw","Los Baños","Luisiana","Lumban","Mabitac","Magdalena","Majayjay","Nagcarlan","Paete","Pagsanjan","Pakil","Pangil","Pila","Rizal","San Pablo City","San Pedro City","Santa Cruz","Santa Maria","Santa Rosa City","Siniloan","Victoria"],
+      "Lanao del Norte": ["Bacolod","Baloi","Baroy","Iligan City","Kapatagan","Kauswagan","Kolambugan","Lala","Linamon","Magsaysay","Maigo","Matungao","Munai","Nunungan","Pantao Ragat","Pantar","Poona Piagapo","Salvador","Sapad","Sultan Naga Dimaporo","Tagoloan","Tangcal","Tubod"],
+      "Lanao del Sur": ["Amai Manabilang","Bacolod-Kalawi","Balabagan","Balindong","Bayang","Binidayan","Buadiposo-Buntong","Bubong","Butig","Calanogas","Ditsaan-Ramain","Ganassi","Kapai","Kapatagan","Lumba-Bayabao","Lumbaca-Unayan","Lumbatan","Lumbayanague","Madalum","Madamba","Maguing","Malabang","Marantao","Marawi City","Masiu","Mulondo","Pagayawan","Piagapo","Poona Bayabao","Pualas","Saguiaran","Sultan Dumalondong","Tagoloan II","Tamparan","Taraka","Tubaran","Tugaya","Wao"],
+      "Leyte": ["Abuyog","Alangalang","Albuera","Babatngon","Barugo","Bato","Baybay City","Burauen","Calubian","Capoocan","Carigara","Dagami","Dulag","Hilongos","Hindang","Inopacan","Isabel","Jaro","Javier","Julita","Kananga","La Paz","Leyte","MacArthur","Mahaplag","Matag-ob","Matalom","Mayorga","Merida","Ormoc City","Palo","Palompon","Pastrana","San Isidro","San Miguel","Santa Fe","Tabango","Tabontabon","Tacloban City","Tanauan","Tolosa","Tunga","Villaba"],
+      "Maguindanao": ["Ampatuan","Barira","Buldon","Buluan","Cotabato City","Datu Abdullah Sangki","Datu Anggal Midtimbang","Datu Blah T. Sinsuat","Datu Hoffer Ampatuan","Datu Montawal","Datu Odin Sinsuat","Datu Paglas","Datu Piang","Datu Salibo","Datu Saudi-Ampatuan","Datu Unsay","Gen. S.K. Pendatun","Guindulungan","Kabuntalan","Mamasapano","Mangudadatu","Matanog","Northern Kabuntalan","Pagalungan","Paglat","Pandag","Parang","Rajah Buayan","Shariff Aguak","Shariff Saydona Mustapha","South Upi","Sultan Kudarat","Sultan Mastura","Sultan sa Barongis","Talayan","Talitay","Upi"],
+      "Marinduque": ["Boac","Buenavista","Gasan","Mogpog","Santa Cruz","Torrijos"],
+      "Masbate": ["Aroroy","Baleno","Balud","Batuan","Cataingan","Cawayan","Claveria","Dimasalang","Esperanza","Mandaon","Masbate City","Milagros","Mobo","Monreal","Palanas","Pio V. Corpuz","Placer","San Fernando","San Jacinto","San Pascual","Uson"],
+      "Metro Manila": ["Caloocan","Las Piñas","Makati","Malabon","Mandaluyong","Manila","Marikina","Muntinlupa","Navotas","Parañaque","Pasay","Pasig","Pateros","Quezon City","San Juan","Taguig","Valenzuela"],
+      "Misamis Occidental": ["Aloran","Baliangao","Bonifacio","Calamba","Clarin","Concepcion","Don Victoriano Chiongbian","Jimenez","Lopez Jaena","Oroquieta City","Ozamiz City","Panaon","Plaridel","Sapang Dalaga","Sinacaban","Tangub City","Tudela"],
+      "Misamis Oriental": ["Alubijid","Balingasag","Balingoan","Binuangan","Cagayan de Oro City","Claveria","El Salvador City","Gingoog City","Gitagum","Initao","Jasaan","Kinoguitan","Lagonglong","Laguitas","Lugait","Magsaysay","Manticao","Medina","Naawan","Opol","Salay","Sugbongcogon","Tagoloan","Talisayan","Villanueva"],
+      "Mountain Province": ["Barlig","Bauko","Besao","Bontoc","Sabangan","Sadanga","Sagada","Tadian"],
+      "Negros Occidental": ["Bacolod City","Bago City","Binalbagan","Cadiz City","Calatrava","Candoni","Cauayan","Enrique B. Magalona","Escalante City","Himamaylan City","Hinigaran","Hinoba-an","Ilog","Isabela","Kabankalan City","La Carlota City","La Castellana","Manapla","Moises Padilla","Murcia","Pontevedra","Pulupandan","Sagay City","Salvador Benedicto","San Carlos City","San Enrique","Silay City","Sipalay City","Talisay City","Toboso","Valladolid","Victorias City"],
+      "Negros Oriental": ["Amlan","Ayungon","Bacong","Bais City","Basay","Bayawan City","Bindoy","Canlaon City","Dauin","Dumaguete City","Guihulngan City","Jimalalud","La Libertad","Mabinay","Manjuyod","Pamplona","San Jose","Santa Catalina","Siaton","Sibulan","Tanjay City","Tayasan","Valencia","Vallehermoso","Zamboanguita"],
+      "Northern Samar": ["Allen","Biri","Bobon","Capul","Catarman","Catubig","Gamay","Laoang","Lapinig","Las Navas","Lavezares","Lope de Vega","Mapanas","Mondragon","Palapag","Pambujan","Rosario","San Antonio","San Isidro","San Jose","San Roque","San Vicente","Silvino Lobos","Victoria"],
+      "Nueva Ecija": ["Aliaga","Bongabon","Cabanatuan City","Cabiao","Carranglan","Cuyapo","Gabaldon","Gapan City","General Mamerto Natividad","General Tinio","Guimba","Jaen","Laur","Licab","Llanera","Lupao","Muñoz City","Nampicuan","Palayan City","Pantabangan","Peñaranda","Quezon","Rizal","San Antonio","San Isidro","San Jose City","San Leonardo","Santa Rosa","Santo Domingo","Science City of Muñoz","Talavera","Talugtug","Zaragoza"],
+      "Nueva Vizcaya": ["Alfonso Castañeda","Ambaguio","Aritao","Bagabag","Bambang","Bayombong","Diadi","Dupax del Norte","Dupax del Sur","Kasibu","Kayapa","Quezon","Santa Fe","Solano","Villaverde"],
+      "Occidental Mindoro": ["Abra de Ilog","Calintaan","Looc","Lubang","Magsaysay","Mamburao","Paluan","Rizal","Sablayan","San Jose","Santa Cruz"],
+      "Oriental Mindoro": ["Baco","Bansud","Bongabong","Bulalacao","Calapan City","Gloria","Mansalay","Naujan","Pinamalayan","Pola","Puerto Galera","Roxas","San Teodoro","Socorro","Victoria"],
+      "Palawan": ["Aborlan","Agutaya","Araceli","Balabac","Bataraza","Brooke's Point","Busuanga","Cagayancillo","Coron","Culion","Cuyo","Dumaran","El Nido","Kalayaan","Linapacan","Magsaysay","Narra","Puerto Princesa City","Quezon","Rizal","Roxas","San Vicente","Sofronio Española","Taytay"],
+      "Pampanga": ["Angeles City","Apalit","Arayat","Bacolor","Candaba","Floridablanca","Guagua","Lubao","Mabalacat City","Macabebe","Magalang","Masantol","Mexico","Minalin","Porac","San Fernando City","San Luis","San Simon","Santa Ana","Santa Rita","Santo Tomas","Sasmuan"],
+      "Pangasinan": ["Agno","Aguilar","Alaminos City","Alcala","Anda","Asingan","Balungao","Bani","Basista","Bautista","Bayambang","Binalonan","Binmaley","Bolinao","Bugallon","Burgos","Calasiao","Dagupan City","Dasol","Infanta","Labrador","Laoac","Lingayen","Mabini","Malasiqui","Manaoag","Mangaldan","Mangatarem","Mapandan","Natividad","Pozorrubio","Rosales","San Carlos City","San Fabian","San Jacinto","San Manuel","San Nicolas","San Quintin","Santa Barbara","Santa Maria","Santo Tomas","Sison","Sual","Tayug","Umingan","Urbiztondo","Urdaneta City","Villasis"],
+      "Quezon": ["Agdangan","Alabat","Atimonan","Buenavista","Burdeos","Calauag","Candelaria","Catanauan","Dolores","General Luna","General Nakar","Guinayangan","Gumaca","Infanta","Jomalig","Lopez","Lucban","Lucena City","Macalelon","Mauban","Mulanay","Padre Burgos","Pagbilao","Panukulan","Patnanungan","Perez","Pitogo","Plaridel","Polillo","Quezon","Real","Sampaloc","San Andres","San Antonio","San Francisco","San Narciso","Sariaya","Tagkawayan","Tayabas City","Tiaong","Unisan"],
+      "Quirino": ["Aglipay","Cabarroguis","Diffun","Maddela","Nagtipunan","Saguday"],
+      "Rizal": ["Angono","Antipolo City","Baras","Binangonan","Cainta","Cardona","Jala-Jala","Morong","Pililla","Rodriguez (Montalban)","San Mateo","Tanay","Taytay","Teresa"],
+      "Romblon": ["Alcantara","Banton","Cajidiocan","Calatrava","Concepcion","Corcuera","Ferrol","Looc","Magdiwang","Odiongan","Romblon","San Agustin","San Andres","San Fernando","San Jose","Santa Fe","Santa Maria"],
+      "Samar": ["Almagro","Basey","Calbayog City","Calbiga","Catbalogan City","Daram","Gandara","Hinabangan","Jiabong","Marabut","Matuguinao","Motiong","Pagsanghan","Paranas","Pinabacdao","San Jorge","San Jose de Buan","San Sebastian","Santa Margarita","Santa Rita","Santo Niño","Talalora","Tarangnan","Villareal","Zumarraga"],
+      "Sarangani": ["Alabel","Glan","Kiamba","Maasim","Maitum","Malapatan","Malungon"],
+      "Siquijor": ["Enrique Villanueva","Larena","Lazi","Maria","San Juan","Siquijor"],
+      "Sorsogon": ["Barcelona","Bulan","Bulusan","Casiguran","Castilla","Donsol","Gubat","Irosin","Juban","Magallanes","Matnog","Pilar","Prieto Diaz","Santa Magdalena","Sorsogon City"],
+      "South Cotabato": ["Banga","General Santos City","Koronadal City","Lake Sebu","Norala","Polomok","Santo Niño","Surallah","Tampakan","Tantangan","T'boli","Tupi"],
+      "Southern Leyte": ["Anahawan","Bontoc","Hinunangan","Hinundayan","Libagon","Liloan","Limasawa","Maasin City","Macrohon","Malitbog","Padre Burgos","Pintuyan","Saint Bernard","San Francisco","San Juan","San Ricardo","Silago","Sogod","Tomas Oppus"],
+      "Sultan Kudarat": ["Bagumbayan","Columbio","Esperanza","Isulan","Kalamansig","Lambayong","Lebak","Lutayan","Palimbang","President Quirino","Senator Ninoy Aquino","Tacurong City"],
+      "Sulu": ["Banguingui","Hadji Panglima Tahil","Indanan","Jolo","Kalingalan Caluang","Lugus","Luuk","Maimbung","Old Panamao","Omar","Pandami","Panglima Estino","Pangutaran","Parang","Pata","Patikul","Siasi","Talipao","Tapul","Tongkil"],
+      "Surigao del Norte": ["Alegria","Bacuag","Burgos","Claver","Dapa","Del Carmen","General Luna","Gigaquit","Mainit","Malimono","Pilar","Placer","San Benito","San Francisco","San Isidro","Santa Monica","Sison","Socorro","Surigao City","Tagana-an","Tubod"],
+      "Surigao del Sur": ["Barobo","Bayabas","Bislig City","Cagwait","Cantilan","Carmen","Carrascal","Cortes","Hinatuan","Lanuza","Lianga","Lingig","Madrid","Marihatag","San Agustin","San Miguel","Tagbina","Tago","Tandag City"],
+      "Tarlac": ["Anao","Bamban","Camiling","Capas","Concepcion","Gerona","La Paz","Mayantoc","Moncada","Paniqui","Pura","Ramos","San Clemente","San Jose","San Manuel","Santa Ignacia","Tarlac City","Victoria"],
+      "Tawi-Tawi": ["Bongao","Languyan","Mapun","Panglima Sugala","Sapa-Sapa","Sibutu","Simunul","Sitangkai","South Ubian","Tandubas","Turtle Islands"],
+      "Zambales": ["Botolan","Cabangan","Candelaria","Castillejos","Iba","Masinloc","Olongapo City","Palauig","San Antonio","San Felipe","San Marcelino","San Narciso","Santa Cruz","Subic"],
+      "Zamboanga del Norte": ["Bacungan (Leon T. Postigo)","Baliguian","Dapitan City","Dipolog City","Godod","Gutalac","Jose Dalman","Kalawit","Katipunan","La Libertad","Labason","Liloy","Manukan","Mutia","Piñan","Polanco","Pres. Manuel A. Roxas","Rizal","Salug","Sergio Osmeña Sr.","Siayan","Sibuco","Sibutad","Sindangan","Siocon","Sirawai","Tampilisan"],
+      "Zamboanga del Sur": ["Aurora","Bayog","Dimataling","Dinas","Dumalinao","Dumingag","Guipos","Josefina","Kumalarang","Labangan","Lakewood","Lapuyan","Mahayag","Margosatubig","Midsalip","Molave","Pagadian City","Pitogo","Ramon Magsaysay","San Miguel","San Pablo","Sominot","Tabina","Tambulig","Tigbao","Tukuran","Vincenzo A. Sagun","Zamboanga City"],
+      "Zamboanga Sibugay": ["Alicia","Buug","Diplahan","Imelda","Ipil","Kabasalan","Mabuhay","Malangas","Naga","Olutanga","Payao","Roseller Lim","Siay","Talusan","Titay","Tungawan"]
+    };
+
+    // -------- Province Codes (DMW numeric values) ----------
+    const provinceCodes = {
+      "Abra":"1","Agusan del Norte":"2","Agusan del Sur":"3","Aklan":"4","Albay":"5","Antique":"6","Apayao":"7","Aurora":"8","Basilan":"9","Bataan":"10","Batanes":"11","Batangas":"12","Benguet":"13","Biliran":"14","Bohol":"15","Bukidnon":"16","Bulacan":"17","Cagayan":"18","Camarines Norte":"19","Camarines Sur":"20","Camiguin":"21","Capiz":"22","Catanduanes":"23","Cavite":"24","Cebu":"25","Compostela Valley":"26","Cotabato":"27","Davao del Norte":"28","Davao del Sur":"29","Davao Oriental":"30","Dinagat Islands":"31","Eastern Samar":"32","Guimaras":"33","Ifugao":"34","Ilocos Norte":"35","Ilocos Sur":"36","Iloilo":"37","Isabela":"38","Kalinga":"39","La Union":"40","Laguna":"41","Lanao del Norte":"42","Lanao del Sur":"43","Leyte":"44","Maguindanao":"45","Marinduque":"46","Masbate":"47","Metro Manila":"81","Misamis Occidental":"48","Misamis Oriental":"49","Mountain Province":"50","NA (Not in the philippines)":"82","Negros Occidental":"51","Negros Oriental":"52","Northern Samar":"53","Nueva Ecija":"54","Nueva Vizcaya":"55","Occidental Mindoro":"56","Oriental Mindoro":"57","Palawan":"58","Pampanga":"59","Pangasinan":"60","Quezon":"61","Quirino":"62","Rizal":"63","Romblon":"64","Samar":"65","Sarangani":"66","Siquijor":"67","Sorsogon":"68","South Cotabato":"69","Southern Leyte":"70","Sultan Kudarat":"71","Sulu":"72","Surigao del Norte":"73","Surigao del Sur":"74","Tarlac":"75","Tawi-Tawi":"76","Zambales":"77","Zamboanga del Norte":"78","Zamboanga del Sur":"79","Zamboanga Sibugay":"80"
+    };
+
+    // Reverse map: code -> name
+    const codeToProvince = Object.fromEntries(Object.entries(provinceCodes).map(([k,v]) => [String(v), k]));
+
+    // Populate province dropdown with numeric values
+    let $province = $('#province');
+    let $city = $('#city');
+
+    // Sort names alphabetically then append options with numeric values
+    Object.keys(provinceCodes).sort().forEach(name => {
+      const code = provinceCodes[name];
+      $province.append(`<option value="${code}">${name}</option>`);
+    });
+
+    // On change, map code back to name to fetch cities
+    $province.on('change', function() {
+      let provName = codeToProvince[this.value];
+      let cities = provinceCities[provName] || [];
+      $city.html('<option value="">Select a city</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join(''));
+    });
+
+    // Show password toggles (DMW-compatible IDs)
+    function wireShowToggle(chkId) {
+      const $chk = $('#'+chkId);
+      const targetId = $chk.attr('data-target');
+      $chk.on('change', function(){
+        const type = this.checked ? 'text' : 'password';
+        $('#'+targetId).attr('type', type);
+      });
+    }
+    wireShowToggle('showPword');
+    wireShowToggle('showPword1');
+
+    // Auto-uppercase for text inputs with .uppercase
+    $(document).on('input', 'input[type="text"].uppercase', function() {
+      this.value = this.value.toUpperCase();
+    });
+
+    // Click image to open file chooser
+    $('#picture').on('click', function(){ $('#appPhoto').click(); });
+    $('#Passport_picture').on('click', function(){ $('#ppPhoto').click(); });
+
+    // ID photo preview + size check
+    $('#appPhoto').on('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => $('#picture').attr('src', e.target.result);
+      reader.readAsDataURL(file);
+      const sizeKB = (file.size / 1024).toFixed(2);
+      let msg = '';
+      if (sizeKB > 13.312) msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${sizeKB} Kb is too large.</span>`;
+      else if (sizeKB < 9.216) msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${sizeKB} Kb is too small.</span>`;
+      $('#app_size').html(msg);
+    });
+
+    // Passport photo preview + size check
+    $('#ppPhoto').on('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => $('#Passport_picture').attr('src', e.target.result);
+      reader.readAsDataURL(file);
+      const sizeKB = (file.size / 1024).toFixed(2);
+      let msg = '';
+      if (sizeKB > 90) msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${sizeKB} Kb is too large.</span>`;
+      else if (sizeKB < 50) msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${sizeKB} Kb is too small.</span>`;
+      $('#passport_size').html(msg);
+    });
+
+    // Basic validations on submit (practice-only)
+    $('#EPSforms').on('submit', function(e){
+      e.preventDefault();
+
+      // Age 18–38
+      const bdateStr = $('#bdate').val();
+      if (!bdateStr) return alert('Please enter your Birthdate.');
+      const bd = new Date(bdateStr);
+      const now = new Date();
+      let age = now.getFullYear() - bd.getFullYear();
+      const m = now.getMonth() - bd.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) age--;
+      if (age < 18 || age > 38) return alert('Registration not allowed: Only applicants 18 to 38 years old are allowed.');
+
+      // Passport validity >= 1 year
+      const pvalidStr = $('#pvalidity').val();
+      if (!pvalidStr) return alert('Please enter Passport Validity date.');
+      const pv = new Date(pvalidStr);
+      const oneYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDate());
+      if (pv < oneYear) return alert('Registration not allowed: Passport must have at least 1 year of validity remaining from the current date.');
+
+      // Password match
+      if ($('#pword').val() !== $('#pword1').val()) return alert('Registration not allowed: Password and Re-type Password must match.');
+
+      // Mobile 11 digits
+      if (!/^\d{11}$/.test($('#contact').val())) return alert('Registration not allowed: Mobile Number must be exactly 11 digits and contain only numbers.');
+
+      // Save minimal success data for redirect (practice only)
+      let lname = $('#lname').val().trim();
+      let fname = $('#fname').val().trim();
+      let mname = $('#mname').val().trim();
+      let suffix = $('#sname').val().trim();
+      let fullname = `${fname} ${mname} ${lname}`.replace(/\s+/g,' ').trim();
+      if (suffix) fullname += ' ' + suffix.toUpperCase();
+      let email = $('#email').val().trim();
+
+      // Simple incrementing id
+      let successCount = localStorage.getItem('successCount');
+      successCount = successCount ? parseInt(successCount)+1 : 1;
+      localStorage.setItem('successCount', successCount);
+      const idStr = String(successCount).padStart(6,'0');
+
+      // Store (practice only)
+      const regList = JSON.parse(localStorage.getItem('reg_list') || '[]');
+      regList.push({
+        id: idStr,
+        fullname,
+        sex: $('input[name="sex"]:checked').val(),
+        bdate: $('#bdate').val(),
+        passport: $('#pport').val(),
+        passport_validity: $('#pvalidity').val(),
+        email,
+        mobile: $('#contact').val(),
+        province: $('#province').val(), // numeric code
+        city: $('#city').val(),
+        password: $('#pword').val()
+      });
+      localStorage.setItem('reg_list', JSON.stringify(regList));
+
+      localStorage.setItem('reg_fullname', fullname);
+      localStorage.setItem('reg_email', email);
+      localStorage.setItem('reg_id', idStr);
+
+      // Redirect (you can create success.html or swap to alert)
+      window.location.href = 'success.html';
+    });
+
+    // Passport number helper (max 9, warn if not 9)
+    $('#pport').on('input', function(){
+      const val = this.value.trim();
+      let msg = '';
+      if (val.length > 9) {
+        this.value = val.substring(0,9);
+        msg = 'Passport Number cannot exceed 9 digits.';
+      } else if (val.length < 9) {
+        msg = 'Passport Number must be 9 digits.';
+      }
+      let $w = $(this).next('.passport-warning');
+      if (!$w.length) $w = $('<span class="passport-warning text-danger d-block mt-1"></span>').insertAfter(this);
+      $w.text(msg);
+    });
+
+  });
+</script>
+
+<!-- Hit Counter (practice only) -->
+<script>
+  if (typeof(Storage) !== "undefined") {
+    let sessionHits = sessionStorage.getItem("sessionPageHits");
+    sessionHits = sessionHits ? parseInt(sessionHits) + 1 : 1;
+    sessionStorage.setItem("sessionPageHits", sessionHits);
+    const counterDisplayElement = document.getElementById("sessionHitCounterDisplay");
+    if (counterDisplayElement) {
+      counterDisplayElement.textContent = String(sessionHits).padStart(7, '0');
+    }
+  }
+</script>
+
+<br><br><br><br><br><br><br><br>
+
 <footer>
   <!-- PH flag 3D badge (left) -->
   <div style="
@@ -1151,7 +1075,6 @@ let email = $('#email').val().trim();
       transform: rotateX(18deg) rotateY(13deg) scale(1.12);
       transition: transform 0.2s;
     ">
-      <!-- Front (PH Flag) -->
       <div style="
         position: absolute;
         width: 38px; height: 38px;
@@ -1167,54 +1090,27 @@ let email = $('#email').val().trim();
              alt="Philippines Flag"
              style="width: 33px; height: 23px; object-fit: contain; display: block;">
       </div>
-      <!-- Top -->
-      <div style="
-        position: absolute;
-        width: 38px; height: 38px;
-        border-radius: 11px 11px 16px 16px;
-        opacity:0.92;
-        transform: rotateX(90deg) translateZ(19px);
-      "></div>
-      <!-- Left Side -->
-      <div style="
-        position: absolute;
-        width: 38px; height: 38px;
-        border-radius: 13px 0 0 13px / 15px 0 0 15px;
-        opacity:0.90;
-        transform: rotateY(-90deg) translateZ(19px);
-      "></div>
+      <div style="position:absolute;width:38px;height:38px;border-radius:11px 11px 16px 16px;opacity:0.92;transform: rotateX(90deg) translateZ(19px);"></div>
+      <div style="position:absolute;width:38px;height:38px;border-radius:13px 0 0 13px / 15px 0 0 15px;opacity:0.90;transform: rotateY(-90deg) translateZ(19px);"></div>
     </div>
   </div>
 
-  <!-- LOGO (centered) -->
+  <!-- LOGO (center) -->
   <div style="
-  position: absolute;
-  top: -53.7px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 12;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-">
-  <img src="vizkor.png"
-       alt="VIZKOR Logo"
-       style="
-         width: 85px;
-         height: 85px;
-         object-fit: contain;
-         display: block;
-         background: none;
-         border: none;
-       ">
-</div>
-
-
-
+    position: absolute;
+    top: -53.7px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 12;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;">
+    <img src="vizkor.png" alt="VIZKOR Logo" style="width:85px;height:85px;object-fit:contain;display:block;background:none;border:none;">
+  </div>
 
   <!-- KR flag 3D badge (right) -->
   <div style="
@@ -1228,17 +1124,14 @@ let email = $('#email').val().trim();
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
-    pointer-events: none;
-  ">
+    pointer-events: none;">
     <div style="
       width: 38px;
       height: 38px;
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(18deg) rotateY(-13deg) scale(1.12);
-      transition: transform 0.2s;
-    ">
-      <!-- Front (KR Flag) -->
+      transition: transform 0.2s;">
       <div style="
         position: absolute;
         width: 38px; height: 38px;
@@ -1248,37 +1141,21 @@ let email = $('#email').val().trim();
         align-items: center;
         justify-content: center;
         transform: translateZ(19px);
-        overflow: hidden;
-      ">
+        overflow: hidden;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Flag_of_South_Korea.svg"
              alt="Korean Flag"
-             style="width: 33px; height: 23px; object-fit: contain; display: block;">
+             style="width:33px;height:23px;object-fit:contain;display:block;">
       </div>
-      <!-- Top -->
-      <div style="
-        position: absolute;
-        width: 38px; height: 38px;
-        border-radius: 11px 11px 16px 16px;
-        opacity:0.92;
-        transform: rotateX(90deg) translateZ(19px);
-      "></div>
-      <!-- Right Side -->
-      <div style="
-        position: absolute;
-        width: 38px; height: 38px;
-        border-radius: 0 13px 13px 0 / 0 15px 15px 0;
-        opacity:0.90;
-        transform: rotateY(90deg) translateZ(19px);
-      "></div>
+      <div style="position:absolute;width:38px;height:38px;border-radius:11px 11px 16px 16px;opacity:0.92;transform: rotateX(90deg) translateZ(19px);"></div>
+      <div style="position:absolute;width:38px;height:38px;border-radius:0 13px 13px 0 / 0 15px 15px 0;opacity:0.90;transform: rotateY(90deg) translateZ(19px);"></div>
     </div>
   </div>
 
-  <!-- Footer Content -->
   <div style="margin-top:8px; font-weight:650; font-size:1.13em; margin-bottom:3px;">
     &copy; All rights reserved 2025
   </div>
   <div style="font-size:0.99em; margin-bottom:7px;">
-    Contact: 
+    Contact:
     <a href="mailto:Lemsvlog@gmail.com" style="text-decoration:none;">
       <i class="fa fa-envelope" style="margin-right:5px;"></i>Lemsvlog@gmail.com
     </a>
@@ -1287,26 +1164,18 @@ let email = $('#email').val().trim();
     Created by <span style="font-weight:600;">VIZKOR KLC Team</span>
   </div>
 </footer>
-	<script>
-// Disable right-click
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-});
 
-// Disable certain keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-  // Disable Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+P, F12
-  if (
-    (e.ctrlKey && (e.key.toLowerCase() === 'u' || e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'c' || e.key.toLowerCase() === 'p')) ||
-    (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j')) ||
-    (e.key === 'F12')
-  ) {
-    e.preventDefault();
-    return false;
-  }
-});
+<script>
+  // Disable right-click & common view-source shortcuts
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', function(e) {
+    if (
+      (e.ctrlKey && ['u','s','c','p'].includes(e.key.toLowerCase())) ||
+      (e.ctrlKey && e.shiftKey && ['i','j'].includes(e.key.toLowerCase())) ||
+      (e.key === 'F12')
+    ) { e.preventDefault(); return false; }
+  });
 </script>
-
 
 </body>
 </html>
