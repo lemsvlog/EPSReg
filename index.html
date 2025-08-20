@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Registration Hub (Green–Gold Cyber)</title>
+  <title>Registration Hub (Cyber Cool Blue)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* ===== Base Green–Gold Cyber Theme ===== */
+    /* ===== Cyber Cool Blue Theme ===== */
     :root{
-      --bg-1:#06120d;        /* page bg (deep green-black) */
-      --bg-2:#0c1b14;        /* card/modal bg */
-      --muted:#a7b7ac;       /* muted text */
-      --text:#eaf7ef;        /* main text */
-      --accent:#10b981;      /* emerald */
-      --accent-2:#059669;    /* deep emerald */
-      --gold:#f5d565;        /* warm gold */
-      --gold-2:#f2c94c;      /* brighter gold */
+      --bg-1:#050b16;        /* page bg (deep navy-black) */
+      --bg-2:#0b1628;        /* card/modal bg */
+      --muted:#9da8c2;       /* muted text */
+      --text:#e6f0ff;        /* main text */
+      --accent:#3b82f6;      /* bright blue */
+      --accent-2:#1e3a8a;    /* deep blue */
+      --cyan:#22d3ee;        /* cyan highlight */
+      --cyan-2:#06b6d4;      /* deeper cyan */
       --danger:#ef4444;
       --shadow:0 10px 30px rgba(0,0,0,.55);
-      --ring: 0 0 14px rgba(16,185,129,.55), 0 0 28px rgba(245,213,101,.35);
+      --ring: 0 0 14px rgba(59,130,246,.55), 0 0 28px rgba(34,211,238,.35);
     }
 
     *{box-sizing:border-box}
@@ -31,9 +31,9 @@
       flex-direction:column;
       align-items:center;
       background:
-        radial-gradient(1200px 800px at 10% -10%, rgba(16,185,129,.18), transparent 60%),
-        radial-gradient(1000px 800px at 100% 120%, rgba(245,213,101,.16), transparent 60%),
-        linear-gradient(180deg, var(--bg-1), #07150f 70%, #040b08);
+        radial-gradient(1200px 800px at 10% -10%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(1000px 800px at 100% 120%, rgba(34,211,238,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #081020 70%, #040812);
       overflow-x:hidden;
     }
 
@@ -43,8 +43,8 @@
       text-align:center;
       padding:28px 12px 18px;
       background:
-        linear-gradient(90deg, rgba(16,185,129,.10), rgba(245,213,101,.10));
-      border-bottom:1px solid rgba(245,213,101,.25);
+        linear-gradient(90deg, rgba(59,130,246,.10), rgba(34,211,238,.10));
+      border-bottom:1px solid rgba(34,211,238,.25);
       box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 4px 14px rgba(0,0,0,.6);
       position:sticky;
       top:0;
@@ -54,13 +54,13 @@
       margin:0;
       font-size:1.8rem;
       font-weight:800;
-      background:linear-gradient(90deg, var(--gold), var(--accent));
+      background:linear-gradient(90deg, var(--cyan), var(--accent));
       -webkit-background-clip:text;
       -webkit-text-fill-color:transparent;
       letter-spacing:1.4px;
       text-shadow:
-        0 0 10px rgba(245,213,101,.55),
-        0 0 16px rgba(16,185,129,.45);
+        0 0 10px rgba(59,130,246,.55),
+        0 0 16px rgba(34,211,238,.45);
     }
 
     /* ===== Grid of Cards ===== */
@@ -75,8 +75,8 @@
     .card{
       width:260px;
       height:180px;
-      background:linear-gradient(180deg, var(--bg-2), #0a1812);
-      border:1px solid rgba(245,213,101,.28);
+      background:linear-gradient(180deg, var(--bg-2), #0a1322);
+      border:1px solid rgba(59,130,246,.28);
       border-radius:18px;
       box-shadow: var(--shadow);
       display:flex;
@@ -90,16 +90,16 @@
       cursor:pointer;
     }
 
-    /* neon sweep (green + gold) */
+    /* neon sweep (blue + cyan) */
     .card::before{
       content:"";
       position:absolute; inset:-2px;
       background: conic-gradient(
         from 180deg at 50% 50%,
-        rgba(16,185,129,0),
-        rgba(16,185,129,.35),
-        rgba(245,213,101,.35),
-        rgba(16,185,129,0)
+        rgba(59,130,246,0),
+        rgba(59,130,246,.35),
+        rgba(34,211,238,.35),
+        rgba(59,130,246,0)
       );
       filter: blur(20px);
       transform: translateX(-70%);
@@ -111,12 +111,12 @@
     .card span{
       position:relative; z-index:1;
       font-weight:700; letter-spacing:.5px;
-      text-shadow:0 0 4px rgba(16,185,129,.6);
+      text-shadow:0 0 4px rgba(59,130,246,.6);
     }
 
     .card:hover{
       transform: translateY(-8px) scale(1.03);
-      border-color: rgba(245,213,101,.6);
+      border-color: rgba(34,211,238,.6);
       box-shadow: var(--ring);
     }
 
@@ -125,7 +125,7 @@
       .card{ width:90vw; max-width:420px; }
     }
 
-    /* ===== Modal (Green–Gold) ===== */
+    /* ===== Modal (Blue–Cyan) ===== */
     .modal{
       display:none;
       position:fixed; inset:0;
@@ -141,8 +141,8 @@
 
     .modal-content{
       width:320px; max-width:92vw;
-      background: linear-gradient(180deg, #0f1f18, #0c1a14);
-      border:1px solid rgba(245,213,101,.35);
+      background: linear-gradient(180deg, #0e1a2b, #0a1422);
+      border:1px solid rgba(34,211,238,.35);
       border-radius:16px;
       padding:20px 18px 16px;
       text-align:center;
@@ -156,7 +156,7 @@
       font-size:20px;
       font-weight:700;
       color:var(--text);
-      text-shadow:0 0 6px rgba(245,213,101,.45);
+      text-shadow:0 0 6px rgba(59,130,246,.45);
     }
     .hint{ margin:0 0 14px; font-size:12px; color:var(--muted); }
 
@@ -164,8 +164,8 @@
     .modal-content input{
       width:70%;
       padding:10px 12px;
-      background:#0a1712;
-      border:1px solid rgba(167,183,172,.35);
+      background:#091524;
+      border:1px solid rgba(157,168,194,.35);
       color:var(--text);
       border-radius:8px;
       outline:none;
@@ -173,12 +173,12 @@
     }
     .modal-content input:focus{
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(16,185,129,.25);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.25);
     }
 
     .btn{
-      background: linear-gradient(90deg, var(--gold), var(--accent));
-      color:#052015;
+      background: linear-gradient(90deg, var(--cyan), var(--accent));
+      color:#04101e;
       border:none;
       padding:10px 14px;
       border-radius:8px;
@@ -194,14 +194,47 @@
       margin-top:10px; min-height:18px;
       font-size:12px; color:var(--danger);
     }
+	header h1{
+  margin:0;
+  line-height:1.2;
+}
+
+.title-main{
+  display:block;
+  font-size:3.2rem;          /* mas malaki si VIZKOR */
+  font-weight:900;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  background:linear-gradient(90deg, #3b82f6, #2563eb, #60a5fa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:
+    0 0 16px rgba(59,130,246,.8),
+    0 0 28px rgba(37,99,235,.7),
+    0 0 40px rgba(96,165,250,.6);
+}
+
+.title-sub{
+  display:block;
+  font-size:1.2rem;
+  font-weight:600;
+  color:#dbeafe;  /* light blue text */
+  letter-spacing:1px;
+  text-shadow:
+    0 0 6px rgba(96,165,250,.6),
+    0 0 10px rgba(37,99,235,.5);
+}
   </style>
 </head>
 <body>
 
   <!-- Top Banner -->
   <header>
-    <h1>VIZKOR Korean Language Learning Academy</h1>
-  </header>
+  <h1>
+    <span class="title-main">VIZKOR</span><br>
+    <span class="title-sub">Korean Language Learning Academy</span>
+  </h1>
+</header>
 
   <div class="container">
     <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
