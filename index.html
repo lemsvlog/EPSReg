@@ -2,36 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Registration Hub (Dark)</title>
+  <title>Registration Hub (Green–Gold Cyber)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* ===== Base (Dark) ===== */
+    /* ===== Base Green–Gold Cyber Theme ===== */
     :root{
-      --bg-1:#0b0f17;       /* page bg */
-      --bg-2:#0f1724;       /* card/modal bg */
-      --muted:#8b93a7;      /* muted text */
-      --text:#e6ebff;       /* main text */
-      --accent:#60a5fa;     /* blue */
-      --accent-2:#22d3ee;   /* cyan */
+      --bg-1:#06120d;        /* page bg (deep green-black) */
+      --bg-2:#0c1b14;        /* card/modal bg */
+      --muted:#a7b7ac;       /* muted text */
+      --text:#eaf7ef;        /* main text */
+      --accent:#10b981;      /* emerald */
+      --accent-2:#059669;    /* deep emerald */
+      --gold:#f5d565;        /* warm gold */
+      --gold-2:#f2c94c;      /* brighter gold */
       --danger:#ef4444;
-      --shadow:0 10px 30px rgba(0,0,0,.45);
-      --ring: 0 0 0 2px rgba(34,211,238,.25), 0 10px 30px rgba(34,211,238,.15);
+      --shadow:0 10px 30px rgba(0,0,0,.55);
+      --ring: 0 0 14px rgba(16,185,129,.55), 0 0 28px rgba(245,213,101,.35);
     }
 
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
       color:var(--text);
       min-height:100vh;
       display:flex;
-      justify-content:center;
+      flex-direction:column;
       align-items:center;
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,.15), transparent 60%),
-        radial-gradient(900px 600px at 110% 110%, rgba(96,165,250,.15), transparent 60%),
-        linear-gradient(180deg, var(--bg-1), #0a0e16 60%, #05070c);
+        radial-gradient(1200px 800px at 10% -10%, rgba(16,185,129,.18), transparent 60%),
+        radial-gradient(1000px 800px at 100% 120%, rgba(245,213,101,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #07150f 70%, #040b08);
+      overflow-x:hidden;
+    }
+
+    /* ===== Top Banner ===== */
+    header{
+      width:100%;
+      text-align:center;
+      padding:28px 12px 18px;
+      background:
+        linear-gradient(90deg, rgba(16,185,129,.10), rgba(245,213,101,.10));
+      border-bottom:1px solid rgba(245,213,101,.25);
+      box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 4px 14px rgba(0,0,0,.6);
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+    header h1{
+      margin:0;
+      font-size:1.8rem;
+      font-weight:800;
+      background:linear-gradient(90deg, var(--gold), var(--accent));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      letter-spacing:1.4px;
+      text-shadow:
+        0 0 10px rgba(245,213,101,.55),
+        0 0 16px rgba(16,185,129,.45);
     }
 
     /* ===== Grid of Cards ===== */
@@ -40,15 +69,15 @@
       gap:1.4rem;
       flex-wrap:wrap;
       justify-content:center;
-      padding:1rem;
+      padding:2rem 1rem;
     }
 
     .card{
       width:260px;
       height:180px;
-      background:linear-gradient(180deg, var(--bg-2), #0b1424);
-      border:1px solid rgba(96,165,250,.18);
-      border-radius:16px;
+      background:linear-gradient(180deg, var(--bg-2), #0a1812);
+      border:1px solid rgba(245,213,101,.28);
+      border-radius:18px;
       box-shadow: var(--shadow);
       display:flex;
       align-items:center;
@@ -59,17 +88,22 @@
       overflow:hidden;
       transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
       cursor:pointer;
-      isolation:isolate;
     }
 
-    /* neon sweep */
+    /* neon sweep (green + gold) */
     .card::before{
       content:"";
       position:absolute; inset:-2px;
-      background: conic-gradient(from 180deg at 50% 50%, rgba(34,211,238,.0), rgba(34,211,238,.25), rgba(96,165,250,.25), rgba(34,211,238,.0));
-      filter: blur(18px);
-      transform: translateX(-60%);
-      transition: transform .45s ease;
+      background: conic-gradient(
+        from 180deg at 50% 50%,
+        rgba(16,185,129,0),
+        rgba(16,185,129,.35),
+        rgba(245,213,101,.35),
+        rgba(16,185,129,0)
+      );
+      filter: blur(20px);
+      transform: translateX(-70%);
+      transition: transform .55s ease;
       z-index:0;
     }
     .card:hover::before{ transform: translateX(0%); }
@@ -77,12 +111,12 @@
     .card span{
       position:relative; z-index:1;
       font-weight:700; letter-spacing:.5px;
-      text-shadow:0 1px 0 rgba(0,0,0,.4);
+      text-shadow:0 0 4px rgba(16,185,129,.6);
     }
 
     .card:hover{
-      transform: translateY(-8px) scale(1.02);
-      border-color: rgba(34,211,238,.45);
+      transform: translateY(-8px) scale(1.03);
+      border-color: rgba(245,213,101,.6);
       box-shadow: var(--ring);
     }
 
@@ -91,15 +125,14 @@
       .card{ width:90vw; max-width:420px; }
     }
 
-    /* ===== Modal (Dark) ===== */
+    /* ===== Modal (Green–Gold) ===== */
     .modal{
       display:none;
       position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       z-index:9999;
-      display:none;
       align-items:center;
       justify-content:center;
       padding:1rem;
@@ -108,51 +141,50 @@
 
     .modal-content{
       width:320px; max-width:92vw;
-      background: linear-gradient(180deg, #0f1724, #0b1220);
-      border:1px solid rgba(96,165,250,.28);
-      border-radius:14px;
+      background: linear-gradient(180deg, #0f1f18, #0c1a14);
+      border:1px solid rgba(245,213,101,.35);
+      border-radius:16px;
       padding:20px 18px 16px;
       text-align:center;
-      box-shadow: var(--shadow);
-      animation: pop .22s ease-out;
+      box-shadow: var(--ring);
+      animation: pop .25s ease-out;
     }
-    @keyframes pop{ from{opacity:0; transform: translateY(6px) scale(.98);} to{opacity:1; transform: translateY(0) scale(1);} }
+    @keyframes pop{ from{opacity:0; transform: translateY(8px) scale(.95);} to{opacity:1; transform: translateY(0) scale(1);} }
 
     .modal-content h2{
       margin:0 0 12px;
-      font-size:18px;
-      color:#eaf2ff;
+      font-size:20px;
+      font-weight:700;
+      color:var(--text);
+      text-shadow:0 0 6px rgba(245,213,101,.45);
     }
-    .hint{
-      margin:0 0 14px; font-size:12px; color:var(--muted);
-    }
+    .hint{ margin:0 0 14px; font-size:12px; color:var(--muted); }
 
-    .field{
-      display:flex; gap:8px; justify-content:center; align-items:center;
-    }
+    .field{ display:flex; gap:8px; justify-content:center; align-items:center; }
     .modal-content input{
       width:70%;
       padding:10px 12px;
-      background:#0a1220;
-      border:1px solid rgba(148,163,184,.35);
+      background:#0a1712;
+      border:1px solid rgba(167,183,172,.35);
       color:var(--text);
       border-radius:8px;
       outline:none;
       transition:border-color .2s ease, box-shadow .2s ease;
     }
     .modal-content input:focus{
-      border-color: rgba(34,211,238,.7);
-      box-shadow: 0 0 0 3px rgba(34,211,238,.18);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16,185,129,.25);
     }
 
     .btn{
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color:#071019;
+      background: linear-gradient(90deg, var(--gold), var(--accent));
+      color:#052015;
       border:none;
       padding:10px 14px;
       border-radius:8px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
+      letter-spacing:.2px;
       transition: transform .15s ease, filter .2s ease;
     }
     .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); }
@@ -161,16 +193,15 @@
     .err{
       margin-top:10px; min-height:18px;
       font-size:12px; color:var(--danger);
-      opacity:.95;
-    }
-
-    /* Small helper: reduce motion preference */
-    @media (prefers-reduced-motion: reduce){
-      .card, .card::before, .modal-content{ transition:none; animation:none; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Top Banner -->
+  <header>
+    <h1>VIZKOR Korean Language Learning Academy</h1>
+  </header>
 
   <div class="container">
     <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
@@ -198,7 +229,6 @@
 
     function openModal(){
       modal.classList.add('show');
-      // autofocus sa input after render
       setTimeout(()=> input.focus(), 50);
       input.value = '';
       errMsg.textContent = '';
@@ -214,17 +244,15 @@
         window.location.href = 'resize.html';
       }else{
         errMsg.textContent = 'Incorrect password. Try again.';
-        input.select(); // highlight para mabilis palitan
+        input.select();
       }
     }
 
-    // Enter key submits
     input.addEventListener('keydown', (e)=>{
       if(e.key === 'Enter'){ checkPassword(); }
       if(e.key === 'Escape'){ closeModal(); }
     });
 
-    // Click outside to close
     window.addEventListener('click', (e)=>{
       if(e.target === modal){ closeModal(); }
     });
