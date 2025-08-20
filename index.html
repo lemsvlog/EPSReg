@@ -273,103 +273,6 @@ small { /* Small text elements like 'Present Address', 'Show Password' */
   vertical-align: middle;
 }
 
-/* Pre-Entry Modal - Blue Theme */
-#preEntryModal {
-  position: fixed; z-index: 11000;
-  left: 0; top: 0;
-  width: 100vw; height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-#preEntryModal .modal-dim-gold { /* Changed to blue-grey dimming */
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: linear-gradient(120deg, #E0E6E9 40%, #A9D6E580 100%); /* Light blue-grey gradient */
-  z-index: -1;
-  backdrop-filter: blur(3px);
-}
-.practice-modal-card-gold { /* Changed to navy-friendly card */
-  background: rgba(249,249,249,0.97); /* Off-white card */
-  border-radius: 24px;
-  box-shadow: 0 10px 38px rgba(74, 144, 226, 0.4), 0 2px 0 rgba(42, 77, 105, 0.15); /* Blue shadows */
-  padding: 2.2em 2.4em 2em 2.4em;
-  color: #2A4D69; /* Darker blue text */
-  text-align: center;
-  min-width: 320px;
-  max-width: 96vw;
-  position: relative;
-  animation: goldPopIn 0.82s cubic-bezier(0.32, 0.71, 0.51, 1.53);
-  border: 2.5px solid #4A90E2; /* Medium blue border */
-  backdrop-filter: blur(3px);
-}
-@keyframes goldPopIn {
-  0% { opacity: 0; transform: scale(0.93) translateY(40px);}
-  70% { opacity: 1; transform: scale(1.06) translateY(-9px);}
-  100% { opacity: 1; transform: scale(1) translateY(0);}
-}
-.icon-circle-gold { /* Changed to blue accent icon */
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, #4A90E2 65%, #E0E6E9 100%); /* Blue gradient */
-  border: 4px solid #F9F9F9; /* Off-white border */
-  border-radius: 50%;
-  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4), 0 1px 7px rgba(42, 77, 105, 0.15); /* Blue shadows */
-  display: flex; align-items: center; justify-content: center;
-  margin: -46px auto 12px auto;
-  position: absolute; left: 50%; transform: translateX(-50%);
-  top: -32px;
-}
-.icon-circle-gold .fa-exclamation-circle {
-  font-size: 2em;
-  color: #fff;
-  filter: drop-shadow(0 2px 7px rgba(169, 214, 229, 0.6)); /* Light blue drop shadow */
-}
-.practice-modal-title-gold { /* Changed to navy blue title */
-  margin-top: 35px;
-  font-size: 1.36em;
-  font-weight: bold;
-  color: #2A4D69; /* Darker blue */
-  margin-bottom: 0.18em;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 13px rgba(74, 144, 226, 0.2), 0 1px 0 #F9F9F9; /* Blue shadow */
-}
-.practice-modal-message-gold { /* Changed to navy blue message text */
-  color: #2A4D69; /* Darker blue */
-  font-size: 1.10em;
-  margin: 0.72em 0 1.7em 0;
-  line-height: 1.7;
-  font-weight: 500;
-}
-.practice-modal-message-gold span { /* Span inside message */
-  color: #2A4D69 !important; /* Ensure dark blue color for the span */
-}
-.practice-modal-btn-gold { /* Changed to navy blue button */
-  margin-top: 0.7em;
-  background: linear-gradient(90deg, #4A90E2 60%, #A9D6E5 120%); /* Blue gradient */
-  color: #F9F9F9; /* Off-white text */
-  font-weight: 700;
-  border: none;
-  border-radius: 14px;
-  padding: 0.82em 2.6em;
-  font-size: 1.13em;
-  box-shadow: 0 2px 18px rgba(74, 144, 226, 0.7); /* Blue shadow */
-  cursor: pointer;
-  letter-spacing: 0.4px;
-  transition: background 0.18s, box-shadow 0.15s, transform 0.11s;
-}
-.practice-modal-btn-gold:hover, .practice-modal-btn-gold:focus { /* Blue hover effect */
-  background: linear-gradient(90deg, #A9D6E5 60%, #4A90E2 110%);
-  color: #102A4A; /* Dark navy text on hover */
-  box-shadow: 0 7px 25px rgba(74, 144, 226, 0.6), 0 0 0 2.5px #F9F9F9; /* Blue shadows */
-  transform: scale(1.045);
-}
-@media (max-width: 480px) {
-  .practice-modal-card-gold {padding: 1.1em 0.4em 1.0em 0.4em; min-width:0; font-size:0.97em;}
-  .icon-circle-gold {width: 48px; height: 48px; font-size: 0.88em; top: -20px;}
-  .practice-modal-title-gold {margin-top: 19px; font-size: 1em;}
-  .practice-modal-btn-gold {font-size: 1em; padding: 0.56em 1.2em;}
-}
 
 /* Footer styles (changed to navy theme) */
 footer {
@@ -440,29 +343,32 @@ footer div:last-child { /* Created by text */
   </style>
 </head>
 <body>
+<!-- Floating Home Button -->
+<a href="homepage.html" class="floating-home">Home</a>
 
-<!-- COOL GLASSY PRACTICE NOTICE MODAL -->
-<div id="preEntryModal">
-  <div class="practice-modal-card-gold">
-    <div class="icon-circle-gold">
-      <i class="fa fa-exclamation-circle"></i>
-    </div>
-    <h2 class="practice-modal-title-gold">Practice Registration Only</h2>
-   <p class="practice-modal-message-gold" style="color:#a0852c;">
-  <b>Reminder lang!</b><br>
-  Pang-practice lang po itong page na ito.<br>
-  <span style="color:#000; font-weight:600;">Hindi ito official registration para sa EPS-TOPIK.</span><br><br>
-	  <span style="color:#d32f2f; font-weight:bold;">
-  <b>NOTE:</b>
-  <span style="color:#000; font-weight:500;">
-    All information entered on this registration form is not saved or stored.
-  </span>
-</span>
-</p>
-    <button id="confirmEntryBtn" class="practice-modal-btn-gold">I Understand</button>
-  </div>
-  <div class="modal-dim-gold"></div>
-</div>
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #2563eb; /* Blue */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 0 0 0 6px; /* rounded sa baba-kaliwa */
+    box-shadow: -2px 2px 6px rgba(0,0,0,0.15);
+    z-index: 999999; /* laging nasa ibabaw */
+    transition: all 0.3s ease;
+  }
+
+  .floating-home:hover {
+    background: #1d4ed8;
+  }
+</style>
+
+
 
 <div class="glow-banner">
   <h6 class="glow-text">
@@ -780,14 +686,7 @@ footer div:last-child { /* Created by text */
 </section>
 
 <script src="3.6.0-jquery.min.js"></script>
-<script>
-  // Prevent background scroll while modal is open
-  document.body.style.overflow = 'hidden';
-  document.getElementById('confirmEntryBtn').onclick = function() {
-    document.getElementById('preEntryModal').style.display = 'none';
-    document.body.style.overflow = '';
-  };
-</script>
+
 
 <script>
   $(function() {
