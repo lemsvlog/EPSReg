@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passport/ID Photo Resizer (Offline)</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#2563eb;--border:#e5e7eb;
+      --shadow:0 10px 24px rgba(0,0,0,.06);--radius:14px;--radius-lg:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .topbar{position:sticky;top:0;z-index:5;background:#2d2d2d;color:#fff;padding:12px 16px;box-shadow:0 2px 10px rgba(0,0,0,.08);display:flex;gap:12px;align-items:center;justify-content:center;border-bottom-left-radius:12px;border-bottom-right-radius:12px}
+    .wrap{max-width:1100px;margin:18px auto;padding:0 16px}
+
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .card h2{margin:0;padding:16px;border-bottom:1px solid var(--border);font-size:18px}
+    .card .body{padding:16px}
+
+    .uploader{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;padding:24px;border:2px dashed var(--border);border-radius:12px;text-align:center;cursor:pointer;transition:.2s}
+    .uploader:hover{border-color:#cdd3df}
+    .btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);background:var(--primary);color:#fff}
+    .btn.secondary{background:#0ea5e9}
+    .btn.ghost{background:#eef2ff;color:#334155;border:1px solid var(--border);box-shadow:none}
+    .btn.danger{background:#ef4444}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn-row{display:flex;flex-wrap:wrap;gap:8px}
+
+    .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    @media (max-width:700px){.controls{grid-template-columns:repeat(2,1fr)}}
+
+    .preview-wrap{display:flex;flex-direction:column;gap:10px;align-items:center}
+    .stage{position:relative;border:1px solid var(--border);border-radius:12px;background:#101827;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+    .frame{position:relative;overflow:hidden;border-radius:10px;background:#111}
+    .frame::after{content:"";position:absolute;inset:0;border:2px dashed rgba(255,255,255,.8);border-radius:10px;pointer-events:none}
+    .helper{color:#cbd5e1;font-size:12px}
+
+    input[type="number"],input[type="text"]{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .cols-2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .mt8{margin-top:8px}.mt12{margin-top:12px}.mb0{margin-bottom:0}
+    .small{font-size:12px;color:var(--muted)}
+    .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px}
+    .right .card{position:sticky;top:66px}
+
+    .footer{margin:18px auto 40px;max-width:1100px;color:#64748b;font-size:12px;text-align:center}
+    .row{display:flex;gap:8px;align-items:center}
+    .seg{display:flex;gap:6px}
+    .seg .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+    .seg .pill.active{background:#e0e7ff;border-color:#c7d2fe}
+  </style>
+</head>
+<body>
+<!-- Floating Home Button -->
+<a href="homepage.html" class="floating-home">Home</a>
+
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #2563eb; /* Blue */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 0 0 0 6px; /* rounded lang sa ibaba-kaliwa */
+    box-shadow: -2px 2px 6px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transition: all 0.3s ease;
+  }
+
+  .floating-home:hover {
+    background: #1d4ed8; /* darker blue */
+  }
+</style>
+
+  <div class="topbar"><strong>Photo Resizer</strong>&nbsp;—&nbsp;Templates: <strong>3.5×4.5 cm</strong> or <strong>800×600 px</strong>. Fully offline.</div>
+
+  <div class="wrap grid">
+    <!-- Left: Workspace -->
+    <section class="card">
+      <h2>Workspace</h2>
+      <div class="body">
+        <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+          <div class="field" style="min-width:260px;max-width:380px;flex:1">
+            <label>Template</label>
+            <div class="seg" role="tablist" aria-label="Template selector">
+              <button id="tmplID" class="pill active" data-tmpl="id">ID – 3.5×4.5 cm (413×531)</button>
+              <button id="tmplPP" class="pill" data-tmpl="passport">Passport – 800×600 px</button>
+            </div>
+          </div>
+          <div class="field" style="width:180px">
+            <label>Preview width (screen)</label>
+            <input type="number" min="180" max="420" step="10" id="previewWidth" value="400">
+          </div>
+          <div class="field" style="width:140px">
+            <label>DPI (info)</label>
+            <input type="number" id="dpi" value="300" step="1">
+          </div>
+        </div>
+
+        <label class="uploader" for="fileInput" id="dropArea" style="margin-top:10px">
+          <div>
+            <div style="font-weight:700;font-size:16px">Upload or Drop a Photo</div>
+            <div class="small">JPG / PNG • Large photos are ok</div>
+          </div>
+          <input id="fileInput" type="file" accept="image/*" hidden>
+        </label>
+
+        <div class="preview-wrap" id="workspace" style="display:none">
+          <div class="helper">Drag to move • Zoom • Fit • Rotate • Template keeps fixed aspect</div>
+          <div class="stage">
+            <div class="frame" id="frame" style="width: 290px; height: 374px;">
+              <canvas id="screenCanvas" width="290" height="374" style="display:block; width:100%; height:100%"></canvas>
+            </div>
+          </div>
+
+          <div class="controls mt12">
+            <button class="btn" id="zoomIn">＋ Zoom In</button>
+            <button class="btn" id="zoomOut">－ Zoom Out</button>
+            <button class="btn ghost" id="fit">Fit to Frame</button>
+            <button class="btn ghost" id="center">Center</button>
+            <button class="btn ghost" id="reset">Reset</button>
+            <button class="btn secondary" id="rotate">Rotate 90°</button>
+          </div>
+
+          <div class="note mt12" id="noteText">Output: <strong>413 × 531 px</strong> (≈3.5×4.5 cm @300 DPI)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Download options -->
+    <aside class="right">
+      <section class="card">
+        <h2>Download (Target File Size)</h2>
+        <div class="body">
+          <div class="field"><label>File type</label>
+            <div class="btn-row">
+              <button class="btn ghost" data-type="image/jpeg" id="typeJpg" aria-pressed="true">JPG</button>
+              <button class="btn ghost" data-type="image/png" id="typePng">PNG</button>
+            </div>
+            <div class="small">JPG recommended for IDs; PNG size not precise.</div>
+          </div>
+
+          <hr class="mt12"/>
+
+          <div id="dlBlock">
+            <!-- This block's labels/defaults change with template -->
+            <div class="cols-2">
+              <div class="field"><label id="optLabel1">Option A</label><input id="opt1" type="number" step="0.1" value="13"> <div class="small">KB</div></div>
+              <button class="btn" id="dl1">Download A</button>
+            </div>
+            <div class="cols-2 mt8">
+              <div class="field"><label id="optLabel2">Option B</label><input id="opt2" type="number" step="0.1" value="12.5"> <div class="small">KB</div></div>
+              <button class="btn" id="dl2">Download B</button>
+            </div>
+            <div class="cols-2 mt8">
+              <div class="field"><label id="optLabel3">Option C</label><input id="opt3" type="number" step="0.1" value="12"> <div class="small">KB</div></div>
+              <button class="btn" id="dl3">Download C</button>
+            </div>
+          </div>
+
+          <hr class="mt12"/>
+          <div class="field">
+            <label>Advanced (optional)</label>
+            <div class="cols">
+              <div class="field"><label>Min quality</label><input id="minQ" type="number" step="0.01" min="0.1" max="0.95" value="0.25"></div>
+              <div class="field"><label>Max quality</label><input id="maxQ" type="number" step="0.01" min="0.3" max="1" value="0.95"></div>
+              <div class="field"><label>Tolerance</label><input id="tol" type="number" step="0.1" min="0.5" value="0.8"><div class="small">KB ±</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="footer">Made for quick passport/ID crops. Works fully offline. No external libraries.</div>
+
+  <script>
+  // ===== Templates =====
+  const TEMPLATES = {
+    id: { name:'ID_3.5x4.5cm', outW:413, outH:531, dpi:300, note:'Output: 413 × 531 px (≈3.5×4.5 cm @300 DPI)', presets:[13,12.5,12] },
+    passport: { name:'Passport_800x600', outW:800, outH:600, dpi:300, note:'Output: 800 × 600 px (passport)', presets:[90,85,75] }
+  };
+
+  // State (mutable)
+  let current = { key:'id', ...TEMPLATES.id };
+
+  // ===== DOM Refs =====
+  const TARGET_DPI_INPUT = document.getElementById('dpi');
+  const screenCanvas = document.getElementById('screenCanvas');
+  const sctx = screenCanvas.getContext('2d');
+  const frameEl = document.getElementById('frame');
+  const previewWidthInput = document.getElementById('previewWidth');
+  const noteText = document.getElementById('noteText');
+
+  const tmplID = document.getElementById('tmplID');
+  const tmplPP = document.getElementById('tmplPP');
+
+  const fileInput = document.getElementById('fileInput');
+  const dropArea = document.getElementById('dropArea');
+  const workspace = document.getElementById('workspace');
+
+  const btnZoomIn = document.getElementById('zoomIn');
+  const btnZoomOut = document.getElementById('zoomOut');
+  const btnFit = document.getElementById('fit');
+  const btnCenter = document.getElementById('center');
+  const btnReset = document.getElementById('reset');
+  const btnRotate = document.getElementById('rotate');
+
+  const typeJpg = document.getElementById('typeJpg');
+  const typePng = document.getElementById('typePng');
+  let mimeType = 'image/jpeg';
+
+  const opt1 = document.getElementById('opt1');
+  const opt2 = document.getElementById('opt2');
+  const opt3 = document.getElementById('opt3');
+  const dl1 = document.getElementById('dl1');
+  const dl2 = document.getElementById('dl2');
+  const dl3 = document.getElementById('dl3');
+
+  const minQ = document.getElementById('minQ');
+  const maxQ = document.getElementById('maxQ');
+  const tolKB = document.getElementById('tol');
+
+  // Image & view state
+  let img = new Image();
+  let loaded = false;
+  let scale = 1;        // zoom factor
+  let pos = {x: 0, y: 0}; // pan offset (px in output space reference)
+  let angle = 0;        // rotation 0, 90, 180, 270
+
+  // ===== Template handling =====
+  function applyTemplate(tkey){
+    current = { key:tkey, ...TEMPLATES[tkey] };
+    TARGET_DPI_INPUT.value = String(current.dpi);
+    // Update preview frame size according to aspect
+    setPreviewWidth(previewWidthInput.value);
+    noteText.textContent = current.note;
+    // Update default size presets
+    [opt1.value,opt2.value,opt3.value] = current.presets.map(v=>String(v));
+    // Visual active state
+    [tmplID, tmplPP].forEach(b=>b.classList.remove('active'));
+    (tkey==='id'?tmplID:tmplPP).classList.add('active');
+    // Keep composition but refit to new aspect if image is loaded
+    if(loaded){ fitToCover(); draw(); }
+  }
+
+  tmplID.onclick = ()=>applyTemplate('id');
+  tmplPP.onclick = ()=>applyTemplate('passport');
+
+  // ===== Preview frame sizing =====
+  function setPreviewWidth(w){
+    w = Math.max(180, Math.min(420, Number(w)||320));
+    const ratio = current.outH / current.outW;
+    const h = Math.round(w * ratio);
+    frameEl.style.width = w + 'px';
+    frameEl.style.height = h + 'px';
+    screenCanvas.width = w;
+    screenCanvas.height = h;
+    draw();
+  }
+  previewWidthInput.addEventListener('change', e=> setPreviewWidth(e.target.value));
+
+  // Init default template and frame
+  applyTemplate('id');
+
+  // ===== Interactions =====
+  let isDragging = false, last = {x:0,y:0};
+  screenCanvas.addEventListener('pointerdown', e=>{
+    isDragging = true; last = {x:e.clientX, y:e.clientY}; screenCanvas.setPointerCapture(e.pointerId);
+  });
+  screenCanvas.addEventListener('pointermove', e=>{
+    if(!isDragging) return;
+    const dx = e.clientX - last.x; const dy = e.clientY - last.y; last = {x:e.clientX,y:e.clientY};
+    const scaleScreenToOut = current.outW / screenCanvas.width; // proportional for both axes
+    pos.x += dx * scaleScreenToOut;
+    pos.y += dy * scaleScreenToOut;
+    draw();
+  });
+  screenCanvas.addEventListener('pointerup', ()=>{isDragging=false});
+  screenCanvas.addEventListener('pointercancel', ()=>{isDragging=false});
+
+  btnZoomIn.onclick = ()=>{ scale *= 1.05; draw(); };
+  btnZoomOut.onclick = ()=>{ scale /= 1.05; draw(); };
+  btnCenter.onclick = ()=>{ pos = {x:0,y:0}; draw(); };
+  btnReset.onclick = ()=>{ resetView(); };
+  btnRotate.onclick = ()=>{ angle = (angle + 90) % 360; fitToCover(); draw(); };
+  btnFit.onclick = ()=>{ fitToCover(); draw(); };
+
+  function resetView(){ scale = 1; pos = {x:0,y:0}; angle = 0; fitToCover(); draw(); }
+
+  function fitToCover(){
+    if(!img.naturalWidth) return;
+    const iw = (angle % 180 === 0) ? img.naturalWidth : img.naturalHeight;
+    const ih = (angle % 180 === 0) ? img.naturalHeight : img.naturalWidth;
+    const s = Math.max(current.outW/iw, current.outH/ih); // cover
+    scale = s; pos = {x:0,y:0};
+  }
+
+  function draw(){
+    sctx.clearRect(0,0,screenCanvas.width,screenCanvas.height);
+    if(!loaded) return;
+    const out = renderToOutputCanvas();
+    sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
+    sctx.drawImage(out, 0, 0, screenCanvas.width, screenCanvas.height);
+  }
+
+  function renderToOutputCanvas(){
+    const oc = document.createElement('canvas'); oc.width = current.outW; oc.height = current.outH; const octx = oc.getContext('2d');
+    octx.fillStyle = '#ffffff'; octx.fillRect(0,0,oc.width,oc.height);
+    octx.save();
+    octx.translate(current.outW/2 + pos.x, current.outH/2 + pos.y);
+    octx.rotate(angle * Math.PI/180);
+    const iw = img.naturalWidth; const ih = img.naturalHeight;
+    const drawW = iw * scale; const drawH = ih * scale;
+    octx.imageSmoothingEnabled = true; octx.imageSmoothingQuality = 'high';
+    octx.drawImage(img, -drawW/2, -drawH/2, drawW, drawH);
+    octx.restore();
+    return oc;
+  }
+
+  function bytesToKB(bytes){ return bytes/1024; }
+  function fileNameFor(kb){ return `${current.name}_${Math.round(kb*10)/10}KB.jpg`; }
+
+  async function canvasToBlobWithQuality(canvas, type, quality){
+    return new Promise(resolve=> canvas.toBlob(b=>resolve(b), type, quality));
+  }
+
+  async function exportAtTargetKB(targetKB){
+    const type = mimeType;
+    const outCanvas = renderToOutputCanvas();
+    if(type === 'image/png'){
+      const blob = await canvasToBlobWithQuality(outCanvas, 'image/png');
+      return {blob, actualKB: bytesToKB(blob.size)};
+    }
+    const minQVal = Math.max(0.1, Math.min(0.95, Number(minQ.value)||0.25));
+    const maxQVal = Math.max(minQVal+0.01, Math.min(1, Number(maxQ.value)||0.95));
+    const tolerance = Math.max(0.1, Number(tolKB.value)||0.8);
+
+    let lo = minQVal, hi = maxQVal, best = null, guard = 0;
+    while(guard++ < 20 && hi - lo > 0.01){
+      const mid = (lo + hi) / 2;
+      const blob = await canvasToBlobWithQuality(outCanvas, 'image/jpeg', mid);
+      const kb = bytesToKB(blob.size);
+      if(Math.abs(kb - targetKB) <= tolerance){ best = {blob, actualKB: kb}; break; }
+      if(kb > targetKB){ hi = mid; best = {blob, actualKB: kb}; }
+      else { lo = mid; best = {blob, actualKB: kb}; }
+    }
+    if(!best){
+      const blob = await canvasToBlobWithQuality(outCanvas, 'image/jpeg', lo);
+      best = {blob, actualKB: bytesToKB(blob.size)};
+    }
+    return best;
+  }
+
+  function triggerDownload(blob, suggestedKB){
+    const a = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileNameFor(suggestedKB);
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+  }
+
+  async function handleDownload(targetInput){
+    if(!loaded){ alert('Please upload a photo first.'); return; }
+    const target = Number(targetInput.value);
+    if(!target || target <= 0){ alert('Enter a valid KB size.'); return; }
+    const {blob, actualKB} = await exportAtTargetKB(target);
+    triggerDownload(blob, target);
+    const tol = Math.max(0.1, Number(tolKB.value)||0.8);
+    if(Math.abs(actualKB - target) > tol){
+      setTimeout(()=>{ alert(`Note: Could not reach exactly ${target}KB. Actual ≈ ${actualKB.toFixed(2)}KB. Adjust options if needed.`); }, 10);
+    }
+  }
+
+  dl1.onclick = ()=>handleDownload(opt1);
+  dl2.onclick = ()=>handleDownload(opt2);
+  dl3.onclick = ()=>handleDownload(opt3);
+
+  function setType(btn){
+    [typeJpg,typePng].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    mimeType = btn.dataset.type;
+  }
+  typeJpg.onclick = ()=>setType(typeJpg);
+  typePng.onclick = ()=>setType(typePng);
+  setType(typeJpg);
+
+  fileInput.addEventListener('change', (e)=>{
+    const f = e.target.files && e.target.files[0]; if(!f) return; loadImageFile(f);
+  });
+
+  ['dragenter','dragover','dragleave','drop'].forEach(evt=>{
+    dropArea.addEventListener(evt, e=>{e.preventDefault();e.stopPropagation();}, false);
+  });
+  dropArea.addEventListener('drop', e=>{
+    const dt = e.dataTransfer; const f = dt.files && dt.files[0]; if(f) loadImageFile(f);
+  });
+
+  function loadImageFile(file){
+    const url = URL.createObjectURL(file);
+    img = new Image();
+    img.onload = ()=>{ URL.revokeObjectURL(url); loaded = true; workspace.style.display = 'flex'; resetView(); draw(); };
+    img.onerror = ()=>{ alert('Could not load image.'); };
+    img.src = url;
+  }
+
+  TARGET_DPI_INPUT.addEventListener('change', ()=>{/* info only */});
+  </script>
+</body>
+</html>

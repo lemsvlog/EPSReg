@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EPS-TOPIK Registration Mock Version</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ===== Theme ===== */
+    :root{
+      --page-bg:#f3f4f6;
+      --card-bg:#ffffff;
+      --border:#e5e7eb;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --warning:#fff3cd;
+      --warning-border:#ffe69c;
+      --pink:#f36e8e;
+      --pink-hover:#e05f7f;
+      --shadow:0 10px 24px rgba(0,0,0,.06);
+      --radius:12px;
+      --radius-lg:16px;
+
+      --field-pad-x:10px;
+      --field-pad-y:9px;
+      --floating-top:6px;      /* top of small label */
+      --floating-gap:18px;     /* space for the small label */
+      --hgap:18px;             /* horizontal gap between fields (wider per request) */
+      --vgap:14px;             /* vertical gap between rows (wider per request) */
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      background:var(--page-bg);
+      color:var(--text);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.5;
+    }
+
+    /* ===== Header Bar ===== */
+    .topbar{
+      width:100%;
+      background:#2d2d2d;
+      color:#fff;
+           box-shadow:0 2px 10px rgba(0,0,0,.08);
+      border-bottom-left-radius:12px;
+      border-bottom-right-radius:12px;
+    }
+	
+	
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 18px;
+    }
+    .topbar-title{font-weight:700; font-size:20px}
+    .btn-back{color:#fff; text-decoration:none; display:flex; align-items:center; gap:6px}
+    .btn-back:hover{text-decoration:underline}
+
+    /* ===== Page container ===== */
+    .wrap{ width:98%; margin:14px auto; padding:0 8px; max-width:1700px; } /* 98% wide */
+
+    /* ===== Card & Grid ===== */
+    .card{background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow)}
+    .card-body{padding:16px}
+    .m-2{margin:8px}
+
+    .row{display:flex; flex-wrap:wrap; gap:var(--vgap) var(--hgap);}    /* wider spacing */
+    .col-8{flex:0 0 100%}
+    .col-4{flex:0 0 100%}
+    @media (min-width: 992px){
+      .col-8{flex:0 0 calc(66.666% - (var(--hgap)/2))}
+      .col-4{flex:0 0 calc(33.333% - (var(--hgap)/2))}
+    }
+
+    /* One-line 3 columns (names) */
+    .name-row{flex-wrap:nowrap}
+    .name-row > .col-4{flex:0 0 calc((100% - (2 * var(--hgap))) / 3); min-width:0}
+
+    /* ===== Floating-label fields ===== */
+    .field{
+      position:relative;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      box-shadow:var(--shadow);
+	   margin-bottom:10px;   /* dagdag space bawat field sa ilalim */
+
+    }
+    .field .flabel{
+      position:absolute; left:var(--field-pad-x); top:var(--floating-top);
+      font-size:12px; color:var(--muted); pointer-events:none;
+    }
+    .field input,
+    .field select{
+      width:100%;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      font-size:16px;
+      padding:calc(var(--field-pad-y) + var(--floating-gap)) var(--field-pad-x) var(--field-pad-y) var(--field-pad-x);
+      outline:none; appearance:none;
+    }
+    .field:focus-within{ box-shadow:0 0 0 3px rgba(37,99,235,.12); border-color:#c7d2fe; }
+    .field.invalid{ border-color:#dc3545 !important; box-shadow:0 0 0 3px rgba(220,53,69,.12) }
+
+    /* Select arrow */
+    .select-wrap{ position:relative; }
+    .select-wrap::after{
+      content:"▾";
+      position:absolute; right:12px; top:50%; transform:translateY(4px);
+      font-size:14px; color:#9ca3af; pointer-events:none;
+    }
+
+    /* Sections */
+    .section{border:1px solid var(--border); border-radius:12px; padding:12px; background:#fff}
+    .section .title{font-weight:600; margin:2px 0 8px 0}
+
+    /* Right column */
+    .alert{padding:12px 14px;border-radius:12px}
+    .alert-warning{background:var(--warning); border:1px solid var(--warning-border)}
+    .consent-title{color:var(--primary); font-weight:800; margin:0 0 10px 0}
+
+    /* Buttons */
+    .btn{display:inline-block; border:0; border-radius:12px; padding:12px 14px; cursor:pointer; user-select:none; text-align:center}
+    .btn-pink{background:var(--pink); color:#fff}
+    .btn-pink:hover{background:var(--pink-hover)}
+    .w-100{width:100%}
+    .disabled-link{opacity:.55; cursor:not-allowed}
+
+    /* Helpers */
+    .mb-0{margin-bottom:0}.mb-1{margin-bottom:6px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}
+    .fw-bold{font-weight:700}.text-muted{color:var(--muted)}
+    .inline{display:flex; align-items:center; gap:10px}
+    .inline-note{white-space:nowrap}
+
+    /* ===== Custom widths to mimic your screenshot ===== */
+    /* SWAP WIDTHS */
+/* Passport row: gawing MAHABA (50/50) */
+.row-passport{justify-content:flex-start;}
+.row-passport .col-pass,
+.row-passport .col-exp{
+  flex:1 1 calc(50% - (var(--hgap)/2));
+  min-width:0;
+}
+
+/* Email/Mobile row: gawing MAIKSI (38% at 32%) nang hindi binabago ang HTML */
+.row-email > div:first-child{  /* Active Email */
+  flex:0 0 38%;
+}
+.row-email > div:last-child{   /* Active Mobile No */
+  flex:0 0 32%;
+}
+
+    @media (max-width: 991.98px){
+      /* Stack nicely on smaller screens */
+      .row-email .col-half,
+      .row-passport .col-pass,
+      .row-passport .col-exp{flex:1 1 100%;}
+    }
+	
+	.row-address{justify-content:flex-start;}
+.row-address .col-prov,
+.row-address .col-muni{
+  flex:1 1 calc(50% - (var(--hgap)/2));
+  min-width:0;
+}
+
+
+/* ===== Responsive for Phones ===== */
+@media (max-width: 768px) {
+  .wrap { width: 100%; padding: 0 12px; }
+
+  .row { flex-direction: column; gap: 12px; }
+
+  .name-row { flex-wrap: wrap; }
+  .name-row > .col-4 { flex: 0 0 100%; }
+
+  .row-email > div,
+  .row-passport .col-pass,
+  .row-passport .col-exp,
+  .row-address .col-prov,
+  .row-address .col-muni {
+    flex: 1 1 100%;
+  }
+
+  .topbar-title { font-size: 16px; }
+  .btn-back { font-size: 14px; }
+
+  .card-body { padding: 12px; }
+
+  .field input,
+  .field select {
+    font-size: 15px;
+    padding: 14px 10px 10px 10px;
+  }
+
+  .flabel { font-size: 11px; }
+
+  /* Modal adjustments sa phone */
+  .modal-card {
+    width: 95%;
+    font-size: 12px;
+    max-height: 80vh;
+  }
+  .modal-body { max-height: 50vh; }
+}
+
+/* Extra small screens (≤480px) */
+@media (max-width: 480px) {
+  .topbar-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .btn-back { align-self: flex-end; }
+
+  .consent-title { font-size: 16px; }
+  .btn { padding: 10px 12px; font-size: 14px; }
+}
+
+
+/* ===== Ultra Compact Responsive Modal ===== */
+.no-scroll { overflow: hidden; }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-card {
+  width: min(340px, 92vw);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transform: scale(0.96);
+  transition: transform 0.15s ease;
+  font-family: system-ui, sans-serif;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-backdrop.show .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-success {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f0fdf4;
+  color: #10b981;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.modal-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.modal-body {
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #4b5563;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.modal-body-content {
+  max-height: calc(90vh - 120px);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.modal-actions {
+  padding: 12px 14px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+}
+
+.btn-pink {
+  background: #ec4899;
+  color: white;
+  border: none;
+}
+
+.btn-pink:hover {
+  background: #db2777;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 400px) {
+  .modal-card {
+    width: 96vw;
+    border-radius: 10px;
+  }
+  
+  .modal-header {
+    padding: 10px 12px;
+  }
+  
+  .modal-body {
+    padding: 12px;
+    font-size: 12.5px;
+  }
+  
+  .btn {
+    padding: 4px 10px;
+  }
+}
+
+@media (max-height: 500px) {
+  .modal-body-content {
+    max-height: calc(100vh - 110px);
+  }
+}
+
+  </style>
+</head>
+<body>
+<!-- Floating Home Button -->
+<a href="homepage.html" class="floating-home">Home</a>
+
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #2563eb; /* Blue */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 0 0 0 6px; /* rounded lang sa ibaba-kaliwa */
+    box-shadow: -2px 2px 6px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transition: all 0.3s ease;
+  }
+
+  .floating-home:hover {
+    background: #1d4ed8; /* darker blue */
+  }
+</style>
+
+
+  <!-- Top bar -->
+  <div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title">EPS-TOPIK Registration Mock Version</div>
+    <a class="btn-back" href="homepage.html">↩ Back</a>
+  </div>
+</div>
+
+  <div class="wrap">
+    <div class="card m-2">
+      <div class="card-body">
+        <div class="row">
+          <!-- LEFT -->
+          <div class="col-8">
+            <!-- Name row -->
+            <div class="row name-row">
+              <div class="col-4">
+                <div class="field">
+                  <div class="flabel">Last Name:</div>
+                  <input id="txtLName" type="text" placeholder="" />
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="field">
+                  <div class="flabel">First Name:</div>
+                  <input id="txtFName" type="text" placeholder="" />
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="inline">
+                  <div class="field" style="flex:1">
+                    <div class="flabel">Middle Name:</div>
+                    <input id="txtMName" type="text" placeholder="" />
+                  </div>
+                  <label class="inline-note"><input type="checkbox" id="chbMiddleName" /> No Middle Name</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suffix / Gender -->
+            <div class="row">
+              <div class="col-4">
+                <div class="field select-wrap">
+                  <div class="flabel">Suffix:</div>
+                  <select id="ddlSName">
+                    <option value="0">Not Applicable</option>
+                    <option value="1">Jr</option><option value="2">Sr</option>
+                    <option value="3">Jr.</option><option value="4">Sr.</option>
+                    <option value="5">I</option><option value="6">II</option>
+                    <option value="7">III</option><option value="8">IV</option>
+                    <option value="9">V</option><option value="10">VI</option>
+                    <option value="11">VII</option><option value="12">VIII</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="field select-wrap">
+                  <div class="flabel">Gender:</div>
+                  <select id="ddlGender">
+                    <option value="0">-Select One-</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Birth Date -->
+            <div class="section mb-3">
+              <div class="title">Birth Date</div>
+              <div class="row name-row">
+                <div class="col-4">
+                  <div class="field select-wrap">
+                    <div class="flabel">Day:</div>
+                    <select id="ddlBdateDay"><option value="0">Day</option></select>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="field select-wrap">
+                    <div class="flabel">Month:</div>
+                    <select id="ddlBdateMonth">
+                      <option value="0">Month</option>
+                      <option value="1">January</option><option value="2">February</option>
+                      <option value="3">March</option><option value="4">April</option>
+                      <option value="5">May</option><option value="6">June</option>
+                      <option value="7">July</option><option value="8">August</option>
+                      <option value="9">September</option><option value="10">October</option>
+                      <option value="11">November</option><option value="12">December</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="field select-wrap">
+                    <div class="flabel">Year:</div>
+                    <select id="ddlBdateYear"><option value="0">Year</option></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email/Mobile (WIDE) -->
+            <div class="row row-email">
+              <div class="col-half">
+                <div class="field">
+                  <div class="flabel">Active Email:</div>
+                  <input id="txtEmail" type="text" placeholder="" />
+                </div>
+              </div>
+              <div class="col-half">
+                <div class="field">
+                  <div class="flabel">Active Mobile No:</div>
+                  <input id="txtMobileNo" type="text" placeholder="" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Passport (SHORTER) -->
+            <div class="row row-passport">
+              <div class="col-pass">
+                <div class="field">
+                  <div class="flabel">Passport Number:</div>
+                  <input id="txtPassport" type="text" placeholder="" />
+                </div>
+              </div>
+              <div class="col-exp">
+                <div class="field">
+                  <div class="flabel">Passport Expiry:</div>
+                  <input id="txtPassportExpiry" type="date" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Address -->
+          <div class="section mb-3">
+  <div class="title">Present Address</div>
+  <div class="row row-address">
+    <div class="col-6 col-prov">
+      <div class="field select-wrap">
+        <div class="flabel">Province:</div>
+        <select id="ddlProvince">
+		<option value="0">-Select One-</option>
+          <option value="1">Abra</option>
+				<option value="2">Agusan del Norte</option>
+				<option value="3">Agusan del Sur</option>
+				<option value="4">Aklan</option>
+				<option value="5">Albay</option>
+				<option value="6">Antique</option>
+				<option value="81">Apayao</option>
+				<option value="77">Aurora</option>
+				<option value="7">Basilan</option>
+				<option value="8">Bataan</option>
+				<option value="9">Batanes</option>
+				<option value="10">Batangas</option>
+				<option value="11">Benguet</option>
+				<option value="78">Biliran</option>
+				<option value="12">Bohol</option>
+				<option value="13">Bukidnon</option>
+				<option value="14">Bulacan</option>
+				<option value="15">Cagayan</option>
+				<option value="16">Camarines Norte</option>
+				<option value="17">Camarines Sur</option>
+				<option value="18">Camiguin</option>
+				<option value="19">Capiz</option>
+				<option value="20">Catanduanes</option>
+				<option value="21">Cavite</option>
+				<option value="22">Cebu</option>
+				<option value="301">City of Angeles</option>
+				<option value="302">City of Bacolod (Capital)</option>
+				<option value="303">City of Baguio</option>
+				<option value="304">City of Butuan (Capital)</option>
+				<option value="305">City of Cagayan De Oro (Capital)</option>
+				<option value="801">City of Caloocan</option>
+				<option value="306">City of Cebu (Capital)</option>
+				<option value="307">City of Davao</option>
+				<option value="308">City of General Santos</option>
+				<option value="309">City of Iligan</option>
+				<option value="310">City of Iloilo (Capital)</option>
+				<option value="901">City of Isabela (Not a Province)</option>
+				<option value="311">City of Lapu-Lapu</option>
+				<option value="802">City of Las Pi&#241;as</option>
+				<option value="312">City of Lucena (Capital)</option>
+				<option value="803">City of Makati</option>
+				<option value="804">City of Malabon</option>
+				<option value="805">City of Mandaluyong</option>
+				<option value="313">City of Mandaue</option>
+				<option value="806">City of Manila</option>
+				<option value="807">City of Marikina</option>
+				<option value="808">City of Muntinlupa</option>
+				<option value="809">City of Navotas</option>
+				<option value="314">City of Olongapo</option>
+				<option value="810">City of Para&#241;aque</option>
+				<option value="812">City of Pasig</option>
+				<option value="315">City of Puerto Princesa (Capital)</option>
+				<option value="814">City of San Juan</option>
+				<option value="316">City of Tacloban (Capital)</option>
+				<option value="815">City of Taguig</option>
+				<option value="816">City of Valenzuela</option>
+				<option value="317">City of Zamboanga</option>
+				<option value="47">Cotabato</option>
+				<option value="82">Davao de Oro</option>
+				<option value="23">Davao del Norte</option>
+				<option value="24">Davao del Sur</option>
+				<option value="86">Davao Occidental</option>
+				<option value="25">Davao Oriental</option>
+				<option value="85">Dinagat Islands</option>
+				<option value="26">Eastern Samar</option>
+				<option value="79">Guimaras</option>
+				<option value="27">Ifugao</option>
+				<option value="28">Ilocos Norte</option>
+				<option value="29">Ilocos Sur</option>
+				<option value="30">Iloilo</option>
+				<option value="999">Interim Province Code for 63 barangays of BARMM ba</option>
+				<option value="31">Isabela</option>
+				<option value="32">Kalinga</option>
+				<option value="33">La Union</option>
+				<option value="34">Laguna</option>
+				<option value="35">Lanao del Norte</option>
+				<option value="36">Lanao del Sur</option>
+				<option value="37">Leyte</option>
+				<option value="38">Maguindanao</option>
+				<option value="40">Marinduque</option>
+				<option value="41">Masbate</option>
+				<option value="42">Misamis Occidental</option>
+				<option value="43">Misamis Oriental</option>
+				<option value="44">Mountain Province</option>
+				<option value="45">Negros Occidental</option>
+				<option value="46">Negros Oriental</option>
+				<option value="48">Northern Samar</option>
+				<option value="49">Nueva Ecija</option>
+				<option value="50">Nueva Vizcaya</option>
+				<option value="51">Occidental Mindoro</option>
+				<option value="52">Oriental Mindoro</option>
+				<option value="53">Palawan</option>
+				<option value="54">Pampanga</option>
+				<option value="55">Pangasinan</option>
+				<option value="811">Pasay City</option>
+				<option value="817">Pateros</option>
+				<option value="56">Quezon</option>
+				<option value="813">Quezon City</option>
+				<option value="57">Quirino</option>
+				<option value="58">Rizal</option>
+				<option value="59">Romblon</option>
+				<option value="60">Samar</option>
+				<option value="80">Sarangani</option>
+				<option value="61">Siquijor</option>
+				<option value="62">Sorsogon</option>
+				<option value="63">South Cotabato</option>
+				<option value="64">Southern Leyte</option>
+				<option value="65">Sultan Kudarat</option>
+				<option value="66">Sulu</option>
+				<option value="67">Surigao del Norte</option>
+				<option value="68">Surigao del Sur</option>
+				<option value="69">Tarlac</option>
+				<option value="70">Tawi-Tawi</option>
+				<option value="71">Zambales</option>
+				<option value="72">Zamboanga del Norte</option>
+				<option value="73">Zamboanga del Sur</option>
+				<option value="83">Zamboanga Sibugay</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-6 col-muni">
+      <div class="field select-wrap">
+        <div class="flabel">Municipality:</div>
+        <select id="ddlMunicipality">
+          <option value="0">-Select One-</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Industry -->
+            <div class="field select-wrap mb-3">
+              <div class="flabel">Desired Industry:</div>
+              <select id="ddlIndustry">
+                <option value="178">Manufacturing</option>
+              </select>
+            </div>
+
+            <!-- Stay duration -->
+            <div class="section">
+              <label class="fw-bold d-block mb-2">
+                Total duration of stay in the Republic of Korea under the E-9 or E-10 residence status:
+              </label>
+              <div class="mb-0">
+                <div><input id="rbtNever" type="radio" name="StayDuration" value="never"> <label for="rbtNever">Never been in Korea</label></div>
+                <div><input id="rbLessThan5Years" type="radio" name="StayDuration" value="lt5"> <label for="rbLessThan5Years">Less than 5 years</label></div>
+                <div><input id="rbMoreThan5Years" type="radio" name="StayDuration" value="gt5"> <label for="rbMoreThan5Years">More than 5 years (Not accepted)</label></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-4">
+            <div class="alert alert-warning mb-3">
+              <div class="fw-bold">Note:</div>
+              <ol style="margin:6px 0 0 18px; color:#374151">
+                <li>Passing the EPS-TOPIK does not guarantee employment.</li>
+                <li>If an applicant’s personal information on the passport is not exactly the same on the application form
+                  (such as English name, birth date, and gender), registration to the EPS job seeker’s roster and employment in Korea is not permitted.
+                  The applicant is fully responsible for any problem caused by differences in the personal information.</li>
+              </ol>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h4 class="consent-title">Consent &amp; Declaration</h4>
+
+                <div class="mb-2"><input id="chkConsent1" type="checkbox">
+                  <label for="chkConsent1">I agree to the collection and use of my personal information.</label>
+                </div>
+                <div class="mb-2"><input id="chkConsent2" type="checkbox">
+                  <label for="chkConsent2">I agree to the collection and use of my unique identification information. (Passport No.)</label>
+                </div>
+                <div class="mb-3"><input id="chkConsent3" type="checkbox">
+                  <label for="chkConsent3">I agree to the provision of my personal information to 3rd parties.</label>
+                </div>
+
+                <p class="mb-3" style="color:#374151">
+                  By submitting this application for the EPS-TOPIK (Korean Language Proficiency Test), I confirm that the above information is true and correct.
+                  I agree to comply with the test regulations set by the Human Resources Development Service of Korea (HRD Korea), and I take full
+                  responsibility for any false statements or violations.
+                </p>
+
+                <button id="btnRegister" class="btn btn-pink w-100 disabled-link" type="button" disabled>Submit</button>
+              </div>
+            </div>
+          </div>
+          <!-- /RIGHT -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ <div id="successModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="badge-success">✓</div>
+      <div class="modal-title" id="successTitle">Successful Registration</div>
+      <button id="btnXClose" class="btn btn-outline" style="margin-left:auto; padding:6px 10px">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="successDetails"></div>
+    </div>
+    <div class="modal-actions">
+      <button id="btnCloseModal" class="btn btn-pink">Close</button>
+    </div>
+  </div>
+</div>
+
+  <!-- JS -->
+  <script>
+    // Populate days/years & min passport date
+    (function(){
+      const daySel = document.getElementById('ddlBdateDay');
+      for(let d=1; d<=31; d++){
+        const o=document.createElement('option'); o.value=String(d); o.textContent=String(d);
+        daySel.appendChild(o);
+      }
+      const yearSel = document.getElementById('ddlBdateYear');
+      const thisYear = new Date().getFullYear();
+      for(let y=thisYear; y>=1900; y--){
+        const o=document.createElement('option'); o.value=String(y); o.textContent=String(y);
+        yearSel.appendChild(o);
+      }
+      const exp = document.getElementById('txtPassportExpiry');
+      exp.min = new Date().toISOString().slice(0,10);
+    })();
+
+    // Province -> Municipality (sample list)
+    const MUNICIPALITIES = {
+      "1": ["Bangued","Boliney","Dolores","Lagangilang"],
+      "22": ["Cebu City","Mandaue","Lapu-Lapu","Talisay"],
+      "34": ["Sta. Rosa","Calamba","San Pablo","Biñan"],
+      "49": ["Cabanatuan","Gapan","San Jose","Palayan"],
+      "50": ["Alfonso Castañeda","Ambaguio","Aritao","Bagabag","Bambang","Bayombong","Diadi","Dupax del Norte","Dupax del Sur","Kasibu","Kayapa","Quezon","Santa Fe","Solano","Villaverde"],
+      "71": ["Olongapo","Iba","Botolan"]
+    };
+    document.getElementById('ddlProvince').addEventListener('change', function(){
+
+      const prov = this.value, muni = document.getElementById('ddlMunicipality');
+      muni.innerHTML = '<option value="0">-Select One-</option>';
+      (MUNICIPALITIES[prov]||[]).forEach(name=>{
+        const o=document.createElement('option'); o.value=name; o.textContent=name; muni.appendChild(o);
+      });
+    });
+
+    // No middle name
+    document.getElementById('chbMiddleName').addEventListener('change', function(){
+      const m = document.getElementById('txtMName');
+      if(this.checked){ m.value=''; m.disabled=true; m.parentElement.parentElement.classList.remove('invalid'); }
+      else{ m.disabled=false; }
+    });
+
+    // Consent gating
+    const consentIds = ['chkConsent1','chkConsent2','chkConsent3'];
+    const btn = document.getElementById('btnRegister');
+    function refreshSubmit(){
+      const ok = consentIds.every(id => document.getElementById(id).checked);
+      btn.disabled = !ok;
+      btn.classList.toggle('disabled-link', !ok);
+    }
+    consentIds.forEach(id=> document.getElementById(id).addEventListener('change', refreshSubmit));
+    refreshSubmit();
+
+    // Validation helpers
+    function markInvalid(el, isBad){
+      const container = el.closest('.field') || el.closest('.section') || el;
+      container.classList.toggle('invalid', !!isBad);
+    }
+
+    function validateEPSForm(){
+      let isValid = true;
+      const requiredInputs = [
+        "txtLName","txtFName","txtEmail","txtMobileNo","txtPassport","txtPassportExpiry"
+      ];
+      requiredInputs.forEach(id=>{
+        const el = document.getElementById(id);
+        const val = (el.type==='date') ? el.value : el.value.trim();
+        const bad = !val;
+        markInvalid(el, bad);
+        if(bad) isValid=false;
+      });
+
+      // Middle name (fully optional)
+const midEl = document.getElementById('txtMName');
+markInvalid(midEl, false); // never mark invalid
+
+// Dropdowns (suffix removed; optional)
+const selects = ["ddlGender","ddlBdateDay","ddlBdateMonth","ddlBdateYear","ddlProvince","ddlMunicipality","ddlIndustry"];
+
+	  
+      selects.forEach(id=>{
+        const el = document.getElementById(id);
+        const bad = (el.value==="" || el.value==="0");
+        markInvalid(el, bad);
+        if(bad) isValid=false;
+      });
+
+      // Radios
+      const r1=document.getElementById('rbtNever'),
+            r2=document.getElementById('rbLessThan5Years'),
+            r3=document.getElementById('rbMoreThan5Years');
+      const any = (r1.checked||r2.checked||r3.checked);
+      if(!any){ isValid=false; alert("Select total duration of stay in Korea."); }
+
+      return isValid;
+    }
+
+   // Submit (offline preview)
+btn.addEventListener('click', function(){
+  if(btn.disabled) return;
+  if(!validateEPSForm()) return;
+
+  // Kunin ang label ng checked radio (robust)
+const stayLabelEl = document.querySelector("input[name='StayDuration']:checked + label");
+const stayText = stayLabelEl ? stayLabelEl.textContent.trim() : "";
+
+let expiryRaw = document.getElementById("txtPassportExpiry").value;
+let expiryFormatted = "";
+if(expiryRaw){
+  let dateObj = new Date(expiryRaw);
+  expiryFormatted = dateObj.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
+
+// Collect info
+const info = {
+  "Last Name": document.getElementById("txtLName").value,
+  "First Name": document.getElementById("txtFName").value,
+  "Middle Name": document.getElementById("chbMiddleName").checked ? "(None)" : document.getElementById("txtMName").value,
+  "Suffix": document.getElementById("ddlSName").options[document.getElementById("ddlSName").selectedIndex].text,
+  "Gender": document.getElementById("ddlGender").options[document.getElementById("ddlGender").selectedIndex].text,
+  "Birth Date": `${document.getElementById("ddlBdateMonth").value}/${document.getElementById("ddlBdateDay").value}/${document.getElementById("ddlBdateYear").value}`,
+  "Email": document.getElementById("txtEmail").value,
+  "Mobile No": document.getElementById("txtMobileNo").value,
+  "Passport No": document.getElementById("txtPassport").value,
+  "Passport Expiry": expiryFormatted,   // ✅ formatted na
+  "Province": document.getElementById("ddlProvince").options[document.getElementById("ddlProvince").selectedIndex].text,
+  "Municipality": document.getElementById("ddlMunicipality").options[document.getElementById("ddlMunicipality").selectedIndex].text,
+  "Industry": document.getElementById("ddlIndustry").options[document.getElementById("ddlIndustry").selectedIndex].text,
+  "Stay Duration": stayText
+};
+
+  // Fill modal details
+  let html = "<ul style='padding-left:18px;'>";
+  for(const [key,val] of Object.entries(info)){
+    html += `<li><b>${key}:</b> ${val}</li>`;
+  }
+  html += "</ul>";
+  document.getElementById("successDetails").innerHTML = html;
+
+  // Show modal
+  const modal = document.getElementById("successModal");
+modal.classList.add("show");
+document.body.classList.add("no-scroll");
+});
+
+// Close modal and refresh page
+document.getElementById("btnCloseModal").addEventListener("click", function(){
+  location.reload();
+});
+
+const modal = document.getElementById("successModal");
+const btnClose = document.getElementById("btnCloseModal");
+const btnXClose = document.getElementById("btnXClose");
+
+function closeAndRefresh(){
+  // optional: maliit na delay para makita ang click feedback
+  setTimeout(()=> location.reload(), 80);
+}
+
+// Close buttons
+btnClose.addEventListener("click", closeAndRefresh);
+btnXClose.addEventListener("click", closeAndRefresh);
+
+// Backdrop click (click sa labas ng card)
+modal.addEventListener("click", function(e){
+  if(e.target === modal){ closeAndRefresh(); }
+});
+
+// ESC key
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && modal.classList.contains("show")){
+    closeAndRefresh();
+  }
+});
+
+
+
+</script>
+
+
+  
+</body>
+</html>

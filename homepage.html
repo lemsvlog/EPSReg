@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registration Hub (Dark)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ===== Base (Dark) ===== */
+    :root{
+      --bg-1:#0b0f17;       /* page bg */
+      --bg-2:#0f1724;       /* card/modal bg */
+      --muted:#8b93a7;      /* muted text */
+      --text:#e6ebff;       /* main text */
+      --accent:#60a5fa;     /* blue */
+      --accent-2:#22d3ee;   /* cyan */
+      --danger:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ring: 0 0 0 2px rgba(34,211,238,.25), 0 10px 30px rgba(34,211,238,.15);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,.15), transparent 60%),
+        radial-gradient(900px 600px at 110% 110%, rgba(96,165,250,.15), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #0a0e16 60%, #05070c);
+    }
+
+    /* ===== Grid of Cards ===== */
+    .container{
+      display:flex;
+      gap:1.4rem;
+      flex-wrap:wrap;
+      justify-content:center;
+      padding:1rem;
+    }
+
+    .card{
+      width:260px;
+      height:180px;
+      background:linear-gradient(180deg, var(--bg-2), #0b1424);
+      border:1px solid rgba(96,165,250,.18);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      color:var(--text);
+      position:relative;
+      overflow:hidden;
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      cursor:pointer;
+      isolation:isolate;
+    }
+
+    /* neon sweep */
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: conic-gradient(from 180deg at 50% 50%, rgba(34,211,238,.0), rgba(34,211,238,.25), rgba(96,165,250,.25), rgba(34,211,238,.0));
+      filter: blur(18px);
+      transform: translateX(-60%);
+      transition: transform .45s ease;
+      z-index:0;
+    }
+    .card:hover::before{ transform: translateX(0%); }
+
+    .card span{
+      position:relative; z-index:1;
+      font-weight:700; letter-spacing:.5px;
+      text-shadow:0 1px 0 rgba(0,0,0,.4);
+    }
+
+    .card:hover{
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(34,211,238,.45);
+      box-shadow: var(--ring);
+    }
+
+    @media (max-width:768px){
+      .container{ flex-direction:column; gap:1rem; }
+      .card{ width:90vw; max-width:420px; }
+    }
+
+    /* ===== Modal (Dark) ===== */
+    .modal{
+      display:none;
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:1rem;
+    }
+    .modal.show{ display:flex; }
+
+    .modal-content{
+      width:320px; max-width:92vw;
+      background: linear-gradient(180deg, #0f1724, #0b1220);
+      border:1px solid rgba(96,165,250,.28);
+      border-radius:14px;
+      padding:20px 18px 16px;
+      text-align:center;
+      box-shadow: var(--shadow);
+      animation: pop .22s ease-out;
+    }
+    @keyframes pop{ from{opacity:0; transform: translateY(6px) scale(.98);} to{opacity:1; transform: translateY(0) scale(1);} }
+
+    .modal-content h2{
+      margin:0 0 12px;
+      font-size:18px;
+      color:#eaf2ff;
+    }
+    .hint{
+      margin:0 0 14px; font-size:12px; color:var(--muted);
+    }
+
+    .field{
+      display:flex; gap:8px; justify-content:center; align-items:center;
+    }
+    .modal-content input{
+      width:70%;
+      padding:10px 12px;
+      background:#0a1220;
+      border:1px solid rgba(148,163,184,.35);
+      color:var(--text);
+      border-radius:8px;
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease;
+    }
+    .modal-content input:focus{
+      border-color: rgba(34,211,238,.7);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.18);
+    }
+
+    .btn{
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:#071019;
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      transition: transform .15s ease, filter .2s ease;
+    }
+    .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+
+    .err{
+      margin-top:10px; min-height:18px;
+      font-size:12px; color:var(--danger);
+      opacity:.95;
+    }
+
+    /* Small helper: reduce motion preference */
+    @media (prefers-reduced-motion: reduce){
+      .card, .card::before, .modal-content{ transition:none; animation:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="index.html" class="card"><span>OLD REGISTRATION</span></a>
+    <a href="epsdmw.html" class="card"><span>NEW REGISTRATION</span></a>
+    <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div>
+  </div>
+
+  <!-- ===== Password Modal ===== -->
+  <div class="modal" id="passwordModal" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <h2>Enter Password</h2>
+      <p class="hint">Type and press <b>Enter</b> to continue</p>
+      <div class="field">
+        <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" />
+        <button class="btn" id="submitBtn" onclick="checkPassword()">Submit</button>
+      </div>
+      <div class="err" id="errMsg"></div>
+    </div>
+  </div>
+
+  <script>
+    const modal   = document.getElementById('passwordModal');
+    const input   = document.getElementById('passwordInput');
+    const errMsg  = document.getElementById('errMsg');
+
+    function openModal(){
+      modal.classList.add('show');
+      // autofocus sa input after render
+      setTimeout(()=> input.focus(), 50);
+      input.value = '';
+      errMsg.textContent = '';
+    }
+
+    function closeModal(){
+      modal.classList.remove('show');
+    }
+
+    function checkPassword(){
+      const pass = input.value.trim();
+      if(pass === '00'){
+        window.location.href = 'resize.html';
+      }else{
+        errMsg.textContent = 'Incorrect password. Try again.';
+        input.select(); // highlight para mabilis palitan
+      }
+    }
+
+    // Enter key submits
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ checkPassword(); }
+      if(e.key === 'Escape'){ closeModal(); }
+    });
+
+    // Click outside to close
+    window.addEventListener('click', (e)=>{
+      if(e.target === modal){ closeModal(); }
+    });
+  </script>
+</body>
+</html>
