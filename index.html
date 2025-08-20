@@ -908,7 +908,7 @@ footer div:last-child { /* Created by text */
       // size check
       let size = (file.size / 1024).toFixed(2);
       let msg = '';
-      if (size > 100) {
+      if (size > 90) {
         msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too large.</span>`;
       } else if (size < 50) {
         msg = `<span class='p-2 bg-danger text-white'>WARNING: file size ${size} Kb is too small.</span>`;
