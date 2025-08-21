@@ -336,32 +336,70 @@
     return new Promise(resolve=> canvas.toBlob(b=>resolve(b), type, quality));
   }
 
-  async function exportAtTargetKB(targetKB){
-    const type = mimeType;
-    const outCanvas = renderToOutputCanvas();
-    if(type === 'image/png'){
-      const blob = await canvasToBlobWithQuality(outCanvas, 'image/png');
-      return {blob, actualKB: bytesToKB(blob.size)};
-    }
-    const minQVal = Math.max(0.1, Math.min(0.95, Number(minQ.value)||0.25));
-    const maxQVal = Math.max(minQVal+0.01, Math.min(1, Number(maxQ.value)||0.95));
-    const tolerance = Math.max(0.1, Number(tolKB.value)||0.8);
+// ===== NEW: Auto-tuned JPEG export =====
+async function exportAtTargetKB(targetKB){
+  const type = mimeType;
+  const outCanvas = renderToOutputCanvas();
 
-    let lo = minQVal, hi = maxQVal, best = null, guard = 0;
-    while(guard++ < 20 && hi - lo > 0.01){
-      const mid = (lo + hi) / 2;
-      const blob = await canvasToBlobWithQuality(outCanvas, 'image/jpeg', mid);
-      const kb = bytesToKB(blob.size);
-      if(Math.abs(kb - targetKB) <= tolerance){ best = {blob, actualKB: kb}; break; }
-      if(kb > targetKB){ hi = mid; best = {blob, actualKB: kb}; }
-      else { lo = mid; best = {blob, actualKB: kb}; }
-    }
-    if(!best){
-      const blob = await canvasToBlobWithQuality(outCanvas, 'image/jpeg', lo);
-      best = {blob, actualKB: bytesToKB(blob.size)};
-    }
-    return best;
+  if(type === 'image/png'){
+    const blob = await canvasToBlobWithQuality(outCanvas, 'image/png');
+    return {blob, actualKB: bytesToKB(blob.size), used:{q:null, tolKB:null, minQ:null, maxQ:null}};
   }
+
+  const {
+    blob, actualKB, usedQ, usedTolKB, usedMinQ, usedMaxQ
+  } = await tuneJpegQuality(outCanvas, targetKB);
+
+  try{
+    minQ.value = usedMinQ.toFixed(2);
+    maxQ.value = usedMaxQ.toFixed(2);
+    tolKB.value = usedTolKB.toFixed(1);
+  }catch(_){ }
+
+  return { blob, actualKB, used:{ q:usedQ, tolKB:usedTolKB, minQ:usedMinQ, maxQ:usedMaxQ } };
+}
+
+// Helper
+async function tuneJpegQuality(canvas, targetKB){
+  const GLOBAL_MIN_Q = 0.05;
+  const GLOBAL_MAX_Q = 0.99;
+  const autoTolKB = Math.max(0.6, targetKB * 0.012);
+
+  async function probe(q){
+    const b = await canvasToBlobWithQuality(canvas, 'image/jpeg', q);
+    return { q, kb: bytesToKB(b.size), blob: b };
+  }
+
+  let lo = await probe(GLOBAL_MIN_Q);
+  let hi = await probe(GLOBAL_MAX_Q);
+
+  if (targetKB <= lo.kb + autoTolKB) {
+    return { blob: lo.blob, actualKB: lo.kb, usedQ: lo.q, usedTolKB: autoTolKB, usedMinQ: GLOBAL_MIN_Q, usedMaxQ: GLOBAL_MAX_Q };
+  }
+  if (targetKB >= hi.kb - autoTolKB) {
+    return { blob: hi.blob, actualKB: hi.kb, usedQ: hi.q, usedTolKB: autoTolKB, usedMinQ: GLOBAL_MIN_Q, usedMaxQ: GLOBAL_MAX_Q };
+  }
+
+  let loQ = GLOBAL_MIN_Q, hiQ = GLOBAL_MAX_Q;
+  let best = { blob: hi.blob, actualKB: hi.kb, q: hiQ };
+
+  for(let i=0; i<26; i++){
+    const midQ = (loQ + hiQ) / 2;
+    const mid = await probe(midQ);
+    if (Math.abs(mid.kb - targetKB) < Math.abs(best.actualKB - targetKB)) {
+      best = { blob: mid.blob, actualKB: mid.kb, q: midQ };
+    }
+    if (Math.abs(mid.kb - targetKB) <= autoTolKB) {
+      return { blob: mid.blob, actualKB: mid.kb, usedQ: midQ, usedTolKB: autoTolKB, usedMinQ: loQ, usedMaxQ: hiQ };
+    }
+    if (mid.kb > targetKB) {
+      hiQ = midQ;
+    } else {
+      loQ = midQ;
+    }
+  }
+  return { blob: best.blob, actualKB: best.actualKB, usedQ: best.q, usedTolKB: autoTolKB, usedMinQ: loQ, usedMaxQ: hiQ };
+}
 
   function triggerDownload(blob, suggestedKB){
     const a = document.createElement('a');
