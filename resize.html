@@ -144,10 +144,10 @@
         <h2>Download (Target File Size)</h2>
         <div class="body">
           <div class="field"><label>File type</label>
-            <div class="btn-row">
-              <button class="btn ghost" data-type="image/jpeg" id="typeJpg" aria-pressed="true">JPG</button>
-              <button class="btn ghost" data-type="image/png" id="typePng">PNG</button>
-            </div>
+           <div class="btn-row">
+  <button class="btn ghost active" data-type="image/jpeg" id="typeJpg" aria-pressed="true">JPG</button>
+</div>
+<div class="small">JPG format only</div>
             <div class="small">JPG recommended for IDs; PNG size not precise.</div>
           </div>
 
@@ -217,9 +217,8 @@
   const btnReset = document.getElementById('reset');
   const btnRotate = document.getElementById('rotate');
 
-  const typeJpg = document.getElementById('typeJpg');
-  const typePng = document.getElementById('typePng');
-  let mimeType = 'image/jpeg';
+const typeJpg = document.getElementById('typeJpg');
+let mimeType = 'image/jpeg';
 
   const opt1 = document.getElementById('opt1');
   const opt2 = document.getElementById('opt2');
@@ -341,10 +340,7 @@ async function exportAtTargetKB(targetKB){
   const type = mimeType;
   const outCanvas = renderToOutputCanvas();
 
-  if(type === 'image/png'){
-    const blob = await canvasToBlobWithQuality(outCanvas, 'image/png');
-    return {blob, actualKB: bytesToKB(blob.size), used:{q:null, tolKB:null, minQ:null, maxQ:null}};
-  }
+
 
   const {
     blob, actualKB, usedQ, usedTolKB, usedMinQ, usedMaxQ
@@ -432,9 +428,8 @@ async function tuneJpegQuality(canvas, targetKB){
     btn.classList.add('active');
     mimeType = btn.dataset.type;
   }
-  typeJpg.onclick = ()=>setType(typeJpg);
-  typePng.onclick = ()=>setType(typePng);
-  setType(typeJpg);
+ typeJpg.onclick = ()=>setType(typeJpg);
+setType(typeJpg);
 
   fileInput.addEventListener('change', (e)=>{
     const f = e.target.files && e.target.files[0]; if(!f) return; loadImageFile(f);
