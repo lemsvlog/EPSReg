@@ -32,18 +32,32 @@
     .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
     .preview-wrap{display:flex;flex-direction:column;gap:10px;align-items:center}
     .stage{position:relative;border:1px solid var(--border);border-radius:12px;background:#0f1d33;overflow:auto;padding:10px}
-    .frame{position:relative;overflow:hidden;border-radius:10px;background:#111}
-    .frame::after{content:"";position:absolute;inset:0;border:2px dashed rgba(56,189,248,.6);border-radius:10px;pointer-events:none}
+    .frame{
+  position:relative;
+  overflow:hidden;
+  border-radius:0;   /* ← tanggalin curve */
+  background:#111;
+}
+.frame::after{
+  content:none;
+}
+
     .note{background:#1e3a5f;border:1px solid #38bdf8;color:#e0f7ff;border-radius:10px;padding:10px;margin-top:12px}
     .footer{margin:18px auto 40px;max-width:1100px;color:#9fb8d6;font-size:12px;text-align:center}
     .seg{display:flex;gap:6px}
     .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#0d203f;cursor:pointer;color:var(--muted)}
     .pill.active{background:#38bdf8;color:#0b1d39;font-weight:600}
     .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+
+    /* --- Download rows (with predicted size) --- */
+    .dlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .dlrow input{width:80px;background:#0d203f;border:1px solid var(--border);border-radius:10px;color:var(--text);padding:6px 8px}
+    .predict{margin-left:auto;font-size:12px;color:var(--muted)}
+    @media (max-width:520px){ .predict{margin-left:0} }
   </style>
 </head>
 <body>
-<div class="topbar"><strong>Photo Resizer</strong> — Templates: <strong>300×400 px</strong> or <strong>800×600 px</strong>. Fully offline.</div>
+<div class="topbar"><strong>PHOTO RESIZER (ID & PASSPORT)</strong> — Sizes: <strong>300×400 px (ID)</strong> | <strong>800×600 px (Passport)</strong></div>
 
 <div class="wrap grid">
   <!-- Left -->
@@ -58,7 +72,7 @@
       <!-- Uploader -->
       <div class="uploader" id="dropArea" style="margin-top:10px; margin-bottom:12px">
         <button class="btn big" id="btnUpload">⬆ Upload Photo</button>
-        <div class="hint">Any format (JPG/PNG/WebP/…) • Export is always JPG</div>
+        
         <input id="fileInput" type="file" accept="image/*" hidden>
       </div>
 
@@ -87,11 +101,26 @@
       <h2>Download (Target File Size)</h2>
       <div class="body">
         <div class="note">Export format: <strong>JPG only</strong></div>
+
+        <!-- Download rows with live prediction -->
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-          <div><input id="opt1" type="number" step="0.1" value="13"> KB <button class="btn" id="dl1">Download A</button></div>
-          <div><input id="opt2" type="number" step="0.1" value="12"> KB <button class="btn" id="dl2">Download B</button></div>
-          <div><input id="opt3" type="number" step="0.1" value="11"> KB <button class="btn" id="dl3">Download C</button></div>
+          <div class="dlrow">
+            <input id="opt1" type="number" step="0.1" value="13"> KB
+            <button class="btn" id="dl1">Download A</button>
+            <span class="predict" id="p1">—</span>
+          </div>
+          <div class="dlrow">
+            <input id="opt2" type="number" step="0.1" value="12"> KB
+            <button class="btn" id="dl2">Download B</button>
+            <span class="predict" id="p2">—</span>
+          </div>
+          <div class="dlrow">
+            <input id="opt3" type="number" step="0.1" value="11"> KB
+            <button class="btn" id="dl3">Download C</button>
+            <span class="predict" id="p3">—</span>
+          </div>
         </div>
+
         <hr style="margin:12px 0"/>
         <div class="field">
           <label>Advanced (optional)</label>
@@ -106,12 +135,34 @@
   </aside>
 </div>
 
-<div class="footer">Made for quick passport/ID crops. Works fully offline.</div>
+<div class="footer">
+  Quick Passport & ID Photo Cropper<br><br>
+  Made by <strong>VIZKOR KLC Team</strong> |
+  Contact: <a href="mailto:Lemsvlog@gmail.com">Lemsvlog@gmail.com</a>
+</div>
+
+<style>
+.footer {
+  text-align: center;
+  font-size: 13px;
+  color: #9fb8d6;   /* muted text color */
+  padding: 15px 10px;
+  margin-top: 20px;
+  border-top: 1px solid #1e3a5f;
+}
+.footer a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+</style>
 
 <script>
 const TEMPLATES = {
-  id:       { name:'ID_300x400',       outW:300, outH:400, note:'Output: 300 × 400 px', presets:[13,12,11] },
-  passport: { name:'Passport_800x600', outW:800, outH:600, note:'Output: 800 × 600 px', presets:[90,85,75] }
+  id:       { name:'ID_300x400',       outW:300, outH:400, note:'Output: 300 × 400 px', presets:[12.8,11.5,10.7] },
+  passport: { name:'Passport_800x600', outW:800, outH:600, note:'Output: 800 × 600 px', presets:[88,83,75] }
 };
 let current = { key:'id', ...TEMPLATES.id };
 
@@ -139,13 +190,27 @@ const minQ = document.getElementById('minQ'),
       maxQ = document.getElementById('maxQ'),
       tolKB= document.getElementById('tol');
 
+const p1 = document.getElementById('p1'),
+      p2 = document.getElementById('p2'),
+      p3 = document.getElementById('p3');
+
 let img = new Image(),
     loaded = false,
     scale = 1,
     pos = {x:0, y:0},
     angle = 0;
 
-/* ===== Template switch (now updates frame & canvas size) ===== */
+/* ===== Utilities ===== */
+function formatBytes(bytes){
+  if(!bytes && bytes!==0) return '—';
+  const kb = bytes/1024;
+  return `≈ ${kb.toFixed(1)} KB (${bytes.toLocaleString()} bytes)`;
+}
+function debounce(fn, ms=200){
+  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+}
+
+/* ===== Template switch (updates frame & canvas size) ===== */
 function applyTemplate(tkey){
   current = { key:tkey, ...TEMPLATES[tkey] };
   noteText.textContent = current.note;
@@ -154,7 +219,6 @@ function applyTemplate(tkey){
   tmplID.classList.toggle('active', tkey==='id');
   tmplPP.classList.toggle('active', tkey==='passport');
 
-  // Update preview frame & canvas to match template output size
   frameEl.style.width  = current.outW + "px";
   frameEl.style.height = current.outH + "px";
   screenCanvas.width   = current.outW;
@@ -163,8 +227,10 @@ function applyTemplate(tkey){
   if (loaded){
     fitToCover();
     draw();
+    refreshPredictions(); // update predictions on template change
   } else {
     sctx.clearRect(0,0,screenCanvas.width,screenCanvas.height);
+    [p1.textContent,p2.textContent,p3.textContent] = ['—','—','—'];
   }
 }
 tmplID.onclick = () => applyTemplate('id');
@@ -181,7 +247,6 @@ screenCanvas.addEventListener('pointermove', e => {
   if(!isDragging) return;
   const dx = e.clientX - last.x, dy = e.clientY - last.y;
   last = { x:e.clientX, y:e.clientY };
-  // map screen movement to output coordinate system
   const scaleScreenToOut = current.outW / screenCanvas.width;
   pos.x += dx * scaleScreenToOut;
   pos.y += dy * scaleScreenToOut;
@@ -203,11 +268,11 @@ function renderToOutputCanvas(){
   oc.height = current.outH;
   const octx = oc.getContext('2d');
 
-  // white background (passport/ID photos need white bg most of the time)
+  // white background
   octx.fillStyle = '#fff';
   octx.fillRect(0,0,oc.width,oc.height);
 
-  // center, rotate, then draw image
+  // center, rotate, draw image
   octx.save();
   octx.translate(current.outW/2 + pos.x, current.outH/2 + pos.y);
   octx.rotate(angle * Math.PI/180);
@@ -232,12 +297,12 @@ function resetView(){
 }
 
 /* ===== Controls ===== */
-document.getElementById('zoomIn').onclick = ()=>{ scale *= 1.05; draw(); };
-document.getElementById('zoomOut').onclick= ()=>{ scale /= 1.05; draw(); };
-document.getElementById('fit').onclick    = ()=>{ fitToCover(); draw(); };
-document.getElementById('center').onclick = ()=>{ pos = {x:0,y:0}; draw(); };
-document.getElementById('reset').onclick  = ()=> resetView();
-document.getElementById('rotate').onclick = ()=>{ angle = (angle+90)%360; fitToCover(); draw(); };
+document.getElementById('zoomIn').onclick = ()=>{ scale *= 1.05; draw(); predictDebounced(); };
+document.getElementById('zoomOut').onclick= ()=>{ scale /= 1.05; draw(); predictDebounced(); };
+document.getElementById('fit').onclick    = ()=>{ fitToCover(); draw(); predictDebounced(); };
+document.getElementById('center').onclick = ()=>{ pos = {x:0,y:0}; draw(); predictDebounced(); };
+document.getElementById('reset').onclick  = ()=>{ resetView(); predictDebounced(); };
+document.getElementById('rotate').onclick = ()=>{ angle = (angle+90)%360; fitToCover(); draw(); refreshPredictions(); };
 
 /* ===== Export (JPG only, with target KB via quality bisection) ===== */
 async function canvasToBlobQ(canvas, q){
@@ -256,7 +321,7 @@ async function exportAtTargetKB(targetKB){
     const kb  = b.size/1024;
 
     if(!best || Math.abs(kb-targetKB) < Math.abs(best.kb - targetKB))
-      best = { b, kb };
+      best = { b, kb, q: mid };
 
     if(Math.abs(kb-targetKB) <= tol) return best;
     if(kb > targetKB) hiQ = mid; else loQ = mid;
@@ -282,13 +347,38 @@ dl1.onclick = ()=>handleDownload(opt1);
 dl2.onclick = ()=>handleDownload(opt2);
 dl3.onclick = ()=>handleDownload(opt3);
 
+/* ===== Live Predictions beside buttons ===== */
+async function refreshPredictions(){
+  if(!loaded){
+    [p1.textContent,p2.textContent,p3.textContent] = ['—','—','—'];
+    return;
+  }
+  const t1 = Number(opt1.value)||0, t2 = Number(opt2.value)||0, t3 = Number(opt3.value)||0;
+
+  // Compute sequentially to reduce spikes
+  if(t1>0){
+    const r1 = await exportAtTargetKB(t1);
+    p1.textContent = formatBytes(Math.round(r1.kb*1024));
+  } else p1.textContent = '—';
+
+  if(t2>0){
+    const r2 = await exportAtTargetKB(t2);
+    p2.textContent = formatBytes(Math.round(r2.kb*1024));
+  } else p2.textContent = '—';
+
+  if(t3>0){
+    const r3 = await exportAtTargetKB(t3);
+    p3.textContent = formatBytes(Math.round(r3.kb*1024));
+  } else p3.textContent = '—';
+}
+const predictDebounced = debounce(refreshPredictions, 250);
+
 /* ===== Load (Upload + Drag & Drop) ===== */
 btnUpload.onclick = ()=> fileInput.click();
 fileInput.onchange = e => {
   const f = e.target.files[0];
   if(f) loadImageFile(f);
 };
-// DnD behavior over the dashed area
 ['dragenter','dragover','dragleave','drop'].forEach(ev =>
   dropArea.addEventListener(ev, e => { e.preventDefault(); })
 );
@@ -306,9 +396,15 @@ function loadImageFile(file){
     workspace.style.display = 'flex';
     fitToCover();
     draw();
+    refreshPredictions();
   };
   img.src = url;
 }
+
+/* React to input changes for predictions */
+[opt1,opt2,opt3,minQ,maxQ,tol].forEach(el=>{
+  el.addEventListener('input', predictDebounced);
+});
 
 /* Sync initial frame/canvas to default template on load */
 applyTemplate(current.key);
