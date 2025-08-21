@@ -69,11 +69,11 @@
       100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
     }
 
-    /* ===== Header (Frosted, Neon Edge) ===== */
+    /* ===== Header ===== */
     header{
       width:100%;
       text-align:center;
-      padding:28px 12px 18px;
+      padding:24px 12px 14px;
       background: linear-gradient(90deg, rgba(56,189,248,.10), rgba(103,232,249,.10));
       border-bottom:1px solid rgba(103,232,249,.30);
       box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(0,0,0,.55);
@@ -92,10 +92,8 @@
       letter-spacing:3px;
       text-transform:uppercase;
       color:#fff;
-      /* frosty gradient fill */
       background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      /* icy glow */
       text-shadow:
         0 0 10px rgba(255,255,255,.75),
         0 0 24px rgba(56,189,248,.55),
@@ -107,7 +105,67 @@
       letter-spacing:.6px;
       color:var(--ice-2);
       text-shadow:0 0 10px rgba(186,230,253,.55);
+      margin-top:2px;
     }
+
+    /* ===== Simple Countdown Bar (under subtitle) ===== */
+   /* ===== Simple Countdown Bar (under subtitle) ===== */
+  .countdown-wrap{
+    margin:12px auto 0;
+    width:min(940px, 92vw);
+    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+    border:1px solid rgba(186,230,253,.35);
+    border-radius:12px;
+    padding:8px 12px;
+    box-shadow: 0 6px 18px rgba(2,12,22,.35);
+    display:flex; gap:10px; align-items:center; justify-content:center;
+    flex-wrap:wrap;
+  }
+  .countdown-title{
+    font-weight:800; letter-spacing:.3px; color:var(--ice-1);
+    text-shadow:0 0 8px rgba(186,230,253,.35);
+    margin:0;
+  }
+  .countdown-date{
+    color:var(--muted); font-weight:600; margin:0;
+  }
+  #countdown{
+    font-weight:900;
+    font-size:1.2rem;
+    /* frosty Vizkor-like gradient text */
+    background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 12px rgba(56,189,248,.55);
+    margin-left:6px;
+  }
+
+  /* ===== Smaller Cards ===== */
+ .card{
+  width:180px; 
+  height:80px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88));
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:0 6px 14px rgba(2,12,22,.45);
+  color:#0c253a;
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none; font-weight:800;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.card span{
+  position:relative; z-index:1;
+  font-size:0.95rem; 
+  letter-spacing:.5px;
+  text-shadow:0 1px 0 rgba(255,255,255,.6);
+}
+
+@media (max-width:768px){
+  .card{ width:80vw; max-width:300px; height:100px; }
+}
 
     /* ===== Cards Grid ===== */
     .container{
@@ -131,7 +189,6 @@
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
 
-    /* gentle internal glare */
     .card::before{
       content:"";
       position:absolute; inset:-1px;
@@ -144,12 +201,11 @@
       transition:transform .6s ease;
       pointer-events:none;
     }
-    /* top shine sweep */
     .card::after{
       content:"";
       position:absolute; top:-60%; left:-40%;
       width:60%; height:220%;
-      background:linear-gradient(120deg, rgba(255,255,255,.0) 0%, rgba(255,255,255,.65) 48%, rgba(255,255,255,.0) 100%);
+      background:linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.65) 48%, rgba(255,255,255,0) 100%);
       transform:rotate(18deg) translateX(-40%);
       transition: transform .7s ease;
       pointer-events:none;
@@ -177,9 +233,11 @@
       .container{ flex-direction:column; gap:1rem; }
       .card{ width:92vw; max-width:460px; }
       .brand .title-main{ font-size:2.4rem; }
+      .countdown-wrap{ padding:10px 12px; }
+      #countdown{ font-size:1.1rem; }
     }
 
-    /* ===== Password Modal (Glass + Ice Ring) ===== */
+    /* ===== Password Modal ===== */
     .modal{
       display:none; position:fixed; inset:0;
       background: rgba(1,7,13,.55);
@@ -236,7 +294,7 @@
 
     .err{ margin-top:10px; min-height:18px; font-size:12px; color:var(--danger); }
 
-    /* ===== Optional: Floating micro-particles for extra "freeze" vibe ===== */
+    /* ===== Optional: Floating micro-particles ===== */
     .flakes{
       position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2;
       opacity:.25;
@@ -253,7 +311,6 @@
       100%{ transform:translateY(110vh) translateX(20px); opacity:0; }
     }
 
-    /* Reduced Motion */
     @media (prefers-reduced-motion: reduce){
       body::before{ animation:none; }
       .card::after{ transition:none; }
@@ -271,6 +328,15 @@
     <div class="brand">
       <h1 class="title-main">VIZKOR</h1>
       <div class="title-sub">Korean Language Learning Academy</div>
+
+      <!-- ===== Simple Countdown (inserted here) ===== -->
+      <div class="countdown-wrap" role="region" aria-label="Registration countdown">
+        <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
+        <p class="countdown-date">August 25, 2025 — 10:00 AM</p>
+        <span id="countdown" aria-live="polite"></span>
+      </div>
+      <!-- ===== End Countdown ===== -->
+
     </div>
   </header>
 
@@ -297,7 +363,7 @@
     /* ===== Particles (tiny frost flakes) ===== */
     (function makeFlakes(){
       const wrap = document.getElementById('flakes');
-      const count = 30; // keep subtle; raise to 50-60 if you want more
+      const count = 30;
       for(let i=0;i<count;i++){
         const f = document.createElement('div');
         const delay = (Math.random()*6).toFixed(2);
@@ -312,6 +378,33 @@
         f.style.height = `${size}px`;
         wrap.appendChild(f);
       }
+    })();
+
+    /* ===== Countdown (simple & clean) ===== */
+    (function initCountdown(){
+      const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
+      const el = document.getElementById("countdown");
+      if(!el) return;
+
+      function tick(){
+        const now = Date.now();
+        const diff = TARGET - now;
+
+        if(diff <= 0){
+          el.textContent = "Started";
+          return;
+        }
+
+        const d = Math.floor(diff / (1000*60*60*24));
+        const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+        const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+        const s = Math.floor((diff % (1000*60)) / 1000);
+
+        el.textContent = `• ${d}d ${h}h ${m}m ${s}s`;
+      }
+
+      tick();
+      setInterval(tick, 1000);
     })();
 
     /* ===== Modal Logic ===== */
@@ -351,4 +444,3 @@
   </script>
 </body>
 </html>
-
