@@ -2,23 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Registration Hub (Cyber Cool Blue)</title>
+  <title>Registration Hub (Sky Blue Freeze)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* ===== Cyber Cool Blue Theme ===== */
+    /* ===== Sky Blue Freeze Theme ===== */
     :root{
-      --bg-1:#050b16;        /* page bg (deep navy-black) */
-      --bg-2:#0b1628;        /* card/modal bg */
-      --muted:#9da8c2;       /* muted text */
-      --text:#e6f0ff;        /* main text */
-      --accent:#3b82f6;      /* bright blue */
-      --accent-2:#1e3a8a;    /* deep blue */
-      --cyan:#22d3ee;        /* cyan highlight */
-      --cyan-2:#06b6d4;      /* deeper cyan */
+      --bg-1:#03121f;          /* deep arctic night */
+      --bg-2:#0a1e2e;          /* card/modal base */
+      --ice-1:#ecfeff;         /* near-white ice */
+      --ice-2:#dbeafe;         /* pale sky */
+      --ice-3:#bae6fd;         /* light sky */
+      --text:#eef6ff;          /* main text */
+      --muted:#a9c3d9;         /* muted text */
+      --accent:#38bdf8;        /* sky blue */
+      --accent-2:#0ea5e9;      /* deeper sky */
+      --cyan:#67e8f9;          /* icier cyan */
+      --cyan-2:#22d3ee;
+      --navy:#0b2440;
       --danger:#ef4444;
-      --shadow:0 10px 30px rgba(0,0,0,.55);
-      --ring: 0 0 14px rgba(59,130,246,.55), 0 0 28px rgba(34,211,238,.35);
+
+      --shadow:0 14px 38px rgba(0,0,0,.55);
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --frost:rgba(255,255,255,.08);
+      --glass:rgba(255,255,255,.06);
+      --border:1px solid rgba(103,232,249,.30);
     }
 
     *{box-sizing:border-box}
@@ -30,235 +38,240 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      background:
-        radial-gradient(1200px 800px at 10% -10%, rgba(59,130,246,.18), transparent 60%),
-        radial-gradient(1000px 800px at 100% 120%, rgba(34,211,238,.16), transparent 60%),
-        linear-gradient(180deg, var(--bg-1), #081020 70%, #040812);
       overflow-x:hidden;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative;
+      isolation:isolate;
     }
 
-    /* ===== Top Banner ===== */
+    /* Animated aurora sheet */
+    body::before{
+      content:"";
+      position:fixed; inset:-20%;
+      background:
+        conic-gradient(from 200deg at 60% 40%,
+          rgba(186,230,253,.12),
+          rgba(34,211,238,.10),
+          rgba(56,189,248,.14),
+          rgba(186,230,253,.10),
+          rgba(34,211,238,.10));
+      filter:blur(48px);
+      animation: drift 20s linear infinite;
+      z-index:-1;
+      opacity:.9;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
+      50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05);}
+      100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
+    }
+
+    /* ===== Header (Frosted, Neon Edge) ===== */
     header{
       width:100%;
       text-align:center;
       padding:28px 12px 18px;
-      background:
-        linear-gradient(90deg, rgba(59,130,246,.10), rgba(34,211,238,.10));
-      border-bottom:1px solid rgba(34,211,238,.25);
-      box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 4px 14px rgba(0,0,0,.6);
-      position:sticky;
-      top:0;
-      z-index:100;
+      background: linear-gradient(90deg, rgba(56,189,248,.10), rgba(103,232,249,.10));
+      border-bottom:1px solid rgba(103,232,249,.30);
+      box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(0,0,0,.55);
+      position:sticky; top:0; z-index:100;
+      backdrop-filter:saturate(140%) blur(8px);
+      -webkit-backdrop-filter:saturate(140%) blur(8px);
     }
-    header h1{
+    .brand{
+      display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
+    }
+    .brand .title-main{
       margin:0;
-      font-size:1.8rem;
-      font-weight:800;
-      background:linear-gradient(90deg, var(--cyan), var(--accent));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      letter-spacing:1.4px;
+      font-size:3.4rem;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      color:#fff;
+      /* frosty gradient fill */
+      background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      /* icy glow */
       text-shadow:
-        0 0 10px rgba(59,130,246,.55),
-        0 0 16px rgba(34,211,238,.45);
+        0 0 10px rgba(255,255,255,.75),
+        0 0 24px rgba(56,189,248,.55),
+        0 0 40px rgba(103,232,249,.45);
+    }
+    .brand .title-sub{
+      font-size:1.05rem;
+      font-weight:600;
+      letter-spacing:.6px;
+      color:var(--ice-2);
+      text-shadow:0 0 10px rgba(186,230,253,.55);
     }
 
-    /* ===== Grid of Cards ===== */
+    /* ===== Cards Grid ===== */
     .container{
-      display:flex;
-      gap:1.4rem;
-      flex-wrap:wrap;
-      justify-content:center;
-      padding:2rem 1rem;
+      display:flex; gap:1.4rem; flex-wrap:wrap;
+      justify-content:center; padding:2rem 1rem 3rem;
+      width:min(1100px, 96vw);
     }
 
+    /* White Frosted Cards */
     .card{
-      width:260px;
-      height:180px;
-      background:linear-gradient(180deg, var(--bg-2), #0a1322);
-      border:1px solid rgba(59,130,246,.28);
+      width:280px; height:190px;
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88));
       border-radius:18px;
-      box-shadow: var(--shadow);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none;
-      color:var(--text);
-      position:relative;
-      overflow:hidden;
-      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      border:1px solid rgba(255,255,255,.65);
+      box-shadow:0 12px 26px rgba(2,12,22,.45);
+      color:#0c253a;
+      display:flex; align-items:center; justify-content:center;
+      text-decoration:none; font-weight:800;
+      position:relative; overflow:hidden;
       cursor:pointer;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
 
-    /* neon sweep (blue + cyan) */
+    /* gentle internal glare */
     .card::before{
       content:"";
-      position:absolute; inset:-2px;
-      background: conic-gradient(
-        from 180deg at 50% 50%,
-        rgba(59,130,246,0),
-        rgba(59,130,246,.35),
-        rgba(34,211,238,.35),
-        rgba(59,130,246,0)
-      );
-      filter: blur(20px);
-      transform: translateX(-70%);
-      transition: transform .55s ease;
-      z-index:0;
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(600px 200px at -10% 0%, rgba(56,189,248,.22), transparent 60%),
+        radial-gradient(600px 200px at 110% 100%, rgba(103,232,249,.20), transparent 60%);
+      mix-blend-mode:screen;
+      opacity:.75;
+      transform:translateX(-15%);
+      transition:transform .6s ease;
+      pointer-events:none;
     }
-    .card:hover::before{ transform: translateX(0%); }
-
-    .card span{
-      position:relative; z-index:1;
-      font-weight:700; letter-spacing:.5px;
-      text-shadow:0 0 4px rgba(59,130,246,.6);
+    /* top shine sweep */
+    .card::after{
+      content:"";
+      position:absolute; top:-60%; left:-40%;
+      width:60%; height:220%;
+      background:linear-gradient(120deg, rgba(255,255,255,.0) 0%, rgba(255,255,255,.65) 48%, rgba(255,255,255,.0) 100%);
+      transform:rotate(18deg) translateX(-40%);
+      transition: transform .7s ease;
+      pointer-events:none;
+      filter:blur(1px);
+      opacity:.9;
     }
 
     .card:hover{
-      transform: translateY(-8px) scale(1.03);
-      border-color: rgba(34,211,238,.6);
-      box-shadow: var(--ring);
+      transform: translateY(-10px) scale(1.035);
+      border-color:rgba(103,232,249,.95);
+      box-shadow:
+        0 0 18px rgba(186,230,253,.75),
+        0 0 36px rgba(56,189,248,.55);
+    }
+    .card:hover::before{ transform:translateX(0%); }
+    .card:hover::after{ transform:rotate(18deg) translateX(120%); }
+
+    .card span{
+      position:relative; z-index:1;
+      font-size:1.08rem; letter-spacing:.5px;
+      text-shadow:0 1px 0 rgba(255,255,255,.6);
     }
 
     @media (max-width:768px){
       .container{ flex-direction:column; gap:1rem; }
-      .card{ width:90vw; max-width:420px; }
+      .card{ width:92vw; max-width:460px; }
+      .brand .title-main{ font-size:2.4rem; }
     }
 
-    /* ===== Modal (Blue–Cyan) ===== */
+    /* ===== Password Modal (Glass + Ice Ring) ===== */
     .modal{
-      display:none;
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      z-index:9999;
-      align-items:center;
-      justify-content:center;
-      padding:1rem;
+      display:none; position:fixed; inset:0;
+      background: rgba(1,7,13,.55);
+      backdrop-filter: blur(6px) saturate(130%);
+      -webkit-backdrop-filter: blur(6px) saturate(130%);
+      z-index:9999; align-items:center; justify-content:center; padding:1rem;
     }
     .modal.show{ display:flex; }
 
     .modal-content{
-      width:320px; max-width:92vw;
-      background: linear-gradient(180deg, #0e1a2b, #0a1422);
-      border:1px solid rgba(34,211,238,.35);
+      width:340px; max-width:92vw;
+      background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94));
+      border: var(--border);
       border-radius:16px;
-      padding:20px 18px 16px;
+      padding:22px 18px 16px;
       text-align:center;
       box-shadow: var(--ring);
       animation: pop .25s ease-out;
     }
-    @keyframes pop{ from{opacity:0; transform: translateY(8px) scale(.95);} to{opacity:1; transform: translateY(0) scale(1);} }
+    @keyframes pop{ from{opacity:0; transform: translateY(8px) scale(.96);} to{opacity:1; transform: translateY(0) scale(1);} }
 
     .modal-content h2{
-      margin:0 0 12px;
-      font-size:20px;
-      font-weight:700;
-      color:var(--text);
-      text-shadow:0 0 6px rgba(59,130,246,.45);
+      margin:0 0 10px; font-size:20px; font-weight:800;
+      color:var(--ice-1);
+      text-shadow:0 0 10px rgba(186,230,253,.45);
     }
     .hint{ margin:0 0 14px; font-size:12px; color:var(--muted); }
 
     .field{ display:flex; gap:8px; justify-content:center; align-items:center; }
     .modal-content input{
-      width:70%;
-      padding:10px 12px;
-      background:#091524;
-      border:1px solid rgba(157,168,194,.35);
-      color:var(--text);
-      border-radius:8px;
-      outline:none;
-      transition:border-color .2s ease, box-shadow .2s ease;
+      width:70%; padding:11px 12px;
+      background:linear-gradient(180deg, #071c2c, #061725);
+      border:1px solid rgba(186,230,253,.35);
+      color:var(--text); border-radius:10px; outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease, transform .1s ease;
     }
     .modal-content input:focus{
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.25), 0 0 0 6px rgba(103,232,249,.18);
+      transform: translateY(-1px);
     }
 
     .btn{
       background: linear-gradient(90deg, var(--cyan), var(--accent));
-      color:#04101e;
-      border:none;
-      padding:10px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.2px;
-      transition: transform .15s ease, filter .2s ease;
+      color:#072235;
+      border:none; padding:11px 14px;
+      border-radius:10px; cursor:pointer; font-weight:900;
+      letter-spacing:.25px;
+      transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
+      box-shadow: 0 6px 18px rgba(56,189,248,.35);
     }
-    .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+    .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); box-shadow: var(--ring); }
     .btn:active{ transform: translateY(0); }
 
-    .err{
-      margin-top:10px; min-height:18px;
-      font-size:12px; color:var(--danger);
+    .err{ margin-top:10px; min-height:18px; font-size:12px; color:var(--danger); }
+
+    /* ===== Optional: Floating micro-particles for extra "freeze" vibe ===== */
+    .flakes{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2;
+      opacity:.25;
     }
-	/* ===== Header White Neon ===== */
-.title-main{
-  display:block;
-  font-size:3.2rem;
-  font-weight:900;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:#fff;
-  text-shadow:
-    0 0 10px rgba(255,255,255,.8),
-    0 0 20px rgba(255,255,255,.7),
-    0 0 35px rgba(59,130,246,.7);  /* bluish glow */
-}
+    .flake{
+      position:absolute; width:2px; height:2px; border-radius:50%;
+      background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.4) 70%, rgba(255,255,255,0) 100%);
+      animation: fall linear infinite;
+      filter:drop-shadow(0 0 4px rgba(255,255,255,.9));
+    }
+    @keyframes fall{
+      0%{ transform:translateY(-10vh) translateX(0); opacity:0; }
+      10%{ opacity:1; }
+      100%{ transform:translateY(110vh) translateX(20px); opacity:0; }
+    }
 
-.title-sub{
-  display:block;
-  font-size:1.2rem;
-  font-weight:600;
-  color:#f5f5f5;
-  text-shadow:
-    0 0 6px rgba(255,255,255,.6),
-    0 0 12px rgba(96,165,250,.6);
-}
-
-/* ===== White Cards ===== */
-.card{
-  width:260px;
-  height:180px;
-  background:#fff;
-  border:1px solid rgba(255,255,255,.3);
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,.4);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  color:#111;    /* dark text inside card */
-  font-weight:700;
-  position:relative;
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-  cursor:pointer;
-}
-
-.card span{
-  position:relative;
-  font-size:1.05rem;
-  letter-spacing:.5px;
-  text-shadow:none;
-}
-
-.card:hover{
-  transform: translateY(-8px) scale(1.05);
-  border-color:#fff;
-  box-shadow:
-    0 0 14px rgba(255,255,255,.8),
-    0 0 28px rgba(59,130,246,.6); /* bluish glow on hover */
-}
-
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce){
+      body::before{ animation:none; }
+      .card::after{ transition:none; }
+      .flake{ animation-duration:12s !important; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- subtle floating ice particles -->
+  <div class="flakes" aria-hidden="true" id="flakes"></div>
+
   <!-- Top Banner -->
   <header>
-    <h1>VIZKOR Korean Language Learning Academy</h1>
+    <div class="brand">
+      <h1 class="title-main">VIZKOR</h1>
+      <div class="title-sub">Korean Language Learning Academy</div>
+    </div>
   </header>
 
   <div class="container">
@@ -281,6 +294,27 @@
   </div>
 
   <script>
+    /* ===== Particles (tiny frost flakes) ===== */
+    (function makeFlakes(){
+      const wrap = document.getElementById('flakes');
+      const count = 30; // keep subtle; raise to 50-60 if you want more
+      for(let i=0;i<count;i++){
+        const f = document.createElement('div');
+        const delay = (Math.random()*6).toFixed(2);
+        const dur = (8 + Math.random()*6).toFixed(2);
+        const left = (Math.random()*100).toFixed(2);
+        const size = (Math.random()*2 + 1).toFixed(2);
+        f.className = 'flake';
+        f.style.left = `${left}vw`;
+        f.style.animationDuration = `${dur}s`;
+        f.style.animationDelay = `${delay}s`;
+        f.style.width = `${size}px`;
+        f.style.height = `${size}px`;
+        wrap.appendChild(f);
+      }
+    })();
+
+    /* ===== Modal Logic ===== */
     const modal   = document.getElementById('passwordModal');
     const input   = document.getElementById('passwordInput');
     const errMsg  = document.getElementById('errMsg');
@@ -317,3 +351,4 @@
   </script>
 </body>
 </html>
+
