@@ -57,6 +57,31 @@
   </style>
 </head>
 <body>
+<!-- Floating Home Button -->
+<a href="index.html" class="floating-home">Home</a>
+
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: #2563eb; /* Blue */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 0 0 0 6px; /* rounded lang sa ibaba-kaliwa */
+    box-shadow: -2px 2px 6px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transition: all 0.3s ease;
+  }
+
+  .floating-home:hover {
+    background: #1d4ed8; /* darker blue */
+  }
+</style>
+
 <div class="topbar"><strong>PHOTO RESIZER (ID & PASSPORT)</strong> — Sizes: <strong>300×400 px (ID)</strong> | <strong>800×600 px (Passport)</strong></div>
 
 <div class="wrap grid">
