@@ -108,37 +108,51 @@
       margin-top:2px;
     }
 
-    /* ===== Simple Countdown Bar (under subtitle) ===== */
    /* ===== Simple Countdown Bar (under subtitle) ===== */
-  .countdown-wrap{
-    margin:12px auto 0;
-    width:min(940px, 92vw);
-    background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
-    border:1px solid rgba(186,230,253,.35);
-    border-radius:12px;
-    padding:8px 12px;
-    box-shadow: 0 6px 18px rgba(2,12,22,.35);
-    display:flex; gap:10px; align-items:center; justify-content:center;
-    flex-wrap:wrap;
-  }
-  .countdown-title{
-    font-weight:800; letter-spacing:.3px; color:var(--ice-1);
-    text-shadow:0 0 8px rgba(186,230,253,.35);
-    margin:0;
-  }
-  .countdown-date{
-    color:var(--muted); font-weight:600; margin:0;
-  }
-  #countdown{
-    font-weight:900;
-    font-size:4rem;
-    /* frosty Vizkor-like gradient text */
-    background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    text-shadow:0 0 12px rgba(56,189,248,.55);
-    margin-left:6px;
-  }
+  .countdown-wrap {
+  margin: 12px auto 0;
+  width: min(940px, 92vw);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  border: 1px solid rgba(186,230,253,.35);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 6px 18px rgba(2,12,22,.35);
+
+  display: flex;
+  flex-direction: column;   /* vertical layout */
+  align-items: center;
+  text-align: center;
+  gap: 0;                   /* wala nang puwang */
+}
+
+.countdown-title,
+.countdown-date,
+#countdown {
+  margin: 0;   /* tanggal lahat ng default margin */
+  padding: 0;
+}
+
+.countdown-title {
+  font-weight: 800;
+  letter-spacing: .3px;
+  color: var(--ice-1);
+  text-shadow: 0 0 8px rgba(186,230,253,.35);
+}
+
+.countdown-date {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#countdown {
+  font-weight: 900;
+  font-size: 3rem;
+  background: linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(56,189,248,.55);
+}
+
 
   /* ===== Smaller Cards ===== */
  .card{
@@ -330,15 +344,18 @@
       <div class="title-sub">Korean Language Learning Academy</div>
 
       <!-- ===== Simple Countdown (inserted here) ===== -->
-      <div class="countdown-wrap" role="region" aria-label="Registration countdown">
-        <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
-        <p class="countdown-date">August 25, 2025 — 10:00 AM</p><br>
-        <span id="countdown" aria-live="polite"></span>
-      </div>
+    <div class="countdown-wrap" role="region" aria-label="Registration countdown">
+  <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
+  <p class="countdown-date">August 25, 2025 — 10:00 AM</p>
+  <p id="countdown" aria-live="polite"></p>
+</div>
+
+   </div>
+  </header>
+
       <!-- ===== End Countdown ===== -->
 
-    </div>
-  </header>
+ 
 
   <div class="container">
     <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
@@ -346,101 +363,186 @@
     <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div>
   </div>
 
-  <!-- ===== Password Modal ===== -->
-  <div class="modal" id="passwordModal" aria-modal="true" role="dialog">
-    <div class="modal-content">
-      <h2>Enter Password</h2>
-      <p class="hint">Type and press <b>Enter</b> to continue</p>
-      <div class="field">
-        <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" />
-        <button class="btn" id="submitBtn" onclick="checkPassword()">Submit</button>
-      </div>
-      <div class="err" id="errMsg"></div>
-    </div>
+  <!-- ===== Password Modal with 9-Dot Pattern ===== -->
+<div class="modal" id="passwordModal" aria-modal="true" role="dialog">
+  <div class="modal-content">
+    <h2>Draw Unlock Pattern</h2>
+    <p class="hint">Drag across 5 dots to continue</p>
+    <canvas id="patternCanvas" width="300" height="300"></canvas>
+    <div class="err" id="errMsg"></div>
   </div>
+</div>
 
-  <script>
-    /* ===== Particles (tiny frost flakes) ===== */
-    (function makeFlakes(){
-      const wrap = document.getElementById('flakes');
-      const count = 30;
-      for(let i=0;i<count;i++){
-        const f = document.createElement('div');
-        const delay = (Math.random()*6).toFixed(2);
-        const dur = (8 + Math.random()*6).toFixed(2);
-        const left = (Math.random()*100).toFixed(2);
-        const size = (Math.random()*2 + 1).toFixed(2);
-        f.className = 'flake';
-        f.style.left = `${left}vw`;
-        f.style.animationDuration = `${dur}s`;
-        f.style.animationDelay = `${delay}s`;
-        f.style.width = `${size}px`;
-        f.style.height = `${size}px`;
-        wrap.appendChild(f);
-      }
-    })();
+<style>
+#patternCanvas {
+  background: linear-gradient(180deg, #071c2c, #061725);
+  border: 1px solid rgba(186,230,253,.35);
+  border-radius: 12px;
+  touch-action: none; /* disable scroll while drawing */
+  display:block;
+  margin:0 auto;
+}
+</style>
 
-    /* ===== Countdown (simple & clean) ===== */
-    (function initCountdown(){
-      const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
-      const el = document.getElementById("countdown");
-      if(!el) return;
+<script>
+/* ===== Modal Logic ===== */
+const modal = document.getElementById('passwordModal');
+const errMsg = document.getElementById('errMsg');
 
-      function tick(){
-        const now = Date.now();
-        const diff = TARGET - now;
+function openModal(){
+  modal.classList.add('show');
+  errMsg.textContent = '';
+}
+function closeModal(){
+  modal.classList.remove('show');
+}
+window.addEventListener('click', (e)=>{
+  if(e.target === modal){ closeModal(); }
+});
 
-        if(diff <= 0){
-          el.textContent = "Started";
-          return;
-        }
+/* ===== Pattern Lock ===== */
+const canvas = document.getElementById("patternCanvas");
+const ctx = canvas.getContext("2d");
+const size = 3; // 3x3 grid
+const radius = 20;
+const nodes = [];
+let pattern = [], isDrawing = false, lastX=0, lastY=0;
 
-        const d = Math.floor(diff / (1000*60*60*24));
-        const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-        const m = Math.floor((diff % (1000*60*60)) / (1000*60));
-        const s = Math.floor((diff % (1000*60)) / 1000);
+// ===== SET YOUR PASSWORD PATTERN HERE =====
+const correctPattern = [0,1,2,5,8];  
 
-        el.textContent = ` ${d}d ${h}h ${m}m ${s}s`;
-      }
-
-      tick();
-      setInterval(tick, 1000);
-    })();
-
-    /* ===== Modal Logic ===== */
-    const modal   = document.getElementById('passwordModal');
-    const input   = document.getElementById('passwordInput');
-    const errMsg  = document.getElementById('errMsg');
-
-    function openModal(){
-      modal.classList.add('show');
-      setTimeout(()=> input.focus(), 50);
-      input.value = '';
-      errMsg.textContent = '';
+function setupGrid(){
+  nodes.length = 0;
+  const gap = canvas.width / (size+1);
+  for(let row=0; row<size; row++){
+    for(let col=0; col<size; col++){
+      nodes.push({
+        x:(col+1)*gap,
+        y:(row+1)*gap,
+        id: row*size+col,
+        active:false
+      });
     }
+  }
+  draw();
+}
 
-    function closeModal(){
-      modal.classList.remove('show');
-    }
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    function checkPassword(){
-      const pass = input.value.trim();
-      if(pass === '00'){
-        window.location.href = 'resize.html';
-      }else{
-        errMsg.textContent = 'Incorrect password. Try again.';
-        input.select();
-      }
-    }
+  // draw glow lines
+  if(pattern.length > 0){
+    const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    gradient.addColorStop(0, "#38bdf8");
+    gradient.addColorStop(1, "#22d3ee");
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 6;
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = "#38bdf8";
 
-    input.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter'){ checkPassword(); }
-      if(e.key === 'Escape'){ closeModal(); }
+    ctx.beginPath();
+    pattern.forEach((id,i)=>{
+      const n=nodes[id];
+      if(i===0) ctx.moveTo(n.x,n.y);
+      else ctx.lineTo(n.x,n.y);
     });
+    if(isDrawing) ctx.lineTo(lastX,lastY);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
 
-    window.addEventListener('click', (e)=>{
-      if(e.target === modal){ closeModal(); }
-    });
-  </script>
+  // draw glowing dots
+  nodes.forEach(n=>{
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,radius,0,Math.PI*2);
+
+    if(n.active){
+      const g = ctx.createRadialGradient(n.x,n.y,5,n.x,n.y,radius+8);
+      g.addColorStop(0,"#67e8f9");
+      g.addColorStop(1,"#0ea5e9");
+      ctx.fillStyle = g;
+      ctx.shadowBlur = 25;
+      ctx.shadowColor = "#38bdf8";
+    }else{
+      ctx.fillStyle="#0a1e2e";
+      ctx.shadowBlur=0;
+    }
+    ctx.fill();
+
+    ctx.strokeStyle="rgba(186,230,253,.5)";
+    ctx.lineWidth=2;
+    ctx.stroke();
+  });
+}
+
+function getNode(x,y){
+  return nodes.find(n=>{
+    const dx=x-n.x, dy=y-n.y;
+    return Math.sqrt(dx*dx+dy*dy) < radius+5;
+  });
+}
+
+function startDraw(e){ isDrawing=true; pattern=[]; nodes.forEach(n=>n.active=false); moveDraw(e); }
+function moveDraw(e){
+  if(!isDrawing) return;
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+  const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+  lastX=x; lastY=y;
+  const node=getNode(x,y);
+  if(node && !node.active){ node.active=true; pattern.push(node.id); }
+  draw();
+}
+function endDraw(){
+  if(!isDrawing) return;
+  isDrawing=false;
+  if(pattern.length===correctPattern.length &&
+     pattern.every((v,i)=>v===correctPattern[i])){
+    window.location.href="resize.html";
+  }else{
+    errMsg.textContent="Incorrect pattern. Try again.";
+  }
+  draw();
+}
+
+canvas.addEventListener("mousedown",startDraw);
+canvas.addEventListener("mousemove",moveDraw);
+window.addEventListener("mouseup",endDraw);
+canvas.addEventListener("touchstart",startDraw);
+canvas.addEventListener("touchmove",moveDraw);
+window.addEventListener("touchend",endDraw);
+
+setupGrid();
+/* ===== Countdown (simple & clean) ===== */
+(function initCountdown(){
+  const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
+  const el = document.getElementById("countdown");
+  if(!el) return;
+
+  function tick(){
+    const now = Date.now();
+    const diff = TARGET - now;
+
+    if(diff <= 0){
+      el.textContent = "Started";
+      return;
+    }
+
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const s = Math.floor((diff % (1000*60)) / 1000);
+
+    el.textContent = ` ${d}d ${h}h ${m}m ${s}s`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+</script>
+
+
+ 
 </body>
 </html>
