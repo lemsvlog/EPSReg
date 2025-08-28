@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VIZKOR Numbers Trainer – Native, Sino & Time (Analog)</title>
+  <style>
+    :root{
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --border:1px solid rgba(103,232,249,.30);
+      --shadow:0 14px 38px rgba(0,0,0,.55);
+      --sa-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; color:var(--text);
+      min-height:100dvh; display:flex; flex-direction:column; align-items:center; gap:12px;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative; isolation:isolate; padding:14px 12px calc(56px + var(--sa-bottom));
+    }
+    body::before{ content:""; position:fixed; inset:-20%; background: conic-gradient(from 200deg at 60% 40%, rgba(186,230,253,.12), rgba(34,211,238,.10), rgba(56,189,248,.14), rgba(186,230,253,.10), rgba(34,211,238,.10)); filter:blur(48px); animation: drift 20s linear infinite; z-index:-1; opacity:.9; }
+    @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05)}100%{transform:translate3d(0,0,0) rotate(0) scale(1)}}
+
+    header{text-align:center}
+    .title{ margin:0; font-size:clamp(1.35rem, 4.2vw, 2rem); font-weight:900; letter-spacing:1.6px; text-transform:uppercase; background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 10px rgba(255,255,255,.75),0 0 24px rgba(56,189,248,.45); }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:600; font-size:clamp(.8rem, 2.8vw, .95rem) }
+    .progress{ margin-top:6px; font-weight:800; color:var(--ice-2) }
+
+    /* --- Toolbar (collapsible on mobile) --- */
+    details.toolbar{ width:min(900px,96vw); margin-top:8px; background:linear-gradient(180deg,#0b2438,#081c2d); border:var(--border); box-shadow:var(--ring); border-radius:16px; overflow:hidden }
+    details.toolbar>summary{ list-style:none; cursor:pointer; padding:10px 12px; font-weight:900; color:var(--ice-1); display:flex; align-items:center; justify-content:center; gap:8px; user-select:none }
+    details.toolbar[open]>summary{ border-bottom:1px solid rgba(186,230,253,.16) }
+    details.toolbar .panel{ padding:10px }
+    .toolrow{ display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; justify-content:center; }
+    .label{ color:var(--ice-2); font-weight:800; letter-spacing:.3px; font-size:.85rem }
+    .seg{ display:inline-flex; background:rgba(186,230,253,.08); border:1px solid rgba(186,230,253,.24); border-radius:12px; padding:4px; }
+    .seg input{ display:none }
+    .seg label{ cursor:pointer; padding:6px 10px; border-radius:10px; font-weight:800; color:var(--ice-2); user-select:none; font-size:.85rem }
+    .seg input:checked + label{ background:linear-gradient(90deg, var(--cyan), var(--accent)); color:#072235; box-shadow:0 6px 18px rgba(56,189,248,.35) }
+
+    .num{ display:flex; align-items:center; gap:8px }
+    .num input[type="number"]{ width:86px; background:#061725; color:var(--ice-2); border:1px solid rgba(186,230,253,.3); border-radius:10px; padding:6px 8px; font-weight:800; font-size:.9rem }
+
+    /* --- Card Stage --- */
+    .stage{ width:min(560px, 96vw); height:clamp(340px, 58dvh, 520px); display:flex; align-items:center; justify-content:center; margin-top:8px; }
+    .flip{ perspective:1200px; width:100%; height:100%; }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipped .card{ transform:rotateY(180deg); }
+
+    .face{ position:absolute; inset:0; border-radius:16px; backface-visibility:hidden; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:14px; }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
+
+    .big-num{ font-size:clamp(1.4rem, 7vw, 2.4rem); font-weight:900; letter-spacing:.5px; color:#0c253a }
+    .big-num-hero{ font-size:clamp(2rem, 10vw, 3.6rem); font-weight:1000; letter-spacing:.5px; line-height:1.05; background:linear-gradient(90deg, #ffffff, var(--ice-3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 20px rgba(56,189,248,.55), 0 0 8px rgba(186,230,253,.45); }
+    .ko-big{ font-size:clamp(1.4rem, 6.4vw, 2.2rem); line-height:1.15; text-align:center; width:100%; margin:2px 0 4px; font-weight:900; letter-spacing:.5px; }
+
+    .ko-row{ display:flex; align-items:center; justify-content:center; gap:10px; width:min(520px,96%); flex-wrap:wrap }
+    .play-base{ appearance:none; border:none; cursor:pointer; border-radius:12px; padding:10px 14px; font-weight:900; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); font-size:clamp(.9rem, 3.4vw, 1rem); min-height:44px }
+    .play-base:hover{ filter:brightness(1.08) }
+
+    .enlines{ width:min(520px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
+    .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
+
+    .gloss{ width:min(520px,96%); margin-top:6px; display:grid; grid-template-columns: repeat(auto-fit, minmax(92px,1fr)); gap:8px; justify-content:center }
+    .gchunk{ background:linear-gradient(180deg,#0b2438,#081c2d); border:1px solid rgba(186,230,253,.2); border-radius:12px; padding:8px 10px; min-width:92px }
+    .gko{ display:block; font-weight:900; color:var(--ice-1); text-align:center; font-size:clamp(.95rem,4vw,1.05rem) }
+    .gen{ display:block; font-size:clamp(.9rem,3.6vw,1rem); color:var(--ice-3); opacity:.95; text-align:center }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:0 }
+    .btn{ appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px; border-radius:12px; padding:10px 12px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); transition:transform .12s ease, filter .2s ease, box-shadow .2s ease; font-size:clamp(.9rem,3.2vw,1rem); min-height:44px }
+    .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--ring) }
+    .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+    #buildDeckBtn{ padding:8px 12px }
+
+    /* AM/PM badge */
+    .ampm{ display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-weight:900; font-size:.9rem; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35) }
+
+    /* Sticky bottom mobile bar */
+    .mbar{ position:fixed; left:8px; right:8px; bottom:8px; padding-bottom:var(--sa-bottom); border-radius:14px; background:linear-gradient(180deg, #0b2236cc, #081a2dcc); border:1px solid rgba(186,230,253,.24); box-shadow:0 10px 26px rgba(2,12,22,.55); display:flex; gap:8px; justify-content:space-between; align-items:center; padding:8px; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
+    .mbar .mbtn{ flex:1; min-width:0; border:none; border-radius:10px; padding:10px 12px; font-weight:900; letter-spacing:.3px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); font-size:1rem }
+    .mbar .mghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+
+    /* Desktop tweaks */
+    @media (min-width: 760px){
+      .mbar{ display:none }
+      body{ padding-bottom:22px }
+      .stage{ height:clamp(420px, 56dvh, 560px) }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition:none }
+      .flip.fly-exit .card, .flip.fly-enter .card{ animation:none }
+    }
+
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    .floating-home{ position: fixed; top: 0; right: 0; background: linear-gradient(90deg, var(--cyan), var(--accent)); color: #072235; font-size: 13px; font-weight: 700; text-decoration: none; padding: 7px 12px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35); z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="floating-home">Home</a>
+
+  <header>
+    <h1 class="title">VIZKOR Numbers Trainer</h1>
+    <p class="subtitle">Native (0–99) • Sino (1–10 digits) • Time (Analog)</p>
+    <div class="progress" id="progress">&nbsp;</div>
+  </header>
+
+  <!-- Collapsible toolbar (open by default; user can collapse on mobile) -->
+  <details class="toolbar" id="toolbar" open>
+    <summary>Options ⚙️</summary>
+    <div class="panel">
+      <div class="toolrow">
+        <span class="label">Mode:</span>
+        <div class="seg" role="radiogroup" aria-label="Number System">
+          <input type="radio" name="mode" id="mode-native" checked>
+          <label for="mode-native">Native (0–99)</label>
+          <input type="radio" name="mode" id="mode-sino">
+          <label for="mode-sino">Sino (1–10 digits)</label>
+          <input type="radio" name="mode" id="mode-time">
+          <label for="mode-time">Time (Analog)</label>
+        </div>
+
+        <span class="label" id="frontNumWrapLabel">Front number:</span>
+        <div class="seg" aria-label="Front numeral toggle" id="frontNumWrap">
+          <input type="checkbox" id="frontNum">
+          <label for="frontNum" id="frontNumLabel">OFF</label>
+        </div>
+
+        <div class="num">
+          <span class="label">Deck size:</span>
+          <input type="number" id="deckSize" min="10" max="200" step="10" value="50" />
+        </div>
+        <button class="btn" id="buildDeckBtn" title="Rebuild deck based on current options">Build Deck</button>
+      </div>
+
+      <div class="toolrow" id="sinoOptions" style="display:none">
+        <span class="label">Sino digits:</span>
+        <div class="seg" role="radiogroup" aria-label="Digit range">
+          <input type="radio" name="digits" id="d-1-3" checked>
+          <label for="d-1-3">1–3</label>
+          <input type="radio" name="digits" id="d-4-5">
+          <label for="d-4-5">4–5</label>
+          <input type="radio" name="digits" id="d-6-7">
+          <label for="d-6-7">6–7</label>
+          <input type="radio" name="digits" id="d-8-10">
+          <label for="d-8-10">8–10</label>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <section class="stage">
+    <div class="flip" id="flipWrap" aria-live="polite">
+      <div class="card" id="card" tabindex="0" aria-label="Flip card">
+        <section class="face front" id="front"></section>
+        <section class="face back" id="back"></section>
+      </div>
+    </div>
+  </section>
+
+  <p class="subtitle" style="color:var(--muted)">
+    Front = <b>Korean</b> (or clock) · Flip = <b>big numeral</b> + <b>KOREAN:   </b> + <b>ROMANIZATION:   </b>
+  </p>
+
+  <div class="finish" id="finish" style="display:none">
+    <div class="panel" style="text-align:center;padding:16px 18px">
+      <h2 style="margin:0 0 8px;color:var(--ice-1)">Finished! 🎉</h2>
+      <div class="controls"><button class="btn" id="restartBtn">Restart (Shuffle)</button></div>
+    </div>
+  </div>
+
+  <!-- Mobile sticky action bar -->
+  <div class="mbar" id="mbar">
+    <button class="mbtn" id="mFlip">Flip</button>
+    <button class="mbtn" id="mPlay">Play</button>
+    <button class="mbtn" id="mNext">Next ▶</button>
+  </div>
+
+  <audio id="koAudio" preload="auto"></audio>
+
+  <script>
+  // =================== AUDIO ===================
+  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE"; // optional; leave as-is to use browser TTS
+  const audioCache = new Map();
+  const player = document.getElementById('koAudio');
+  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+  let audioReady = false;
+  function speakWeb(text){ if(!('speechSynthesis' in window)) return; const u = new SpeechSynthesisUtterance(text); u.lang='ko-KR'; u.rate=0.95; try{speechSynthesis.cancel();}catch(e){} speechSynthesis.speak(u); }
+  async function playKo(text){ if(!audioReady) return; if(!VOICERSS_KEY || VOICERSS_KEY==="YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; } let url=audioCache.get(text); if(!url){ url=koTtsUrl(text); audioCache.set(text,url); } player.src=url; try{ await player.play(); }catch(e){ speakWeb(text); } }
+
+  // =================== NUMBER BUILDERS ===================
+  // Native 0..99 (0 as 영)
+  const N_UNITS = [ '영','하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉' ];
+  const N_TENS  = [ '', '열','스물','서른','마흔','쉰','예순','일흔','여든','아흔' ];
+  const N_UNITS_RR = [ 'yeong','hana','dul','set','net','daseot','yeoseot','ilgop','yeodeol','ahop' ];
+  const N_TENS_RR  = [ '', 'yeol','seumul','seoreun','maheun','swin','yesun','ilheun','yeodeun','aheun' ];
+  function toNative(n){ if(n===0) return '영'; if(n<10) return N_UNITS[n]; const t=Math.floor(n/10), u=n%10; return N_TENS[t] + (u? N_UNITS[u] : ''); }
+  function romanizeNative(n){ if(n===0) return 'yeong'; if(n<10) return N_UNITS_RR[n]; const t=Math.floor(n/10), u=n%10; return (N_TENS_RR[t] + (u? ' '+N_UNITS_RR[u] : '')); }
+
+  // Sino 0..9,999,999,999 (10 digits max)
+  const MAX_SINO = 9999999999;
+  const S_DIG   = [ '', '일','이','삼','사','오','육','칠','팔','구' ];
+  const S_DIG_R = [ '', 'il','i','sam','sa','o','yuk','chil','pal','gu' ];
+  const S_UNIT_SMALL  = [ '', '십','백','천' ];
+  const S_UNIT_SMALL_R= [ '', 'sip','baek','cheon' ];
+
+  function under10000(n){ let s=''; const digits=String(n).padStart(4,'0').split('').map(x=>+x); for(let i=0;i<4;i++){ const d=digits[i]; if(d===0) continue; const pos=3-i; if(pos>0){ s += (d===1? '' : S_DIG[d]) + S_UNIT_SMALL[pos]; } else { s += S_DIG[d]; } } return s || '영'; }
+  function toSino(n){ if(n===0) return '영'; const eok=Math.floor(n/1e8); const restAfterEok=n%1e8; const man=Math.floor(restAfterEok/1e4); const rest=restAfterEok%1e4; const parts=[]; if(eok){ const p=under10000(eok); parts.push((p==='영'||p==='')? '억' : (p==='일' ? '억' : p+'억')); } if(man){ const p=under10000(man); parts.push((p==='영'||p==='')? '만' : (p==='일' ? '만' : p+'만')); } if(rest){ parts.push(under10000(rest)); } return parts.join(' ').trim(); }
+
+  function tokensUnder10000(n){ const tks=[]; const digits=String(n).padStart(4,'0').split('').map(x=>+x); const names=['천','백','십','']; for(let i=0;i<4;i++){ const d=digits[i]; if(!d) continue; const name=names[i]; if(name){ tks.push((d===1?'':S_DIG[d]) + name); } else { tks.push(S_DIG[d]); } } return tks.length? tks : ['영']; }
+  function breakdownSino(n){ if(n===0) return [{ko:'영', num:0}]; const arr=[]; const eok=Math.floor(n/1e8); const restAfterEok=n%1e8; const man=Math.floor(restAfterEok/1e4); const rest=restAfterEok%1e4; function addTokens(x, base){ const ts = tokensUnder10000(x); for(const t of ts){ let num=0; if(t.endsWith('천')){ const d=t.length===1?1:S_DIG.indexOf(t.replace('천','')); num = d*1000; } else if(t.endsWith('백')){ const d=t.length===1?1:S_DIG.indexOf(t.replace('백','')); num = d*100; } else if(t.endsWith('십')){ const d=t.length===1?1:S_DIG.indexOf(t.replace('십','')); num = d*10; } else if(t==='영'){ num=0; } else { num = S_DIG.indexOf(t); } arr.push({ ko:t, num: num*base }); } } if(eok) addTokens(eok, 100000000); if(man) addTokens(man, 10000); if(rest) addTokens(rest, 1); return arr; }
+
+  function romanizeTokenSino(tok){ if(tok==='억') return 'eok'; if(tok==='만') return 'man'; if(tok.endsWith('천')){ const d = tok.replace('천',''); const r = d? S_DIG_R[S_DIG.indexOf(d)]+' ' : ''; return r + 'cheon'; } if(tok.endsWith('백')){ const d = tok.replace('백',''); const r = d? S_DIG_R[S_DIG.indexOf(d)]+' ' : ''; return r + 'baek'; } if(tok.endsWith('십')){ const d = tok.replace('십',''); const r = d? S_DIG_R[S_DIG.indexOf(d)]+' ' : ''; return r + 'sip'; } if(tok==='영') return 'yeong'; return S_DIG_R[S_DIG.indexOf(tok)] || ''; }
+  function collapseSpaces(s){ return s.split(' ').filter(Boolean).join(' '); }
+  function romanizeSino(n){ if(n===0) return 'yeong'; const eok=Math.floor(n/1e8); const restAfterEok=n%1e8; const man=Math.floor(restAfterEok/1e4); const rest=restAfterEok%1e4; const chunks=[]; if(eok){ const t = tokensUnder10000(eok).map(romanizeTokenSino).join(' '); chunks.push((t? t+' ':'') + 'eok'); } if(man){ const t = tokensUnder10000(man).map(romanizeTokenSino).join(' '); chunks.push((t? t+' ':'') + 'man'); } if(rest){ chunks.push(tokensUnder10000(rest).map(romanizeTokenSino).join(' ')); } return collapseSpaces(chunks.join(' ')); }
+
+  // Native breakdown values
+  function breakdownNative(n){ if(n===0) return [{ko:'영', num:0}]; const chips=[]; if(n>=10){ const t=Math.floor(n/10); chips.push({ko:N_TENS[t], num:t*10}); } if(n%10){ const u=n%10; chips.push({ko:N_UNITS[u], num:u}); } return chips.length?chips:[{ko:'영',num:0}]; }
+
+  // =================== TIME (ANALOG) HELPERS ===================
+  const HOUR_NATIVE_FORMS = [ '', '한','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두' ];
+  const HOUR_NATIVE_ROMA  = [ '', 'han','du','se','ne','daseot','yeoseot','ilgop','yeodeol','ahop','yeol','yeolhan','yeoldu' ];
+  function timeToKo(h24, m){ const am = h24<12; const h12 = ((h24%12)||12); const hourKo = HOUR_NATIVE_FORMS[h12] + ' 시'; const minKo = m===0 ? '정각' : (toSino(m) + ' 분'); return (am? '오전 ' : '오후 ') + hourKo + ' ' + (m===0? '정각' : toSino(m) + ' 분'); }
+  function timeToRR(h24,m){ const am = h24<12; const h12 = ((h24%12)||12); const hourR = HOUR_NATIVE_ROMA[h12] + ' si'; const minR = m===0 ? 'jeonggak' : (romanizeSino(m) + ' bun'); return (am? 'ojeon ' : 'ohu ') + hourR + ' ' + minR; }
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function formatTime12(h24,m){ const am = h24<12; const h12 = ((h24%12)||12); return `${pad2(h12)}:${pad2(m)} ${am? 'AM':'PM'}`; }
+
+  function drawClock(canvas, h24, m){
+    const ctx=canvas.getContext('2d');
+    const DPR=window.devicePixelRatio||1;
+    const size=Math.min(canvas.clientWidth||canvas.width, canvas.clientHeight||canvas.height);
+    const W=size*DPR, H=W;
+    canvas.width=W; canvas.height=H;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2; const R=W*0.45;
+    // face ring
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.94)'; ctx.fill(); ctx.lineWidth=4*DPR; ctx.strokeStyle='rgba(56,189,248,0.55)'; ctx.stroke();
+    // ticks (12-hour dial)
+    for(let i=0;i<60;i++){
+      const ang = (Math.PI*2)*(i/60)-Math.PI/2;
+      const r1=R*(i%5===0?0.82:0.88); const r2=R*0.96;
+      ctx.beginPath(); ctx.moveTo(cx+Math.cos(ang)*r1, cy+Math.sin(ang)*r1); ctx.lineTo(cx+Math.cos(ang)*r2, cy+Math.sin(ang)*r2);
+      ctx.lineWidth=(i%5===0?3:1.5)*DPR; ctx.strokeStyle='rgba(10,30,46,0.9)'; ctx.stroke();
+    }
+    // numerals 12,3,6,9
+    ctx.fillStyle='rgba(10,30,46,0.85)'; ctx.font=`${14*DPR}px system-ui, -apple-system, Segoe UI, Arial`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    [[12,0], [3,90], [6,180], [9,270]].forEach(([num,deg])=>{ const ang=(deg-90)*Math.PI/180; const rr=R*0.7; ctx.fillText(String(num), cx+Math.cos(ang)*rr, cy+Math.sin(ang)*rr); });
+    // hands (12-hour)
+    const h12=((h24%12)||12);
+    const hourAng=(Math.PI*2)*((h12%12)/12 + m/720)-Math.PI/2; // hour + minute influence
+    const minAng=(Math.PI*2)*(m/60)-Math.PI/2;
+    // hour hand
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(hourAng)*R*0.55, cy+Math.sin(hourAng)*R*0.55); ctx.lineWidth=5*DPR; ctx.strokeStyle='rgba(34,211,238,0.9)'; ctx.stroke();
+    // minute hand
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(minAng)*R*0.78, cy+Math.sin(minAng)*R*0.78); ctx.lineWidth=4*DPR; ctx.strokeStyle='rgba(56,189,248,0.95)'; ctx.stroke();
+    // center cap
+    ctx.beginPath(); ctx.arc(cx,cy,5*DPR,0,Math.PI*2); ctx.fillStyle='rgba(10,30,46,0.95)'; ctx.fill();
+  }
+
+  // =================== DECK GENERATION ===================
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function randByDigits(d){ const min=(d===1)?0:Math.pow(10,d-1); const max=Math.pow(10,d)-1; return randInt(min,max); }
+  function pickDigitsRange(){ if(document.getElementById('d-4-5').checked) return [4,5]; if(document.getElementById('d-6-7').checked) return [6,7]; if(document.getElementById('d-8-10').checked) return [8,10]; return [1,3]; }
+  function buildNativeDeck(){ const arr=Array.from({length:100},(_,i)=>i); return shuffle(arr).slice(0, deckSize()); }
+  function buildSinoDeck(){ const [a,b]=pickDigitsRange(); const want=deckSize(); const set=new Set(); let guard=0; while(set.size<want && guard<want*80){ const d=randInt(a,b); let n=randByDigits(d); if(n<=MAX_SINO) set.add(n); guard++; } return Array.from(set); }
+  function buildTimeDeck(){ const want=deckSize(); const set=new Set(); while(set.size<want){ const h=randInt(0,23), m=randInt(0,59); set.add(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`); } return Array.from(set).map(s=>{const [hh,mm]=s.split(':').map(x=>+x); return {h:hh,m:mm};}); }
+
+  // =================== UI STATE ===================
+  let queue=[]; let index=0; let mode='native'; let showFrontNumber=false;
+  const progressEl=document.getElementById('progress');
+  const flipWrap=document.getElementById('flipWrap');
+  const cardEl=document.getElementById('card');
+  const front=document.getElementById('front');
+  const back=document.getElementById('back');
+  let isAnimating=false;
+  function deckSize(){ const v=parseInt(document.getElementById('deckSize').value,10); return Math.max(10, Math.min(200, isNaN(v)?50:v)); }
+  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  // =================== RENDERING (NUMERIC) ===================
+  function koReadingNumber(n){ return mode==='native' ? toNative(n) : toSino(n); }
+  function koRomanNumber(n){ return mode==='native' ? romanizeNative(n) : romanizeSino(n); }
+  function chipsNumber(n){ return mode==='native' ? breakdownNative(n) : breakdownSino(n); }
+
+  function renderFrontNumber(n){ const ko=koReadingNumber(n); const numeral=n.toLocaleString('en-US'); front.innerHTML = `
+      <div class="ko-row">
+        <div class="ko-big">${ko}</div>
+        <button class="play-base" id="playBaseFront">🔊 Play</button>
+      </div>
+      ${showFrontNumber? `<div class="big-num" style="opacity:.7">${numeral}</div>`:''}
+      <div class="controls" style="margin-top:6px"><button class="btn" id="flipToBack">Flip</button></div>`;
+    front.querySelector('#playBaseFront').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(ko); });
+    front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); }); }
+
+  function renderBackNumber(n){ const ko=koReadingNumber(n); const numeral=n.toLocaleString('en-US'); const rom=koRomanNumber(n); const chipList=chipsNumber(n); back.innerHTML = `
+      <div class="big-num-hero">${numeral}</div>
+      <ul class="enlines">
+        <li><b>KOREAN:   </b> <span class="ko-big" style="font-size:1.5rem">${ko}</span></li>
+        <li><b>ROMANIZATION:   </b> <span class="ko-big" style="font-size:1.05rem">${rom}</span></li>
+      </ul>
+      <div class="gloss">
+        ${chipList.map(c=>`<span class=\"gchunk\"><span class=\"gko\">${c.ko}</span><span class=\"gen\">${c.num.toLocaleString('en-US')}</span></span>`).join('')}
+      </div>
+      <div class="controls" style="margin-top:4px">
+        <button class="btn ghost" id="flipToFront">Back</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="playKoBack">🔊 Play</button>
+      </div>`;
+    back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+    back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+    back.querySelector('#playKoBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(ko); }); }
+
+  // =================== RENDERING (TIME MODE) ===================
+  function renderFrontTime(t){ const {h,m}=t; const am = h<12; const num12=formatTime12(h,m); front.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:center; gap:8px">
+        <div style="display:flex; align-items:center; gap:8px; justify-content:center">
+          <canvas id="clockFront" style="width:min(70vw,260px); height:min(70vw,260px); max-width:260px; max-height:260px; border-radius:50%; box-shadow:0 6px 18px rgba(56,189,248,.25);"></canvas>
+          <span class="ampm">${am? 'AM':'PM'}</span>
+        </div>
+        <div class="big-num" style="opacity:.95">${num12}</div>
+      </div>
+      <div class="controls" style="margin-top:6px"><button class="btn" id="flipToBack">Flip</button></div>`;
+    const c=document.getElementById('clockFront'); drawClock(c, h, m); front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); }); }
+
+  function renderBackTime(t){ const {h,m}=t; const num12=formatTime12(h,m); const ko=timeToKo(h,m); const rr=timeToRR(h,m); const am = h<12; back.innerHTML = `
+      <div class="big-num-hero">${num12}</div>
+      <ul class="enlines">
+        <li><b>KOREAN:   </b> <span class="ko-big" style="font-size:1.4rem">${ko}</span></li>
+        <li><b>ROMANIZATION:   </b> <span class="ko-big" style="font-size:1.02rem">${rr}</span></li>
+      </ul>
+      <div class="controls" style="margin-top:4px; gap:8px">
+        <span class="ampm">${am? 'AM':'PM'}</span>
+        <button class="btn ghost" id="flipToFront">Back</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="playKoBack">🔊 Play</button>
+      </div>`;
+    back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+    back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+    back.querySelector('#playKoBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(ko); }); }
+
+  function renderCurrent(){ const item=queue[index]; if(mode==='time'){ renderFrontTime(item); renderBackTime(item); } else { renderFrontNumber(item); renderBackNumber(item); } }
+
+  // =================== FLOW ===================
+  function buildDeck(){
+    mode = document.getElementById('mode-sino').checked ? 'sino' : (document.getElementById('mode-time').checked ? 'time' : 'native');
+    const sinoOptions=document.getElementById('sinoOptions');
+    sinoOptions.style.display = (mode==='sino') ? 'flex' : 'none';
+    const frontNumWrap=document.getElementById('frontNumWrap');
+    const frontNumWrapLabel=document.getElementById('frontNumWrapLabel');
+    const showFrontControls = (mode!=='time');
+    frontNumWrap.style.display = showFrontControls? 'inline-flex':'none';
+    frontNumWrapLabel.style.display = showFrontControls? 'inline-block':'none';
+    if(mode==='native') queue = buildNativeDeck(); else if(mode==='sino') queue = buildSinoDeck(); else queue = buildTimeDeck();
+    index=0; audioReady=true; renderCurrent(); flipWrap.classList.remove('flipped'); updateProgress();
+    if(mode!=='time'){ // auto audio ONLY for numeric modes
+      const speak = (mode==='native' || mode==='sino') ? (koReadingNumber(queue[index])) : '';
+      if(speak) playKo(speak);
+    }
+  }
+
+  function nextCardAnimated(){ if(isAnimating) return; isAnimating=true; flipWrap.classList.add('animating','fly-exit'); const onExitEnd=(e)=>{ if(e.target!==cardEl) return; flipWrap.removeEventListener('animationend', onExitEnd); flipWrap.classList.remove('fly-exit'); index++; if(index>=queue.length){ flipWrap.classList.remove('animating'); isAnimating=false; document.getElementById('finish').style.display='flex'; return; } renderCurrent(); flipWrap.classList.remove('flipped'); updateProgress(); flipWrap.classList.add('fly-enter'); const onEnterEnd=(ev)=>{ if(ev.target!==cardEl) return; flipWrap.removeEventListener('animationend', onEnterEnd); flipWrap.classList.remove('fly-enter','animating'); isAnimating=false; if(mode!=='time'){ const speak = koReadingNumber(queue[index]); playKo(speak); } }; flipWrap.addEventListener('animationend', onEnterEnd); }; flipWrap.addEventListener('animationend', onExitEnd); }
+
+  // Click / tap on card area
+  flipWrap.addEventListener('click', ()=>{ if(!queue.length) return; if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); });
+  // Keyboard
+  cardEl.addEventListener('keydown', (e)=>{ if(e.code==='Enter' || e.code==='Space'){ e.preventDefault(); if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); } if(e.code==='ArrowRight'){ e.preventDefault(); nextCardAnimated(); } if(e.code==='ArrowLeft'){ e.preventDefault(); flipWrap.classList.remove('flipped'); } });
+
+  // Toolbar interactions
+  document.getElementById('mode-native').addEventListener('change', ()=>{ if(document.getElementById('mode-native').checked){ buildDeck(); }});
+  document.getElementById('mode-sino').addEventListener('change', ()=>{ if(document.getElementById('mode-sino').checked){ buildDeck(); }});
+  document.getElementById('mode-time').addEventListener('change', ()=>{ if(document.getElementById('mode-time').checked){ buildDeck(); }});
+  document.getElementById('buildDeckBtn').addEventListener('click', buildDeck);
+  const frontNumChk = document.getElementById('frontNum');
+  const frontNumLabel = document.getElementById('frontNumLabel');
+  frontNumChk.addEventListener('change', ()=>{ showFrontNumber = frontNumChk.checked; frontNumLabel.textContent = showFrontNumber? 'ON' : 'OFF'; if(queue.length && mode!=='time') renderCurrent(); });
+  document.getElementById('restartBtn')?.addEventListener('click', ()=>{ document.getElementById('finish').style.display='none'; buildDeck(); });
+
+  // Mobile sticky bar actions
+  function speakCurrent(){ if(!queue.length) return; if(mode==='time'){ const t=queue[index]; playKo(timeToKo(t.h,t.m)); } else { playKo(koReadingNumber(queue[index])); } }
+  document.getElementById('mFlip').addEventListener('click', (e)=>{ e.stopPropagation(); if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); });
+  document.getElementById('mPlay').addEventListener('click', (e)=>{ e.stopPropagation(); speakCurrent(); });
+  document.getElementById('mNext').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+  </script>
+  <script>
+// Disable right click
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable text selection
+document.addEventListener("selectstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable drag (para hindi madrag palabas yung image/text)
+document.addEventListener("dragstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener("keydown", function(e){
+  if (
+    e.key === "F12" || 
+    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+  }
+}, false);
+</script>
+
+</body>
+</html>

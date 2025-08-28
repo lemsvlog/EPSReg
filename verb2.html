@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flip Cards – Sky Blue Freeze (Sequential + Autoplay + Per-form Buttons)</title>
+  <style>
+    /* ===== Sky Blue Freeze Theme ===== */
+    :root{
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --border:1px solid rgba(103,232,249,.30);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; color:var(--text);
+      min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:12px;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative; isolation:isolate; padding:22px 16px 42px;
+    }
+    body::before{
+      content:""; position:fixed; inset:-20%;
+      background: conic-gradient(from 200deg at 60% 40%, rgba(186,230,253,.12), rgba(34,211,238,.10), rgba(56,189,248,.14), rgba(186,230,253,.10), rgba(34,211,238,.10));
+      filter:blur(48px); animation: drift 20s linear infinite; z-index:-1; opacity:.9;
+    }
+    @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05)}100%{transform:translate3d(0,0,0) rotate(0) scale(1)}}
+
+    header{text-align:center}
+    .title{
+      margin:0; font-size:2.2rem; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+      background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 10px rgba(255,255,255,.75),0 0 24px rgba(56,189,248,.45);
+    }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:600 }
+    .progress{ margin-top:6px; font-weight:800; color:var(--ice-2) }
+
+    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
+    .flip{ perspective:1200px; width:100%; height:100%; }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipped .card{ transform:rotateY(180deg); }
+
+    .face{ position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; padding:18px; }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
+
+    .ko{ font-size:2.2rem; font-weight:900; letter-spacing:.5px; text-shadow:0 1px 0 rgba(255,255,255,.7); color:#0c253a }
+
+    .ko-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:min(460px,96%); }
+    .play-base{ appearance:none; border:none; cursor:pointer; border-radius:10px; padding:8px 12px; font-weight:900; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); }
+    .play-base:hover{ filter:brightness(1.08) }
+
+    .forms{ width:min(460px,96%); margin:4px auto 0; padding:0; list-style:none; text-align:left; }
+    .forms li{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; margin:8px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
+    .forms .left{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+    .forms b{ color:var(--ice-3) }
+    .play-mini{ flex:0 0 auto; appearance:none; border:none; cursor:pointer; border-radius:10px; padding:8px 10px; font-weight:900; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); }
+    .play-mini:hover{ filter:brightness(1.08) }
+
+    .enhead{ font-size:1.2rem; font-weight:900; color:var(--ice-1); margin-top:6px; text-align:left; width:min(460px,96%); }
+    .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
+    .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
+    .enlines b{ color:var(--ice-3) }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:0 }
+    .btn{ appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px; border-radius:12px; padding:10px 14px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); transition:transform .12s ease, filter .2s ease, box-shadow .2s ease }
+    .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--ring) }
+    .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+
+    .gate, .finish{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(1,7,13,.55); backdrop-filter: blur(6px) saturate(130%); -webkit-backdrop-filter: blur(6px) saturate(130%); z-index:5; }
+    .panel{ width:min(520px,92vw); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); border-radius:16px; padding:20px; text-align:center; box-shadow:var(--ring); }
+    .panel h2{ margin:0 0 8px; font-size:22px; font-weight:900; color:var(--ice-1) }
+    .panel p{ margin:6px 0 14px; color:var(--muted) }
+
+    @media (max-width:768px){ .stage{ height:420px } .ko{ font-size:2.4rem } }
+
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    #flipToFront{
+      background: linear-gradient(90deg, #a78bfa, #60a5fa) !important; color:#07162a !important; border:none !important;
+      font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+      box-shadow:0 10px 26px rgba(96,165,250,.45), 0 0 26px rgba(167,139,250,.35);
+    }
+    #flipToFront:hover{ filter:brightness(1.08); box-shadow:0 0 22px rgba(96,165,250,.65), 0 0 34px rgba(167,139,250,.45); }
+
+    /* 3D icy flip button (front) */
+    #flipToBack{
+      position:relative; padding:14px 22px !important; border-radius:16px;
+      border:1px solid rgba(255,255,255,.75) !important; border-bottom-color:rgba(10,60,90,.45) !important; border-right-color:rgba(10,60,90,.35) !important;
+      background:linear-gradient(180deg, rgba(236,254,255,.98) 0%, rgba(219,234,254,.96) 38%, rgba(56,189,248,.93) 100%) !important;
+      color:#062136 !important; text-transform:uppercase; letter-spacing:.8px; font-weight:900;
+      box-shadow:0 14px 28px rgba(56,189,248,.35), 0 6px 0 rgba(6,26,43,.65), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -8px 20px rgba(7,34,53,.25);
+      transform:translateY(-1px); transition:transform .18s ease, box-shadow .22s ease, filter .22s ease; overflow:hidden; isolation:isolate;
+    }
+    #flipToBack::before{
+      content:""; position:absolute; inset:2px 2px 10px 2px; border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 60%); pointer-events:none; mix-blend-mode:screen;
+    }
+    #flipToBack::after{
+      content:""; position:absolute; inset:-45% -70%;
+      background:
+        radial-gradient(12px 12px at 22% 32%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(10px 10px at 72% 65%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.45) 50%, rgba(255,255,255,0) 65%);
+      transform:translateX(-120%) rotate(8deg); animation:icySweep 2.6s ease-in-out infinite; pointer-events:none; mix-blend-mode:screen;
+    }
+    #flipToBack:hover{
+      filter:brightness(1.06); transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(56,189,248,.45), 0 8px 0 rgba(6,26,43,.6), inset 0 1px 0 rgba(255,255,255,1), inset 0 -10px 24px rgba(7,34,53,.28);
+    }
+    #flipToBack:active{
+      transform:translateY(0);
+      box-shadow:0 8px 16px rgba(56,189,248,.35), 0 3px 0 rgba(6,26,43,.7), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -6px 16px rgba(7,34,53,.28);
+    }
+    @keyframes icySweep{ 0%{transform:translateX(-120%) rotate(8deg); opacity:.95} 50%{opacity:1} 100%{transform:translateX(120%) rotate(8deg); opacity:.95} }
+
+    /* Emphasis for Korean forms */
+    .koform{ font-size:1.38rem; font-weight:300; letter-spacing:.3px; color:var(--ice-1); }
+    @media (max-width:420px){ .koform{ font-size:1.18rem; } }
+
+    /* Floating Home Button */
+    .floating-home {
+      position: fixed; top: 0; right: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--accent));
+      color: #072235; font-size: 14px; font-weight: 700; text-decoration: none;
+      padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35);
+      z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
+    }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <!-- Floating Home Button -->
+  <a href="index.html" class="floating-home">Home</a>
+
+  <header>
+    <h1 class="title">VIZKOR Flip Cards</h1>
+    <p class="subtitle">Korean Advanced Verb 101-300 (minus 3)</p>
+    <div class="progress" id="progress">&nbsp;</div>
+  </header>
+
+  <section class="stage">
+    <div class="flip" id="flipWrap" aria-live="polite">
+      <div class="card" id="card" tabindex="0" aria-label="Flip card">
+        <section class="face front" id="front"></section>
+        <section class="face back" id="back"></section>
+      </div>
+    </div>
+  </section>
+
+  <p class="subtitle" style="font-size:.95rem; color:var(--muted)">
+    Note: Click <b>Start</b> once to enable audio. Each new card auto-plays the <b>base Korean only</b>.
+    Back side shows <b>single English form</b> per tense with <b>Tagalog</b> gloss (e.g., <i>drink/inom</i>, <i>drank/uminom</i>, <i>will drink/iinom</i>).
+  </p>
+
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Start Practice</h2>
+      <p>Enable audio first. Then each card autoplays the base Korean once. Use ▶ for forms, 🔊 to replay base, and FLIP to view English + Tagalog.</p>
+      <div class="controls"><button class="btn" id="startBtn">Start (Enable Audio)</button></div>
+    </div>
+  </div>
+
+  <div class="finish" id="finish" style="display:none">
+    <div class="panel">
+      <h2>Finished! 🎉</h2>
+      <p>Na-randomize na lahat. Gusto mo bang ulitin (reshuffle)?</p>
+      <div class="controls"><button class="btn" id="restartBtn">Restart (Shuffle)</button></div>
+    </div>
+  </div>
+
+  <audio id="koAudio" preload="auto"></audio>
+
+  <script>
+  // ===== Data =====
+ // ===== 1) WORDS_MASTER =====
+const WORDS_MASTER = [
+  { ko:'굽다', en:'To grill/bake', present:'구워요', past:'구웠어요', future:'구울 거예요' },           // 101
+  { ko:'구하다', en:'To find/save/seek', present:'구해요', past:'구했어요', future:'구할 거예요' },     // 102
+  { ko:'그치다', en:'To stop (rain/snow)', present:'그쳐요', past:'그쳤어요', future:'그칠 거예요' },     // 103
+  { ko:'금연하다', en:'To quit smoking', present:'금연해요', past:'금연했어요', future:'금연할 거예요' }, // 104
+  { ko:'금지하다', en:'To prohibit/forbid', present:'금지해요', past:'금지했어요', future:'금지할 거예요' }, // 105
+  { ko:'기념하다', en:'To commemorate', present:'기념해요', past:'기념했어요', future:'기념할 거예요' },  // 106
+  { ko:'기도하다', en:'To pray', present:'기도해요', past:'기도했어요', future:'기도할 거예요' },        // 107
+  { ko:'내려받다', en:'To download', present:'내려받아요', past:'내려받았어요', future:'내려받을 거예요' }, // 110
+  { ko:'내려오다', en:'To come down', present:'내려와요', past:'내려왔어요', future:'내려올 거예요' },     // 111
+  { ko:'농구하다', en:'To play basketball', present:'농구해요', past:'농구했어요', future:'농구할 거예요' }, // 113
+  { ko:'누르다', en:'To press', present:'눌러요', past:'눌렀어요', future:'누를 거예요' },               // 114
+  { ko:'닦다', en:'To wipe/polish/brush', present:'닦아요', past:'닦았어요', future:'닦을 거예요' },      // 115
+  { ko:'다니다', en:'To attend/go regularly', present:'다녀요', past:'다녔어요', future:'다닐 거예요' },    // 116
+  { ko:'다치다', en:'To get hurt/injured', present:'다쳐요', past:'다쳤어요', future:'다칠 거예요' },        // 117
+  { ko:'달다', en:'To hang/put on', present:'달아요', past:'달았어요', future:'달 거예요' },              // 118
+  { ko:'당기다', en:'To pull', present:'당겨요', past:'당겼어요', future:'당길 거예요' },                 // 119
+  { ko:'대접하다', en:'To treat/serve', present:'대접해요', past:'대접했어요', future:'대접할 거예요' },    // 120
+  { ko:'데우다', en:'To heat up/reheat', present:'데워요', past:'데웠어요', future:'데울 거예요' },          // 121
+  { ko:'돌리다', en:'To turn/operate/spin', present:'돌려요', past:'돌렸어요', future:'돌릴 거예요' },       // 122
+  { ko:'두다', en:'To put/place/leave', present:'둬요', past:'뒀어요', future:'둘 거예요' },               // 123
+  { ko:'들다', en:'To hold/carry/take (age)', present:'들어요', past:'들었어요', future:'들 거예요' },       // 124
+  { ko:'들어가다', en:'To go in', present:'들어가요', past:'들어갔어요', future:'들어갈 거예요' },            // 125
+  { ko:'따라 부르다', en:'To sing along', present:'따라 불러요', past:'따라 불렀어요', future:'따라 부를 거예요' }, // 126
+  { ko:'따라 추다', en:'To dance along', present:'따라 춰요', past:'따라 췄어요', future:'따라 출 거예요' },       // 127
+  { ko:'따다', en:'To pick/open/earn', present:'따요', past:'땄어요', future:'딸 거예요' },               // 128
+  { ko:'떠들다', en:'To make noise/chatter', present:'떠들어요', past:'떠들었어요', future:'떠들 거예요' }, // 129
+  { ko:'떨리다', en:'To tremble/shake', present:'떨려요', past:'떨렸어요', future:'떨릴 거예요' },          // 130
+  { ko:'뛰어다니다', en:'To run around', present:'뛰어다녀요', past:'뛰어다녔어요', future:'뛰어다닐 거예요' }, // 131
+  { ko:'마음에 들다', en:'To like/be pleased with', present:'마음에 들어요', past:'마음에 들었어요', future:'마음에 들 거예요' }, // 132
+  { ko:'마음을 전하다', en:`To express one's feelings`, present:'마음을 전해요', past:'마음을 전했어요', future:'마음을 전할 거예요' }, // 133
+  { ko:'만지다', en:'To touch', present:'만져요', past:'만졌어요', future:'만질 거예요' },                 // 134
+  { ko:'말씀하시다', en:'To speak (honorific)', present:'말씀하세요', past:'말씀하셨어요', future:'말씀하실 거예요' }, // 135
+  { ko:'맛없다', en:'To be tasteless', present:'맛없어요', past:'맛없었어요', future:'맛없을 거예요' },      // 136
+  { ko:'맛이 좋다', en:'To taste good', present:'맛이 좋아요', past:'맛이 좋았어요', future:'맛이 좋을 거예요' }, // 137
+  { ko:'맛있다', en:'To be delicious', present:'맛있어요', past:'맛있었어요', future:'맛있을 거예요' },      // 138
+  { ko:'맞다', en:'To be correct/fit', present:'맞아요', past:'맞았어요', future:'맞을 거예요' },           // 139
+  { ko:'먼지를 털다', en:'To dust off', present:'먼지를 털어요', past:'먼지를 털었어요', future:'먼지를 털 거예요' }, // 140
+  { ko:'모이다', en:'To gather/assemble', present:'모여요', past:'모였어요', future:'모일 거예요' },        // 141
+  { ko:'모집하다', en:'To recruit/gather', present:'모집해요', past:'모집했어요', future:'모집할 거예요' },  // 142
+  { ko:'묵다', en:'To stay (at a place)', present:'묵어요', past:'묵었어요', future:'묵을 거예요' },        // 143
+  { ko:'문의하다', en:'To inquire', present:'문의해요', past:'문의했어요', future:'문의할 거예요' },          // 144
+  { ko:'무단 횡단하다', en:'To jaywalk', present:'무단 횡단해요', past:'무단 횡단했어요', future:'무단 횡단할 거예요' }, // 145
+  { ko:'바쁘다', en:'To be busy', present:'바빠요', past:'바빴어요', future:'바쁠 거예요' },                 // 146
+  { ko:'바람이 불다', en:'Wind blows', present:'바람이 불어요', past:'바람이 불었어요', future:'바람이 불 거예요' }, // 147
+  { ko:'반입하다', en:'To bring in/carry in', present:'반입해요', past:'반입했어요', future:'반입할 거예요' }, // 148
+  { ko:'발급받다', en:'To be issued', present:'발급받아요', past:'발급받았어요', future:'발급받을 거예요' },    // 149
+  { ko:'밝다', en:'To be bright', present:'밝아요', past:'밝았어요', future:'밝을 거예요' },               // 150
+  { ko:'배송하다', en:'To deliver', present:'배송해요', past:'배송했어요', future:'배송할 거예요' },          // 151
+  { ko:'배탈이 나다', en:'To have an upset stomach', present:'배탈이 나요', past:'배탈이 났어요', future:'배탈이 날 거예요' }, // 152
+  { ko:'버튼을 누르다', en:'To press the button', present:'버튼을 눌러요', past:'버튼을 눌렀어요', future:'버튼을 누를 거예요' }, // 153
+  { ko:'번호표를 뽑다', en:'To take a ticket number', present:'번호표를 뽑아요', past:'번호표를 뽑았어요', future:'번호표를 뽑을 거예요' }, // 154
+  { ko:'보이다', en:'To show/be seen', present:'보여요', past:'보였어요', future:'보일 거예요' },            // 155
+  { ko:'보존하다', en:'To preserve/conserve', present:'보존해요', past:'보존했어요', future:'보존할 거예요' }, // 156
+  { ko:'복잡하다', en:'To be complicated/crowded', present:'복잡해요', past:'복잡했어요', future:'복잡할 거예요' }, // 157
+  { ko:'볶다', en:'To stir-fry', present:'볶아요', past:'볶았어요', future:'볶을 거예요' },                // 158
+  { ko:'부러지다', en:'To break (intrans.)', present:'부러져요', past:'부러졌어요', future:'부러질 거예요' },  // 159
+  { ko:'부르다', en:'To call/sing', present:'불러요', past:'불렀어요', future:'부를 거예요' },               // 160
+  { ko:'부치다', en:'To send (mail)/fry', present:'부쳐요', past:'부쳤어요', future:'부칠 거예요' },          // 161
+  { ko:'부족하다', en:'To be lacking', present:'부족해요', past:'부족했어요', future:'부족할 거예요' },       // 162
+  { ko:'부지런하다', en:'To be diligent', present:'부지런해요', past:'부지런했어요', future:'부지런할 거예요' }, // 163
+  { ko:'붙이다', en:'To attach/paste/light', present:'붙여요', past:'붙였어요', future:'붙일 거예요' },       // 164
+  { ko:'비가 오다', en:'To rain', present:'비가 와요', past:'비가 왔어요', future:'비가 올 거예요' },         // 165
+  { ko:'비싸다', en:'To be expensive', present:'비싸요', past:'비쌌어요', future:'비쌀 거예요' },            // 166
+  { ko:'뼈가 부러지다', en:'To break a bone', present:'뼈가 부러져요', past:'뼈가 부러졌어요', future:'뼈가 부러질 거예요' }, // 167
+  { ko:'빨래하다', en:'To do laundry', present:'빨래해요', past:'빨래했어요', future:'빨래할 거예요' },        // 168
+  { ko:'빨래를 널다', en:'To hang the laundry', present:'빨래를 널어요', past:'빨래를 널었어요', future:'빨래를 널 거예요' }, // 169
+  { ko:'빨래를 걷다', en:'To take down the laundry', present:'빨래를 걷어요', past:'빨래를 걷었어요', future:'빨래를 걷을 거예요' }, // 170
+  { ko:'상하다', en:'To go bad/spoil', present:'상해요', past:'상했어요', future:'상할 거예요' },             // 171
+  { ko:'새치기하다', en:'To cut in line', present:'새치기해요', past:'새치기했어요', future:'새치기할 거예요' }, // 172
+  { ko:'서명하다', en:'To sign (document)', present:'서명해요', past:'서명했어요', future:'서명할 거예요' },   // 173
+  { ko:'설거지하다', en:'To do dishes', present:'설거지해요', past:'설거지했어요', future:'설거지할 거예요' },   // 174
+  { ko:'설사하다', en:'To have diarrhea', present:'설사해요', past:'설사했어요', future:'설사할 거예요' },      // 175
+  { ko:'세배하다', en:`To do the New Year's bow`, present:'세배해요', past:'세배했어요', future:'세배할 거예요' }, // 176
+  { ko:'소리를 내다', en:'To make a sound', present:'소리를 내요', past:'소리를 냈어요', future:'소리를 낼 거예요' }, // 177
+  { ko:'소화가 안 되다', en:'To have indigestion', present:'소화가 안 돼요', past:'소화가 안 됐어요', future:'소화가 안 될 거예요' }, // 178
+  { ko:'손이 베이다', en:`To cut one's hand`, present:'손이 베여요', past:'손이 베었어요', future:'손이 벨 거예요' }, // 179
+  { ko:'쇼핑하다', en:'To shop', present:'쇼핑해요', past:'쇼핑했어요', future:'쇼핑할 거예요' },             // 180
+  { ko:'수술하다', en:'To perform surgery', present:'수술해요', past:'수술했어요', future:'수술할 거예요' },    // 181
+  { ko:'수술을 받다', en:'To undergo surgery', present:'수술을 받아요', past:'수술을 받았어요', future:'수술을 받을 거예요' }, // 182
+  { ko:'수영하다', en:'To swim', present:'수영해요', past:'수영했어요', future:'수영할 거예요' },              // 183
+  { ko:'쉽다', en:'To be easy', present:'쉬워요', past:'쉬웠어요', future:'쉬울 거예요' },                    // 184
+  { ko:'시끄럽다', en:'To be noisy', present:'시끄러워요', past:'시끄러웠어요', future:'시끄러울 거예요' },     // 185
+  { ko:'시원하다', en:'To be cool/refreshing', present:'시원해요', past:'시원했어요', future:'시원할 거예요' },  // 186
+  { ko:'싱싱하다', en:'To be fresh', present:'싱싱해요', past:'싱싱했어요', future:'싱싱할 거예요' },          // 187
+  { ko:'싸다', en:'To be cheap/wrap/pack', present:'싸요', past:'쌌어요', future:'쌀 거예요' },               // 188
+  { ko:'썰다', en:'To slice/chop', present:'썰어요', past:'썰었어요', future:'썰 거예요' },                  // 189
+  { ko:'알아보다', en:'To look for/find out', present:'알아봐요', past:'알아봤어요', future:'알아볼 거예요' },   // 190
+  { ko:'약을 먹다', en:'To take medicine', present:'약을 먹어요', past:'약을 먹었어요', future:'약을 먹을 거예요' }, // 191
+  { ko:'약을 뿌리다', en:'To spray medicine', present:'약을 뿌려요', past:'약을 뿌렸어요', future:'약을 뿌릴 거예요' }, // 192
+  { ko:'얌전하다', en:'To be quiet/gentle', present:'얌전해요', past:'얌전했어요', future:'얌전할 거예요' },   // 193
+  { ko:'어둡다', en:'To be dark', present:'어두워요', past:'어두웠어요', future:'어두울 거예요' },            // 194
+  { ko:'어렵다', en:'To be difficult', present:'어려워요', past:'어려웠어요', future:'어려울 거예요' },        // 195
+  { ko:'어리다', en:'To be young', present:'어려요', past:'어렸어요', future:'어릴 거예요' },                 // 196
+  { ko:'열이 나다', en:'To have a fever', present:'열이 나요', past:'열이 났어요', future:'열이 날 거예요' },  // 197
+  { ko:'영향을 주다', en:'To influence', present:'영향을 줘요', past:'영향을 줬어요', future:'영향을 줄 거예요' }, // 198
+  { ko:'올라오다', en:'To come up', present:'올라와요', past:'올라왔어요', future:'올라올 거예요' },          // 199
+  { ko:'올리다', en:'To upload/raise/offer', present:'올려요', past:'올렸어요', future:'올릴 거예요' },        // 200
+  { ko:'운전하다', en:'To drive', present:'운전해요', past:'운전했어요', future:'운전할 거예요' },            // 201
+  { ko:'위반하다', en:'To violate', present:'위반해요', past:'위반했어요', future:'위반할 거예요' },           // 202
+  { ko:'유명하다', en:'To be famous', present:'유명해요', past:'유명했어요', future:'유명할 거예요' },         // 203
+  { ko:'이용하다', en:'To use/utilize', present:'이용해요', past:'이용했어요', future:'이용할 거예요' },        // 204
+  { ko:'이사하다', en:'To move (house)', present:'이사해요', past:'이사했어요', future:'이사할 거예요' },       // 205
+  { ko:'이야기하다', en:'To talk/chat', present:'이야기해요', past:'이야기했어요', future:'이야기할 거예요' },   // 206
+  { ko:'작동하다', en:'To operate (a device)', present:'작동해요', past:'작동했어요', future:'작동할 거예요' },  // 207
+  { ko:'장을 보다', en:'To buy groceries', present:'장을 봐요', past:'장을 봤어요', future:'장을 볼 거예요' },  // 208
+  { ko:'재미없다', en:'To be uninteresting/boring', present:'재미없어요', past:'재미없었어요', future:'재미없을 거예요' }, // 209
+  { ko:'재미있다', en:'To be interesting/fun', present:'재미있어요', past:'재미있었어요', future:'재미있을 거예요' },    // 210
+  { ko:'저장하다', en:'To save/store', present:'저장해요', past:'저장했어요', future:'저장할 거예요' },         // 211
+  { ko:'절하다', en:'To bow', present:'절해요', past:'절했어요', future:'절할 거예요' },                     // 212
+  { ko:'점검하다', en:'To inspect/check', present:'점검해요', past:'점검했어요', future:'점검할 거예요' },      // 213
+  { ko:'정확하다', en:'To be accurate/exact', present:'정확해요', past:'정확했어요', future:'정확할 거예요' },  // 214
+  { ko:'제기차기하다', en:'To play Jegichagi', present:'제기차기해요', past:'제기차기했어요', future:'제기차기할 거예요' }, // 215
+  { ko:'조용하다', en:'To be quiet', present:'조용해요', past:'조용했어요', future:'조용할 거예요' },          // 216
+  { ko:'조이다', en:'To tighten', present:'조여요', past:'조였어요', future:'조일 거예요' },                 // 217
+  { ko:'조깅하다', en:'To jog', present:'조깅해요', past:'조깅했어요', future:'조깅할 거예요' },               // 218
+  { ko:'졸리다', en:'To feel drowsy/sleepy', present:'졸려요', past:'졸렸어요', future:'졸릴 거예요' },       // 219
+  { ko:'좋다', en:'To be good', present:'좋아요', past:'좋았어요', future:'좋을 거예요' },                    // 220
+  { ko:'주무시다', en:'To sleep (honorific)', present:'주무세요', past:'주무셨어요', future:'주무실 거예요' },   // 221
+  { ko:'주사하다', en:'To inject', present:'주사해요', past:'주사했어요', future:'주사할 거예요' },            // 222
+  { ko:'주사를 놓다', en:'To give an injection', present:'주사를 놓아요', past:'주사를 놓았어요', future:'주사를 놓을 거예요' }, // 223
+  { ko:'주사를 맞다', en:'To get an injection', present:'주사를 맞아요', past:'주사를 맞았어요', future:'주사를 맞을 거예요' }, // 224
+  { ko:'주차하다', en:'To park', present:'주차해요', past:'주차했어요', future:'주차할 거예요' },              // 225
+  { ko:'준비하다', en:'To prepare', present:'준비해요', past:'준비했어요', future:'준비할 거예요' },           // 226
+  { ko:'줄다리기하다', en:'To play tug-of-war', present:'줄다리기해요', past:'줄다리기했어요', future:'줄다리기할 거예요' }, // 227
+  { ko:'줄이다', en:'To reduce/decrease', present:'줄여요', past:'줄였어요', future:'줄일 거예요' },           // 228
+  { ko:'지나가다', en:'To pass by', present:'지나가요', past:'지나갔어요', future:'지나갈 거예요' },           // 229
+  { ko:'지내다', en:'To spend time/get along', present:'지내요', past:'지냈어요', future:'지낼 거예요' },       // 230
+  { ko:'짓다', en:'To build/make', present:'지어요', past:'지었어요', future:'지을 거예요' },                 // 231
+  { ko:'찜질하다', en:'To apply a heat compress', present:'찜질해요', past:'찜질했어요', future:'찜질할 거예요' }, // 232
+  { ko:'차례를 지내다', en:'To hold a memorial service', present:'차례를 지내요', past:'차례를 지냈어요', future:'차례를 지낼 거예요' }, // 233
+  { ko:'차례상을 차리다', en:'To set up a memorial table', present:'차례상을 차려요', past:'차례상을 차렸어요', future:'차례상을 차릴 거예요' }, // 234
+  { ko:'착하다', en:'To be kind/good-natured', present:'착해요', past:'착했어요', future:'착할 거예요' },      // 235
+  { ko:'참가하다', en:'To participate', present:'참가해요', past:'참가했어요', future:'참가할 거예요' },         // 236
+  { ko:'참석하다', en:'To attend', present:'참석해요', past:'참석했어요', future:'참석할 거예요' },            // 237
+  { ko:'참여하다', en:'To participate', present:'참여해요', past:'참여했어요', future:'참여할 거예요' },         // 238
+  { ko:'채팅하다', en:'To chat', present:'채팅해요', past:'채팅했어요', future:'채팅할 거예요' },               // 239
+  { ko:'처방하다', en:'To prescribe', present:'처방해요', past:'처방했어요', future:'처방할 거예요' },          // 240
+  { ko:'처방을 받다', en:'To receive a prescription', present:'처방을 받아요', past:'처방을 받았어요', future:'처방을 받을 거예요' }, // 241
+  { ko:'천천히 하다', en:'To do slowly', present:'천천히 해요', past:'천천히 했어요', future:'천천히 할 거예요' }, // 242
+  { ko:'체온을 재다', en:`To take one's temperature`, present:'체온을 재요', past:'체온을 쟀어요', future:'체온을 잴 거예요' }, // 243
+  { ko:'체험하다', en:'To experience', present:'체험해요', past:'체험했어요', future:'체험할 거예요' },          // 244
+  { ko:'초대하다', en:'To invite', present:'초대해요', past:'초대했어요', future:'초대할 거예요' },            // 245
+  { ko:'초대를 받다', en:'To be invited', present:'초대를 받아요', past:'초대를 받았어요', future:'초대를 받을 거예요' }, // 246
+  { ko:'축구하다', en:'To play soccer', present:'축구해요', past:'축구했어요', future:'축구할 거예요' },         // 247
+  { ko:'축하하다', en:'To congratulate', present:'축하해요', past:'축하했어요', future:'축하할 거예요' },         // 248
+  { ko:'출근하다', en:'To go to work', present:'출근해요', past:'출근했어요', future:'출근할 거예요' },          // 249
+  { ko:'출금하다', en:'To withdraw money', present:'출금해요', past:'출금했어요', future:'출금할 거예요' },       // 250
+  { ko:'출발하다', en:'To depart', present:'출발해요', past:'출발했어요', future:'출발할 거예요' },             // 251
+  { ko:'치료하다', en:'To treat (illness)', present:'치료해요', past:'치료했어요', future:'치료할 거예요' },      // 252
+  { ko:'치료를 받다', en:'To receive treatment', present:'치료를 받아요', past:'치료를 받았어요', future:'치료를 받을 거예요' }, // 253
+  { ko:'치우다', en:'To clear away/tidy up', present:'치워요', past:'치웠어요', future:'치울 거예요' },          // 254
+  { ko:'친절하다', en:'To be kind', present:'친절해요', past:'친절했어요', future:'친절할 거예요' },             // 255
+  { ko:'침을 뱉다', en:'To spit', present:'침을 뱉어요', past:'침을 뱉었어요', future:'침을 뱉을 거예요' },       // 256
+  { ko:'탁구를 치다', en:'To play table tennis', present:'탁구를 쳐요', past:'탁구를 쳤어요', future:'탁구를 칠 거예요' }, // 257
+  { ko:'타고 가다', en:'To go by (transport)', present:'타고 가요', past:'타고 갔어요', future:'타고 갈 거예요' }, // 258
+  { ko:'타고 오다', en:'To come by (transport)', present:'타고 와요', past:'타고 왔어요', future:'타고 올 거예요' }, // 259
+  { ko:'태우다', en:'To burn (something)/give a ride', present:'태워요', past:'태웠어요', future:'태울 거예요' }, // 260
+  { ko:'테니스하다', en:'To play tennis', present:'테니스해요', past:'테니스했어요', future:'테니스할 거예요' },   // 261
+  { ko:'토하다', en:'To vomit', present:'토해요', past:'토했어요', future:'토할 거예요' },                    // 262
+  { ko:'퇴근하다', en:'To leave work', present:'퇴근해요', past:'퇴근했어요', future:'퇴근할 거예요' },          // 263
+  { ko:'튀기다', en:'To deep-fry', present:'튀겨요', past:'튀겼어요', future:'튀길 거예요' },                 // 264
+  { ko:'특별하다', en:'To be special', present:'특별해요', past:'특별했어요', future:'특별할 거예요' },          // 265
+  { ko:'피우다', en:'To smoke/light (fire)', present:'피워요', past:'피웠어요', future:'피울 거예요' },          // 266
+  { ko:'포장하다', en:'To pack/wrap', present:'포장해요', past:'포장했어요', future:'포장할 거예요' },           // 267
+  { ko:'풀다', en:'To unpack/solve/untie', present:'풀어요', past:'풀었어요', future:'풀 거예요' },             // 268
+  { ko:'흔들다', en:'To shake/wave', present:'흔들어요', past:'흔들었어요', future:'흔들 거예요' },             // 269
+  { ko:'흡연하다', en:'To smoke', present:'흡연해요', past:'흡연했어요', future:'흡연할 거예요' },              // 270
+  { ko:'힘들다', en:'To be difficult/hard', present:'힘들어요', past:'힘들었어요', future:'힘들 거예요' },       // 271
+  { ko:'검사하다', en:'To inspect', present:'검사해요', past:'검사했어요', future:'검사할 거예요' },            // 272
+  { ko:'검수하다', en:'To inspect/check goods', present:'검수해요', past:'검수했어요', future:'검수할 거예요' },  // 273
+  { ko:'결속하다', en:'To bind/tie together', present:'결속해요', past:'결속했어요', future:'결속할 거예요' },   // 274
+  { ko:'결정하다', en:'To decide', present:'결정해요', past:'결정했어요', future:'결정할 거예요' },             // 275
+  { ko:'경고하다', en:'To warn', present:'경고해요', past:'경고했어요', future:'경고할 거예요' },               // 276
+  { ko:'고르다', en:'To choose/smooth', present:'골라요', past:'골랐어요', future:'고를 거예요' },             // 277
+  { ko:'곰팡이가 피다', en:'Mold grows', present:'곰팡이가 펴요', past:'곰팡이가 폈어요', future:'곰팡이가 필 거예요' }, // 278
+  { ko:'공제하다', en:'To deduct', present:'공제해요', past:'공제했어요', future:'공제할 거예요' },             // 279
+  { ko:'구부리다', en:'To bend', present:'구부려요', past:'구부렸어요', future:'구부릴 거예요' },             // 280
+  { ko:'귀국하다', en:`To return to one's home country`, present:'귀국해요', past:'귀국했어요', future:'귀국할 거예요' }, // 281
+  { ko:'긁어내다', en:'To scrape off', present:'긁어내요', past:'긁어냈어요', future:'긁어낼 거예요' },         // 282
+  { ko:'긋다', en:'To draw (a line)', present:'그어요', past:'그었어요', future:'그을 거예요' },               // 283
+  { ko:'깔다', en:'To lay/spread (mat/carpet)', present:'깔아요', past:'깔았어요', future:'깔 거예요' },        // 284
+  { ko:'깨다', en:'To break/wake up', present:'깨요', past:'깼어요', future:'깰 거예요' },                    // 285
+  { ko:'깨지다', en:'To be broken', present:'깨져요', past:'깨졌어요', future:'깨질 거예요' },                  // 286
+  { ko:'꼬이다', en:'To get tangled/twisted', present:'꼬여요', past:'꼬였어요', future:'꼬일 거예요' },        // 287
+  { ko:'끓이다', en:'To boil (something)', present:'끓여요', past:'끓였어요', future:'끓일 거예요' },          // 288
+  { ko:'끄다', en:'To turn off/extinguish', present:'꺼요', past:'껐어요', future:'끌 거예요' },               // 289
+  { ko:'끌어올리다', en:'To pull up/hoist', present:'끌어올려요', past:'끌어올렸어요', future:'끌어올릴 거예요' }, // 290
+  { ko:'끼다', en:'To wear (gloves/glasses)/get stuck', present:'껴요', past:'꼈어요', future:'낄 거예요' },     // 291
+  { ko:'끼우다', en:'To insert/fit/fasten', present:'끼워요', past:'끼웠어요', future:'끼울 거예요' },         // 292
+  { ko:'나누다', en:'To divide/share', present:'나눠요', past:'나눴어요', future:'나눌 거예요' },               // 293
+  { ko:'나르다', en:'To carry/transport', present:'날라요', past:'날랐어요', future:'나를 거예요' },            // 294
+  { ko:'납입하다', en:'To pay (fees/installments)', present:'납입해요', past:'납입했어요', future:'납입할 거예요' }, // 295
+  { ko:'납품하다', en:'To deliver goods', present:'납품해요', past:'납품했어요', future:'납품할 거예요' },        // 296
+  { ko:'낮추다', en:'To lower/reduce', present:'낮춰요', past:'낮췄어요', future:'낮출 거예요' },              // 297
+  { ko:'넘어지다', en:'To fall down/trip', present:'넘어져요', past:'넘어졌어요', future:'넘어질 거예요' },       // 298
+  { ko:'녹다', en:'To melt/dissolve', present:'녹아요', past:'녹았어요', future:'녹을 거예요' },               // 299
+  { ko:'녹슬다', en:'To rust', present:'녹슬어요', past:'녹슬었어요', future:'녹슬 거예요' },                  // 300
+];
+
+
+  // ===== State & Elements =====
+  let queue = []; let current = null; let index = 0; let audioReady = false;
+  const gate = document.getElementById('gate');
+  const finish = document.getElementById('finish');
+  const progressEl = document.getElementById('progress');
+  const flipWrap = document.getElementById('flipWrap');
+  const cardEl = document.getElementById('card');
+  const front = document.getElementById('front');
+  const back  = document.getElementById('back');
+  const player = document.getElementById('koAudio');
+  let isAnimating = false;
+
+  // ===== Utils =====
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, WORDS_MASTER.length)} / ${WORDS_MASTER.length}`; }
+
+  // ===== TTS =====
+  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
+  const audioCache = new Map();
+  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+  function speakWeb(text){
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = 0.95;
+    try{ speechSynthesis.cancel(); }catch(e){}
+    speechSynthesis.speak(u);
+  }
+  async function playKo(text){
+    if(!audioReady) return;
+    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; }
+    let url = audioCache.get(text);
+    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
+    player.src = url;
+    try{ await player.play(); }catch(e){ console.warn("VoiceRSS play failed; falling back to Web Speech:", e); speakWeb(text); }
+  }
+
+ // ===== English + Tagalog (single form per tense) =====
+// Format per verb: present: "EN/TL", past: "EN/TL", future: "EN/TL"
+const EN_TL_FORMS = {
+  'grill/bake': { present:'grill/bake/iniihaw·binibake', past:'grilled/baked/inihaw·binake', future:'will grill/bake/iihawin·babakehin' }, // 101
+  'find/save/seek': { present:'find/save/seek/nakikita·nililigtas·naghahanap', past:'found/saved/sought/nakita·nailigtas·hinanap', future:'will find/save/seek/makikita·ililigtas·maghahanap' }, // 102
+  'stop (rain/snow)': { present:'stop/humihinto', past:'stopped/huminto', future:'will stop/hihinto' }, // 103
+  'quit smoking': { present:'quit smoking/humihinto sa paninigarilyo', past:'quit smoking/huminto sa paninigarilyo', future:'will quit smoking/hihinto sa paninigarilyo' }, // 104
+  'prohibit/forbid': { present:'prohibit/forbid/ipinagbabawal', past:'prohibited/forbade/ipinagbawal', future:'will prohibit/ipagbabawal' }, // 105
+  'commemorate': { present:'commemorate/ginugunita', past:'commemorated/ginunita', future:'will commemorate/gugunitain' }, // 106
+  'pray': { present:'pray/nagdarasal', past:'prayed/nagdasal', future:'will pray/magdarasal' }, // 107
+  'download': { present:'download/nagda-download', past:'downloaded/nag-download', future:'will download/magda-download' }, // 110
+  'come down': { present:'come down/bumababa', past:'came down/bumaba', future:'will come down/bababa' }, // 111
+  'play basketball': { present:'play basketball/naglalaro ng basketball', past:'played basketball/naglaro ng basketball', future:'will play basketball/maglalaro ng basketball' }, // 113
+  'press': { present:'press/pinipindot', past:'pressed/pinindot', future:'will press/pipindutin' }, // 114
+  'wipe/polish/brush': { present:'wipe/polish/brush/pinupunasan·pinapakinis·nagsisipilyo', past:'wiped/polished/brushed/pinunasan·pinakinis·nagsipilyo', future:'will wipe/polish/brush/pupunasan·papakinisin·magsisipilyo' }, // 115
+  'attend/go regularly': { present:'attend/go regularly/dumadalo·pumupunta', past:'attended/went regularly/dumalo', future:'will attend/go regularly/dadalo·pupunta' }, // 116
+  'get hurt/injured': { present:'get hurt/nasasaktan', past:'got hurt/nasaktan', future:'will get hurt/masasaktan' }, // 117
+  'hang/put on': { present:'hang/put on/isinasabit·inilalagay', past:'hung/put on/isinabit·inilagay', future:'will hang/put on/isasabit·ilalagay' }, // 118
+  'pull': { present:'pull/hinihila', past:'pulled/hinila', future:'will pull/hihilahin' }, // 119
+  'treat/serve': { present:'treat/serve/tinatrato·pinagsisilbihan', past:'treated/served/tinrato·pinagsilbihan', future:'will treat/serve/tratuhin·pagsisilbihan' }, // 120
+  'heat up/reheat': { present:'heat up/pinaiinit', past:'heated up/pinainit', future:'will heat up/papainitin' }, // 121
+  'turn/operate/spin': { present:'turn/operate/spin/pinapaiikot·pinapatakbo·umiikot', past:'turned/operated/spun/pinaikot·pinatakbo·umikot', future:'will turn/operate/spin/papaikutin·papatakbuhin·iikot' }, // 122
+  'put/place/leave': { present:'put/place/leave/inilalagay·iniiwan', past:'put/placed/left/inilagay·iniwan', future:'will put/place/leave/ilalagay·iiwan' }, // 123
+  'hold/carry/take': { present:'hold/carry/take/hinahawakan·dinadala·kumukuha', past:'held/carried/took/hinawakan·dinala·kumuha', future:'will hold/carry/take/hahawakan·dadalhin·kukuha' }, // 124
+  'go in': { present:'go in/pumapasok', past:'went in/pumasok', future:'will go in/papasok' }, // 125
+  'sing along': { present:'sing along/kumakanta kasama', past:'sang along/kumanta kasama', future:'will sing along/kakanta kasama' }, // 126
+  'dance along': { present:'dance along/sumasayaw kasama', past:'danced along/sumayaw kasama', future:'will dance along/sasayaw kasama' }, // 127
+  'pick/open/earn': { present:'pick/open/earn/pinipitas·binubuksan·kinikita', past:'picked/opened/earned/pinitas·binuksan·kinita', future:'will pick/open/earn/pipitasin·bubuksan·kikita' }, // 128
+  'make noise/chatter': { present:'make noise/gumagawa ng ingay', past:'made noise/gumawa ng ingay', future:'will make noise/gagawa ng ingay' }, // 129
+  'tremble/shake': { present:'tremble/nanginginig', past:'trembled/nanginginig', future:'will tremble/manginginig' }, // 130
+  'run around': { present:'run around/tumatakbo sa paligid', past:'ran around/tumakbo sa paligid', future:'will run around/tatakbo sa paligid' }, // 131
+  'like/be pleased with': { present:'like/be pleased with/nagugustuhan', past:'liked/be pleased with/nagustuhan', future:'will like/be pleased with/magugustuhan' }, // 132
+  'express feelings': { present:'express feelings/nagpapahayag ng damdamin', past:'expressed feelings/nagpahayag ng damdamin', future:'will express feelings/magpapahayag ng damdamin' }, // 133
+  'touch': { present:'touch/hinahawakan', past:'touched/hinawakan', future:'will touch/hahawakan' }, // 134
+  'speak (honorific)': { present:'speak/nagsasalita', past:'spoke/nagsalita', future:'will speak/magsasalita' }, // 135
+  'be tasteless': { present:'be tasteless/walang lasa', past:'was tasteless/walang lasa', future:'will be tasteless/walang lasa' }, // 136
+  'taste good': { present:'taste good/masarap', past:'tasted good/masarap', future:'will taste good/magiging masarap' }, // 137
+  'be delicious': { present:'be delicious/masarap', past:'was delicious/masarap', future:'will be delicious/magiging masarap' }, // 138
+  'be correct/fit': { present:'be correct/tama', past:'was correct/tama', future:'will be correct/magiging tama' }, // 139
+  'dust off': { present:'dust off/nag-aalikabok', past:'dusted off/nag-alikabok', future:'will dust off/mag-aalikabok' }, // 140
+  'gather/assemble': { present:'gather/nagtitipon', past:'gathered/nagtipon', future:'will gather/magtitipon' }, // 141
+  'recruit/gather': { present:'recruit/nagre-recruit', past:'recruited/nag-recruit', future:'will recruit/magre-recruit' }, // 142
+  'stay (at a place)': { present:'stay/nananatili', past:'stayed/nanatili', future:'will stay/mananatili' }, // 143
+  'inquire': { present:'inquire/nagtatanong', past:'inquired/nagtanong', future:'will inquire/magtatanong' }, // 144
+  'jaywalk': { present:'jaywalk/sumisingit sa pila', past:'jaywalked/sumingit sa pila', future:'will jaywalk/sisingit sa pila' }, // 145
+  'be busy': { present:'be busy/abala', past:'was busy/naging abala', future:'will be busy/magiging abala' }, // 146
+  'wind blows': { present:'wind blows/humahangin', past:'wind blew/humangin', future:'wind will blow/hahangin' }, // 147
+  'bring in/carry in': { present:'bring in/ipinapasok', past:'brought in/ipinasok', future:'will bring in/ipapasok' }, // 148
+  'be issued': { present:'be issued/inilalabas', past:'was issued/inilabas', future:'will be issued/ilalabas' }, // 149
+  'be bright': { present:'be bright/maliwanag', past:'was bright/maliwanag', future:'will be bright/magiging maliwanag' }, // 150
+  'deliver': { present:'deliver/naghahatid', past:'delivered/naghatid', future:'will deliver/maghahatid' }, // 151
+  'have an upset stomach': { present:'have an upset stomach/nagkakaroon ng masamang tiyan', past:'had an upset stomach/nagkaroon ng masamang tiyan', future:'will have an upset stomach/magkakaroon ng masamang tiyan' }, // 152
+  'press the button': { present:'press the button/pinipindot ang button', past:'pressed the button/pinindot ang button', future:'will press the button/pipindutin ang button' }, // 153
+  'take a ticket number': { present:'take a ticket number/kumukuha ng numero ng tiket', past:'took a ticket number/kumuha ng numero ng tiket', future:'will take a ticket number/kukuha ng numero ng tiket' }, // 154
+  'show/be seen': { present:'show/is seen/ipinapakita·nakikita', past:'showed/was seen/ipinakita·nakita', future:'will show/be seen/ipapakita·makikita' }, // 155
+  'preserve/conserve': { present:'preserve/napapanatili', past:'preserved/napanatili', future:'will preserve/mapapanatili' }, // 156
+  'be complicated/crowded': { present:'be complicated/kumplikado', past:'was complicated/naging kumplikado', future:'will be complicated/magiging kumplikado' }, // 157
+  'stir-fry': { present:'stir-fry/nag-i-stir-fry', past:'stir-fried/nag-stir-fry', future:'will stir-fry/mag-i-stir-fry' }, // 158
+  'break (intrans.)': { present:'break/nababali', past:'broke/nabali', future:'will break/mababali' }, // 159
+  'call/sing': { present:'call/sing/tumatawag·kumakanta', past:'called/sang/tumawag·kumanta', future:'will call/sing/tatawag·kakanta' }, // 160
+  'send (mail)/fry': { present:'send/fry/nagpapadala·nagluluto', past:'sent/fried/nagpadala·nagluto', future:'will send/fry/magpapadala·magluluto' }, // 161
+  'be lacking': { present:'be lacking/kulang', past:'was lacking/kulang', future:'will be lacking/magiging kulang' }, // 162
+  'be diligent': { present:'be diligent/masipag', past:'was diligent/masipag', future:'will be diligent/magiging masipag' }, // 163
+  'attach/paste/light': { present:'attach/paste/light/ikinakabit·ipinapaskil·sinisindihan', past:'attached/pasted/lit/ikinabit·ipinaskil·sinindihan', future:'will attach/paste/light/ikakabit·ipapaskil·sisindihan' }, // 164
+  'rain': { present:'rain/umuulan', past:'rained/umulan', future:'will rain/uulan' }, // 165
+  'be expensive': { present:'be expensive/mahal', past:'was expensive/mahal', future:'will be expensive/magiging mahal' }, // 166
+  'break a bone': { present:'break a bone/nababali ang buto', past:'broke a bone/nabali ang buto', future:'will break a bone/mababali ang buto' }, // 167
+  'do laundry': { present:'do laundry/naglalaba', past:'did laundry/naglaba', future:'will do laundry/maglalaba' }, // 168
+  'hang the laundry': { present:'hang the laundry/nagsasampay ng labada', past:'hung the laundry/nagsampay ng labada', future:'will hang the laundry/magsasampay ng labada' }, // 169
+  'take down the laundry': { present:'take down the laundry/nagtutupi ng labada', past:'took down the laundry/nagtupi ng labada', future:'will take down the laundry/magtutupi ng labada' }, // 170
+  'go bad/spoil': { present:'go bad/nasisira', past:'went bad/nasira', future:'will go bad/masisira' }, // 171
+  'cut in line': { present:'cut in line/sumisingit sa pila', past:'cut in line/sumingit sa pila', future:'will cut in line/sisingit sa pila' }, // 172
+  'sign (document)': { present:'sign/pumipirma', past:'signed/pumirma', future:'will sign/pipirma' }, // 173
+  'do dishes': { present:'do dishes/naghuhugas ng pinggan', past:'did dishes/naghugas ng pinggan', future:'will do dishes/maghuhugas ng pinggan' }, // 174
+  'have diarrhea': { present:'have diarrhea/nagtatae', past:'had diarrhea/nagtae', future:'will have diarrhea/magtatae' }, // 175
+  "do the New Year's bow": { present:"do New Year's bow/nagbibigay galang", past:"did New Year's bow/nagbigay galang", future:"will do New Year's bow/magbibigay galang" }, // 176
+  'make a sound': { present:'make a sound/gumagawa ng tunog', past:'made a sound/gumawa ng tunog', future:'will make a sound/gagawa ng tunog' }, // 177
+  'have indigestion': { present:'have indigestion/hindi natutunawan', past:'had indigestion/hindi natunawan', future:'will have indigestion/hindi matutunawan' }, // 178
+  "cut one's hand": { present:"cut one's hand/nasusugatan ang kamay", past:"cut one's hand/nasugatan ang kamay", future:"will cut one's hand/masusugatan ang kamay" }, // 179
+  'shop': { present:'shop/namimili', past:'shopped/namili', future:'will shop/mamimili' }, // 180
+  'perform surgery': { present:'perform surgery/nagsasagawa ng operasyon', past:'performed surgery/nagsagawa ng operasyon', future:'will perform surgery/magsasagawa ng operasyon' }, // 181
+  'undergo surgery': { present:'undergo surgery/sumasailalim sa operasyon', past:'underwent surgery/sumailalim sa operasyon', future:'will undergo surgery/sasailalim sa operasyon' }, // 182
+  'swim': { present:'swim/lumalangoy', past:'swam/lumangoy', future:'will swim/lalangoy' }, // 183
+  'be easy': { present:'be easy/madali', past:'was easy/madali', future:'will be easy/magiging madali' }, // 184
+  'be noisy': { present:'be noisy/maingay', past:'was noisy/maingay', future:'will be noisy/magiging maingay' }, // 185
+  'be cool': { present:'be cool/malamig', past:'was cool/malamig', future:'will be cool/magiging malamig' }, // 186
+  'be fresh': { present:'be fresh/sariwa', past:'was fresh/sariwa', future:'will be fresh/magiging sariwa' }, // 187
+  'be cheap/wrap/pack': { present:'be cheap/wrap/pack/mura·binalot·ini-empake', past:'was cheap/wrapped/packed/mura·binalot·in-empake', future:'will be cheap/wrap/pack/magiging mura·babalutin·i-empake' }, // 188
+  'slice/chop': { present:'slice/chop/hinihiwa·tinatadtad', past:'sliced/chopped/hiniwa·tinadtad', future:'will slice/chop/hihiwain·tatadtarin' }, // 189
+  'look for/find out': { present:'look for/find out/naghahanap·nalalaman', past:'looked for/found out/hinanap·nalaman', future:'will look for/find out/maghahanap·malalaman' }, // 190
+  'take medicine': { present:'take medicine/umiinom ng gamot', past:'took medicine/uminom ng gamot', future:'will take medicine/iinom ng gamot' }, // 191
+  'spray medicine': { present:'spray medicine/nag-i-spray ng gamot', past:'sprayed medicine/nag-spray ng gamot', future:'will spray medicine/mag-i-spray ng gamot' }, // 192
+  'be quiet/gentle': { present:'be quiet/tahimik', past:'was quiet/tahimik', future:'will be quiet/magiging tahimik' }, // 193
+  'be dark': { present:'be dark/madilim', past:'was dark/madilim', future:'will be dark/magiging madilim' }, // 194
+  'be difficult': { present:'be difficult/mahirap', past:'was difficult/mahirap', future:'will be difficult/magiging mahirap' }, // 195
+  'be young': { present:'be young/bata', past:'was young/bata', future:'will be young/magiging bata' }, // 196
+  'have a fever': { present:'have a fever/nagkakalagnat', past:'had a fever/nilagnat', future:'will have a fever/magkakaroon ng lagnat' }, // 197
+  'influence': { present:'influence/nakaiimpluwensya', past:'influenced/nakaimpluwensya', future:'will influence/makaiimpluwensya' }, // 198
+  'come up': { present:'come up/umaakyat', past:'came up/umakyat', future:'will come up/aakyat' }, // 199
+  'upload/raise/offer': { present:'upload/raise/offer/inu-upload·itinataas·iniaalok', past:'uploaded/raised/offered/in-upload·itinataas·inialok', future:'will upload/raise/offer/iu-upload·itataas·iaalok' }, // 200
+  'drive': { present:'drive/nagmamaneho', past:'drove/nagmaneho', future:'will drive/magmamaneho' }, // 201
+  'violate': { present:'violate/nilalabag', past:'violated/nilabag', future:'will violate/lalabagin' }, // 202
+  'be famous': { present:'be famous/sikat', past:'was famous/sikat', future:'will be famous/magiging sikat' }, // 203
+  'use/utilize': { present:'use/utilize/ginagamit', past:'used/ginamit', future:'will use/gagamitin' }, // 204
+  'move (house)': { present:'move (house)/lumilipat', past:'moved/lumipat', future:'will move/lilipat' }, // 205
+  'talk/chat': { present:'talk/chat/nag-uusap', past:'talked/nag-usap', future:'will talk/mag-uusap' }, // 206
+  'operate (device)': { present:'operate/nagpapaandar', past:'operated/nagpaandar', future:'will operate/magpapaandar' }, // 207
+  'buy groceries': { present:'buy groceries/namimili ng grocery', past:'went grocery shopping/namili ng grocery', future:'will buy groceries/mamimili ng grocery' }, // 208
+  'be uninteresting/boring': { present:'be boring/hindi interesante', past:'was boring/hindi interesante', future:'will be boring/hindi magiging interesante' }, // 209
+  'be interesting/fun': { present:'be interesting/interesante', past:'was interesting/interesante', future:'will be interesting/magiging interesante' }, // 210
+  'save/store': { present:'save/inilalagay', past:'saved/inilagay', future:'will save/ilalagay' }, // 211
+  'bow': { present:'bow/yumuyuko', past:'bowed/yumuko', future:'will bow/yuyuko' }, // 212
+  'inspect/check': { present:'inspect/nag-i-inspeksyon', past:'inspected/nag-inspeksyon', future:'will inspect/mag-i-inspeksyon' }, // 213
+  'be accurate/exact': { present:'be accurate/tumpak', past:'was accurate/tumpak', future:'will be accurate/magiging tumpak' }, // 214
+  'play Jegichagi': { present:'play Jegichagi/naglalaro ng Jegichagi', past:'played Jegichagi/naglaro ng Jegichagi', future:'will play Jegichagi/maglalaro ng Jegichagi' }, // 215
+  'be quiet': { present:'be quiet/tahimik', past:'was quiet/tahimik', future:'will be quiet/magiging tahimik' }, // 216
+  'tighten': { present:'tighten/hinihigpitan', past:'tightened/hinigpitan', future:'will tighten/hihigpitan' }, // 217
+  'jog': { present:'jog/nagjo-jogging', past:'jogged/nag-jogging', future:'will jog/magjo-jogging' }, // 218
+  'feel drowsy/sleepy': { present:'feel sleepy/inaantok', past:'felt sleepy/inantok', future:'will feel sleepy/aantukin' }, // 219
+  'be good': { present:'be good/mabuti', past:'was good/mabuti', future:'will be good/magiging mabuti' }, // 220
+  'sleep (honorific)': { present:'sleep/natutulog', past:'slept/natulog', future:'will sleep/matutulog' }, // 221
+  'inject': { present:'inject/iniiniksyon', past:'injected/ininiksyon', future:'will inject/iiniksyon' }, // 222
+  'give an injection': { present:'give an injection/nagbibigay ng iniksyon', past:'gave an injection/nagbigay ng iniksyon', future:'will give an injection/magbibigay ng iniksyon' }, // 223
+  'get an injection': { present:'get an injection/nagpapa-iniksyon', past:'got an injection/nagpa-iniksyon', future:'will get an injection/magpapa-iniksyon' }, // 224
+  'park': { present:'park/nagpa-park', past:'parked/nag-park', future:'will park/magpa-park' }, // 225
+  'prepare': { present:'prepare/naghahanda', past:'prepared/naghanda', future:'will prepare/maghahanda' }, // 226
+  'play tug-of-war': { present:'play tug-of-war/naglalaro ng tug-of-war', past:'played tug-of-war/naglaro ng tug-of-war', future:'will play tug-of-war/maglalaro ng tug-of-war' }, // 227
+  'reduce/decrease': { present:'reduce/binabawasan', past:'reduced/binawasan', future:'will reduce/babawasan' }, // 228
+  'pass by': { present:'pass by/dumadaan', past:'passed by/dumaan', future:'will pass by/dadaan' }, // 229
+  'spend time/get along': { present:'spend time/nagpapalipas ng oras', past:'spent time/nagpalipas ng oras', future:'will spend time/magpapalipas ng oras' }, // 230
+  'build/make': { present:'build/make/gumagawa·nagluluto', past:'built/made/gumawa·nagluto', future:'will build/make/gagawa·magluluto' }, // 231
+  'apply a heat compress': { present:'apply heat compress/naglalagay ng heat compress', past:'applied heat compress/naglagay ng heat compress', future:'will apply heat compress/maglalagay ng heat compress' }, // 232
+  'hold a memorial service': { present:'hold a memorial service/nagsasagawa ng memorial service', past:'held a memorial service/nagsagawa ng memorial service', future:'will hold a memorial service/magsasagawa ng memorial service' }, // 233
+  'set up a memorial table': { present:'set up a memorial table/nagse-set up ng memorial table', past:'set up a memorial table/nag-set up ng memorial table', future:'will set up a memorial table/magse-set up ng memorial table' }, // 234
+  'be kind/good-natured': { present:'be kind/mabait', past:'was kind/mabait', future:'will be kind/magiging mabait' }, // 235
+  'participate': { present:'participate/lumalahok', past:'participated/lumahok', future:'will participate/lalahok' }, // 236
+  'attend': { present:'attend/dumadalo', past:'attended/dumalo', future:'will attend/dadalo' }, // 237
+  'participate (another)': { present:'participate/lumalahok', past:'participated/lumahok', future:'will participate/lalahok' }, // 238
+  'chat': { present:'chat/nagcha-chat', past:'chatted/nag-chat', future:'will chat/magcha-chat' }, // 239
+  'prescribe': { present:'prescribe/nagre-reseta', past:'prescribed/nagreseta', future:'will prescribe/magre-reseta' }, // 240
+  'receive a prescription': { present:'receive a prescription/nakakatanggap ng reseta', past:'received a prescription/nakatanggap ng reseta', future:'will receive a prescription/makakatanggap ng reseta' }, // 241
+  'do slowly': { present:'do slowly/ginagawa nang dahan-dahan', past:'did slowly/ginawa nang dahan-dahan', future:'will do slowly/gagawin nang dahan-dahan' }, // 242
+  "take one's temperature": { present:'take temperature/kinukuha ang temperatura', past:'took temperature/kinuha ang temperatura', future:'will take temperature/kukuha ng temperatura' }, // 243
+  'experience': { present:'experience/nararanasan', past:'experienced/naranasan', future:'will experience/mararanasan' }, // 244
+  'invite': { present:'invite/iniimbita', past:'invited/inimbita', future:'will invite/iimbita' }, // 245
+  'be invited': { present:'be invited/iniimbita', past:'was invited/inimbita', future:'will be invited/iimbita' }, // 246
+  'play soccer': { present:'play soccer/naglalaro ng soccer', past:'played soccer/naglaro ng soccer', future:'will play soccer/maglalaro ng soccer' }, // 247
+  'congratulate': { present:'congratulate/bumabati', past:'congratulated/bumati', future:'will congratulate/babati' }, // 248
+  'go to work': { present:'go to work/pumapasok sa trabaho', past:'went to work/pumasok sa trabaho', future:'will go to work/papasok sa trabaho' }, // 249
+  'withdraw money': { present:'withdraw money/nagwi-withdraw ng pera', past:'withdrew money/nag-withdraw ng pera', future:'will withdraw money/magwi-withdraw ng pera' }, // 250
+  'depart': { present:'depart/umaalis', past:'departed/umalis', future:'will depart/aalis' }, // 251
+  'treat (illness)': { present:'treat/ginagamot', past:'treated/ginamot', future:'will treat/gagamutin' }, // 252
+  'receive treatment': { present:'receive treatment/nakakatanggap ng paggamot', past:'received treatment/nakatanggap ng paggamot', future:'will receive treatment/makakatanggap ng paggamot' }, // 253
+  'clear away/tidy up': { present:'clear away/nililinis', past:'cleared away/nilinis', future:'will clear away/lilinisin' }, // 254
+  'be kind': { present:'be kind/mabait', past:'was kind/mabait', future:'will be kind/magiging mabait' }, // 255
+  'spit': { present:'spit/dumudura', past:'spat/dumura', future:'will spit/dudura' }, // 256
+  'play table tennis': { present:'play table tennis/naglalaro ng table tennis', past:'played table tennis/naglaro ng table tennis', future:'will play table tennis/maglalaro ng table tennis' }, // 257
+  'go by (transport)': { present:'go by/pumupunta sa pamamagitan ng', past:'went by/pumunta sa pamamagitan ng', future:'will go by/pupunta sa pamamagitan ng' }, // 258
+  'come by (transport)': { present:'come by/dumadating sa pamamagitan ng', past:'came by/dumating sa pamamagitan ng', future:'will come by/darating sa pamamagitan ng' }, // 259
+  'burn/give a ride': { present:'burn/give a ride/sinusunog·binibigyan ng sakay', past:'burned/gave a ride/sinunog·binigyan ng sakay', future:'will burn/give a ride/susunugin·bibigyan ng sakay' }, // 260
+  'play tennis': { present:'play tennis/naglalaro ng tennis', past:'played tennis/naglaro ng tennis', future:'will play tennis/maglalaro ng tennis' }, // 261
+  'vomit': { present:'vomit/sumusuka', past:'vomited/sumuka', future:'will vomit/susuka' }, // 262
+  'leave work': { present:'leave work/umaalis sa trabaho', past:'left work/umalis sa trabaho', future:'will leave work/aalis sa trabaho' }, // 263
+  'deep-fry': { present:'deep-fry/nagpiprito', past:'deep-fried/nagprito', future:'will deep-fry/magpiprito' }, // 264
+  'be special': { present:'be special/espesyal', past:'was special/espesyal', future:'will be special/magiging espesyal' }, // 265
+  'smoke/light': { present:'smoke/light/naninigarilyo·sinisindihan', past:'smoked/lit/nanigarilyo·sinindihan', future:'will smoke/light/maninigarilyo·sisindihan' }, // 266
+  'pack/wrap': { present:'pack/wrap/iniimpake·binabalot', past:'packed/wrapped/inimpake·binalot', future:'will pack/wrap/iimpake·babalutin' }, // 267
+  'unpack/solve/untie': { present:'unpack/solve/untie/nag-u-unpack·nalulutas·kinakalas', past:'unpacked/solved/untied/nag-unpack·nalutas·kinakalag', future:'will unpack/solve/untie/mag-u-unpack·malulutas·kakalas' }, // 268
+  'shake/wave': { present:'shake/wave/inaalog·ikinakaway', past:'shook/waved/inalog·ikinaway', future:'will shake/wave/aalugin·ikakaway' }, // 269
+  'smoke (formal)': { present:'smoke/naninigarilyo', past:'smoked/nanigarilyo', future:'will smoke/maninigarilyo' }, // 270
+  'be difficult/hard': { present:'be difficult/mahirap', past:'was difficult/mahirap', future:'will be difficult/magiging mahirap' }, // 271
+  'inspect': { present:'inspect/nag-i-inspeksyon', past:'inspected/nag-inspeksyon', future:'will inspect/mag-i-inspeksyon' }, // 272
+  'inspect goods': { present:'inspect goods/nag-i-inspeksyon ng mga kalakal', past:'inspected goods/nag-inspeksyon ng mga kalakal', future:'will inspect goods/mag-i-inspeksyon ng mga kalakal' }, // 273
+  'bind/tie together': { present:'bind/tie/tinatalian', past:'bound/tinalian', future:'will bind/tatalian' }, // 274
+  'decide': { present:'decide/nagpapasiya', past:'decided/nagpasya', future:'will decide/magpapasiya' }, // 275
+  'warn': { present:'warn/binabalaan', past:'warned/binalaan', future:'will warn/babalaan' }, // 276
+  'choose/smooth': { present:'choose/smooth/pinipili·pinapakinis', past:'chose/smoothed/pinili·pinakinis', future:'will choose/smooth/pipiliin·papakinisin' }, // 277
+  'mold grows': { present:'mold grows/nag-a-amag', past:'mold grew/nag-amag', future:'mold will grow/mag-a-amag' }, // 278
+  'deduct': { present:'deduct/binabawas', past:'deducted/binawas', future:'will deduct/babawasan' }, // 279
+  'bend': { present:'bend/binabaluktot', past:'bent/binaluktot', future:'will bend/babaluktutin' }, // 280
+  "return to one's home country": { present:'return/bumabalik', past:'returned/bumalik', future:'will return/babalik' }, // 281
+  'scrape off': { present:'scrape off/kinakaskas', past:'scraped off/kinaskas', future:'will scrape off/kakaskasin' }, // 282
+  'draw (a line)': { present:'draw/iginuguhit', past:'drew/iginuhit', future:'will draw/iguguhit' }, // 283
+  'lay/spread': { present:'lay/spread/inilalatag', past:'laid/inilatag', future:'will lay/ilalatag' }, // 284
+  'break/wake up': { present:'break/wake up/binabasag·nagigising', past:'broke/woke up/binasag·nagising', future:'will break/wake up/babasagin·gigising' }, // 285
+  'be broken': { present:'be broken/nababasag', past:'was broken/nabasag', future:'will be broken/mababasag' }, // 286
+  'get tangled/twisted': { present:'get tangled/nabubuhol', past:'got tangled/nabuhol', future:'will get tangled/mabubuhol' }, // 287
+  'boil (something)': { present:'boil/pinapakuluan', past:'boiled/pinakuluan', future:'will boil/papakuluan' }, // 288
+  'turn off/extinguish': { present:'turn off/pinapatay', past:'turned off/pinatay', future:'will turn off/papatayin' }, // 289
+  'pull up/hoist': { present:'pull up/hinihila pataas', past:'pulled up/hinila pataas', future:'will pull up/hihilahin pataas' }, // 290
+  'wear/get stuck': { present:'wear/get stuck/nagsusuot·naiipit', past:'wore/got stuck/nagsuot·naipit', future:'will wear/get stuck/magsusuot·maiipit' }, // 291
+  'insert/fit/fasten': { present:'insert/ipinapasok', past:'inserted/ipinasok', future:'will insert/ipapasok' }, // 292
+  'divide/share': { present:'divide/share/hinahati·ibinibigay', past:'divided/shared/hinati·ibinigay', future:'will divide/share/hahatiin·ibibigay' }, // 293
+  'carry/transport': { present:'carry/transport/dinadala', past:'carried/dinala', future:'will carry/dadalhin' }, // 294
+  'pay (fees/installments)': { present:'pay/nagbabayad', past:'paid/nagbayad', future:'will pay/magbabayad' }, // 295
+  'deliver goods': { present:'deliver goods/naghahatid ng mga kalakal', past:'delivered goods/naghatid ng mga kalakal', future:'will deliver goods/maghahatid ng mga kalakal' }, // 296
+  'lower/reduce': { present:'lower/reduce/ibinababa', past:'lowered/ibinaba', future:'will lower/ibababa' }, // 297
+  'fall down/trip': { present:'fall down/natutumba', past:'fell down/natumba', future:'will fall down/matutumba' }, // 298
+  'melt/dissolve': { present:'melt/dissolve/natutunaw', past:'melted/dissolved/natunaw', future:'will melt/matutunaw' }, // 299
+  'rust': { present:'rust/kinakalawang', past:'rusted/kinalawang', future:'will rust/kakalawangin' }, // 300
+};
+
+
+// ===== Replace your englishLines() with this =====
+const VOWELS = new Set(['a','e','i','o','u']);
+function pastFormGuess(base){
+  if(base.endsWith('e')) return base+'d';
+  if(base.endsWith('y') && !VOWELS.has(base[base.length-2])) return base.slice(0,-1)+'ied';
+  return base+'ed';
+}
+
+function englishLines(en){
+  // raw = lowercased English na tinanggal lang ang leading "to "
+  const raw = en.replace(/^to\s+/i,'').trim().toLowerCase();           // e.g. "stop (rain/snow)"
+  const noParens = raw.replace(/\s*\(.*?\)\s*/g,'').trim();            // e.g. "stop"
+
+  const hit = EN_TL_FORMS[raw] || EN_TL_FORMS[noParens];
+  if(hit){
+    return {
+      present: hit.present,
+      past:    hit.past,
+      future:  hit.future
+    };
+  }
+
+  // fallback (English-only) kapag talagang walang entry sa EN_TL_FORMS
+  return {
+    present: noParens,
+    past:    pastFormGuess(noParens),
+    future:  `will ${noParens}`
+  };
+}
+
+
+
+  // ===== Rendering =====
+  function renderFront(w){
+    front.innerHTML = `
+      <div class="ko-row">
+        <div class="ko">${w.ko}</div>
+        <button class="play-base" id="playBaseFront" title="Play base" aria-label="Play base">🔊 Play</button>
+      </div>
+      <ul class="forms">
+        <li>
+          <span class="left"><b>Present</b> <span class="koform">${w.present}</span></span>
+          <button class="play-mini" data-tts="${w.present}" aria-label="Play Present">Play ▶</button>
+        </li>
+        <li>
+          <span class="left"><b>Past</b> <span class="koform">${w.past}</span></span>
+          <button class="play-mini" data-tts="${w.past}" aria-label="Play Past">Play ▶</button>
+        </li>
+        <li>
+          <span class="left"><b>Future</b> <span class="koform">${w.future}</span></span>
+          <button class="play-mini" data-tts="${w.future}" aria-label="Play Future">Play ▶</button>
+        </li>
+      </ul>
+      <div class="controls" style="margin-top:6px">
+        <button class="btn ghost" id="flipToBack"> FLIP the CARD</button>
+      </div>
+    `;
+    front.querySelector('#playBaseFront').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+    front.querySelectorAll('.play-mini').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); playKo(btn.dataset.tts); });
+    });
+    front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+  }
+
+  function renderBack(w){
+    const lines = englishLines(w.en);
+    back.innerHTML = `
+      <div class="enhead">${w.ko} - ${w.en}</div>
+      <ul class="enlines">
+        <li><b>Present</b> <span class="koform">${w.present}</span> - ${lines.present}</li>
+        <li><b>Past</b>    <span class="koform">${w.past}</span>    - ${lines.past}</li>
+        <li><b>Future</b>  <span class="koform">${w.future}</span>  - ${lines.future}</li>
+      </ul>
+      <div class="controls" style="margin-top:6px">
+        <button class="btn ghost" id="flipToFront">◀ Back</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="playBaseBack">🔊 Play Base</button>
+      </div>
+    `;
+    back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+    back.querySelector('#playBaseBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+    back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+  }
+
+  function showCard(w){
+    current = w;
+    renderFront(w);
+    renderBack(w);
+    flipWrap.classList.remove('flipped');
+    updateProgress();
+    playKo(w.ko); // autoplay base once
+  }
+
+  // ===== Flow =====
+  function startRun(){
+    queue = shuffle([...WORDS_MASTER]);
+    index = 0;
+    finish.style.display = 'none';
+    showCard(queue[index]);
+  }
+
+  function nextCardAnimated(){
+    if(isAnimating) return;
+    isAnimating = true;
+    flipWrap.classList.add('animating','fly-exit');
+
+    const onExitEnd = (e)=>{
+      if(e.target !== cardEl) return;
+      flipWrap.removeEventListener('animationend', onExitEnd);
+      flipWrap.classList.remove('fly-exit');
+
+      index++;
+      if(index >= queue.length){
+        flipWrap.classList.remove('animating');
+        isAnimating = false;
+        finish.style.display = 'flex';
+        return;
+      }
+
+      const w = queue[index];
+      renderFront(w);
+      renderBack(w);
+      flipWrap.classList.remove('flipped');
+      updateProgress();
+
+      flipWrap.classList.add('fly-enter');
+      const onEnterEnd = (ev)=>{
+        if(ev.target !== cardEl) return;
+        flipWrap.removeEventListener('animationend', onEnterEnd);
+        flipWrap.classList.remove('fly-enter','animating');
+        isAnimating = false;
+        playKo(w.ko);
+      };
+      flipWrap.addEventListener('animationend', onEnterEnd);
+    };
+    flipWrap.addEventListener('animationend', onExitEnd);
+  }
+
+  // Click/tap behavior
+  flipWrap.addEventListener('click', ()=>{
+    if(!current) return;
+    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+    else nextCardAnimated();
+  });
+
+  // Keyboard accessibility
+  cardEl.addEventListener('keydown', (e)=>{
+    if(e.code==='Enter' || e.code==='Space'){
+      e.preventDefault();
+      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+      else nextCardAnimated();
+    }
+  });
+
+  // Start / Restart
+  document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
+  document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
+  </script>
+  <script>
+// Disable right click
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable text selection
+document.addEventListener("selectstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable drag (para hindi madrag palabas yung image/text)
+document.addEventListener("dragstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener("keydown", function(e){
+  if (
+    e.key === "F12" || 
+    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+  }
+}, false);
+</script>
+
+</body>
+</html>

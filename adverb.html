@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flip Cards – Sky Blue Freeze (Korean Adverbs)</title>
+  <style>
+    :root{
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --border:1px solid rgba(103,232,249,.30);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; color:var(--text);
+      min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:12px;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative; isolation:isolate; padding:22px 16px 42px;
+    }
+    body::before{
+      content:""; position:fixed; inset:-20%;
+      background: conic-gradient(from 200deg at 60% 40%, rgba(186,230,253,.12), rgba(34,211,238,.10), rgba(56,189,248,.14), rgba(186,230,253,.10), rgba(34,211,238,.10));
+      filter:blur(48px); animation: drift 20s linear infinite; z-index:-1; opacity:.9;
+    }
+    @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05)}100%{transform:translate3d(0,0,0) rotate(0) scale(1)}}
+
+    header{text-align:center}
+    .title{
+      margin:0; font-size:2.2rem; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+      background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 10px rgba(255,255,255,.75),0 0 24px rgba(56,189,248,.45);
+    }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:600 }
+    .progress{ margin-top:6px; font-weight:800; color:var(--ice-2) }
+
+    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
+    .flip{ perspective:1200px; width:100%; height:100%; }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipped .card{ transform:rotateY(180deg); }
+
+    .face{ position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; padding:18px; }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
+
+    .ko{ font-size:2.6rem; font-weight:900; letter-spacing:.5px; text-shadow:0 1px 0 rgba(255,255,255,.7); color:#0c253a }
+    .ko-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:min(460px,96%); }
+    .play-base{ appearance:none; border:none; cursor:pointer; border-radius:10px; padding:10px 14px; font-weight:900; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); }
+    .play-base:hover{ filter:brightness(1.08) }
+
+    .enhead{ font-size:1.1rem; font-weight:900; color:var(--ice-1); margin-top:6px; text-align:left; width:min(460px,96%); }
+	/* bigger + centered adverb on the back */
+.ko-big{
+  font-size: 2rem;        /* palakihin */
+  line-height: 1.15;
+  text-align: center;     /* gitna (horizontal) */
+  width: 100%;
+  margin: 2px 0 4px;      /* konting spacing lang */
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: var(--ice-1);
+}
+@media (max-width:420px){
+  .ko-big{ font-size: 1.8rem; }
+}
+
+    .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
+    .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
+    .enlines b{ color:var(--ice-3) }
+
+    .sentence{ width:min(460px,96%); margin-top:6px; padding:10px 12px; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-1); font-size:1.15rem; }
+    .gloss{ width:min(460px,96%); margin-top:6px; display:flex; flex-wrap:wrap; gap:8px; }
+    .gchunk{ background:linear-gradient(180deg,#0b2438,#081c2d); border:1px solid rgba(186,230,253,.2); border-radius:10px; padding:6px 8px; }
+    .gko{ display:block; font-weight:800; color:var(--ice-1); }
+    .gen{ display:block; font-size:.92rem; color:var(--ice-3); opacity:.95 }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:0 }
+    .btn{ appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px; border-radius:12px; padding:10px 14px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); transition:transform .12s ease, filter .2s ease, box-shadow .2s ease }
+    .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--ring) }
+    .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+
+    .gate, .finish{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(1,7,13,.55); backdrop-filter: blur(6px) saturate(130%); -webkit-backdrop-filter: blur(6px) saturate(130%); z-index:5; }
+    .panel{ width:min(520px,92vw); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); border-radius:16px; padding:20px; text-align:center; box-shadow:var(--ring); }
+    .panel h2{ margin:0 0 8px; font-size:22px; font-weight:900; color:var(--ice-1) }
+    .panel p{ margin:6px 0 14px; color:var(--muted) }
+
+    @media (max-width:768px){ .stage{ height:420px } .ko{ font-size:2.8rem } }
+
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    #flipToFront{
+      background: linear-gradient(90deg, #a78bfa, #60a5fa) !important; color:#07162a !important; border:none !important;
+      font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+      box-shadow:0 10px 26px rgba(96,165,250,.45), 0 0 26px rgba(167,139,250,.35);
+    }
+    #flipToFront:hover{ filter:brightness(1.08); box-shadow:0 0 22px rgba(96,165,250,.65), 0 0 34px rgba(167,139,250,.45); }
+
+    #flipToBack{
+      position:relative; padding:14px 22px !important; border-radius:16px;
+      border:1px solid rgba(255,255,255,.75) !important; border-bottom-color:rgba(10,60,90,.45) !important; border-right-color:rgba(10,60,90,.35) !important;
+      background:linear-gradient(180deg, rgba(236,254,255,.98) 0%, rgba(219,234,254,.96) 38%, rgba(56,189,248,.93) 100%) !important;
+      color:#062136 !important; text-transform:uppercase; letter-spacing:.8px; font-weight:900;
+      box-shadow:0 14px 28px rgba(56,189,248,.35), 0 6px 0 rgba(6,26,43,.65), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -8px 20px rgba(7,34,53,.25);
+      transform:translateY(-1px); transition:transform .18s ease, box-shadow .22s ease, filter .22s ease; overflow:hidden; isolation:isolate;
+    }
+    #flipToBack::before{ content:""; position:absolute; inset:2px 2px 10px 2px; border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 60%); pointer-events:none; mix-blend-mode:screen; }
+    #flipToBack::after{
+      content:""; position:absolute; inset:-45% -70%;
+      background:
+        radial-gradient(12px 12px at 22% 32%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(10px 10px at 72% 65%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.45) 50%, rgba(255,255,255,0) 65%);
+      transform:translateX(-120%) rotate(8deg); animation:icySweep 2.6s ease-in-out infinite; pointer-events:none; mix-blend-mode:screen;
+    }
+    #flipToBack:hover{ filter:brightness(1.06); transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(56,189,248,.45), 0 8px 0 rgba(6,26,43,.6), inset 0 1px 0 rgba(255,255,255,1), inset 0 -10px 24px rgba(7,34,53,.28); }
+    #flipToBack:active{ transform:translateY(0); box-shadow:0 8px 16px rgba(56,189,248,.35), 0 3px 0 rgba(6,26,43,.7),
+      inset 0 1px 0 rgba(255,255,255,.95), inset 0 -6px 16px rgba(7,34,53,.28); }
+    @keyframes icySweep{ 0%{transform:translateX(-120%) rotate(8deg); opacity:.95} 50%{opacity:1} 100%{transform:translateX(120%) rotate(8deg); opacity:.95} }
+
+    .koform{ font-size:1.24rem; font-weight:400; letter-spacing:.3px; color:var(--ice-1); }
+    @media (max-width:420px){ .koform{ font-size:1.1rem; } }
+
+    .floating-home {
+      position: fixed; top: 0; right: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--accent));
+      color: #072235; font-size: 14px; font-weight: 700; text-decoration: none;
+      padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35);
+      z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
+    }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="floating-home">Home</a>
+
+  <header>
+    <h1 class="title">VIZKOR Flip Cards</h1>
+    <p class="subtitle">Korean Adverbs (80)</p>
+    <div class="progress" id="progress">&nbsp;</div>
+  </header>
+
+  <section class="stage">
+    <div class="flip" id="flipWrap" aria-live="polite">
+      <div class="card" id="card" tabindex="0" aria-label="Flip card">
+        <section class="face front" id="front"></section>
+        <section class="face back" id="back"></section>
+      </div>
+    </div>
+  </section>
+
+  <p class="subtitle" style="font-size:.95rem; color:var(--muted)">
+    Click <b>Start</b> to enable audio. Front shows <b>Korean only</b>. Flip to see meanings and a short <b>random sentence</b> with a word-by-word gloss.
+  </p>
+
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Start Practice</h2>
+      <p>Enable audio first. Each new card autoplays the base Korean once. Flip to reveal meaning and an example sentence.</p>
+      <div class="controls"><button class="btn" id="startBtn">Start (Enable Audio)</button></div>
+    </div>
+  </div>
+
+  <div class="finish" id="finish" style="display:none">
+    <div class="panel">
+      <h2>Finished! 🎉</h2>
+      <p>Na-randomize na lahat. Gusto mo bang ulitin (reshuffle)?</p>
+      <div class="controls"><button class="btn" id="restartBtn">Restart (Shuffle)</button></div>
+    </div>
+  </div>
+
+  <audio id="koAudio" preload="auto"></audio>
+
+  <script>
+  // ===== DATA (Adverbs) =====
+  const WORDS_MASTER = [
+    // Core
+    { ko:'빨리', en:'quickly', tl:'mabilis' }, { ko:'자주', en:'often', tl:'madalas' },
+    { ko:'가끔', en:'sometimes', tl:'minsan' }, { ko:'지금', en:'now', tl:'ngayon' },
+    { ko:'아직', en:'still / not yet', tl:'hindi pa' }, { ko:'벌써', en:'already', tl:'tapos na' },
+    { ko:'다시', en:'again', tl:'ulit' }, { ko:'많이', en:'a lot', tl:'marami' },
+    { ko:'잘', en:'well', tl:'maayos / mabuti' }, { ko:'천천히', en:'slowly', tl:'dahan-dahan' },
+    { ko:'항상', en:'always', tl:'palagi' }, { ko:'먼저', en:'first', tl:'una' },
+    { ko:'제일', en:'the most', tl:'pinaka' }, { ko:'아주', en:'very', tl:'napaka' },
+    { ko:'너무', en:'too much / very', tl:'masyado' }, { ko:'꼭', en:'surely', tl:'tiyak' },
+    { ko:'정말', en:'really', tl:'talaga' }, { ko:'조금', en:'a little', tl:'kaunti' },
+    { ko:'좀', en:'a bit', tl:'medyo' },
+
+    // Secondary
+    { ko:'같이', en:'together', tl:'kasama' }, { ko:'곧', en:'soon', tl:'malapit na' },
+    { ko:'나중에', en:'later', tl:'mamaya' }, { ko:'아까', en:'earlier', tl:'kanina' },
+    { ko:'미리', en:'in advance', tl:'maaga' }, { ko:'특히', en:'especially', tl:'lalo na' },
+    { ko:'우선', en:'first of all', tl:'una sa lahat' }, { ko:'모두', en:'all', tl:'lahat' },
+    { ko:'보통', en:'usually', tl:'karaniwan' }, { ko:'별로', en:'not really (w/ 안)', tl:'hindi naman' },
+    { ko:'서로', en:'each other', tl:'isa’t isa' }, { ko:'언제나', en:'always', tl:'palagi' },
+    { ko:'오래', en:'long (time)', tl:'matagal' }, { ko:'멀리', en:'far', tl:'malayo' },
+    { ko:'조용히', en:'quietly', tl:'tahimik' }, { ko:'자꾸', en:'repeatedly', tl:'paulit-ulit' },
+    { ko:'제대로', en:'properly', tl:'nang maayos' }, { ko:'점점', en:'gradually', tl:'unti-unti' },
+    { ko:'직접', en:'directly', tl:'direkta' }, { ko:'또', en:'also', tl:'din' },
+    { ko:'주로', en:'mainly', tl:'pangunahin' }, { ko:'쯤', en:'about / around', tl:'humigit-kumulang' },
+
+    // Extended
+    { ko:'갑자기', en:'suddenly', tl:'bigla' }, { ko:'따로', en:'separately', tl:'hiwalay' },
+    { ko:'그냥', en:'just', tl:'basta' }, { ko:'그동안', en:'in the meantime', tl:'samantala' },
+    { ko:'그래도', en:'still / even though', tl:'gayonpaman' }, { ko:'덜', en:'less', tl:'mas kaunti' },
+    { ko:'빠짐없이', en:'without exception', tl:'walang labis / kulang' }, { ko:'정확히', en:'accurately', tl:'tumpak' },
+    { ko:'혼자', en:'alone', tl:'mag-isa' }, { ko:'함부로', en:'carelessly', tl:'pabaya' },
+    { ko:'곧장', en:'straight / directly', tl:'diretso agad' }, { ko:'급히', en:'hastily', tl:'dali-dali' },
+    { ko:'날마다', en:'every day', tl:'araw-araw' }, { ko:'대체로', en:'generally', tl:'sa pangkalahatan' },
+    { ko:'당장', en:'immediately', tl:'mismong ngayon' }, { ko:'막', en:'just / randomly', tl:'basta na lang' },
+    { ko:'반드시', en:'absolutely', tl:'talagang / tiyak' }, { ko:'살짝', en:'slightly', tl:'bahagya' },
+    { ko:'아마', en:'probably', tl:'marahil' }, { ko:'역시', en:'as expected', tl:'gaya ng inaasahan' },
+    { ko:'종종', en:'occasionally', tl:'paminsan-minsan' }, { ko:'줄곧', en:'continuously', tl:'tuloy-tuloy' },
+    { ko:'차례로', en:'in order', tl:'ayon sa pagkakasunod' }, { ko:'충분히', en:'sufficiently', tl:'sapat' },
+    { ko:'최근', en:'recently', tl:'kamakailan' }, { ko:'최소한', en:'at least', tl:'kahit papaano' },
+    { ko:'최대한', en:'as much as possible', tl:'pinaka kaya' }, { ko:'흔히', en:'often / commonly', tl:'madalas' },
+    { ko:'혹시', en:'perhaps', tl:'baka' }, { ko:'현재', en:'currently', tl:'kasalukuyan' },
+    { ko:'확실히', en:'surely', tl:'tiyak' }, { ko:'훨씬', en:'much (more)', tl:'mas higit' },
+    { ko:'모두들', en:'all (people)', tl:'lahat sila' }, { ko:'몰래', en:'secretly', tl:'palihim' },
+    { ko:'무조건', en:'unconditionally', tl:'walang kondisyon' }, { ko:'서로서로', en:'with each other', tl:'isa’t isa' },
+    { ko:'슬슬', en:'slowly / gently', tl:'dahan-dahan lang' }, { ko:'억지로', en:'forcibly', tl:'pilit' },
+    { ko:'혹은', en:'or', tl:'o / kaya' },
+  ];
+
+  // ===== STATE =====
+  let queue = [];
+  let current = null;
+  let index = 0;
+  let audioReady = false;
+
+  const gate = document.getElementById('gate');
+  const finish = document.getElementById('finish');
+  const progressEl = document.getElementById('progress');
+  const flipWrap = document.getElementById('flipWrap');
+  const cardEl = document.getElementById('card');
+  const front = document.getElementById('front');
+  const back  = document.getElementById('back');
+  const player = document.getElementById('koAudio');
+  let isAnimating = false;
+
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, WORDS_MASTER.length)} / ${WORDS_MASTER.length}`; }
+
+  // ===== AUDIO =====
+  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
+  const audioCache = new Map();
+  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+  function speakWeb(text){
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR'; u.rate = 0.95;
+    try{ speechSynthesis.cancel(); }catch(e){}
+    speechSynthesis.speak(u);
+  }
+  async function playKo(text){
+    if(!audioReady) return;
+    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; }
+    let url = audioCache.get(text);
+    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
+    player.src = url;
+    try{ await player.play(); }catch(e){ speakWeb(text); }
+  }
+
+  // ===== RANDOM SENTENCE GENERATOR =====
+  const subjects = ['저는','우리는','친구는','아이들은','선생님은','그는','그녀는','사람들은','비가','고양이는','강아지는'];
+  const intransVerbs = ['가요','와요','일해요','운동해요','쉬어요','자요','공부해요','산책해요','웃어요','울어요','연락해요','전화해요','출발해요','도착해요','맞아요','진행해요','시작해요','끝나요','모여요','만나요','떠나요','나가요'];
+  const transVerbs = [
+    {v:'먹어요', obj:true},{v:'마셔요', obj:true},{v:'읽어요', obj:true},{v:'배워요', obj:true},
+    {v:'기다려요', obj:true},{v:'만들어요', obj:true},{v:'봐요', obj:true},{v:'청소해요', obj:true},
+    {v:'준비해요', obj:true},{v:'도와요', obj:true},{v:'사요', obj:true},{v:'팔아요', obj:true},
+    {v:'좋아해요', obj:true},{v:'계산해요', obj:true},{v:'참석해요', obj:false},{v:'기억해요', obj:true},
+    {v:'확인해요', obj:false},{v:'열어요', obj:false},{v:'응원해요', obj:false},{v:'시도해요', obj:false}
+  ];
+  const objectsPool = ['밥을','빵을','물을','커피를','책을','영화를','한국어를','숙제를','방을','집을','연습을','문제를','친구를','시간을'];
+  const timeNouns = ['세 시','네 시','내일','주말','다음 주','이번 주','이번 달','올해'];
+
+  // multiple special variants to ensure "new sentence" changes
+  const specials = {
+    '별로': ['별로 안 먹어요.','별로 안 바빠요.','별로 안 비싸요.'],
+    '아직': ['아직 안 가요.','아직 안 끝났어요.','아직 못 했어요.'],
+    '벌써': ['벌써 시작해요.','벌써 왔어요.','벌써 끝났어요.'],
+    '다시': ['다시 시작해요.','다시 배워요.','다시 시도해요.'],
+    '많이': ['많이 공부해요.','많이 먹어요.','많이 웃어요.'],
+    '잘': ['잘 지내요.','잘 들어요.','잘 알아요.'],
+    '천천히': ['천천히 가요.','천천히 읽어요.','천천히 말해요.'],
+    '항상': ['항상 노력해요.','항상 일찍 자요.','항상 감사해요.'],
+    '먼저': ['먼저 시작해요.','먼저 들어가요.','먼저 준비해요.'],
+    '제일': ['한국어를 제일 좋아해요.','제일 맛있어요.','제일 빨라요.'],
+    '아주': ['아주 좋아요.','아주 쉬워요.','아주 멀어요.'],
+    '너무': ['너무 피곤해요.','너무 매워요.','너무 빨라요.'],
+    '꼭': ['꼭 와요.','꼭 연락해요.','꼭 기억해요.'],
+    '정말': ['정말 고마워요.','정말 예뻐요.','정말 맛있어요.'],
+    '조금': ['조금 쉬어요.','조금만 먹어요.','조금 늦어요.'],
+    '좀': ['좀 도와요.','좀 기다려요.','좀 천천히 말해요.'],
+    '같이': ['같이 가요.','같이 먹어요.','같이 공부해요.'],
+    '곧': ['곧 시작해요.','곧 도착해요.','곧 끝나요.'],
+    '나중에': ['나중에 만나요.','나중에 해요.','나중에 전화해요.'],
+    '아까': ['아까 전화했어요.','아까 봤어요.','아까 먹었어요.'],
+    '미리': ['미리 준비해요.','미리 예약해요.','미리 확인해요.'],
+    '특히': ['특히 한국어를 좋아해요.','특히 매운 음식을 좋아해요.','특히 주말에 바빠요.'],
+    '우선': ['우선 정리해요.','우선 확인해요.','우선 쉬어요.'],
+    '모두': ['모두 모여요.','모두 왔어요.','모두 이해해요.'],
+    '보통': ['보통 일찍 자요.','보통 집에서 공부해요.','보통 버스로 가요.'],
+    '서로': ['서로 도와요.','서로 이해해요.','서로 존중해요.'],
+    '언제나': ['언제나 응원해요.','언제나 감사해요.','언제나 바빠요.'],
+    '오래': ['오래 기다려요.','오래 일해요.','오래 살고 싶어요.'],
+    '멀리': ['멀리 가요.','멀리 이사해요.','멀리 보여요.'],
+    '조용히': ['조용히 읽어요.','조용히 들어요.','조용히 나가요.'],
+    '자꾸': ['자꾸 잊어버려요.','자꾸 늦어요.','자꾸 전화해요.'],
+    '제대로': ['제대로 해요.','제대로 먹어요.','제대로 쉬어요.'],
+    '점점': ['점점 좋아져요.','점점 추워져요.','점점 빨라져요.'],
+    '직접': ['직접 확인해요.','직접 가요.','직접 만들어요.'],
+    '또': ['또 만나요.','또 만나서 반가워요.','또 전화할게요.'],
+    '주로': ['주로 집에서 공부해요.','주로 아침에 운동해요.','주로 버스를 타요.'],
+    '쯤': [`${timeNouns[0]}쯤 가요.`,`${timeNouns[1]}쯤 가요.`,`${timeNouns[2]}쯤 만나요.`],
+    '갑자기': ['갑자기 비가 와요.','갑자기 전화가 와요.','갑자기 바빠요.'],
+    '따로': ['따로 계산해요.','따로 가요.','따로 살아요.'],
+    '그냥': ['그냥 쉬어요.','그냥 가요.','그냥 먹어요.'],
+    '그동안': ['그동안 잘 지냈어요.','그동안 바빴어요.','그동안 공부했어요.'],
+    '그래도': ['그래도 노력해요.','그래도 괜찮아요.','그래도 가요.'],
+    '덜': ['덜 먹어요.','덜 마셔요.','덜 자요.'],
+    '빠짐없이': ['빠짐없이 참석해요.','빠짐없이 기록해요.','빠짐없이 확인해요.'],
+    '정확히': ['정확히 기억해요.','정확히 말해요.','정확히 도착해요.'],
+    '혼자': ['혼자 공부해요.','혼자 가요.','혼자 살아요.'],
+    '함부로': ['함부로 말해요.','함부로 하지 마세요.','함부로 버려요.'],
+    '곧장': ['곧장 집에 가요.','곧장 회사로 가요.','곧장 연락해요.'],
+    '급히': ['급히 떠나요.','급히 준비해요.','급히 도와요.'],
+    '날마다': ['날마다 운동해요.','날마다 기록해요.','날마다 전화해요.'],
+    '대체로': ['대체로 좋아요.','대체로 조용해요.','대체로 괜찮아요.'],
+    '당장': ['당장 시작해요.','당장 가요.','당장 확인해요.'],
+    '막': ['막 시작해요.','막 끝났어요.','막 왔어요.'],
+    '반드시': ['반드시 성공해요.','반드시 가요.','반드시 지켜요.'],
+    '살짝': ['살짝 열어요.','살짝 밀어요.','살짝 웃어요.'],
+    '아마': ['아마 가요.','아마 맞아요.','아마 늦어요.'],
+    '역시': ['역시 최고예요.','역시 어렵네요.','역시 맞아요.'],
+    '종종': ['종종 가요.','종종 만나고 있어요.','종종 연락해요.'],
+    '줄곧': ['줄곧 공부해요.','줄곧 일해요.','줄곧 기다려요.'],
+    '차례로': ['차례로 들어가요.','차례로 읽어요.','차례로 발표해요.'],
+    '충분히': ['충분히 쉬어요.','충분히 먹어요.','충분히 연습해요.'],
+    '최근': ['최근 운동해요.','최근 바빠요.','최근 배웠어요.'],
+    '최소한': ['최소한 시도해요.','최소한 연락해요.','최소한 쉬어요.'],
+    '최대한': ['최대한 노력해요.','최대한 빨리 갈게요.','최대한 도와줄게요.'],
+    '흔히': ['흔히 말해요.','흔히 있어요.','흔히 봐요.'],
+    '혹시': ['혹시 시간 있어요?','혹시 내일 가능해요?','혹시 길 알아요?'],
+    '현재': ['현재 진행해요.','현재 준비 중이에요.','현재 회의 중이에요.'],
+    '확실히': ['확실히 맞아요.','확실히 달라요.','확실히 좋아요.'],
+    '훨씬': ['훨씬 좋아요.','훨씬 빨라요.','훨씬 쉬워요.'],
+    '모두들': ['모두들 왔어요.','모두들 들어왔어요.','모두들 먹었어요.'],
+    '몰래': ['몰래 나가요.','몰래 준비해요.','몰래 봐요.'],
+    '무조건': ['무조건 가요.','무조건 해요.','무조건 믿어요.'],
+    '서로서로': ['서로서로 도와요.','서로서로 인사해요.','서로서로 배워요.'],
+    '슬슬': ['슬슬 가요.','슬슬 시작해요.','슬슬 졸려요.'],
+    '억지로': ['억지로 해요.','억지로 먹어요.','억지로 웃어요.'],
+    '혹은': ['밥 혹은 빵을 먹어요.','커피 혹은 물을 마셔요.','버스 혹은 지하철을 타요.']
+  };
+
+  function randomItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function buildGenericSentence(adv){
+    const useSubject = Math.random() < 0.5;
+    const subj = randomItem(subjects);
+    const verb = randomItem(Math.random() < 0.5 ? intransVerbs : transVerbs.map(x=>x.v));
+    const needsObj = transVerbs.some(x=>x.v===verb && x.obj) && Math.random() < 0.7;
+    const obj = needsObj ? (randomItem(objectsPool)+' ') : '';
+    const left = useSubject ? (subj+' ') : '';
+    return `${left}${adv} ${obj}${verb}.`;
+  }
+
+  function makeSentence(adv, prev=''){
+    // 60% chance generic, 40% special (if exists)
+    for(let tries=0; tries<10; tries++){
+      let s;
+      if(specials[adv] && Math.random()<0.4) s = randomItem(specials[adv]);
+      else s = buildGenericSentence(adv);
+      if(s !== prev) return s;
+    }
+    return buildGenericSentence(adv); // final fallback
+  }
+
+  // ===== WORD-BY-WORD GLOSS =====
+  // basic token map used by generator
+  const GLOSS = {
+    // pronouns / topics / subjects
+    '저는':'I (TOP)','우리는':'we (TOP)','친구는':'friend (TOP)','아이들은':'children (TOP)','선생님은':'teacher (TOP)',
+    '그는':'he (TOP)','그녀는':'she (TOP)','사람들은':'people (TOP)','비가':'rain (SUBJ)','고양이는':'cat (TOP)','강아지는':'puppy (TOP)',
+
+    // objects (ACC)
+    '밥을':'rice (ACC)','빵을':'bread (ACC)','물을':'water (ACC)','커피를':'coffee (ACC)','책을':'book (ACC)','영화를':'movie (ACC)',
+    '한국어를':'Korean (ACC)','숙제를':'homework (ACC)','방을':'room (ACC)','집을':'house (ACC)','연습을':'practice (ACC)',
+    '문제를':'problem (ACC)','친구를':'friend (ACC)','시간을':'time (ACC)',
+    // bare nouns sometimes appear in specials
+    '밥':'rice','빵':'bread','시간':'time','집':'home','집에':'to home','집에서':'at home',
+
+    // adverbs that may also appear in sentences
+    '별로':'not really','아직':'still / not yet','벌써':'already','다시':'again','많이':'a lot','잘':'well','천천히':'slowly',
+    '항상':'always','먼저':'first','제일':'most','아주':'very','너무':'too (very)','꼭':'surely','정말':'really',
+    '조금':'a little','좀':'a bit','같이':'together','곧':'soon','나중에':'later','아까':'earlier','미리':'in advance',
+    '특히':'especially','우선':'first of all','모두':'everyone','보통':'usually','서로':'each other','언제나':'always',
+    '오래':'for long','멀리':'far','조용히':'quietly','자꾸':'repeatedly','제대로':'properly','점점':'gradually',
+    '직접':'directly','또':'again/also','주로':'mainly','쯤':'around','혹은':'or','혹시':'perhaps',
+    '갑자기':'suddenly','따로':'separately','그냥':'just','그동안':'in the meantime','그래도':'still/yet',
+    '덜':'less','빠짐없이':'without exception','정확히':'accurately','혼자':'alone','함부로':'carelessly',
+    '곧장':'straight','급히':'hastily','날마다':'every day','대체로':'generally','당장':'right away','막':'just now',
+    '반드시':'absolutely','살짝':'slightly','아마':'probably','역시':'as expected','종종':'occasionally','줄곧':'continually',
+    '차례로':'in order','충분히':'sufficiently','최근':'recently','최소한':'at least','최대한':'as much as possible',
+    '흔히':'often','현재':'currently','확실히':'surely','훨씬':'much (more)','모두들':'everyone','몰래':'secretly',
+    '무조건':'unconditionally','서로서로':'with each other','슬슬':'slowly','억지로':'by force',
+
+    // verbs (polite present)
+    '가요':'go','와요':'come','일해요':'work','운동해요':'exercise','쉬어요':'rest','자요':'sleep','공부해요':'study','산책해요':'take a walk',
+    '웃어요':'laugh','울어요':'cry','연락해요':'contact','전화해요':'call','출발해요':'depart','도착해요':'arrive','맞아요':'be correct',
+    '진행해요':'proceed','시작해요':'start','끝나요':'finish','모여요':'gather','만나요':'meet','떠나요':'leave','나가요':'go out',
+    '먹어요':'eat','마셔요':'drink','읽어요':'read','배워요':'learn','기다려요':'wait','만들어요':'make','봐요':'see/watch',
+    '청소해요':'clean','준비해요':'prepare','도와요':'help','사요':'buy','팔아요':'sell','좋아해요':'like','계산해요':'pay/calc',
+    '참석해요':'attend','기억해요':'remember','확인해요':'check','열어요':'open','응원해요':'support','시도해요':'try',
+    '있어요':'exist/have','좋아요':'is good','좋아져요':'get better','열어요.':'open', // lenient catch
+
+    // time words (may combine with 쯤)
+    '세':'three','네':'four','시':"o'clock",'시쯤':"around o'clock",'내일':'tomorrow','주말':'weekend','다음':'next','다음 주':'next week',
+    '이번':'this','이번 주':'this week','이번 달':'this month','올해':'this year'
+  };
+
+  function sanitize(tok){
+    return tok.replace(/[.,!?…]/g,'').trim();
+  }
+
+  function glossForSentence(sentence, adv){
+    const advEnglish = current?.en || '';
+    const tokens = sentence.split(/\s+/).filter(Boolean);
+    const chunks = tokens.map(t=>{
+      const clean = sanitize(t);
+      let en = GLOSS[clean];
+      // try fallback without 요, or strip polite endings roughly
+      if(!en && clean.endsWith('요')) en = GLOSS[clean];
+      // map current adverb explicitly
+      if(!en && clean === adv) en = advEnglish;
+      // tiny heuristics
+      if(!en && clean.endsWith('쯤')) en = 'around';
+      if(!en) en = '—';
+      return {ko:t.replace(/\s+/g,' '), en};
+    });
+    return chunks;
+  }
+
+  // ===== RENDERING =====
+  function renderFront(w){
+    front.innerHTML = `
+      <div class="ko-row">
+        <div class="ko" aria-label="Korean adverb">${w.ko}</div>
+        <button class="play-base" id="playBaseFront" title="Play base" aria-label="Play base">🔊 Play</button>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn" id="flipToBack"> FLIP the CARD</button>
+      </div>
+    `;
+    front.querySelector('#playBaseFront').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+    front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+  }
+
+  function renderBack(w){
+    const firstSentence = makeSentence(w.ko);
+    const glossChunks = glossForSentence(firstSentence, w.ko);
+
+    back.innerHTML = `
+     <div class="enhead ko-big">${w.ko}</div>
+      <ul class="enlines">
+        <li><b>Meaning</b> <span class="koform">${w.en} / ${w.tl}</span></li>
+      </ul>
+      <div class="sentence" id="sentBox">${firstSentence}</div>
+      <div class="gloss" id="glossBox">
+        ${glossChunks.map(c=>`<span class="gchunk"><span class="gko">${c.ko}</span><span class="gen">${c.en}</span></span>`).join('')}
+      </div>
+      <div class="controls" style="margin-top:6px">
+        <button class="btn ghost" id="flipToFront">◀ Back</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="newSentBtn">New sentence</button>
+        <button class="btn" id="playSentBtn">🔊 Sentence</button>
+        <button class="btn" id="playBaseBack">🔊 Base</button>
+      </div>
+    `;
+
+    const rerenderSentence = ()=>{
+      const prev = document.getElementById('sentBox').textContent;
+      const s = makeSentence(w.ko, prev);
+      document.getElementById('sentBox').textContent = s;
+      const chunks = glossForSentence(s, w.ko);
+      document.getElementById('glossBox').innerHTML =
+        chunks.map(c=>`<span class="gchunk"><span class="gko">${c.ko}</span><span class="gen">${c.en}</span></span>`).join('');
+    };
+
+    back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+    back.querySelector('#playBaseBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+    back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+    back.querySelector('#newSentBtn').addEventListener('click', (e)=>{ e.stopPropagation(); rerenderSentence(); });
+    back.querySelector('#playSentBtn').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const s = document.getElementById('sentBox').textContent;
+      playKo(s);
+    });
+  }
+
+  function showCard(w){
+    current = w;
+    renderFront(w);
+    renderBack(w);
+    flipWrap.classList.remove('flipped');
+    updateProgress();
+    playKo(w.ko); // autoplay base once
+  }
+
+  // ===== FLOW =====
+  function startRun(){
+    queue = shuffle([...WORDS_MASTER]);
+    index = 0;
+    finish.style.display = 'none';
+    showCard(queue[index]);
+  }
+
+  function nextCardAnimated(){
+    if(isAnimating) return;
+    isAnimating = true;
+    flipWrap.classList.add('animating','fly-exit');
+
+    const onExitEnd = (e)=>{
+      if(e.target !== cardEl) return;
+      flipWrap.removeEventListener('animationend', onExitEnd);
+      flipWrap.classList.remove('fly-exit');
+
+      index++;
+      if(index >= queue.length){
+        flipWrap.classList.remove('animating');
+        isAnimating = false;
+        finish.style.display = 'flex';
+        return;
+      }
+
+      const w = queue[index];
+      renderFront(w);
+      renderBack(w);
+      flipWrap.classList.remove('flipped');
+      updateProgress();
+
+      flipWrap.classList.add('fly-enter');
+      const onEnterEnd = (ev)=>{
+        if(ev.target !== cardEl) return;
+        flipWrap.removeEventListener('animationend', onEnterEnd);
+        flipWrap.classList.remove('fly-enter','animating');
+        isAnimating = false;
+        playKo(w.ko);
+      };
+      flipWrap.addEventListener('animationend', onEnterEnd);
+    };
+    flipWrap.addEventListener('animationend', onExitEnd);
+  }
+
+  // Click / tap
+  flipWrap.addEventListener('click', ()=>{
+    if(!current) return;
+    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+    else nextCardAnimated();
+  });
+
+  // Keyboard
+  cardEl.addEventListener('keydown', (e)=>{
+    if(e.code==='Enter' || e.code==='Space'){
+      e.preventDefault();
+      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+      else nextCardAnimated();
+    }
+  });
+
+  // Start / Restart
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    audioReady = true; gate.style.display = 'none'; startRun();
+  });
+  document.getElementById('restartBtn').addEventListener('click', ()=>{
+    gate.style.display = 'none'; audioReady = true; startRun();
+  });
+  </script>
+  <script>
+// Disable right click
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable text selection
+document.addEventListener("selectstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable drag (para hindi madrag palabas yung image/text)
+document.addEventListener("dragstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener("keydown", function(e){
+  if (
+    e.key === "F12" || 
+    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+  }
+}, false);
+</script>
+
+</body>
+</html>
