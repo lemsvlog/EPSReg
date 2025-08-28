@@ -1014,31 +1014,23 @@ for (const categoryKey in CATEGORIZED_NOUNS) {
   document.getElementById('category-select').addEventListener('change', buildDeck);
 
   // =================== FIXED AUDIO ===================
-let isSpeaking = false;
-
-function speakWeb(text){
+  function speakWeb(text){
   if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
 
-  if (isSpeaking) {
-    speechSynthesis.cancel();
-    isSpeaking = false;
-  }
+  // dummy utterance para i-flush engine (fix sa repeating bug)
+  const dummy = new SpeechSynthesisUtterance(" ");
+  dummy.lang = 'ko-KR';
+  speechSynthesis.speak(dummy);
 
-  // maliit na delay para ma-flush engine lalo na sa mobile
   setTimeout(()=>{
     const u = new SpeechSynthesisUtterance(text.trim());
     u.lang = 'ko-KR';
     u.rate = 0.95;
     u.pitch = 1;
-    isSpeaking = true;
-
-    u.onend = () => { isSpeaking = false; };
-    u.onerror = () => { isSpeaking = false; };
-
     speechSynthesis.speak(u);
-  }, 200);
+  }, 300); // maliit na delay (300ms)
 }
-
 
   async function playKo(text){
     if(!audioReady) return;
@@ -1050,11 +1042,7 @@ function speakWeb(text){
     player.src = url;
     try{ await player.play(); }catch(e){ speakWeb(text); }
   }
-  
-  
 </script>
-
-
 <script>
 // Disable right click
 document.addEventListener("contextmenu", function(e){
