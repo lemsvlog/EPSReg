@@ -772,277 +772,302 @@ for (const categoryKey in CATEGORIZED_NOUNS) {
   }
 }
 
-  // ===== STATE =====
-  let queue = [];
-  let current = null;
-  let index = 0;
-  let audioReady = false;
-  let selectedCategory = 'all';
 
-  const gate = document.getElementById('gate');
-  const finish = document.getElementById('finish');
-  const progressEl = document.getElementById('progress');
-  const flipWrap = document.getElementById('flipWrap');
-  const cardEl = document.getElementById('card');
-  const front = document.getElementById('front');
-  const back  = document.getElementById('back');
-  const player = document.getElementById('koAudio');
-  let isAnimating = false;
+// ===== STATE =====
+let queue = [];
+let current = null;
+let index = 0;
+let audioReady = false;
+let selectedCategory = 'all';
 
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-  function randomItem(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
-  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
+const gate = document.getElementById('gate');
+const finish = document.getElementById('finish');
+const progressEl = document.getElementById('progress');
+const flipWrap = document.getElementById('flipWrap');
+const cardEl = document.getElementById('card');
+const front = document.getElementById('front');
+const back  = document.getElementById('back');
+const player = document.getElementById('koAudio');
+let isAnimating = false;
 
-  // ===== AUDIO =====
-  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
-  const audioCache = new Map();
-  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
-  function speakWeb(text){
-    if(!('speechSynthesis' in window)) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR'; u.rate = 0.95;
-    try{ speechSynthesis.cancel(); }catch(e){}
-    speechSynthesis.speak(u);
-  }
-  async function playKo(text){
-    if(!audioReady) return;
-    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function randomItem(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
+
+// ===== AUDIO (single source, debounced) =====
+const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE"; // leave blank to use Web Speech
+const audioCache = new Map();
+const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+
+let speakTimer = 0;
+let koVoice = null;
+
+function stopAllAudio(){
+  try { window.speechSynthesis?.cancel(); } catch(_) {}
+  try { player.pause(); player.currentTime = 0; } catch(_) {}
+}
+
+function pickKoVoice(){
+  if (!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  koVoice = voices.find(v => (v.lang||'').toLowerCase().startsWith('ko')) || null;
+}
+if ('speechSynthesis' in window){
+  pickKoVoice();
+  window.speechSynthesis.onvoiceschanged = pickKoVoice;
+}
+
+function speakWeb(text){
+  if (!('speechSynthesis' in window)) return;
+  // cancel current, debounce next utterance (mobile Safari fix)
+  stopAllAudio();
+  clearTimeout(speakTimer);
+
+  const phrase = String(text||'').trim();
+  speakTimer = setTimeout(()=>{
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.lang  = 'ko-KR';
+    u.rate  = 0.95;
+    u.pitch = 1.0;
+    if (koVoice) u.voice = koVoice;
+    window.speechSynthesis.speak(u);
+  }, 180);
+}
+
+async function playKo(text){
+  if(!audioReady) return;
+  stopAllAudio();
+
+  // Prefer VoiceRSS if key present; else Web Speech
+  if(VOICERSS_KEY && VOICERSS_KEY !== "YOUR_VOICERSS_KEY_HERE"){
     let url = audioCache.get(text);
     if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
     player.src = url;
-    try{ await player.play(); }catch(e){ speakWeb(text); }
-  }
-
-  // ===== SENTENCE GENERATOR & GLOSSING LOGIC =====
-  const simpleSubjects = ['저는','친구가','고양이가','사람들이'];
-  const simplePredicates = ['있어요.', '없어요.', '좋아요.', '예뻐요.', '먹었어요.'];
-
-  function articleFor(englishNoun){
-    const w = englishNoun.trim();
-    const vowel = ['a','e','i','o','u'];
-    return vowel.includes(w[0]) ? 'an' : 'a';
-  }
-
-  function generateSimpleSentence(nounKo){
-    const subject = randomItem(simpleSubjects);
-    const predicate = randomItem(simplePredicates);
-    return `${subject} ${nounKo} ${predicate}`;
-  }
-
-  const GLOSS_MAP = {
-    // Korean
-    '저는': {en:'I', tl:'ako'}, '친구가': {en:'friend (SUBJ)', tl:'kaibigan'},
-    '고양이가': {en:'cat (SUBJ)', tl:'pusa'}, '사람들이': {en:'people (SUBJ)', tl:'mga tao'},
-
-    // ✅ keys without trailing period to match sanitize()
-    '있어요': {en:'have/exist.', tl:'mayroon.'},
-    '없어요': {en:"don't have/not exist.", tl:'wala.'},
-    '좋아요': {en:'is good.', tl:'mabuti.'},
-    '예뻐요': {en:'is pretty.', tl:'maganda.'},
-    '먹었어요': {en:'ate.', tl:'kumain.'},
-
-    // Particles
-    '은': {en:'(TOP)', tl:'(pantukoy)'}, '는': {en:'(TOP)', tl:'(pantukoy)'},
-    '이': {en:'(SUBJ)', tl:'(paksa)'}, '가': {en:'(SUBJ)', tl:'(paksa)'},
-    '을': {en:'(OBJ)', tl:'(layon)'}, '를': {en:'(OBJ)', tl:'(layon)'},
-    '.': {en:'.', tl:'.'},
-
-    // English → Tagalog (lowercase keys; glossForSentence lowercases tokens)
-    'i': {tl:'ako'}, 'have': {tl:'mayroon'}, 'a': {tl:'isang'}, 'an': {tl:'isang'},
-    'the': {tl:'ang'}, 'my': {tl:'aking'}, 'friend': {tl:'kaibigan'}, 'cat': {tl:'pusa'},
-    'people': {tl:'mga tao'}, 'is': {tl:'ay'}, 'good': {tl:'mabuti'}, 'pretty': {tl:'maganda'},
-    'ate': {tl:'kumain'}
-  };
-
-
-  // =================== ADD NOUNS TO GLOSS_MAP ===================
-  for (const categoryKey in CATEGORIZED_NOUNS) {
-    if (CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
-      CATEGORIZED_NOUNS[categoryKey].data.forEach(item => {
-        GLOSS_MAP[item.ko] = {en: item.en, tl: item.tl};
-        if (!item.en.includes('/') && !item.en.includes('(')) {
-          GLOSS_MAP[item.en.toLowerCase()] = {tl: item.tl};
-        }
-      });
+    try{
+      await player.play();
+    }catch(e){
+      // fallback to Web Speech if autoplay policy blocks <audio>
+      speakWeb(text);
     }
+  }else{
+    speakWeb(text);
   }
+}
 
-  // =================== HELPERS ===================
-  function sanitize(tok){ return tok.replace(/[.,!?…]/g,'').trim(); }
+// ===== SENTENCE GENERATOR & GLOSSING (unchanged from yours) =====
+const simpleSubjects = ['저는','친구가','고양이가','사람들이'];
+const simplePredicates = ['있어요.', '없어요.', '좋아요.', '예뻐요.', '먹었어요.'];
 
-  function glossForSentence(sentence, lang){
-    const tokens = sentence.split(/\s+/).filter(Boolean);
-    return tokens.map(t => {
-      const cleanToken = sanitize(t);
-      if (lang === 'ko') {
-        const gloss = GLOSS_MAP[cleanToken];
-        return {ko: t, en: gloss?.en || '—', tl: gloss?.tl || '—'};
-      } else {
-        const gloss = GLOSS_MAP[cleanToken.toLowerCase()];
-        return {en_word: t, tl: gloss?.tl || '—'};
+function articleFor(englishNoun){
+  const w = englishNoun.trim();
+  const vowel = ['a','e','i','o','u'];
+  return vowel.includes(w[0]) ? 'an' : 'a';
+}
+function generateSimpleSentence(nounKo){
+  const subject = randomItem(simpleSubjects);
+  const predicate = randomItem(simplePredicates);
+  return `${subject} ${nounKo} ${predicate}`;
+}
+
+const GLOSS_MAP = {
+  '저는': {en:'I', tl:'ako'}, '친구가': {en:'friend (SUBJ)', tl:'kaibigan'},
+  '고양이가': {en:'cat (SUBJ)', tl:'pusa'}, '사람들이': {en:'people (SUBJ)', tl:'mga tao'},
+
+  '있어요': {en:'have/exist.', tl:'mayroon.'},
+  '없어요': {en:"don't have/not exist.", tl:'wala.'},
+  '좋아요': {en:'is good.', tl:'mabuti.'},
+  '예뻐요': {en:'is pretty.', tl:'maganda.'},
+  '먹었어요': {en:'ate.', tl:'kumain.'},
+
+  '은': {en:'(TOP)', tl:'(pantukoy)'}, '는': {en:'(TOP)', tl:'(pantukoy)'},
+  '이': {en:'(SUBJ)', tl:'(paksa)'}, '가': {en:'(SUBJ)', tl:'(paksa)'},
+  '을': {en:'(OBJ)', tl:'(layon)'}, '를': {en:'(OBJ)', tl:'(layon)'},
+  '.': {en:'.', tl:'.'},
+
+  'i': {tl:'ako'}, 'have': {tl:'mayroon'}, 'a': {tl:'isang'}, 'an': {tl:'isang'},
+  'the': {tl:'ang'}, 'my': {tl:'aking'}, 'friend': {tl:'kaibigan'}, 'cat': {tl:'pusa'},
+  'people': {tl:'mga tao'}, 'is': {tl:'ay'}, 'good': {tl:'mabuti'}, 'pretty': {tl:'maganda'},
+  'ate': {tl:'kumain'}
+};
+
+// Add nouns to gloss map (unchanged)
+for (const categoryKey in CATEGORIZED_NOUNS) {
+  if (CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
+    CATEGORIZED_NOUNS[categoryKey].data.forEach(item => {
+      GLOSS_MAP[item.ko] = {en: item.en, tl: item.tl};
+      if (!item.en.includes('/') && !item.en.includes('(')) {
+        GLOSS_MAP[item.en.toLowerCase()] = {tl: item.tl};
       }
     });
   }
-
-  // =================== UI RENDER ===================
-  function renderFront(w){
-    front.innerHTML = `
-      <div class="ko-row">
-        <div class="ko">${w.ko}</div>
-        <button class="play-base" id="playBaseFront">🔊 Play</button>
-      </div>
-      <div class="controls" style="margin-top:10px">
-        <button class="btn" id="flipToBack">FLIP the CARD</button>
-      </div>
-    `;
-    front.querySelector('#playBaseFront').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
-    front.querySelector('#flipToBack').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); };
-  }
-
-  function renderBack(w){
-    back.innerHTML = `
-      <div class="ko-big">${w.ko}</div>
-      <ul class="enlines">
-        <li><b>English:</b> <span class="koform">${w.en}</span></li>
-        <li><b>Tagalog:</b> <span class="koform">${w.tl}</span></li>
-      </ul>
-      <div class="controls" style="margin-top:10px">
-        <button class="btn ghost" id="flipToFront">◀ Back</button>
-        <button class="btn" id="nextBtn">Next ▶</button>
-        <button class="btn" id="playBaseBack">🔊 Base</button>
-      </div>
-    `;
-    back.querySelector('#nextBtn').onclick = (e)=>{ e.stopPropagation(); nextCardAnimated(); };
-    back.querySelector('#playBaseBack').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
-    back.querySelector('#flipToFront').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); };
-  }
-
-  function showCard(w){
-    current = w;
-    renderFront(w);
-    renderBack(w);
-    flipWrap.classList.remove('flipped');
-    updateProgress();
-    playKo(w.ko); // autoplay once
-  }
-
-  // =================== FLOW ===================
-  function buildDeck(){
-    audioReady = true;
-    const sel = document.getElementById('category-select');
-    selectedCategory = sel?.value || 'all';
-
-    const dataForDeck =
-      CATEGORIZED_NOUNS[selectedCategory]?.data?.length
-        ? CATEGORIZED_NOUNS[selectedCategory].data
-        : CATEGORIZED_NOUNS.all.data;
-
-    queue = shuffle([...dataForDeck]);
-    index = 0;
-    gate.style.display = 'none';
-    finish.style.display = 'none';
-
-    if (!queue.length) { front.innerHTML = '<p>No cards in this category.</p>'; return; }
-    showCard(queue[index]);
-  }
-
-  function nextCardAnimated(){
-    if(isAnimating) return;
-    isAnimating = true;
-    flipWrap.classList.add('animating','fly-exit');
-
-    const onExitEnd = (e)=>{
-      if(e.target !== cardEl) return;
-      flipWrap.removeEventListener('animationend', onExitEnd);
-      flipWrap.classList.remove('fly-exit');
-      index++;
-
-      if(index >= queue.length){
-        flipWrap.classList.remove('animating');
-        isAnimating = false;
-        finish.style.display='flex';
-        return;
-      }
-      showCard(queue[index]);
-      flipWrap.classList.add('fly-enter');
-
-      const onEnterEnd = (ev)=>{
-        if(ev.target !== cardEl) return;
-        flipWrap.removeEventListener('animationend', onEnterEnd);
-        flipWrap.classList.remove('fly-enter','animating');
-        isAnimating = false;
-        playKo(queue[index].ko);
-      };
-      flipWrap.addEventListener('animationend', onEnterEnd);
-    };
-    flipWrap.addEventListener('animationend', onExitEnd);
-  }
-
-  // =================== INTERACTIONS ===================
-  flipWrap.addEventListener('click', ()=>{
-    if(!queue.length || isAnimating) return;
-    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
-    else nextCardAnimated();
-  });
-
-  cardEl.addEventListener('keydown', (e)=>{
-    if(e.code==='Enter' || e.code==='Space'){ e.preventDefault(); 
-      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
-      else nextCardAnimated();
-    }
-    if(e.code==='ArrowRight'){ e.preventDefault(); nextCardAnimated(); }
-    if(e.code==='ArrowLeft'){ e.preventDefault(); flipWrap.classList.remove('flipped'); }
-  });
-
-  // Populate categories
-  (function populateCategories(){
-    const sel = document.getElementById('category-select');
-    if (!sel) return;
-    sel.innerHTML = '';
-    for (const key in CATEGORIZED_NOUNS) {
-      const opt = document.createElement('option');
-      opt.value = key;
-      opt.textContent = CATEGORIZED_NOUNS[key].name?.en || key;
-      sel.appendChild(opt);
-    }
-    sel.value = 'all';
-  })();
-
-  // Toolbar
-  document.getElementById('startBtn').onclick = ()=>{ audioReady = true; gate.style.display = 'none'; buildDeck(); };
-  document.getElementById('restartBtn').onclick = ()=>{ finish.style.display='none'; buildDeck(); };
-  document.getElementById('category-select').addEventListener('change', buildDeck);
-
-  // =================== FIXED AUDIO ===================
-  function speakWeb(text){
-  if(!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-
-  // dummy utterance para i-flush engine (fix sa repeating bug)
-  const dummy = new SpeechSynthesisUtterance(" ");
-  dummy.lang = 'ko-KR';
-  speechSynthesis.speak(dummy);
-
-  setTimeout(()=>{
-    const u = new SpeechSynthesisUtterance(text.trim());
-    u.lang = 'ko-KR';
-    u.rate = 0.95;
-    u.pitch = 1;
-    speechSynthesis.speak(u);
-  }, 300); // maliit na delay (300ms)
 }
 
-  async function playKo(text){
-    if(!audioReady) return;
-    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ 
-      speakWeb(text); return; 
+// Helpers (unchanged)
+function sanitize(tok){ return tok.replace(/[.,!?…]/g,'').trim(); }
+function glossForSentence(sentence, lang){
+  const tokens = sentence.split(/\s+/).filter(Boolean);
+  return tokens.map(t => {
+    const cleanToken = sanitize(t);
+    if (lang === 'ko') {
+      const gloss = GLOSS_MAP[cleanToken];
+      return {ko: t, en: gloss?.en || '—', tl: gloss?.tl || '—'};
+    } else {
+      const gloss = GLOSS_MAP[cleanToken.toLowerCase()];
+      return {en_word: t, tl: gloss?.tl || '—'};
     }
-    let url = audioCache.get(text);
-    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
-    player.src = url;
-    try{ await player.play(); }catch(e){ speakWeb(text); }
+  });
+}
+
+// ===== UI RENDER =====
+function renderFront(w){
+  front.innerHTML = `
+    <div class="ko-row">
+      <div class="ko">${w.ko}</div>
+      <button class="play-base" id="playBaseFront">🔊 Play</button>
+    </div>
+    <div class="controls" style="margin-top:10px">
+      <button class="btn" id="flipToBack">FLIP the CARD</button>
+    </div>
+  `;
+  front.querySelector('#playBaseFront').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
+  front.querySelector('#flipToBack').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); };
+}
+
+function renderBack(w){
+  back.innerHTML = `
+    <div class="ko-big">${w.ko}</div>
+    <ul class="enlines">
+      <li><b>English:</b> <span class="koform">${w.en}</span></li>
+      <li><b>Tagalog:</b> <span class="koform">${w.tl}</span></li>
+    </ul>
+    <div class="controls" style="margin-top:10px">
+      <button class="btn ghost" id="flipToFront">◀ Back</button>
+      <button class="btn" id="nextBtn">Next ▶</button>
+      <button class="btn" id="playBaseBack">🔊 Base</button>
+    </div>
+  `;
+  back.querySelector('#nextBtn').onclick = (e)=>{ e.stopPropagation(); nextCardAnimated(); };
+  back.querySelector('#playBaseBack').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
+  back.querySelector('#flipToFront').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); };
+}
+
+// IMPORTANT: no autoplay here
+function showCard(w){
+  current = w;
+  renderFront(w);
+  renderBack(w);
+  flipWrap.classList.remove('flipped');
+  updateProgress();
+}
+
+// ===== FLOW =====
+function autoplayCurrentOnce(){
+  if (!queue.length) return;
+  // tiny delay avoids stutter on mobile after layout/animation
+  setTimeout(()=> playKo(queue[index].ko), 220);
+}
+
+function buildDeck(){
+  const sel = document.getElementById('category-select');
+  selectedCategory = sel?.value || 'all';
+
+  const dataForDeck =
+    CATEGORIZED_NOUNS[selectedCategory]?.data?.length
+      ? CATEGORIZED_NOUNS[selectedCategory].data
+      : CATEGORIZED_NOUNS.all.data;
+
+  queue = shuffle([...dataForDeck]);
+  index = 0;
+  gate.style.display = 'none';
+  finish.style.display = 'none';
+
+  if (!queue.length) { front.innerHTML = '<p>No cards in this category.</p>'; return; }
+  showCard(queue[index]);
+
+  // autoplay only once for the first card
+  if (audioReady) autoplayCurrentOnce();
+}
+
+function nextCardAnimated(){
+  if(isAnimating) return;
+  isAnimating = true;
+
+  // stop anything currently playing before exit
+  stopAllAudio();
+  flipWrap.classList.add('animating','fly-exit');
+
+  const onExitEnd = (e)=>{
+    if(e.target !== cardEl) return;
+    flipWrap.removeEventListener('animationend', onExitEnd);
+    flipWrap.classList.remove('fly-exit');
+    index++;
+
+    if(index >= queue.length){
+      flipWrap.classList.remove('animating');
+      isAnimating = false;
+      finish.style.display='flex';
+      return;
+    }
+
+    showCard(queue[index]);     // no autoplay yet
+    flipWrap.classList.add('fly-enter');
+
+    const onEnterEnd = (ev)=>{
+      if(ev.target !== cardEl) return;
+      flipWrap.removeEventListener('animationend', onEnterEnd);
+      flipWrap.classList.remove('fly-enter','animating');
+      isAnimating = false;
+
+      // autoplay once AFTER the enter animation completes
+      if (audioReady) autoplayCurrentOnce();
+    };
+    flipWrap.addEventListener('animationend', onEnterEnd);
+  };
+  flipWrap.addEventListener('animationend', onExitEnd);
+}
+
+// ===== INTERACTIONS =====
+flipWrap.addEventListener('click', ()=>{
+  if(!queue.length || isAnimating) return;
+  if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+  else nextCardAnimated();
+});
+
+cardEl.addEventListener('keydown', (e)=>{
+  if(e.code==='Enter' || e.code==='Space'){ e.preventDefault(); 
+    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+    else nextCardAnimated();
   }
+  if(e.code==='ArrowRight'){ e.preventDefault(); nextCardAnimated(); }
+  if(e.code==='ArrowLeft'){ e.preventDefault(); flipWrap.classList.remove('flipped'); }
+});
+
+// Populate categories
+(function populateCategories(){
+  const sel = document.getElementById('category-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  for (const key in CATEGORIZED_NOUNS) {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = CATEGORIZED_NOUNS[key].name?.en || key;
+    sel.appendChild(opt);
+  }
+  sel.value = 'all';
+})();
+
+// Toolbar
+document.getElementById('startBtn').onclick = ()=>{
+  audioReady = true;              // unlocked by user gesture
+  gate.style.display = 'none';
+  // "warm up" speech engine on mobile
+  try { window.speechSynthesis?.cancel(); } catch(_) {}
+  buildDeck();
+};
+document.getElementById('restartBtn').onclick = ()=>{ finish.style.display='none'; buildDeck(); };
+document.getElementById('category-select').addEventListener('change', buildDeck);
 </script>
+
 <script>
 // Disable right click
 document.addEventListener("contextmenu", function(e){
