@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flip Cards – VIZKOR Korean Nouns (Categorized)</title>
+  <style>
+    :root{
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --border:1px solid rgba(103,232,249,.30);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; color:var(--text);
+      min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:12px;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative; isolation:isolate; padding:22px 16px 42px;
+    }
+    body::before{
+      content:""; position:fixed; inset:-20%;
+      background: conic-gradient(from 200deg at 60% 40%, rgba(186,230,253,.12), rgba(34,211,238,.10), rgba(56,189,248,.14), rgba(186,230,253,.10), rgba(34,211,238,.10));
+      filter:blur(48px); animation: drift 20s linear infinite; z-index:-1; opacity:.9;
+    }
+    @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05)}100%{transform:translate3d(0,0,0) rotate(0) scale(1)}}
+
+    header{text-align:center}
+    .title{
+      margin:0; font-size:2.2rem; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+      background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 10px rgba(255,255,255,.75),0 0 24px rgba(56,189,248,.45);
+    }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:600 }
+    .progress{ margin-top:6px; font-weight:800; color:var(--ice-2) }
+
+    .toolbar {
+        width: min(520px, 94vw);
+        margin-top: 10px;
+        padding: 15px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94));
+        border: var(--border);
+        box-shadow: var(--ring);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .toolbar label { color: var(--ice-2); font-weight: 600; margin-bottom: 5px; display: block; }
+    .toolbar select {
+        width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(186,230,253,.3);
+        background: #061725; color: var(--ice-1); font-size: 1rem; appearance: none;
+        -webkit-appearance: none; -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23dbeafe" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat; background-position: right 8px top 50%; background-size: 24px auto; cursor: pointer;
+    }
+
+    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
+    .flip{ perspective:1200px; width:100%; height:100%; }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipped .card{ transform:rotateY(180deg); }
+
+    .face{ position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; padding:18px; }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
+
+    .ko{ font-size:2.6rem; font-weight:900; letter-spacing:.5px; text-shadow:0 1px 0 rgba(255,255,255,.7); color:#0c253a }
+
+    .ko-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:min(460px,96%); }
+    .play-base{ appearance:none; border:none; cursor:pointer; border-radius:10px; padding:10px 14px; font-weight:900; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); }
+    .play-base:hover{ filter:brightness(1.08) }
+
+    .enhead{ font-size:1.1rem; font-weight:900; color:var(--ice-1); margin-top:6px; text-align:left; width:min(460px,96%); }
+
+    .ko-big{
+      font-size: 2rem; line-height: 1.15; text-align: center; width: 100%;
+      margin: 2px 0 4px; font-weight: 900; letter-spacing: .5px; color: var(--ice-1);
+    }
+    @media (max-width:420px){ .ko-big{ font-size:1.8rem; } }
+
+    .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
+    .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
+    .enlines b{ color:var(--ice-3) }
+
+    .sentence{ width:min(460px,96%); margin-top:6px; padding:10px 12px; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-1); font-size:1.15rem; }
+    .gloss{ width:min(460px,96%); margin-top:6px; display:flex; flex-wrap:wrap; gap:8px; }
+    .gchunk{ background:linear-gradient(180deg,#0b2438,#081c2d); border:1px solid rgba(186,230,253,.2); border-radius:10px; padding:6px 8px; }
+    .gko{ display:block; font-weight:800; color:var(--ice-1); }
+    .gen{ display:block; font-size:.92rem; color:var(--ice-3); opacity:.95 }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:0 }
+    .btn{ appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px; border-radius:12px; padding:10px 14px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 6px 18px rgba(56,189,248,.35); transition:transform .12s ease, filter .2s ease, box-shadow .2s ease }
+    .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--ring) }
+    .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+
+    .gate, .finish{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(1,7,13,.55); backdrop-filter: blur(6px) saturate(130%); -webkit-backdrop-filter: blur(6px) saturate(130%); z-index:5; }
+    .panel{ width:min(520px,92vw); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); border-radius:16px; padding:20px; text-align:center; box-shadow:var(--ring); }
+    .panel h2{ margin:0 0 8px; font-size:22px; font-weight:900; color:var(--ice-1) }
+    .panel p{ margin:6px 0 14px; color:var(--muted) }
+
+    @media (max-width:768px){ .stage{ height:420px } .ko{ font-size:2.8rem } }
+
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    #flipToFront{
+      background: linear-gradient(90deg, #a78bfa, #60a5fa) !important; color:#07162a !important; border:none !important;
+      font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+      box-shadow:0 10px 26px rgba(96,165,250,.45), 0 0 26px rgba(167,139,250,.35);
+    }
+    #flipToFront:hover{ filter:brightness(1.08); box-shadow:0 0 22px rgba(96,165,250,.65), 0 0 34px rgba(167,139,250,.45); }
+
+    #flipToBack{
+      position:relative; padding:14px 22px !important; border-radius:16px;
+      border:1px solid rgba(255,255,255,.75) !important; border-bottom-color:rgba(10,60,90,.45) !important; border-right-color:rgba(10,60,90,.35) !important;
+      background:linear-gradient(180deg, rgba(236,254,255,.98) 0%, rgba(219,234,254,.96) 38%, rgba(56,189,248,.93) 100%) !important;
+      color:#062136 !important; text-transform:uppercase; letter-spacing:.8px; font-weight:900;
+      box-shadow:0 14px 28px rgba(56,189,248,.35), 0 6px 0 rgba(6,26,43,.65), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -8px 20px rgba(7,34,53,.25);
+      transform:translateY(-1px); transition:transform .18s ease, box-shadow .22s ease, filter .22s ease; overflow:hidden; isolation:isolate;
+    }
+    #flipToBack::before{ content:""; position:absolute; inset:2px 2px 10px 2px; border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 60%); pointer-events:none; mix-blend-mode:screen; }
+    #flipToBack::after{
+      content:""; position:absolute; inset:-45% -70%;
+      background:
+        radial-gradient(12px 12px at 22% 32%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(10px 10px at 72% 65%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.45) 50%, rgba(255,255,255,0) 65%);
+      transform:translateX(-120%) rotate(8deg); animation:icySweep 2.6s ease-in-out infinite; pointer-events:none; mix-blend-mode:screen;
+    }
+    #flipToBack:hover{ filter:brightness(1.06); transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(56,189,248,.45), 0 8px 0 rgba(6,26,43,.6), inset 0 1px 0 rgba(255,255,255,1), inset 0 -10px 24px rgba(7,34,53,.28); }
+    #flipToBack:active{ transform:translateY(0); box-shadow:0 8px 16px rgba(56,189,248,.35), 0 3px 0 rgba(6,26,43,.7),
+      inset 0 1px 0 rgba(255,255,255,.95), inset 0 -6px 16px rgba(7,34,53,.28); }
+    @keyframes icySweep{ 0%{transform:translateX(-120%) rotate(8deg); opacity:.95} 50%{opacity:1} 100%{transform:translateX(120%) rotate(8deg); opacity:.95} }
+
+    .koform{ font-size:1.24rem; font-weight:400; letter-spacing:.3px; color:var(--ice-1); }
+    @media (max-width:420px){ .koform{ font-size:1.1rem; } }
+
+    .floating-home {
+      position: fixed; top: 0; right: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--accent));
+      color: #072235; font-size: 14px; font-weight: 700; text-decoration: none;
+      padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35);
+      z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
+    }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="floating-home">Home</a>
+
+  <header>
+    <h1 class="title">VIZKOR Flip Cards</h1>
+    <p class="subtitle">Korean Nouns (Categorized)</p>
+    <div class="progress" id="progress">&nbsp;</div>
+  </header>
+
+  <div class="toolbar">
+    <label for="category-select">Select Noun Category:</label>
+    <select id="category-select">
+      <!-- Options will be populated by JavaScript -->
+    </select>
+  </div>
+
+  <section class="stage">
+    <div class="flip" id="flipWrap" aria-live="polite">
+      <div class="card" id="card" tabindex="0" aria-label="Flip card">
+        <section class="face front" id="front"></section>
+        <section class="face back" id="back"></section>
+      </div>
+    </div>
+  </section>
+
+  <p class="subtitle" style="font-size:.95rem; color:var(--muted)">
+    Click <b>Start</b> to enable audio. Front shows <b>Korean only</b>. Flip to see meanings and a short <b>random sentence</b> with a word-by-word gloss.
+  </p>
+
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Start Practice</h2>
+      <p>Enable audio first. Each new card autoplays the base Korean once. Flip to reveal meaning and an example sentence.</p>
+      <div class="controls"><button class="btn" id="startBtn">Start (Enable Audio)</button></div>
+    </div>
+  </div>
+
+  <div class="finish" id="finish" style="display:none">
+    <div class="panel">
+      <h2>Finished! 🎉</h2>
+      <p>Na-randomize na lahat. Gusto mo bang ulitin (reshuffle)?</p>
+      <div class="controls"><button class="btn" id="restartBtn">Restart (Shuffle)</button></div>
+    </div>
+  </div>
+
+  <audio id="koAudio" preload="auto"></audio>
+
+<script>
+
+  // =================== CATEGORIZED NOUNS DATA ===================
+const CATEGORIZED_NOUNS = {
+  'all': {
+    name: {en: "All Nouns", tl: "Lahat ng Pangngalan"},
+    data: [] // This will be populated with all other categories combined
+  },
+  'pronouns': {
+    name: {en: "Pronouns & Interrogatives", tl: "Panghalip at Pantanong"},
+    data: [
+      {ko:'저', en:'I / Me (Formal)', tl:'ako'}, {ko:'나', en:'I / Me (Informal)', tl:'ako'},
+      {ko:'제', en:'My (Formal)', tl:'aking'}, {ko:'당신', en:'You (Formal)', tl:'ikaw'},
+      {ko:'너', en:'You (Informal)', tl:'ikaw'}, {ko:'그', en:'He / That person', tl:'siya / yaong tao'},
+      {ko:'그녀', en:'She', tl:'siya'}, {ko:'저희', en:'We / Us (Formal/Humble)', tl:'kami'},
+      {ko:'우리', en:'We / Us (Informal/General)', tl:'tayo/kami'}, {ko:'여러분', en:'You (Plural, polite)', tl:'kayo'},
+      {ko:'너희', en:'You (Plural, informal)', tl:'kayo'}, {ko:'그들', en:'They', tl:'sila'},
+      {ko:'이것', en:'This (thing)', tl:'ito'}, {ko:'저것', en:'That (thing over there)', tl:'iyon'},
+      {ko:'여기', en:'Here', tl:'dito'}, {ko:'거기', en:'There', tl:'doon'},
+      {ko:'저기', en:'Over there', tl:'doon (sa malayo)'}, {ko:'그것', en:'that (thing)', tl:'iyan'},
+      {ko:'이분', en:'this person (hon.)', tl:'ang taong ito (magalang)'},
+      {ko:'그분', en:'that person (hon.)', tl:'ang taong ‘yan (magalang)'},
+      {ko:'저분', en:'that person over there (hon.)', tl:'ang taong nandoon (magalang)'},
+      {ko:'누구', en:'Who', tl:'sino'}, {ko:'뭐 / 무엇', en:'What', tl:'ano'},
+      {ko:'어디', en:'Where', tl:'saan'}, {ko:'언제', en:'When', tl:'kailan'},
+      {ko:'왜', en:'Why', tl:'bakit'}, {ko:'어떻게', en:'How', tl:'paano'},
+      {ko:'얼마', en:'How much (price)', tl:'magkano'}, {ko:'몇', en:'How many', tl:'ilan'},
+      {ko:'어느', en:'Which', tl:'alin'}, {ko:'무슨', en:'What kind of', tl:'anong klase'},
+      {ko:'어떤', en:'Which one', tl:'alin'}, {ko:'어때요', en:'how is it?', tl:'kumusta?'},
+      {ko:'어떠세요', en:'how is it? (hon.)', tl:'kumusta po?'},
+      {ko:'얼마나', en:'how much/how long (degree)', tl:'gaano (kalaki/katagal)'},
+      {ko:'몇 시', en:'what time', tl:'anong oras'}, {ko:'몇 살', en:'how old', tl:'ilang taon'},
+      {ko:'무슨 일', en:'what matter', tl:'anong usapin'},
+    ]
+  },
+  'expressions': {
+    name: {en: "Greetings & Expressions", tl: "Pagbati at Ekspresyon"},
+    data: [
+      {ko:'네', en:'Yes', tl:'oo'}, {ko:'아니요', en:'No', tl:'hindi'},
+      {ko:'인사', en:'Greeting', tl:'pagbati'}, {ko:'감사', en:'Gratitude', tl:'pasasalamat'},
+      {ko:'부탁', en:'Favor', tl:'pabor'}, {ko:'사과', en:'Apology', tl:'paumanhin'},
+      {ko:'약속', en:'Promise / Appointment', tl:'pangako'}, {ko:'이야기', en:'Talk / Story', tl:'kwento'},
+      {ko:'질문', en:'Question', tl:'tanong'}, {ko:'대답', en:'Answer', tl:'sagot'},
+      {ko:'칭찬', en:'Compliment', tl:'papuri'}, {ko:'걱정', en:'Worry', tl:'pag-aalala'},
+      {ko:'생각', en:'Thought', tl:'pag-iisip'}, {ko:'기분', en:'Mood', tl:'pakiramdam'},
+      {ko:'실수', en:'Mistake', tl:'pagkakamali'}, {ko:'농담', en:'Joke', tl:'biro'},
+    ]
+  },
+  'people_relations': {
+    name: {en: "People & Relationships", tl: "Tao at Relasyon"},
+    data: [
+      {ko:'가족', en:'Family', tl:'pamilya'}, {ko:'부모님', en:'Parents', tl:'magulang'},
+      {ko:'아버지', en:'Father', tl:'ama'}, {ko:'아빠', en:'Dad', tl:'tatay'},
+      {ko:'어머니', en:'Mother', tl:'ina'}, {ko:'엄마', en:'Mom', tl:'nanay'},
+      {ko:'남편', en:'Husband', tl:'asawang lalaki'}, {ko:'아내', en:'Wife', tl:'asawang babae'},
+      {ko:'아들', en:'Son', tl:'anak na lalaki'}, {ko:'딸', en:'Daughter', tl:'anak na babae'},
+      {ko:'형', en:'Older brother (male speaker)', tl:'nakatatandang kapatid na lalaki'},
+      {ko:'오빠', en:'Older brother (female speaker)', tl:'kuya'},
+      {ko:'누나', en:'Older sister (male speaker)', tl:'ate'},
+      {ko:'언니', en:'Older sister (female speaker)', tl:'ate'},
+      {ko:'동생', en:'Younger sibling', tl:'nakababatang kapatid'},
+      {ko:'남동생', en:'Younger brother', tl:'nakababatang kapatid na lalaki'},
+      {ko:'여동생', en:'Younger sister', tl:'nakababatang kapatid na babae'},
+      {ko:'형제', en:'Brothers', tl:'magkapatid na lalaki'},
+      {ko:'자매', en:'Sisters', tl:'magkapatid na babae'},
+      {ko:'남매', en:'Brother and sister', tl:'magkapatid (L/B)'},
+      {ko:'할아버지', en:'Grandfather', tl:'lolo'}, {ko:'할머니', en:'Grandmother', tl:'lola'},
+      {ko:'친척', en:'Relative', tl:'kamag-anak'}, {ko:'조카', en:'Nephew / Niece', tl:'pamangkin'},
+      {ko:'아기', en:'Baby', tl:'sanggol'}, {ko:'어른', en:'Adult', tl:'matanda'},
+      {ko:'사람', en:'Person', tl:'tao'}, {ko:'친구', en:'Friend', tl:'kaibigan'},
+      {ko:'동료', en:'Colleague', tl:'kasamahan'}, {ko:'상사', en:'Boss / Superior', tl:'amo/nakatataas'},
+      {ko:'부하', en:'Subordinate', tl:'nasasakupan'}, {ko:'보호자', en:'Guardian', tl:'tagapag-alaga'},
+      {ko:'가해자', en:'Perpetrator', tl:'gumawa ng masama'}, {ko:'피해자', en:'Victim', tl:'biktima'},
+      {ko:'증인', en:'Witness', tl:'saksi'},
+    ]
+  },
+  'occupations': {
+    name: {en: "Occupations & Professions", tl: "Trabaho at Propesyon"},
+    data: [
+      {ko:'직업', en:'Occupation', tl:'trabaho'}, {ko:'학생', en:'Student', tl:'estudyante'},
+      {ko:'선생님', en:'Teacher', tl:'guro'}, {ko:'의사', en:'Doctor', tl:'doktor'},
+      {ko:'간호사', en:'Nurse', tl:'nars'}, {ko:'경찰관', en:'Police Officer', tl:'pulis'},
+      {ko:'소방관', en:'Firefighter', tl:'bumbero'}, {ko:'요리사', en:'Chef / Cook', tl:'kusinero'},
+      {ko:'농부', en:'Farmer', tl:'magsasaka'}, {ko:'어부', en:'Fisherman', tl:'mangingisda'},
+      {ko:'가수', en:'Singer', tl:'mang-aawit'}, {ko:'화가', en:'Painter', tl:'pintor'},
+      {ko:'기술자', en:'Technician', tl:'tekniko'}, {ko:'목수', en:'Carpenter', tl:'karpentero'},
+      {ko:'공무원', en:'Public Official', tl:'opisyal ng gobyerno'}, {ko:'근로자', en:'Worker', tl:'manggagawa'},
+      {ko:'회사원', en:'Company Employee', tl:'empleyado'}, {ko:'점원', en:'Clerk', tl:'tindero/a'},
+      {ko:'운전기사', en:'Driver', tl:'tsuper'}, {ko:'배우', en:'Actor', tl:'aktor/aktres'},
+      {ko:'광부', en:'Miner', tl:'minero'}, {ko:'신입 사원', en:'New employee', tl:'bagong empleyado'},
+    ]
+  },
+  'identity_nationality': {
+    name: {en: "Identity & Nationality", tl: "Pagkakakilanlan at Nasyonalidad"},
+    data: [
+      {ko:'이름', en:'Name', tl:'pangalan'}, {ko:'성함', en:'Name (Honorific)', tl:'pangalan (magalang)'},
+      {ko:'나이', en:'Age', tl:'edad'}, {ko:'연세', en:'Age (Honorific)', tl:'edad (magalang)'},
+      {ko:'성별', en:'Gender', tl:'kasarian'}, {ko:'국적', en:'Nationality', tl:'nasyonalidad'},
+      {ko:'고향', en:'Hometown', tl:'bayan'}, {ko:'주소', en:'Address', tl:'tirahan'},
+      {ko:'한국 사람', en:'Korean', tl:'Koreano'}, {ko:'필리핀 사람', en:'Filipino', tl:'Pilipino'},
+      {ko:'일본 사람', en:'Japanese', tl:'Hapon'}, {ko:'중국 사람', en:'Chinese', tl:'Intsik'},
+      {ko:'미국 사람', en:'American', tl:'Amerikano'}, {ko:'베트남 사람', en:'Vietnamese', tl:'Vietnamese'},
+      {ko:'태국 사람', en:'Thai', tl:'Thai'}, {ko:'인도네시아 사람', en:'Indonesian', tl:'Indonesian'},
+      {ko:'네팔 사람', en:'Nepali', tl:'Nepali'}, {ko:'몽골 사람', en:'Mongolian', tl:'Mongolian'},
+    ]
+  },
+  'time_calendar': {
+    name: {en: "Time & Calendar", tl: "Oras at Kalendaryo"},
+    data: [
+      {ko:'시간', en:'Time', tl:'oras'}, {ko:'오늘', en:'Today', tl:'ngayon'},
+      {ko:'어제', en:'Yesterday', tl:'kahapon'}, {ko:'내일', en:'Tomorrow', tl:'bukas'},
+      {ko:'모레', en:'Day after tomorrow', tl:'samakalawa'}, {ko:'아침', en:'Morning', tl:'umaga'},
+      {ko:'점심', en:'Lunchtime', tl:'tanghali'}, {ko:'저녁', en:'Evening', tl:'gabi'},
+      {ko:'밤', en:'Night', tl:'gabi (panggabi)'}, {ko:'낮', en:'Daytime', tl:'araw'},
+      {ko:'새벽', en:'Dawn', tl:'madaling-araw'}, {ko:'하루', en:'One day', tl:'isang araw'},
+      {ko:'이틀', en:'Two days', tl:'dalawang araw'}, {ko:'사흘', en:'Three days', tl:'tatlong araw'},
+      {ko:'나흘', en:'Four days', tl:'apat na araw'}, {ko:'오전', en:'a.m.', tl:'umaga'},
+      {ko:'오후', en:'p.m.', tl:'hapon'}, {ko:'정오', en:'noon', tl:'tanghali'},
+      {ko:'자정', en:'midnight', tl:'hatinggabi'}, {ko:'그제 / 그저께', en:'the day before yesterday', tl:'nung isang araw'},
+      {ko:'글피', en:'three days from now', tl:'makalawa pa'},
+      {ko:'주', en:'Week', tl:'linggo'}, {ko:'주말', en:'Weekend', tl:'weekend'},
+      {ko:'평일', en:'Weekday', tl:'araw ng trabaho'}, {ko:'매일', en:'every day', tl:'araw-araw'},
+      {ko:'매주', en:'every week', tl:'linggo-linggo'}, {ko:'매달 / 매월', en:'every month', tl:'buwan-buwan'},
+      {ko:'이번 주', en:'This week', tl:'ngayong linggo'}, {ko:'다음 주', en:'Next week', tl:'susunod na linggo'},
+      {ko:'지난주', en:'Last week', tl:'nakaraang linggo'}, {ko:'월요일', en:'Monday', tl:'Lunes'},
+      {ko:'화요일', en:'Tuesday', tl:'Martes'}, {ko:'수요일', en:'Wednesday', tl:'Miyerkules'},
+      {ko:'목요일', en:'Thursday', tl:'Huwebes'}, {ko:'금요일', en:'Friday', tl:'Biyernes'},
+      {ko:'토요일', en:'Saturday', tl:'Sabado'}, {ko:'일요일', en:'Sunday', tl:'Linggo'},
+      {ko:'월', en:'Month', tl:'buwan'}, {ko:'1월', en:'January', tl:'Enero'},
+      {ko:'2월', en:'February', tl:'Pebrero'}, {ko:'3월', en:'March', tl:'Marso'},
+      {ko:'4월', en:'April', tl:'Abril'}, {ko:'5월', en:'May', tl:'Mayo'},
+      {ko:'6월', en:'June', tl:'Hunyo'}, {ko:'7월', en:'July', tl:'Hulyo'},
+      {ko:'8월', en:'August', tl:'Agosto'}, {ko:'9월', en:'September', tl:'Setyembre'},
+      {ko:'10월', en:'October', tl:'Oktubre'}, {ko:'11월', en:'November', tl:'Nobyembre'},
+      {ko:'12월', en:'December', tl:'Disyembre'}, {ko:'이번 달', en:'this month', tl:'ngayong buwan'},
+      {ko:'년', en:'Year', tl:'taon'}, {ko:'올해', en:'This year', tl:'ngayong taon'},
+      {ko:'작년', en:'Last year', tl:'nakaraang taon'}, {ko:'내년', en:'Next year', tl:'susunod na taon'},
+      {ko:'계절', en:'Season', tl:'panahon'}, {ko:'봄', en:'Spring', tl:'tagsibol'},
+      {ko:'여름', en:'Summer', tl:'tag-init'}, {ko:'가을', en:'Autumn', tl:'taglagas'},
+      {ko:'겨울', en:'Winter', tl:'taglamig'},
+      ]
+    },
+    'numbers_counters': {
+      name: {en: "Numbers & Counters", tl: "Bilang at Pantukoy"},
+      data: [
+        {ko:'숫자', en:'Number', tl:'numero'}, {ko:'하나/일', en:'One', tl:'isa'},
+        {ko:'둘/이', en:'Two', tl:'dalawa'}, {ko:'셋/삼', en:'Three', tl:'tatlo'},
+        {ko:'넷/사', en:'Four', tl:'apat'}, {ko:'다섯/오', en:'Five', tl:'lima'},
+        {ko:'여섯/육', en:'Six', tl:'anim'}, {ko:'일곱/칠', en:'Seven', tl:'pito'},
+        {ko:'여덟/팔', en:'Eight', tl:'walo'}, {ko:'아홉/구', en:'Nine', tl:'siyam'},
+        {ko:'열/십', en:'Ten', tl:'sampu'}, {ko:'스물', en:'Twenty', tl:'dalawampu'},
+        {ko:'서른', en:'Thirty', tl:'tatlumpu'}, {ko:'마흔', en:'Forty', tl:'apatnapu'},
+        {ko:'쉰', en:'Fifty', tl:'limampu'}, {ko:'백', en:'Hundred', tl:'daan'},
+        {ko:'천', en:'Thousand', tl:'libo'}, {ko:'만', en:'Ten Thousand', tl:'sampung libo'},
+        {ko:'개', en:'Counter (things)', tl:'piraso'}, {ko:'명/분', en:'Counter (people)', tl:'tao'},
+        {ko:'마리', en:'Counter (animals)', tl:'hayop'}, {ko:'병', en:'Counter (bottles)', tl:'bote'},
+        {ko:'잔', en:'Counter (cups/glasses)', tl:'tasa/baso'}, {ko:'권', en:'Counter (books)', tl:'aklat'},
+        {ko:'대', en:'Counter (vehicles, machines)', tl:'sasakyan/makina'},
+        {ko:'닷새', en:'five days', tl:'limang araw'}, {ko:'엿새', en:'six days', tl:'anim na araw'},
+        {ko:'이레', en:'seven days', tl:'pitong araw'}, {ko:'여드레', en:'eight days', tl:'walong araw'},
+        {ko:'아흐레', en:'nine days', tl:'siyam na araw'}, {ko:'열흘', en:'ten days', tl:'sampung araw'},
+        {ko:'번', en:'times (occurrence)', tl:'beses'}, {ko:'장', en:'sheets (paper, tickets)', tl:'piraso (papel/tiket)'},
+        {ko:'켤레', en:'pairs (shoes/socks)', tl:'pares'}, {ko:'벌', en:'set of clothes', tl:'piraso (damit)'},
+        {ko:'살', en:'age (years old)', tl:'taong gulang'}, {ko:'층', en:'floor (story)', tl:'palapag'},
+        {ko:'호', en:'room/number', tl:'numero (kuwarto/unit)'}, {ko:'시', en:'o’clock', tl:'oras (eksaktong oras)'},
+        {ko:'분', en:'minutes', tl:'minuto'}, {ko:'초', en:'seconds', tl:'segundo'},
+        {ko:'시간', en:'hours (duration)', tl:'oras (tagal)'}, {ko:'달 / 개월', en:'months (duration)', tl:'buwan'},
+        {ko:'인분', en:'servings', tl:'order'}, {ko:'송이', en:'bunch/cluster', tl:'kumpol'},
+        {ko:'통', en:'container', tl:'galon/lagayan'},
+      ]
+    },
+    'fruits': {
+      name: {en: "Fruits", tl: "Mga Prutas"},
+      data: [
+        {ko:'과일', en:'Fruit', tl:'prutas'}, {ko:'사과', en:'Apple', tl:'mansanas'},
+        {ko:'배', en:'Pear', tl:'peras'}, {ko:'수박', en:'Watermelon', tl:'pakwan'},
+        {ko:'오렌지', en:'Orange', tl:'kahel'}, {ko:'포도', en:'Grapes', tl:'ubas'},
+        {ko:'딸기', en:'Strawberry', tl:'strawberry'}, {ko:'바나나', en:'Banana', tl:'saging'},
+        {ko:'체리', en:'Cherry', tl:'cherry'}, {ko:'참외', en:'Melon', tl:'melon'},
+        {ko:'복숭아', en:'Peach', tl:'melokoton'}, {ko:'감', en:'Persimmon', tl:'persimon'},
+        {ko:'망고', en:'Mango', tl:'mangga'}, {ko:'키위', en:'Kiwi', tl:'kiwi'},
+        {ko:'파파야', en:'Papaya', tl:'papaya'}, {ko:'석류', en:'Pomegranate', tl:'granada'},
+        {ko:'파인애플', en:'Pineapple', tl:'pinya'}, {ko:'레몬', en:'Lemon', tl:'lemon'},
+        {ko:'코코넛', en:'Coconut', tl:'niyog'}, {ko:'용과', en:'Dragonfruit', tl:'dragonfruit'},
+        {ko:'자두', en:'Plum', tl:'prunes'}, {ko:'블루베리', en:'Blueberry', tl:'blueberry'},
+        {ko:'아보카도', en:'Avocado', tl:'abokado'}, {ko:'무화과', en:'Fig', tl:'igos'},
+        {ko:'귤', en:'Tangerine', tl:'tangerine'},
+      ]
+    },
+    'vegetables_plants': {
+      name: {en: "Vegetables & Plants", tl: "Gulay at Halaman"},
+      data: [
+        {ko:'채소/야채', en:'Vegetables', tl:'gulay'}, {ko:'배추', en:'Cabbage', tl:'repolyo'},
+        {ko:'무', en:'Radish', tl:'labanos'}, {ko:'감자', en:'Potato', tl:'patatas'},
+        {ko:'고구마', en:'Sweet potato', tl:'kamote'}, {ko:'양파', en:'Onion', tl:'sibuyas'},
+        {ko:'마늘', en:'Garlic', tl:'bawang'}, {ko:'당근', en:'Carrot', tl:'karot'},
+        {ko:'토마토', en:'Tomato', tl:'kamatis'}, {ko:'가지', en:'Eggplant', tl:'talong'},
+        {ko:'오이', en:'Cucumber', tl:'pipino'}, {ko:'호박', en:'Pumpkin', tl:'kalabasa'},
+        {ko:'상추', en:'Lettuce', tl:'letsugas'}, {ko:'파', en:'Green onion', tl:'sibuyas na mura'},
+        {ko:'생강', en:'Ginger', tl:'luya'}, {ko:'고추', en:'Chili pepper', tl:'sili'},
+        {ko:'옥수수', en:'Corn', tl:'mais'}, {ko:'콩', en:'Bean', tl:'beans'},
+        {ko:'버섯', en:'Mushroom', tl:'kabute'}, {ko:'시금치', en:'Spinach', tl:'spinach'},
+        {ko:'꽃', en:'Flower', tl:'bulaklak'},
+      ]
+    },
+    'meat_seafood': {
+      name: {en: "Meat & Seafood", tl: "Karne at Pagkaing-Dagat"},
+      data: [
+        {ko:'고기', en:'Meat', tl:'karne'}, {ko:'소고기', en:'Beef', tl:'baka'},
+        {ko:'돼지고기', en:'Pork', tl:'baboy'}, {ko:'닭고기', en:'Chicken meat', tl:'karne ng manok'},
+        {ko:'해산물', en:'Seafood', tl:'pagkaing-dagat'}, {ko:'생선', en:'Fish (for eating)', tl:'isda'},
+        {ko:'새우', en:'Shrimp', tl:'hipon'}, {ko:'게', en:'Crab', tl:'alimango'},
+        {ko:'조개', en:'Clam', tl:'talaba'},
+      ]
+    },
+    'dishes_fooditems': {
+      name: {en: "Dishes & Food Items", tl: "Mga Luto at Pagkain"},
+      data: [
+        {ko:'음식', en:'Food', tl:'pagkain'}, {ko:'밥', en:'Cooked rice', tl:'kanin'},
+        {ko:'국', en:'Soup', tl:'sabaw'}, {ko:'반찬', en:'Side dish', tl:'side dish'},
+        {ko:'김치찌개', en:'Kimchi stew', tl:'kimchi stew'}, {ko:'된장찌개', en:'Soybean paste stew', tl:'soybean paste stew'},
+        {ko:'비빔밥', en:'Bibimbap', tl:'bibimbap'}, {ko:'불고기', en:'Bulgogi', tl:'bulgogi'},
+        {ko:'삼겹살', en:'Pork belly', tl:'samgyeopsal'}, {ko:'떡볶이', en:'Tteokbokki', tl:'tteokbokki'},
+        {ko:'라면', en:'Instant noodles', tl:'ramyeon'}, {ko:'국수', en:'Noodles', tl:'pansit'},
+        {ko:'만두', en:'Dumplings', tl:'mandu'}, {ko:'김밥', en:'Gimbap', tl:'gimbap'},
+        {ko:'치킨', en:'Fried chicken', tl:'fried chicken'}, {ko:'피자', en:'Pizza', tl:'pizza'},
+        {ko:'햄버거', en:'Hamburger', tl:'hamburger'}, {ko:'샌드위치', en:'Sandwich', tl:'sandwich'},
+        {ko:'빵', en:'Bread', tl:'tinapay'}, {ko:'과자', en:'Snack', tl:'biskwit'},
+        {ko:'계란/달걀', en:'Egg', tl:'itlog'}, {ko:'두부', en:'Tofu', tl:'tokwa'},
+        {ko:'떡', en:'Rice cake', tl:'rice cake'}, {ko:'죽', en:'Porridge', tl:'lugaw'},
+        {ko:'탕수육', en:'Sweet and sour pork', tl:'sweet and sour pork'},
+        {ko:'김치', en:'kimchi', tl:'kimchi'}, {ko:'냉면', en:'cold noodles', tl:'malamig na pansit'},
+        {ko:'칼국수', en:'knife-cut noodles', tl:'kalguksu'},
+        {ko:'순두부찌개', en:'soft tofu stew', tl:'nilagang malambot na tokwa'},
+        {ko:'갈비', en:'ribs', tl:'tadyang'}, {ko:'갈비탕', en:'beef-rib soup', tl:'sabaw ng tadyang'},
+        {ko:'잡채', en:'japchae', tl:'sotanghon na may gulay/karne'},
+        {ko:'삼계탕', en:'ginseng chicken soup', tl:'sabaw ng manok na may ginseng'},
+      ]
+    },
+    'ingredients_drinks': {
+      name: {en: "Ingredients & Drinks", tl: "Sangkap at Inumin"},
+      data: [
+        {ko:'재료', en:'Ingredient', tl:'sangkap'}, {ko:'양념', en:'Seasoning', tl:'pampalasa'},
+        {ko:'소금', en:'Salt', tl:'asin'}, {ko:'설탕', en:'Sugar', tl:'asukal'},
+        {ko:'후추', en:'Pepper', tl:'paminta'}, {ko:'간장', en:'Soy sauce', tl:'toyo'},
+        {ko:'물', en:'Water', tl:'tubig'}, {ko:'우유', en:'Milk', tl:'gatas'},
+        {ko:'주스', en:'Juice', tl:'juice'}, {ko:'커피', en:'Coffee', tl:'kape'},
+        {ko:'술', en:'Alcohol', tl:'alak'}, {ko:'소스', en:'Sauce', tl:'sarsa'},
+        {ko:'식용유', en:'cooking oil', tl:'mantika'}, {ko:'밀가루', en:'flour', tl:'harina'},
+        {ko:'고춧가루', en:'red pepper powder', tl:'pulbos na sili'},
+        {ko:'참기름', en:'sesame oil', tl:'langis ng linga'}, {ko:'식초', en:'vinegar', tl:'suka'},
+      ]
+    },
+    'housing_parts': {
+      name: {en: "Housing & Parts", tl: "Tirahan at Bahagi"},
+      data: [
+        {ko:'집', en:'House', tl:'bahay'}, {ko:'아파트', en:'Apartment', tl:'apartment'},
+        {ko:'빌라', en:'Villa / Small apartment', tl:'villa/maliit na apartment'},
+        {ko:'원룸', en:'Studio apartment', tl:'studio apartment'},
+        {ko:'기숙사', en:'Dormitory', tl:'dormitoryo'}, {ko:'고시원', en:'Small room for rent', tl:'maliit na upa na kwarto'},
+        {ko:'한옥', en:'Traditional Korean house', tl:'tradisyonal na bahay ng Korea'},
+        {ko:'주택', en:'Housing / House', tl:'pabahay'},
+        {ko:'방', en:'Room', tl:'kwarto'}, {ko:'거실', en:'Living room', tl:'sala'},
+        {ko:'부엌', en:'Kitchen', tl:'kusina'}, {ko:'화장실', en:'Restroom / Banyo', tl:'palikuran/banyo'},
+        {ko:'창문', en:'Window', tl:'bintana'}, {ko:'문', en:'Door', tl:'pinto'},
+        {ko:'현관', en:'Entrance', tl:'pasukan'}, {ko:'지붕', en:'Roof', tl:'bubong'},
+        {ko:'마당', en:'Yard', tl:'bakuran'}, {ko:'계단', en:'Stairs', tl:'hagdanan'},
+        {ko:'벽', en:'Wall', tl:'pader'}, {ko:'바닥', en:'Floor', tl:'sahig'},
+        {ko:'옥상', en:'Rooftop', tl:'bubong'},
+      ]
+    },
+    'furniture_appliances': {
+      name: {en: "Furniture & Appliances", tl: "Muwebles at Appliances"},
+      data: [
+        {ko:'가구', en:'Furniture', tl:'kasangkapan'}, {ko:'침대', en:'Bed', tl:'kama'},
+        {ko:'책상', en:'Desk', tl:'mesa'}, {ko:'의자', en:'Chair', tl:'silya'},
+        {ko:'식탁', en:'Dining table', tl:'lamesa'}, {ko:'소파', en:'Sofa', tl:'sofa'},
+        {ko:'옷장', en:'Closet', tl:'aparador'}, {ko:'거울', en:'Mirror', tl:'salamin'},
+        {ko:'시계', en:'Clock', tl:'orasan'}, {ko:'이불', en:'Blanket', tl:'kumot'},
+        {ko:'베개', en:'Pillow', tl:'unan'}, {ko:'수건', en:'Towel', tl:'tuwalya'},
+        {ko:'빗', en:'Comb', tl:'suklay'}, {ko:'칫솔', en:'Toothbrush', tl:'sepilyo'},
+        {ko:'치약', en:'Toothpaste', tl:'toothpaste'}, {ko:'비누', en:'Soap', tl:'sabon'},
+        {ko:'휴지', en:'Tissue / Toilet paper', tl:'tissue/toilet paper'}, {ko:'샴푸', en:'Shampoo', tl:'shampoo'},
+        {ko:'린스', en:'Conditioner', tl:'conditioner'}, {ko:'쓰레기통', en:'Trash bin', tl:'basurahan'},
+        {ko:'빗자루', en:'Broom', tl:'walis'}, {ko:'걸레', en:'Cleaning cloth', tl:'basahan'},
+        {ko:'냉장고', en:'Refrigerator', tl:'ref'}, {ko:'세탁기', en:'Washing machine', tl:'labadora'},
+        {ko:'텔레비전', en:'Television', tl:'TV'}, {ko:'에어컨', en:'Air conditioner', tl:'aircon'},
+        {ko:'컴퓨터', en:'Computer', tl:'computer'}, {ko:'전화기', en:'Telephone', tl:'telepono'},
+        {ko:'선풍기', en:'Electric fan', tl:'electric fan'}, {ko:'진공청소기', en:'Vacuum cleaner', tl:'vacuum cleaner'},
+        {ko:'전자레인지', en:'Microwave', tl:'microwave'}, {ko:'밥솥', en:'Rice cooker', tl:'rice cooker'},
+        {ko:'다리미', en:'Iron', tl:'plantsa'}, {ko:'카메라', en:'Camera', tl:'camera'},
+      ]
+    },
+    'kitchenware': {
+      name: {en: "Kitchenware", tl: "Kagamitan sa Kusina"},
+      data: [
+        {ko:'냄비', en:'Pot', tl:'kaldero'}, {ko:'프라이팬', en:'Frying pan', tl:'kawali'},
+        {ko:'그릇', en:'Bowl', tl:'mangkok'}, {ko:'접시', en:'Plate', tl:'plato'},
+        {ko:'컵', en:'Cup', tl:'tasa'}, {ko:'수저', en:'Spoon and chopsticks', tl:'kutsara at chopsticks'},
+        {ko:'숟가락', en:'Spoon', tl:'kutsara'}, {ko:'젓가락', en:'Chopsticks', tl:'chopsticks'},
+        {ko:'칼', en:'Knife', tl:'kutsilyo'}, {ko:'도마', en:'Cutting board', tl:'cutting board'},
+        {ko:'주전자', en:'Kettle', tl:'takure'},
+      ]
+    },
+    'public_places': {
+      name: {en: "Public Places", tl: "Pampublikong Lugar"},
+      data: [
+        {ko:'학교', en:'School', tl:'paaralan'}, {ko:'회사', en:'Company', tl:'kumpanya'},
+        {ko:'병원', en:'Hospital', tl:'ospital'}, {ko:'약국', en:'Pharmacy', tl:'botika'},
+        {ko:'은행', en:'Bank', tl:'bangko'}, {ko:'식당', en:'Restaurant', tl:'restawran'},
+        {ko:'시장', en:'Market', tl:'palengke'}, {ko:'공원', en:'Park', tl:'parke'},
+        {ko:'공항', en:'Airport', tl:'paliparan'}, {ko:'지하철역', en:'Subway station', tl:'istasyon ng subway'},
+        {ko:'기차역', en:'Train station', tl:'istasyon ng tren'}, {ko:'버스 정류장', en:'Bus stop', tl:'hintuan ng bus'},
+        {ko:'박물관', en:'Museum', tl:'museo'}, {ko:'도서관', en:'Library', tl:'aklatan'},
+        {ko:'영화관', en:'Cinema', tl:'sinehan'}, {ko:'가게', en:'Store', tl:'tindahan'},
+        {ko:'편의점', en:'Convenience store', tl:'convenience store'}, {ko:'우체국', en:'Post office', tl:'post office'},
+        {ko:'경찰서', en:'Police station', tl:'istasyon ng pulis'}, {ko:'소방서', en:'Fire station', tl:'istasyon ng bumbero'},
+        {ko:'호텔', en:'Hotel', tl:'hotel'}, {ko:'교회', en:'Church', tl:'simbahan'},
+        {ko:'절', en:'Temple', tl:'templo'}, {ko:'사원', en:'Mosque', tl:'moske'},
+        {ko:'마트 / 슈퍼마켓', en:'supermarket', tl:'pamilihan'},
+        {ko:'백화점', en:'department store', tl:'department store'},
+        {ko:'헬스장 / 체육관', en:'gym', tl:'gym'}, {ko:'세탁소', en:'laundry shop', tl:'plantsahan/labahan'},
+        {ko:'민원실', en:'civil service desk', tl:'tanggapan para sa publiko'},
+        {ko:'은행창구', en:'bank counter', tl:'counter sa bangko'},
+      ]
+    },
+    'clothing_accessories': {
+      name: {en: "Clothing & Accessories", tl: "Damit at Aksesorya"},
+      data: [
+        {ko:'옷', en:'Clothes', tl:'damit'}, {ko:'바지', en:'Pants', tl:'pantalon'},
+        {ko:'청바지', en:'Jeans', tl:'maong'}, {ko:'반바지', en:'Shorts', tl:'shorts'},
+        {ko:'치마', en:'Skirt', tl:'palda'}, {ko:'원피스', en:'Dress', tl:'dress'},
+        {ko:'티셔츠', en:'T-shirt', tl:'t-shirt'}, {ko:'자켓', en:'Jacket', tl:'jacket'},
+        {ko:'점퍼', en:'Jumper', tl:'jumper'}, {ko:'양복', en:'Suit', tl:'terno'},
+        {ko:'한복', en:'Traditional Korean clothes', tl:'tradisyonal na kasuotang Koreano'},
+        {ko:'유니폼', en:'Uniform', tl:'uniporme'}, {ko:'작업복', en:'Work clothes', tl:'damit-panukit'},
+        {ko:'앞치마', en:'Apron', tl:'apron'}, {ko:'우비', en:'Raincoat', tl:'kapote'},
+        {ko:'속옷', en:'underwear', tl:'panloob'}, {ko:'운동복', en:'sportswear', tl:'damit-pang-ehersisyo'},
+        {ko:'잠옷', en:'pajamas', tl:'pang-tulog'},
+        {ko:'신발', en:'Shoes', tl:'sapatos'}, {ko:'구두', en:'Dress shoes', tl:'sapatos panlalaki'},
+        {ko:'운동화', en:'Sneakers', tl:'rubber shoes'}, {ko:'장화', en:'Boots', tl:'bota'},
+        {ko:'슬리퍼', en:'Slippers', tl:'tsinelas'}, {ko:'양말', en:'Socks', tl:'medyas'},
+        {ko:'스타킹', en:'Stockings', tl:'medyas'}, {ko:'작업화', en:'work shoes', tl:'sapatos-pang-trabaho'},
+        {ko:'모자', en:'Hat / Cap', tl:'sumbrero/kepi'}, {ko:'안경', en:'Eyeglasses', tl:'salamin sa mata'},
+        {ko:'선글라스', en:'Sunglasses', tl:'salamin'}, {ko:'장갑', en:'Gloves', tl:'guwantes'},
+        {ko:'목걸이', en:'Necklace', tl:'kwintas'}, {ko:'귀걸이', en:'Earrings', tl:'hikaw'},
+        {ko:'반지', en:'Ring', tl:'singsing'}, {ko:'팔찌', en:'Bracelet', tl:'pulseras'},
+        {ko:'시계', en:'Watch', tl:'relo'}, {ko:'가방', en:'Bag', tl:'bag'},
+        {ko:'지갑', en:'Wallet', tl:'pitaka'}, {ko:'넥타이', en:'Tie', tl:'kurbata'},
+        {ko:'벨트', en:'Belt', tl:'sinturon'}, {ko:'스카프', en:'Scarf', tl:'bupanda'},
+        {ko:'우산', en:'Umbrella', tl:'payong'}, {ko:'마스크', en:'mask', tl:'mask'},
+        {ko:'우의', en:'raincoat (alt.)', tl:'kapote'},
+      ]
+    },
+    'appearance': {
+      name: {en: "Appearance", tl: "Hitsura"},
+      data: [
+        {ko:'외모', en:'Looks', tl:'hitsura'}, {ko:'얼굴', en:'Face', tl:'mukha'},
+        {ko:'머리', en:'Hair', tl:'buhok'}, {ko:'피부', en:'Skin', tl:'balat'},
+        {ko:'성격', en:'Personality', tl:'personalidad'}, {ko:'태도', en:'Attitude', tl:'saloobin'},
+      ]
+    },
+    'industry_work': {
+      name: {en: "Industry & Work", tl: "Industriya at Trabaho"},
+      data: [
+        {ko:'산업', en:'Industry', tl:'industriya'}, {ko:'건설업', en:'Construction', tl:'konstruksyon'},
+        {ko:'제조업', en:'Manufacturing', tl:'paggawa'}, {ko:'농업', en:'Agriculture', tl:'agrikultura'},
+        {ko:'축산업', en:'Livestock industry', tl:'industriya ng pag-aalaga ng hayop'},
+        {ko:'어업', en:'Fishery', tl:'pangisdaan'}, {ko:'광업', en:'Mining', tl:'pagmimina'},
+        {ko:'서비스업', en:'Service industry', tl:'industriya ng serbisyo'},
+        {ko:'작업장', en:'Workplace', tl:'lugar ng trabaho'}, {ko:'공장', en:'Factory', tl:'pabrika'},
+        {ko:'사무실', en:'Office', tl:'opisina'}, {ko:'건설현장', en:'Construction site', tl:'lugar ng konstruksyon'},
+        {ko:'농장', en:'Farm', tl:'bukid'}, {ko:'창고', en:'Warehouse', tl:'bodega'},
+        {ko:'일', en:'Work', tl:'trabaho'}, {ko:'작업', en:'Task', tl:'gawain'},
+        {ko:'회의', en:'Meeting', tl:'pulong'}, {ko:'출근', en:'Going to work', tl:'pagpasok sa trabaho'},
+        {ko:'퇴근', en:'Leaving work', tl:'pag-uwi galing trabaho'}, {ko:'휴가', en:'Vacation', tl:'bakasyon'},
+        {ko:'야근', en:'Overtime work', tl:'overtime'}, {ko:'보고', en:'Report', tl:'ulat'},
+        {ko:'지시', en:'Instruction', tl:'tagubilin'}, {ko:'근무', en:'duty/work shift', tl:'duty/gawain'},
+        {ko:'휴일 / 공휴일', en:'holiday', tl:'pista opisyal'}, {ko:'점검', en:'inspection', tl:'inspeksiyon'},
+        {ko:'납기', en:'delivery deadline', tl:'petsa ng deliveri'},
+      ]
+    },
+    'tools_equipment': {
+      name: {en: "Tools & Equipment", tl: "Mga Kagamitan at Tools"},
+      data: [
+        {ko:'공구', en:'Tool', tl:'kasangkapan'}, {ko:'망치', en:'Hammer', tl:'martilyo'},
+        {ko:'톱', en:'Saw', tl:'lagari'}, {ko:'드릴', en:'Drill', tl:'barena'},
+        {ko:'드라이버', en:'Screwdriver', tl:'distornilyador'}, {ko:'펜치', en:'Pincers', tl:'plays'},
+        {ko:'스패너', en:'Spanner', tl:'liyabe'}, {ko:'줄자', en:'Tape measure', tl:'metro'},
+        {ko:'사다리', en:'Ladder', tl:'hagdanan'}, {ko:'손수레', en:'Hand cart', tl:'kariton'},
+        {ko:'지게차', en:'Forklift', tl:'forklift'}, {ko:'용접기', en:'Welding machine', tl:'welding machine'},
+        {ko:'그라인더', en:'Grinder', tl:'gilingan'}, {ko:'컨베이어', en:'Conveyor belt', tl:'conveyor belt'},
+        {ko:'크레인', en:'Crane', tl:'crane'},
+        {ko:'재료 / 자재', en:'Material', tl:'sangkap'}, {ko:'못', en:'Nail', tl:'pako'},
+        {ko:'나사못', en:'Screw', tl:'tornilyo'}, {ko:'볼트', en:'Bolt', tl:'tornilyo'},
+        {ko:'너트', en:'Nut', tl:'nut'}, {ko:'철근', en:'Rebar', tl:'rebar'},
+        {ko:'시멘트', en:'Cement', tl:'semento'}, {ko:'모래', en:'Sand', tl:'buhangin'},
+        {ko:'자갈', en:'Gravel', tl:'graba'}, {ko:'페인트', en:'Paint', tl:'pintura'},
+        {ko:'목재', en:'Wood', tl:'kahoy'}, {ko:'유리', en:'Glass', tl:'salamin'},
+        {ko:'플라스틱', en:'Plastic', tl:'plastik'}, {ko:'벽돌', en:'Brick', tl:'tisa'},
+        {ko:'폭약', en:'Explosive', tl:'pampasabog'},
+      ]
+    },
+    'workplace_safety': {
+      name: {en: "Workplace Safety", tl: "Kaligtasan sa Trabaho"},
+      data: [
+        {ko:'안전', en:'Safety', tl:'kaligtasan'}, {ko:'사고', en:'Accident', tl:'aksidente'},
+        {ko:'안전모', en:'Safety helmet', tl:'helmet'}, {ko:'안전화', en:'Safety shoes', tl:'sapatos pangkaligtasan'},
+        {ko:'마스크', en:'Mask', tl:'mask'}, {ko:'안전장갑', en:'Safety gloves', tl:'guwantes pangkaligtasan'},
+        {ko:'보안경', en:'Safety goggles', tl:'salamin pangkaligtasan'}, {ko:'귀마개', en:'Earplugs', tl:'earplugs'},
+        {ko:'소화기', en:'Fire extinguisher', tl:'fire extinguisher'}, {ko:'구급함', en:'First-aid kit', tl:'first-aid kit'},
+        {ko:'금지', en:'Prohibition', tl:'pagbabawal'}, {ko:'경고', en:'Warning', tl:'babala'},
+        {ko:'위험', en:'Danger', tl:'panganib'}, {ko:'출입증', en:'entry pass', tl:'ID pass'},
+        {ko:'비상구', en:'emergency exit', tl:'labasan sa emerhensiya'},
+        {ko:'안전띠', en:'safety belt', tl:'sinturon pangkaligtasan'},
+        {ko:'보호구', en:'protective gear', tl:'protective gear'},
+      ]
+    },
+    'finance_documents': {
+      name: {en: "Finance & Documents", tl: "Pananalapi at Dokumento"},
+      data: [
+        {ko:'돈', en:'Money', tl:'pera'}, {ko:'현금', en:'Cash', tl:'cash'},
+        {ko:'동전', en:'Coin', tl:'barya'}, {ko:'지폐', en:'Paper bill', tl:'perang papel'},
+        {ko:'신용카드', en:'Credit card', tl:'credit card'}, {ko:'체크카드', en:'Debit card', tl:'debit card'},
+        {ko:'은행', en:'Bank', tl:'bangko'}, {ko:'계좌', en:'Bank account', tl:'bank account'},
+        {ko:'통장', en:'Bankbook', tl:'bankbook'}, {ko:'비밀번호', en:'Password', tl:'password'},
+        {ko:'월급/급여', en:'Salary', tl:'sahod'}, {ko:'보너스/상여금', en:'Bonus', tl:'bonus'},
+        {ko:'세금', en:'Tax', tl:'buwis'}, {ko:'환불', en:'Refund', tl:'refund'},
+        {ko:'가격/값', en:'Price', tl:'presyo'}, {ko:'요금', en:'Fee', tl:'bayad'},
+        {ko:'보증금', en:'Security deposit', tl:'security deposit'}, {ko:'월세', en:'Monthly rent', tl:'buwanang upa'},
+        {ko:'송금', en:'Money transfer', tl:'padala'}, {ko:'환전', en:'currency exchange', tl:'pagpapalit ng pera'},
+        {ko:'환율', en:'exchange rate', tl:'palitan'}, {ko:'수수료', en:'service fee', tl:'bayad-serbisyo'},
+        {ko:'영업시간', en:'business hours', tl:'oras ng serbisyo'},
+        {ko:'법률', en:'Law', tl:'batas'}, {ko:'계약', en:'Contract', tl:'kontrata'},
+        {ko:'위반', en:'Violation', tl:'paglabag'}, {ko:'벌금', en:'Fine', tl:'multa'},
+        {ko:'보험', en:'Insurance', tl:'siguro'}, {ko:'고용허가제', en:'Employment Permit System (EPS)', tl:'Employment Permit System (EPS)'},
+        {ko:'체류', en:'Stay', tl:'pananatili'}, {ko:'허가', en:'Permission', tl:'pahintulot'},
+        {ko:'출입국', en:'immigration', tl:'imigrasyon'}, {ko:'비자', en:'visa', tl:'bisa'},
+        {ko:'서류', en:'Document', tl:'dokumento'}, {ko:'여권', en:'Passport', tl:'pasaporte'},
+        {ko:'신분증', en:'ID card', tl:'ID card'}, {ko:'외국인등록증', en:'Alien Registration Card (ARC)', tl:'Alien Registration Card (ARC)'},
+        {ko:'계약서', en:'Contract form', tl:'kontrata'}, {ko:'영수증', en:'Receipt', tl:'resibo'},
+        {ko:'진단서', en:'Medical certificate', tl:'medical certificate'}, {ko:'신청서', en:'Application form', tl:'application form'},
+        {ko:'표', en:'Ticket', tl:'tiket'}, {ko:'우표', en:'Stamp', tl:'selyo'},
+        {ko:'서명', en:'signature', tl:'pirma'}, {ko:'도장', en:'seal/stamp', tl:'selyo'},
+        {ko:'원본', en:'original', tl:'orihinal'}, {ko:'사본', en:'copy', tl:'kopya'},
+      ]
+    },
+    'culture_media_tech': {
+      name: {en: "Culture, Media & Tech", tl: "Kultura, Media at Teknolohiya"},
+      data: [
+        {ko:'취미', en:'Hobby', tl:'libangan'}, {ko:'운동', en:'Exercise / Sports', tl:'ehersisyo/palakasan'},
+        {ko:'영화', en:'Movie', tl:'pelikula'}, {ko:'음악', en:'Music', tl:'musika'},
+        {ko:'독서', en:'Reading', tl:'pagbabasa'}, {ko:'여행', en:'Travel', tl:'paglalakbay'},
+        {ko:'사진', en:'Photograph', tl:'litrato'}, {ko:'그림', en:'Drawing / Painting', tl:'pagguhit/pagpinta'},
+        {ko:'춤', en:'Dance', tl:'sayaw'}, {ko:'축구', en:'Soccer / Football', tl:'soccer/football'},
+        {ko:'농구', en:'Basketball', tl:'basketball'}, {ko:'야구', en:'Baseball', tl:'baseball'},
+        {ko:'배구', en:'Volleyball', tl:'volleyball'}, {ko:'수영', en:'Swimming', tl:'paglangoy'},
+        {ko:'등산', en:'Hiking', tl:'pag-akyat ng bundok'}, {ko:'낚시', en:'Fishing', tl:'pangingisda'},
+        {ko:'태권도', en:'Taekwondo', tl:'taekwondo'}, {ko:'골프', en:'Golf', tl:'golp'},
+        {ko:'테니스', en:'Tennis', tl:'tennis'}, {ko:'스키', en:'Skiing', tl:'skiing'},
+        {ko:'문화', en:'Culture', tl:'kultura'}, {ko:'한류', en:'Korean Wave', tl:'Korean Wave'},
+        {ko:'K-팝', en:'K-pop', tl:'K-pop'}, {ko:'드라마', en:'Drama', tl:'drama'},
+        {ko:'한식', en:'Korean food', tl:'Korean food'}, {ko:'한복', en:'Traditional Korean clothes', tl:'tradisyonal na kasuotang Koreano'},
+        {ko:'축제', en:'Festival', tl:'pista'}, {ko:'추석', en:'Korean Thanksgiving', tl:'Korean Thanksgiving'},
+        {ko:'설날', en:'Lunar New Year', tl:'Lunar New Year'}, {ko:'한글날', en:'Hangeul Day', tl:'Araw ng Hangeul'},
+        {ko:'전통', en:'Tradition', tl:'tradisyon'}, {ko:'종교', en:'Religion', tl:'relihiyon'},
+        {ko:'KTX', en:'High-speed train (Korea Train Express)', tl:'High-speed train (Korea Train Express)'},
+        {ko:'K-댄스', en:'K-dance', tl:'K-dance'}, {ko:'K-드라마', en:'K-drama', tl:'K-drama'},
+        {ko:'K-뷰티', en:'K-beauty', tl:'K-beauty'}, {ko:'K-예능', en:'K-variety show', tl:'K-variety show'},
+        {ko:'K-웹툰', en:'K-webtoon', tl:'K-webtoon'}, {ko:'K-푸드', en:'K-food', tl:'K-food'},
+        {ko:'컴퓨터', en:'Computer', tl:'computer'}, {ko:'노트북', en:'Laptop', tl:'laptop'},
+        {ko:'스마트폰/휴대폰', en:'Smartphone / Cellphone', tl:'smartphone/cellphone'},
+        {ko:'인터넷', en:'Internet', tl:'internet'}, {ko:'웹사이트', en:'Website', tl:'website'},
+        {ko:'이메일', en:'E-mail', tl:'E-mail'}, {ko:'앱/애플리케이션', en:'App / Application', tl:'App/Application'},
+        {ko:'와이파이', en:'Wi-Fi', tl:'Wi-Fi'}, {ko:'비밀번호', en:'Password', tl:'password'},
+        {ko:'다운로드', en:'Download', tl:'download'}, {ko:'업로드', en:'Upload', tl:'upload'},
+        {ko:'채팅', en:'Chatting', tl:'chatting'}, {ko:'충전기', en:'charger', tl:'charger'},
+        {ko:'케이블', en:'cable', tl:'kable'}, {ko:'파일', en:'file', tl:'file'},
+        {ko:'프린터', en:'printer', tl:'printer'}, {ko:'복사', en:'copy/photocopy', tl:'kopya-xerox'},
+        {ko:'설치', en:'install', tl:'install'},
+      ]
+    },
+    'nature_animals': {
+      name: {en: "Nature & Animals", tl: "Kalikasan at Hayop"},
+      data: [
+        {ko:'자연', en:'Nature', tl:'kalikasan'}, {ko:'산', en:'Mountain', tl:'bundok'},
+        {ko:'강', en:'River', tl:'ilog'}, {ko:'바다', en:'Sea', tl:'dagat'},
+        {ko:'하늘', en:'Sky', tl:'langit'}, {ko:'땅', en:'Land', tl:'lupa'},
+        {ko:'해', en:'Sun', tl:'araw'}, {ko:'달', en:'Moon', tl:'buwan'},
+        {ko:'별', en:'Star', tl:'bituin'}, {ko:'구름', en:'Cloud', tl:'ulap'},
+        {ko:'비', en:'Rain', tl:'ulan'}, {ko:'눈', en:'Snow', tl:'niyebe'},
+        {ko:'바람', en:'Wind', tl:'hangin'}, {ko:'돌', en:'Stone', tl:'bato'},
+        {ko:'나무', en:'Tree', tl:'puno'}, {ko:'태풍', en:'typhoon', tl:'bagyo'},
+        {ko:'폭우', en:'heavy rain', tl:'malakas na ulan'}, {ko:'폭설', en:'heavy snow', tl:'malakas na niyebe'},
+        {ko:'지진', en:'earthquake', tl:'lindol'}, {ko:'홍수', en:'flood', tl:'baha'},
+        {ko:'동물', en:'Animal', tl:'hayop'}, {ko:'개', en:'Dog', tl:'aso'},
+        {ko:'고양이', en:'Cat', tl:'pusa'}, {ko:'소', en:'Cow', tl:'baka'},
+        {ko:'돼지', en:'Pig', tl:'baboy'}, {ko:'닭', en:'Chicken', tl:'manok'},
+        {ko:'말', en:'Horse', tl:'kabayo'}, {ko:'새', en:'Bird', tl:'ibon'},
+        {ko:'물고기', en:'Fish', tl:'isda'}, {ko:'토끼', en:'Rabbit', tl:'kuneho'},
+      ]
+    },
+    'body_health': {
+      name: {en: "Body & Health", tl: "Katawan at Kalusugan"},
+      data: [
+        {ko:'몸', en:'Body', tl:'katawan'}, {ko:'머리', en:'Head', tl:'ulo'},
+        {ko:'얼굴', en:'Face', tl:'mukha'}, {ko:'눈', en:'Eye', tl:'mata'},
+        {ko:'코', en:'Nose', tl:'ilong'}, {ko:'입', en:'Mouth', tl:'bibig'},
+        {ko:'귀', en:'Ear', tl:'tainga'}, {ko:'손', en:'Hand', tl:'kamay'},
+        {ko:'발', en:'Foot', tl:'paa'}, {ko:'다리', en:'Leg', tl:'binti'},
+        {ko:'팔', en:'Arm', tl:'braso'}, {ko:'어깨', en:'Shoulder', tl:'balikat'},
+        {ko:'배', en:'Abdomen', tl:'tiyan'}, {ko:'허리', en:'Waist', tl:'baywang'},
+        {ko:'이', en:'Tooth', tl:'ngipin'}, {ko:'목', en:'neck/throat', tl:'leeg/lalamunan'},
+        {ko:'등', en:'back', tl:'likod'}, {ko:'무릎', en:'knee', tl:'tuhod'},
+        {ko:'손가락', en:'finger', tl:'daliri (kamay)'}, {ko:'발가락', en:'toe', tl:'daliri (paa)'},
+        {ko:'심장', en:'heart', tl:'puso'},
+        {ko:'건강', en:'Health', tl:'kalusugan'}, {ko:'병원', en:'Hospital', tl:'ospital'},
+        {ko:'약', en:'Medicine', tl:'gamot'}, {ko:'감기', en:'Cold (illness)', tl:'sipon'},
+        {ko:'기침', en:'Cough', tl:'ubo'}, {ko:'열', en:'Fever', tl:'lagnat'},
+        {ko:'통증', en:'Pain', tl:'sakit'}, {ko:'치료', en:'Treatment', tl:'lunas'},
+        {ko:'수술', en:'Surgery', tl:'operasyon'}, {ko:'증상', en:'Symptom', tl:'sintomas'},
+        {ko:'혈압', en:'blood pressure', tl:'presyon'}, {ko:'처방전', en:'prescription', tl:'reseta'},
+        {ko:'진료', en:'medical treatment', tl:'konsultang medikal'}, {ko:'응급실', en:'emergency room', tl:'ER'},
+      ]
+    },
+    'colors': {
+      name: {en: "Colors", tl: "Mga Kulay"},
+      data: [
+        {ko:'색/색깔', en:'Color', tl:'kulay'}, {ko:'빨간색', en:'Red', tl:'pula'},
+        {ko:'파란색', en:'Blue', tl:'asul'}, {ko:'노란색', en:'Yellow', tl:'dilaw'},
+        {ko:'초록색', en:'Green', tl:'berde'}, {ko:'하얀색', en:'White', tl:'puti'},
+        {ko:'검은색', en:'Black', tl:'itim'}, {ko:'보라색', en:'Purple', tl:'lila'},
+        {ko:'주황색', en:'Orange', tl:'kahel'}, {ko:'분홍색', en:'Pink', tl:'rosas'},
+        {ko:'회색', en:'gray', tl:'abo'}, {ko:'갈색', en:'brown', tl:'kayumanggi'},
+      ]
+    },
+    'transportation': {
+      name: {en: "Transportation", tl: "Transportasyon"},
+      data: [
+        {ko:'자동차', en:'car', tl:'kotse'}, {ko:'트럭', en:'truck', tl:'trak'},
+        {ko:'자전거', en:'bicycle', tl:'bisikleta'}, {ko:'오토바이', en:'motorcycle', tl:'motorsiklo'},
+        {ko:'버스', en:'bus', tl:'bus'}, {ko:'택시', en:'taxi', tl:'taksi'},
+        {ko:'지하철', en:'subway', tl:'tren sa ilalim'}, {ko:'기차', en:'train', tl:'tren'},
+        {ko:'비행기', en:'airplane', tl:'eroplano'}, {ko:'배', en:'boat/ship', tl:'bangka/barko'},
+        {ko:'운전면허증', en:'driver’s license', tl:'lisensya sa pagmamaneho'},
+        {ko:'주차', en:'parking', tl:'paradahan'}, {ko:'주차장', en:'parking lot', tl:'paradahan'},
+        {ko:'신호등', en:'traffic light', tl:'ilaw trapiko'}, {ko:'횡단보도', en:'crosswalk', tl:'tawiran'},
+        {ko:'도로 / 길', en:'road/street', tl:'kalsada/daan'}, {ko:'교통사고', en:'traffic accident', tl:'aksidente sa kalsada'},
+        {ko:'안전벨트', en:'seatbelt', tl:'seatbelt'}, {ko:'정류장', en:'stop (bus)', tl:'hintuan'},
+      ]
+    },
+    'weather_temperature': {
+      name: {en: "Weather & Temperature", tl: "Panahon at Temperatura"},
+      data: [
+        {ko:'날씨', en:'weather', tl:'panahon'}, {ko:'기온', en:'temperature', tl:'temperatura'},
+      ]
+    }
+  };
+  
+  
+// Populate 'all' category
+for (const categoryKey in CATEGORIZED_NOUNS) {
+  if (categoryKey !== 'all' && CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
+    CATEGORIZED_NOUNS['all'].data =
+      CATEGORIZED_NOUNS['all'].data.concat(CATEGORIZED_NOUNS[categoryKey].data);
+  }
+}
+
+  // ===== STATE =====
+  let queue = [];
+  let current = null;
+  let index = 0;
+  let audioReady = false;
+  let selectedCategory = 'all';
+
+  const gate = document.getElementById('gate');
+  const finish = document.getElementById('finish');
+  const progressEl = document.getElementById('progress');
+  const flipWrap = document.getElementById('flipWrap');
+  const cardEl = document.getElementById('card');
+  const front = document.getElementById('front');
+  const back  = document.getElementById('back');
+  const player = document.getElementById('koAudio');
+  let isAnimating = false;
+
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function randomItem(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
+
+  // ===== AUDIO =====
+  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
+  const audioCache = new Map();
+  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+  function speakWeb(text){
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR'; u.rate = 0.95;
+    try{ speechSynthesis.cancel(); }catch(e){}
+    speechSynthesis.speak(u);
+  }
+  async function playKo(text){
+    if(!audioReady) return;
+    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; }
+    let url = audioCache.get(text);
+    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
+    player.src = url;
+    try{ await player.play(); }catch(e){ speakWeb(text); }
+  }
+
+  // ===== SENTENCE GENERATOR & GLOSSING LOGIC =====
+  const simpleSubjects = ['저는','친구가','고양이가','사람들이'];
+  const simplePredicates = ['있어요.', '없어요.', '좋아요.', '예뻐요.', '먹었어요.'];
+
+  function articleFor(englishNoun){
+    const w = englishNoun.trim();
+    const vowel = ['a','e','i','o','u'];
+    return vowel.includes(w[0]) ? 'an' : 'a';
+  }
+
+  function generateSimpleSentence(nounKo){
+    const subject = randomItem(simpleSubjects);
+    const predicate = randomItem(simplePredicates);
+    return `${subject} ${nounKo} ${predicate}`;
+  }
+
+  const GLOSS_MAP = {
+    // Korean
+    '저는': {en:'I', tl:'ako'}, '친구가': {en:'friend (SUBJ)', tl:'kaibigan'},
+    '고양이가': {en:'cat (SUBJ)', tl:'pusa'}, '사람들이': {en:'people (SUBJ)', tl:'mga tao'},
+
+    // ✅ keys without trailing period to match sanitize()
+    '있어요': {en:'have/exist.', tl:'mayroon.'},
+    '없어요': {en:"don't have/not exist.", tl:'wala.'},
+    '좋아요': {en:'is good.', tl:'mabuti.'},
+    '예뻐요': {en:'is pretty.', tl:'maganda.'},
+    '먹었어요': {en:'ate.', tl:'kumain.'},
+
+    // Particles
+    '은': {en:'(TOP)', tl:'(pantukoy)'}, '는': {en:'(TOP)', tl:'(pantukoy)'},
+    '이': {en:'(SUBJ)', tl:'(paksa)'}, '가': {en:'(SUBJ)', tl:'(paksa)'},
+    '을': {en:'(OBJ)', tl:'(layon)'}, '를': {en:'(OBJ)', tl:'(layon)'},
+    '.': {en:'.', tl:'.'},
+
+    // English → Tagalog (lowercase keys; glossForSentence lowercases tokens)
+    'i': {tl:'ako'}, 'have': {tl:'mayroon'}, 'a': {tl:'isang'}, 'an': {tl:'isang'},
+    'the': {tl:'ang'}, 'my': {tl:'aking'}, 'friend': {tl:'kaibigan'}, 'cat': {tl:'pusa'},
+    'people': {tl:'mga tao'}, 'is': {tl:'ay'}, 'good': {tl:'mabuti'}, 'pretty': {tl:'maganda'},
+    'ate': {tl:'kumain'}
+  };
+
+
+  // =================== ADD NOUNS TO GLOSS_MAP ===================
+  for (const categoryKey in CATEGORIZED_NOUNS) {
+    if (CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
+      CATEGORIZED_NOUNS[categoryKey].data.forEach(item => {
+        GLOSS_MAP[item.ko] = {en: item.en, tl: item.tl};
+        if (!item.en.includes('/') && !item.en.includes('(')) {
+          GLOSS_MAP[item.en.toLowerCase()] = {tl: item.tl};
+        }
+      });
+    }
+  }
+
+  // =================== HELPERS ===================
+  function sanitize(tok){ return tok.replace(/[.,!?…]/g,'').trim(); }
+
+  function glossForSentence(sentence, lang){
+    const tokens = sentence.split(/\s+/).filter(Boolean);
+    return tokens.map(t => {
+      const cleanToken = sanitize(t);
+      if (lang === 'ko') {
+        const gloss = GLOSS_MAP[cleanToken];
+        return {ko: t, en: gloss?.en || '—', tl: gloss?.tl || '—'};
+      } else {
+        const gloss = GLOSS_MAP[cleanToken.toLowerCase()];
+        return {en_word: t, tl: gloss?.tl || '—'};
+      }
+    });
+  }
+
+  // =================== UI RENDER ===================
+  function renderFront(w){
+    front.innerHTML = `
+      <div class="ko-row">
+        <div class="ko">${w.ko}</div>
+        <button class="play-base" id="playBaseFront">🔊 Play</button>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn" id="flipToBack">FLIP the CARD</button>
+      </div>
+    `;
+    front.querySelector('#playBaseFront').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
+    front.querySelector('#flipToBack').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); };
+  }
+
+  function renderBack(w){
+    back.innerHTML = `
+      <div class="ko-big">${w.ko}</div>
+      <ul class="enlines">
+        <li><b>English:</b> <span class="koform">${w.en}</span></li>
+        <li><b>Tagalog:</b> <span class="koform">${w.tl}</span></li>
+      </ul>
+      <div class="controls" style="margin-top:10px">
+        <button class="btn ghost" id="flipToFront">◀ Back</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn" id="playBaseBack">🔊 Base</button>
+      </div>
+    `;
+    back.querySelector('#nextBtn').onclick = (e)=>{ e.stopPropagation(); nextCardAnimated(); };
+    back.querySelector('#playBaseBack').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
+    back.querySelector('#flipToFront').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); };
+  }
+
+  function showCard(w){
+    current = w;
+    renderFront(w);
+    renderBack(w);
+    flipWrap.classList.remove('flipped');
+    updateProgress();
+    playKo(w.ko); // autoplay once
+  }
+
+  // =================== FLOW ===================
+  function buildDeck(){
+    audioReady = true;
+    const sel = document.getElementById('category-select');
+    selectedCategory = sel?.value || 'all';
+
+    const dataForDeck =
+      CATEGORIZED_NOUNS[selectedCategory]?.data?.length
+        ? CATEGORIZED_NOUNS[selectedCategory].data
+        : CATEGORIZED_NOUNS.all.data;
+
+    queue = shuffle([...dataForDeck]);
+    index = 0;
+    gate.style.display = 'none';
+    finish.style.display = 'none';
+
+    if (!queue.length) { front.innerHTML = '<p>No cards in this category.</p>'; return; }
+    showCard(queue[index]);
+  }
+
+  function nextCardAnimated(){
+    if(isAnimating) return;
+    isAnimating = true;
+    flipWrap.classList.add('animating','fly-exit');
+
+    const onExitEnd = (e)=>{
+      if(e.target !== cardEl) return;
+      flipWrap.removeEventListener('animationend', onExitEnd);
+      flipWrap.classList.remove('fly-exit');
+      index++;
+
+      if(index >= queue.length){
+        flipWrap.classList.remove('animating');
+        isAnimating = false;
+        finish.style.display='flex';
+        return;
+      }
+      showCard(queue[index]);
+      flipWrap.classList.add('fly-enter');
+
+      const onEnterEnd = (ev)=>{
+        if(ev.target !== cardEl) return;
+        flipWrap.removeEventListener('animationend', onEnterEnd);
+        flipWrap.classList.remove('fly-enter','animating');
+        isAnimating = false;
+        playKo(queue[index].ko);
+      };
+      flipWrap.addEventListener('animationend', onEnterEnd);
+    };
+    flipWrap.addEventListener('animationend', onExitEnd);
+  }
+
+  // =================== INTERACTIONS ===================
+  flipWrap.addEventListener('click', ()=>{
+    if(!queue.length || isAnimating) return;
+    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+    else nextCardAnimated();
+  });
+
+  cardEl.addEventListener('keydown', (e)=>{
+    if(e.code==='Enter' || e.code==='Space'){ e.preventDefault(); 
+      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+      else nextCardAnimated();
+    }
+    if(e.code==='ArrowRight'){ e.preventDefault(); nextCardAnimated(); }
+    if(e.code==='ArrowLeft'){ e.preventDefault(); flipWrap.classList.remove('flipped'); }
+  });
+
+  // Populate categories
+  (function populateCategories(){
+    const sel = document.getElementById('category-select');
+    if (!sel) return;
+    sel.innerHTML = '';
+    for (const key in CATEGORIZED_NOUNS) {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = CATEGORIZED_NOUNS[key].name?.en || key;
+      sel.appendChild(opt);
+    }
+    sel.value = 'all';
+  })();
+
+  // Toolbar
+  document.getElementById('startBtn').onclick = ()=>{ audioReady = true; gate.style.display = 'none'; buildDeck(); };
+  document.getElementById('restartBtn').onclick = ()=>{ finish.style.display='none'; buildDeck(); };
+  document.getElementById('category-select').addEventListener('change', buildDeck);
+
+  // =================== FIXED AUDIO ===================
+  function speakWeb(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+
+  // dummy utterance para i-flush engine (fix sa repeating bug)
+  const dummy = new SpeechSynthesisUtterance(" ");
+  dummy.lang = 'ko-KR';
+  speechSynthesis.speak(dummy);
+
+  setTimeout(()=>{
+    const u = new SpeechSynthesisUtterance(text.trim());
+    u.lang = 'ko-KR';
+    u.rate = 0.95;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
+  }, 100); // maliit na delay (100ms)
+}
+
+  async function playKo(text){
+    if(!audioReady) return;
+    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ 
+      speakWeb(text); return; 
+    }
+    let url = audioCache.get(text);
+    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
+    player.src = url;
+    try{ await player.play(); }catch(e){ speakWeb(text); }
+  }
+</script>
+<script>
+// Disable right click
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable text selection
+document.addEventListener("selectstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable drag (para hindi madrag palabas yung image/text)
+document.addEventListener("dragstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener("keydown", function(e){
+  if (
+    e.key === "F12" || 
+    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+  }
+}, false);
+</script>
+
+</body>
+</html>
