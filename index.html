@@ -361,6 +361,7 @@
     <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
     <a href="epsdmw.html" class="card"><span>NEW REGISTRATION</span></a>
     <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div>
+	<a href="vocabulary.html" class="card"><span>FLIPCARDS VOCABULARY</span></a>
   </div>
 
   <!-- ===== Password Modal with 9-Dot Pattern ===== -->
@@ -542,6 +543,32 @@ setupGrid();
 
 </script>
 
+<script>
+// Disable right click
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable text selection
+document.addEventListener("selectstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable drag (para hindi madrag palabas yung image/text)
+document.addEventListener("dragstart", function(e){
+  e.preventDefault();
+}, false);
+
+// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener("keydown", function(e){
+  if (
+    e.key === "F12" || 
+    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+  ) {
+    e.preventDefault();
+  }
+}, false);
+</script>
 
  
 </body>
