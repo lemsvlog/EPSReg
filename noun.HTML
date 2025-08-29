@@ -155,6 +155,35 @@
       z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
     }
     .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+	
+	/* ==== Auto image box ==== */
+.img-wrap{
+  width:min(460px,96%); height:180px;
+  border-radius:12px; overflow:hidden; position:relative;
+  border:1px solid rgba(186,230,253,.2);
+  background:linear-gradient(180deg,#071c2c,#061725);
+  display:flex; align-items:center; justify-content:center;
+  margin-top:6px;
+}
+
+.img-wrap.loading::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.08),rgba(255,255,255,0));
+  animation:sweep 1.4s infinite;
+}
+
+
+.img-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* dati: cover */
+  display:block;
+  background:#061725;   /* para may letterbox kung kailangan */
+}
+
+
+@keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
   </style>
 </head>
 <body>
@@ -171,6 +200,11 @@
     <select id="category-select">
       <!-- Options will be populated by JavaScript -->
     </select>
+	<div style="display:flex;align-items:center;gap:10px">
+  <input type="checkbox" id="togglePics" checked />
+  <label for="togglePics">Show picture</label>
+</div>
+
   </div>
 
   <section class="stage">
@@ -921,25 +955,35 @@ function glossForSentence(sentence, lang){
 // ===== UI RENDER =====
 function renderFront(w){
   front.innerHTML = `
+    <div class="img-wrap" id="imgWrapFront">
+      <img id="autoImgFront" alt="" loading="lazy">
+    </div>
+
     <div class="ko-row">
       <div class="ko">${w.ko}</div>
       <button class="play-base" id="playBaseFront">🔊 Play</button>
     </div>
+
     <div class="controls" style="margin-top:10px">
       <button class="btn" id="flipToBack">FLIP the CARD</button>
     </div>
   `;
   front.querySelector('#playBaseFront').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
   front.querySelector('#flipToBack').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); };
+
+  // ⬇️ auto-load ng picture sa FRONT
+  loadAutoImage(w, '#imgWrapFront', '#autoImgFront');
 }
 
 function renderBack(w){
   back.innerHTML = `
     <div class="ko-big">${w.ko}</div>
+
     <ul class="enlines">
       <li><b>English:</b> <span class="koform">${w.en}</span></li>
       <li><b>Tagalog:</b> <span class="koform">${w.tl}</span></li>
     </ul>
+
     <div class="controls" style="margin-top:10px">
       <button class="btn ghost" id="flipToFront">◀ Back</button>
       <button class="btn" id="nextBtn">Next ▶</button>
@@ -1066,7 +1110,219 @@ document.getElementById('startBtn').onclick = ()=>{
 };
 document.getElementById('restartBtn').onclick = ()=>{ finish.style.display='none'; buildDeck(); };
 document.getElementById('category-select').addEventListener('change', buildDeck);
+
+const picsToggle = document.getElementById('togglePics');
+if(picsToggle){
+  picsToggle.addEventListener('change', (e)=>{
+    showPics = e.target.checked;
+    if(queue.length){ showCard(queue[index]); } // re-render current card
+  });
+}
+
 </script>
+
+<script>
+// ==== Auto-image (accurate + always visible) ====
+let showPics = true;
+const imgCache = new Map();
+
+// <category> → hint to disambiguate queries
+const CATEGORY_HINTS = {
+  fruits: 'fruit',
+  vegetables_plants: 'vegetable',
+  meat_seafood: 'food ingredient',
+  dishes_fooditems: 'Korean food',
+  ingredients_drinks: 'ingredient',
+  kitchenware: 'kitchenware',
+  furniture_appliances: 'appliance',
+  public_places: 'building',
+  clothing_accessories: 'clothing',
+  tools_equipment: 'tool',
+  workplace_safety: 'safety equipment',
+  culture_media_tech: 'technology',
+  nature_animals: 'animal',
+  body_health: 'human body',
+  colors: 'color',
+  transportation: 'vehicle',
+  numbers_counters: 'icon',
+  time_calendar: 'calendar',
+  identity_nationality: 'people'
+};
+
+// Specific word → better-known page titles (for accuracy)
+const WORD_OVERRIDES = {
+  'Kimchi stew':'Kimchi jjigae',
+  'Soybean paste stew':'Doenjang jjigae',
+  'Cold noodles':'Naengmyeon',
+  'knife-cut noodles':'Kalguksu',
+  'Fried chicken':'Korean fried chicken',
+  'Rice cake':'Tteok',
+  'Sweet and sour pork':'Tangsuyuk',
+  'Gimbap':'Gimbap',
+  'Bibimbap':'Bibimbap',
+  'Bulgogi':'Bulgogi',
+  'Galbitang':'Galbitang',
+  'Galbi':'Galbi',
+  'Japchae':'Japchae',
+  'Samgyetang':'Samgyetang',
+  'Alien Registration Card (ARC)':'Alien registration card',
+  'Subway station':'Seoul Metropolitan Subway',
+  'KTX':'KTX train',
+  'School':'School building',
+  'Hospital':'Hospital building'
+};
+
+function withTimeout(p, ms=3000){
+  return Promise.race([
+    p,
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms))
+  ]);
+}
+
+// Build a more precise search string
+function primaryQueryFromWord(w){
+  // Start from clean English; fall back to Korean
+  let q = (w.en || '').split('/')[0].split('(')[0].split(',')[0].trim();
+  if (!q) q = w.ko;
+
+  // Per-word overrides (exact, case-insensitive)
+  const hit = Object.keys(WORD_OVERRIDES)
+    .find(k => k.toLowerCase() === q.toLowerCase());
+  if (hit) q = WORD_OVERRIDES[hit];
+
+  // Category hint
+  const hint = CATEGORY_HINTS[selectedCategory] || '';
+
+  // Heuristics for accuracy
+  // Colors → color swatch / sample
+  if (selectedCategory === 'colors') q = `${q} color`;
+  // Public places → building photo
+  if (selectedCategory === 'public_places') q = `${q} building`;
+  // Transportation → vehicle
+  if (selectedCategory === 'transportation') q = `${q} vehicle`;
+  // Body/health → anatomy/medical
+  if (selectedCategory === 'body_health') q = `${q} ${/^[A-Za-z]+$/.test(q) ? 'anatomy' : ''}`.trim();
+  // Dishes → Korean food
+  if (selectedCategory === 'dishes_fooditems') q = `Korean food ${q}`;
+  // Ingredients → ingredient photo
+  if (selectedCategory === 'ingredients_drinks') q = `${q} ingredient`;
+  // Tools/equipment
+  if (selectedCategory === 'tools_equipment') q = `${q} tool`;
+
+  // Generic append
+  if (hint && !q.toLowerCase().includes(hint)) q = `${q} ${hint}`.trim();
+
+  // If still too abstract (pronouns, numbers, time, etc.), keep it,
+  // but our fallback will be a nice SVG so card never looks empty.
+  return q;
+}
+
+// Wikipedia (language) → thumbnail URL
+async function fetchWikiThumbFrom(lang, q){
+  const endpoint =
+    `https://${lang}.wikipedia.org/w/api.php` +
+    `?action=query&origin=*&format=json&prop=pageimages|pageterms` +
+    `&piprop=thumbnail&pithumbsize=640&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('wiki fetch failed');
+  const data = await res.json();
+  const pages = data?.query?.pages;
+  const first = pages ? Object.values(pages)[0] : null;
+  const src = first?.thumbnail?.source;
+  if(src) return src;
+  throw new Error('no thumb');
+}
+
+// Wikimedia Commons fallback
+async function fetchCommonsThumb(q){
+  const endpoint =
+    `https://commons.wikimedia.org/w/api.php` +
+    `?action=query&origin=*&format=json&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}` +
+    `&prop=imageinfo&iiprop=url&iiurlwidth=640`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('commons fetch failed');
+  const data = await res.json();
+  const pages = data?.query?.pages;
+  const first = pages ? Object.values(pages)[0] : null;
+  const info = first?.imageinfo?.[0];
+  const src = info?.thumburl || info?.url;
+  if(src) return src;
+  throw new Error('no commons image');
+}
+
+async function getImageUrl(q){
+  if(imgCache.has(q)) return imgCache.get(q);
+  let url = '';
+  try { url = await fetchWikiThumbFrom('en', q); }
+  catch(_) { try { url = await fetchWikiThumbFrom('ko', q); }
+  catch(_) { try { url = await fetchCommonsThumb(q); }
+  catch(_) { url = `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}`; }}}
+  imgCache.set(q, url);
+  return url;
+}
+
+// SVG placeholder so a card is NEVER blank
+function svgPlaceholder(koText, enText=''){
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#67e8f9"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#061725"/>
+  <rect x="16" y="16" width="768" height="468" rx="20" fill="url(#g)" opacity="0.10" />
+  <text x="50%" y="48%" font-size="64" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">${esc(koText)}</text>
+  <text x="50%" y="64%" font-size="28" fill="#bae6fd" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">${esc(enText)}</text>
+</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+// Preload next image for smoother UX
+function preloadNext(){
+  if (index+1 >= queue.length) return;
+  const nxt = queue[index+1];
+  const q = primaryQueryFromWord(nxt);
+  getImageUrl(q).then(u => { const im = new Image(); im.src = u; }).catch(()=>{});
+}
+
+async function loadAutoImage(w, wrapSel='#imgWrapFront', imgSel='#autoImgFront'){
+  const wrap = document.querySelector(wrapSel);
+  const imgEl = document.querySelector(imgSel);
+  if(!wrap || !imgEl) return;
+
+  if(!showPics){ wrap.style.display='none'; return; }
+  wrap.style.display='';
+  wrap.classList.add('loading');
+  imgEl.removeAttribute('src'); imgEl.alt = '';
+
+  const q = primaryQueryFromWord(w);
+
+  // Set handlers so we always show something
+  imgEl.onerror = () => {
+    imgEl.src = svgPlaceholder(w.ko, (w.en||'').split('/')[0].split('(')[0]);
+  };
+  imgEl.onload = () => {
+    wrap.classList.remove('loading');
+    // Preload next card once current image is ready
+    preloadNext();
+  };
+
+  try{
+    const url = await getImageUrl(q);
+    imgEl.src = url;            // Triggers onload/onerror
+    imgEl.alt = q;
+  }catch(_){
+    // Last-resort placeholder
+    wrap.classList.remove('loading');
+    imgEl.src = svgPlaceholder(w.ko, (w.en||'').split('/')[0].split('(')[0]);
+  }
+}
+</script>
+
+
 
 <script>
 // Disable right click
