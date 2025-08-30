@@ -184,6 +184,78 @@
 
 @keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 
+/* ========== MCQ styles (front) ========== */
+.choices{
+  width:min(460px,96%);
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;
+}
+.choice{
+  position:relative; cursor:pointer; user-select:none;
+  padding:12px 12px 12px 42px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(245,250,255,.92));
+  border:1px solid rgba(6,26,43,.12); color:#0c253a; font-weight:900; letter-spacing:.2px;
+  box-shadow:0 6px 16px rgba(2,12,22,.08); transition:transform .08s ease, box-shadow .18s ease, filter .2s;
+}
+.choice:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(2,12,22,.14); filter:brightness(1.03) }
+.choice.disabled{ pointer-events:none; opacity:.98; }
+
+.choice .badge{
+  position:absolute; left:10px; top:50%; transform:translateY(-50%);
+  width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+  font-weight:900; background:linear-gradient(90deg,#67e8f9,#38bdf8); color:#072235; box-shadow:0 0 12px rgba(56,189,248,.35);
+}
+
+/* feedback colors */
+.choice.correct{
+  background:linear-gradient(180deg, rgba(240,253,244,1), rgba(220,252,231,.96));
+  border-color:rgba(16,185,129,.55); box-shadow:0 0 0 2px rgba(16,185,129,.35), 0 8px 22px rgba(16,185,129,.22);
+}
+.choice.wrong{
+  background:linear-gradient(180deg, rgba(254,242,242,1), rgba(254,226,226,.96));
+  border-color:rgba(239,68,68,.55); box-shadow:0 0 0 2px rgba(239,68,68,.35), 0 8px 22px rgba(239,68,68,.22);
+}
+.choice.pulse{ animation: mcqPulse 1.2s ease-in-out 1 }
+@keyframes mcqPulse{
+  0%{ box-shadow:0 0 0 0 rgba(16,185,129,.45) }
+  100%{ box-shadow:0 0 0 12px rgba(16,185,129,0) }
+}
+
+
+/* === Compact MCQ buttons (smaller) === */
+.choices{ gap:8px; } /* dati 10px */
+
+.choice{
+  padding: 8px 10px 8px 34px;   /* dati 12px 12px 12px 42px */
+  border-radius: 10px;          /* dati 12px */
+  font-size: .95rem;            /* medyo mas maliit ang text */
+}
+
+.choice .badge{
+  left: 8px;                    /* dati 10px */
+  width: 22px; height: 22px;    /* dati 26x26 */
+  border-radius: 6px;           /* dati 8px */
+  font-size: .8rem;             /* liitan yung letra sa badge */
+  line-height: 1;
+}
+
+/* mas subtle lang ang hover para di mukhang malaki */
+.choice:hover{
+  transform: translateY(-0.5px);
+  box-shadow: 0 8px 18px rgba(2,12,22,.12);
+}
+
+/* extra-compact on very small screens */
+@media (max-width: 420px){
+  .choice{
+    font-size: .9rem;
+    padding: 8px 9px 8px 30px;
+  }
+  .choice .badge{
+    width: 20px; height: 20px; left: 7px;
+    font-size: .75rem;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -1938,8 +2010,8 @@ for (const categoryKey in CATEGORIZED_NOUNS) {
 </script>
 
 <script>
-// ===== STATE =====
-let showPics = document.getElementById('togglePics')?.checked ?? true; // respect "Show picture" on first load
+// =================== GLOBAL STATE ===================
+let showPics = document.getElementById('togglePics')?.checked ?? true;
 let queue = [];
 let current = null;
 let index = 0;
@@ -1960,7 +2032,7 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 function randomItem(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
 
-// ===== AUDIO (single source, debounced) =====
+// =================== AUDIO ===================
 const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE"; // leave blank to use Web Speech
 const audioCache = new Map();
 const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
@@ -2000,7 +2072,7 @@ function speakWeb(text){
 }
 
 async function playKo(text){
-  if(!audioReady) return;
+  if(!audioReady){ speakWeb(text); return; }
   stopAllAudio();
 
   if(VOICERSS_KEY && VOICERSS_KEY !== "YOUR_VOICERSS_KEY_HERE"){
@@ -2017,7 +2089,7 @@ async function playKo(text){
   }
 }
 
-// ===== SENTENCE GENERATOR & GLOSSING =====
+// =================== SENTENCE/ GLOSS (kept for future use) ===================
 const simpleSubjects = ['저는','친구가','고양이가','사람들이'];
 const simplePredicates = ['있어요.', '없어요.', '좋아요.', '예뻐요.', '먹었어요.'];
 
@@ -2032,40 +2104,18 @@ function generateSimpleSentence(nounKo){
   return `${subject} ${nounKo} ${predicate}`;
 }
 
-const GLOSS_MAP = {
-  '저는': {en:'I', tl:'ako'}, '친구가': {en:'friend (SUBJ)', tl:'kaibigan'},
-  '고양이가': {en:'cat (SUBJ)', tl:'pusa'}, '사람들이': {en:'people (SUBJ)', tl:'mga tao'},
-
-  '있어요': {en:'have/exist.', tl:'mayroon.'},
-  '없어요': {en:"don't have/not exist.", tl:'wala.'},
-  '좋아요': {en:'is good.', tl:'mabuti.'},
-  '예뻐요': {en:'is pretty.', tl:'maganda.'},
-  '먹었어요': {en:'ate.', tl:'kumain.'},
-
-  '은': {en:'(TOP)', tl:'(pantukoy)'}, '는': {en:'(TOP)', tl:'(pantukoy)'},
-  '이': {en:'(SUBJ)', tl:'(paksa)'}, '가': {en:'(SUBJ)', tl:'(paksa)'},
-  '을': {en:'(OBJ)', tl:'(layon)'}, '를': {en:'(OBJ)', tl:'(layon)'},
-  '.': {en:'.', tl:'.'},
-
-  'i': {tl:'ako'}, 'have': {tl:'mayroon'}, 'a': {tl:'isang'}, 'an': {tl:'isang'},
-  'the': {tl:'ang'}, 'my': {tl:'aking'}, 'friend': {tl:'kaibigan'}, 'cat': {tl:'pusa'},
-  'people': {tl:'mga tao'}, 'is': {tl:'ay'}, 'good': {tl:'mabuti'}, 'pretty': {tl:'maganda'},
-  'ate': {tl:'kumain'}
-};
-
-// Add nouns to gloss map
+// Build gloss map (English/Tagalog)
+const GLOSS_MAP = {};
 for (const categoryKey in CATEGORIZED_NOUNS) {
   if (CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
     CATEGORIZED_NOUNS[categoryKey].data.forEach(item => {
       GLOSS_MAP[item.ko] = {en: item.en, tl: item.tl};
-      if (!item.en.includes('/') && !item.en.includes('(')) {
+      if (item.en && !item.en.includes('/') && !item.en.includes('(')) {
         GLOSS_MAP[item.en.toLowerCase()] = {tl: item.tl};
       }
     });
   }
 }
-
-// Helpers
 function sanitize(tok){ return tok.replace(/[.,!?…]/g,'').trim(); }
 function glossForSentence(sentence, lang){
   const tokens = sentence.split(/\s+/).filter(Boolean);
@@ -2081,29 +2131,299 @@ function glossForSentence(sentence, lang){
   });
 }
 
-// ===== UI RENDER =====
-function renderFront(w){
+// =================== CATEGORY: fill "all" once ===================
+function ensureAllPoolFilled(){
+  if(CATEGORIZED_NOUNS.all.data && CATEGORIZED_NOUNS.all.data.length) return;
+  const seen = new Set();
+  for(const key in CATEGORIZED_NOUNS){
+    if(key==='all') continue;
+    const arr = CATEGORIZED_NOUNS[key].data || [];
+    for(const it of arr){
+      if(!it || !it.ko) continue;
+      if(seen.has(it.ko)) continue;
+      seen.add(it.ko);
+      CATEGORIZED_NOUNS.all.data.push(it);
+    }
+  }
+}
+ensureAllPoolFilled();
+
+// =================== IMAGE FETCH (Wikipedia → Commons → Unsplash) ===================
+const IMG_CACHE = new Map();
+
+const HINT_SUFFIXES = {
+  pronouns: ' (pronoun)',
+  interrogatives: ' (question word)',
+  people_relations: ' (person)',
+  nationality: ' (nationality)',
+  food_drinks: ' (food or drink)',
+  home_goods: ' (household item)',
+  places: ' (place)',
+  transportation_places: ' (transport location)',
+  transportation: ' (vehicle)',
+  clothing_accessories: ' (clothing)',
+  school_office_supplies: ' (stationery)',
+  tools: ' (tool)',
+  materials: ' (material)',
+  nature_weather: ' (nature)',
+  body_health: ' (anatomy)',
+  activities: ' (activity)',
+  time_numbers: ' (time/number)',
+  colors: ' (color)',
+  animals: ' (animal)',
+  emotions_qualities: ' (emotion)',
+  technology_modern_life: ' (technology)',
+  education_study: ' (education)',
+  travel_tourism: ' (travel)',
+  health_medicine: ' (medicine)',
+  banking_finance: ' (finance)',
+  public_services: ' (public service)',
+  events_occasions: ' (event)',
+  work_career: ' (work)',
+  attributes_conditions: ' (concept)',
+  daily_life: ' (daily life)'
+};
+
+// specific word overrides → better Wikipedia hits
+const WORD_OVERRIDES = {
+  'Kimchi stew':'Kimchi jjigae',
+  'Soybean paste stew':'Doenjang jjigae',
+  'Cold noodles':'Naengmyeon',
+  'knife-cut noodles':'Kalguksu',
+  'Fried chicken':'Korean fried chicken',
+  'Rice cake':'Tteok',
+  'Sweet and sour pork':'Tangsuyuk',
+  'Gimbap':'Gimbap',
+  'Bibimbap':'Bibimbap',
+  'Bulgogi':'Bulgogi',
+  'Galbitang':'Galbitang',
+  'Galbi':'Galbi',
+  'Japchae':'Japchae',
+  'Samgyetang':'Samgyetang',
+  'Alien Registration Card (ARC)':'Alien registration card',
+  'Subway station':'Seoul Metropolitan Subway',
+  'KTX':'KTX train',
+  'School':'School building',
+  'Hospital':'Hospital building'
+};
+
+function cleanEnglishLabel(en){
+  return String(en||'')
+    .split('/')[0]
+    .replace(/\(.*?\)/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function englishQueryFor(item){
+  let base = cleanEnglishLabel(item.en);
+  if (!base) base = item.ko;
+  const hit = Object.keys(WORD_OVERRIDES).find(k => k.toLowerCase() === base.toLowerCase());
+  if (hit) base = WORD_OVERRIDES[hit];
+  const suffix = HINT_SUFFIXES[selectedCategory] ?? '';
+  return (base + suffix).trim();
+}
+
+function withTimeout(p, ms=3500){
+  return Promise.race([ p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms)) ]);
+}
+
+async function fetchWikiThumbFrom(lang, q){
+  const endpoint =
+    `https://${lang}.wikipedia.org/w/api.php` +
+    `?action=query&origin=*&format=json&prop=pageimages|pageterms` +
+    `&piprop=thumbnail&pithumbsize=640&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('wiki fetch failed');
+  const data = await res.json();
+  const pages = data?.query?.pages;
+  const first = pages ? Object.values(pages)[0] : null;
+  const src = first?.thumbnail?.source;
+  if(src) return src;
+  throw new Error('no thumb');
+}
+async function fetchCommonsThumb(q){
+  const endpoint =
+    `https://commons.wikimedia.org/w/api.php` +
+    `?action=query&origin=*&format=json&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}` +
+    `&prop=imageinfo&iiprop=url&iiurlwidth=640`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('commons fetch failed');
+  const data = await res.json();
+  const pages = data?.query?.pages;
+  const first = pages ? Object.values(pages)[0] : null;
+  const info = first?.imageinfo?.[0];
+  const src = info?.thumburl || info?.url;
+  if(src) return src;
+  throw new Error('no commons image');
+}
+async function getImageUrl(q){
+  if(IMG_CACHE.has(q)) return IMG_CACHE.get(q);
+  let url = '';
+  try { url = await fetchWikiThumbFrom('en', q); }
+  catch(_) { try { url = await fetchWikiThumbFrom('ko', q); }
+  catch(_) { try { url = await fetchCommonsThumb(q); }
+  catch(_) { url = `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}`; }}}
+  IMG_CACHE.set(q, url);
+  return url;
+}
+
+function svgPlaceholder(koText, enText=''){
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+  <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+    <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#67e8f9"/>
+  </linearGradient></defs>
+  <rect width="100%" height="100%" fill="#061725"/>
+  <rect x="16" y="16" width="768" height="468" rx="20" fill="url(#g)" opacity="0.10" />
+  <text x="50%" y="48%" font-size="64" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">${esc(koText)}</text>
+  <text x="50%" y="64%" font-size="28" fill="#bae6fd" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">${esc(enText)}</text>
+</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+function preloadNext(){
+  if (index+1 >= queue.length) return;
+  const nxt = queue[index+1];
+  const q   = englishQueryFor(nxt);
+  getImageUrl(q).then(src => { const im = new Image(); im.src = src; }).catch(()=>{});
+}
+
+async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImgFront'){
+  const wrap = document.querySelector(wrapSel);
+  const img  = document.querySelector(imgSel);
+  if(!wrap || !img) return;
+
+  if(!showPics){
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = '';
+  wrap.classList.add('loading');
+  img.removeAttribute('src'); img.alt = '';
+
+  const q   = englishQueryFor(item);
+  try{
+    const src = await getImageUrl(q);
+    img.onerror = ()=>{
+      wrap.classList.remove('loading');
+      img.src = svgPlaceholder(item.ko, cleanEnglishLabel(item.en));
+    };
+    img.onload = ()=>{
+      wrap.classList.remove('loading');
+      preloadNext();
+    };
+    img.src = src;
+    img.alt = `${cleanEnglishLabel(item.en)} (${item.ko})`;
+  }catch{
+    wrap.classList.remove('loading');
+    img.src = svgPlaceholder(item.ko, cleanEnglishLabel(item.en));
+  }
+}
+
+// =================== MCQ (FRONT) ===================
+const _shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+const _sampleN = (arr, n) => _shuffle(arr).slice(0, n);
+
+function getCurrentPool(){
+  const sel = document.getElementById('category-select');
+  const key = sel?.value || 'all';
+  selectedCategory = key;
+  let pool = [];
+  if(key && CATEGORIZED_NOUNS[key]?.data?.length){
+    pool = CATEGORIZED_NOUNS[key].data;
+  }else{
+    ensureAllPoolFilled();
+    pool = CATEGORIZED_NOUNS.all.data;
+  }
+  return pool;
+}
+
+function makeChoices(item){
+  const pool = getCurrentPool().filter(x => x && (x.en || x.tl || x.ko) && x.ko !== item.ko);
+
+  const cleanEN = s => cleanEnglishLabel(s || '').trim();
+  const norm = s => cleanEN(s).toLowerCase();
+
+  const correctText = cleanEN(item.en || item.tl || item.ko);
+  const used = new Set([norm(correctText)]);
+  const distractors = [];
+
+  for(const x of _shuffle(pool)){
+    const txt = cleanEN(x.en || x.tl || x.ko);
+    const key = norm(txt);
+    if(!txt || used.has(key)) continue;
+    used.add(key);
+    distractors.push({ text: txt, correct:false });
+    if(distractors.length >= 3) break;
+  }
+
+  const correct = { text: correctText, correct:true };
+  return _shuffle([correct, ...distractors]).slice(0,4);
+}
+
+
+function onPickChoice(evt){
+  evt.stopPropagation();
+  const el = evt.currentTarget;
+  const wrap = el.parentElement;
+  const all = [...wrap.querySelectorAll('.choice')];
+  all.forEach(c => c.classList.add('disabled'));
+  const isCorrect = el.dataset.correct === 'true';
+  if(isCorrect){
+    el.classList.add('correct','pulse');
+  }else{
+    el.classList.add('wrong');
+    const right = all.find(c => c.dataset.correct === 'true');
+    if(right){ right.classList.add('correct','pulse'); }
+  }
+}
+function renderFrontWithChoices(item){
   front.innerHTML = `
-    <div class="img-wrap" id="imgWrapFront">
-      <img id="autoImgFront" alt="" loading="lazy">
+    <div class="ko-row">
+      <div class="ko" aria-label="Korean">${item.ko}</div>
+      <button class="play-base" id="playBaseFront" type="button">🔊 Play</button>
     </div>
 
-    <div class="ko-row">
-      <div class="ko">${w.ko}</div>
-      <button class="play-base" id="playBaseFront">🔊 Play</button>
+    <div class="img-wrap" id="imgWrapFront"
+         role="img" aria-label="photo area"
+         style="height: 400px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+      <img id="autoImgFront" alt="${item.ko}"
+           style="max-width:100%; max-height:100%; object-fit:contain;" />
     </div>
+
+    <div class="choices" id="choices"></div>
 
     <div class="controls" style="margin-top:10px">
       <button class="btn" id="flipToBack">FLIP the CARD</button>
     </div>
   `;
-  front.querySelector('#playBaseFront').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
-  front.querySelector('#flipToBack').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); };
 
-  // auto-load picture on FRONT (English-first)
-  loadAutoImage(w, '#imgWrapFront', '#autoImgFront');
+  front.querySelector('#playBaseFront')?.addEventListener('click', (e)=>{ e.stopPropagation(); playKo(item.ko); });
+  front.querySelector('#flipToBack')?.addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+
+  // load bigger image
+  loadAutoImage(item, '#imgWrapFront', '#autoImgFront');
+
+  // build English choices
+  const opts = makeChoices(item);
+  const letters = ['A','B','C','D'];
+  const box = document.getElementById('choices');
+  box.innerHTML = '';
+  opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'choice';
+    div.dataset.correct = String(!!opt.correct);
+    div.innerHTML = `<span class="badge">${letters[i]}</span>${opt.text}`;
+    div.addEventListener('click', onPickChoice, { once:true });
+    div.addEventListener('click', (e)=>e.stopPropagation());
+    box.appendChild(div);
+  });
 }
 
+
+// =================== BACK (kept as-is) ===================
 function renderBack(w){
   back.innerHTML = `
     <div class="ko-big">${w.ko}</div>
@@ -2124,22 +2444,23 @@ function renderBack(w){
   back.querySelector('#flipToFront').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); };
 }
 
-// IMPORTANT: no autoplay here
+// =================== SHOW CARD (uses MCQ on front) ===================
 function showCard(w){
   current = w;
-  renderFront(w);
-  renderBack(w);
+  renderFrontWithChoices(w);   // FRONT = MCQ
+  renderBack(w);               // BACK = unchanged
   flipWrap.classList.remove('flipped');
   updateProgress();
 }
 
-// ===== FLOW =====
+// =================== FLOW ===================
 function autoplayCurrentOnce(){
   if (!queue.length) return;
   setTimeout(()=> playKo(queue[index].ko), 220);
 }
 
 function buildDeck(){
+  ensureAllPoolFilled();
   const sel = document.getElementById('category-select');
   selectedCategory = sel?.value || 'all';
 
@@ -2195,8 +2516,10 @@ function nextCardAnimated(){
   flipWrap.addEventListener('animationend', onExitEnd);
 }
 
-// ===== INTERACTIONS =====
-flipWrap.addEventListener('click', ()=>{
+// =================== INTERACTIONS ===================
+flipWrap.addEventListener('click', (e)=>{
+  // Huwag mag-react kapag nag-click sa choice (may stopPropagation na tayo),
+  // kaya ito ay para lang sa “blank” area click.
   if(!queue.length || isAnimating) return;
   if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
   else nextCardAnimated();
@@ -2243,357 +2566,12 @@ if(picsToggle){
   });
 }
 
-// ===== IMAGE FETCH (English-first via Wikipedia) =====
-const IMG_CACHE = new Map();
-
-// map category keys from your dataset → hint suffixes
-const HINT_SUFFIXES = {
-  fruits: ' (fruit)',
-  vegetables_plants: ' (vegetable)',
-  meat_seafood: ' (food)',
-  dishes_fooditems: ' (Korean dish)',
-  ingredients_drinks: ' (ingredient)',
-  kitchenware: ' (kitchenware)',
-  furniture_appliances: ' (appliance)',
-  public_places: ' (building)',
-  clothing_accessories: ' (clothing)',
-  tools_equipment: ' (tool)',
-  workplace_safety: ' (safety equipment)',
-  culture_media_tech: ' (technology)',
-  nature_animals: ' (animal)',
-  body_health: ' (anatomy)',
-  colors: ' (color)',
-  transportation: ' (vehicle)',
-  numbers_counters: '',
-  time_calendar: '',
-  identity_nationality: ' (people)'
-};
-
-// specific word overrides → better Wikipedia page hits
-const WORD_OVERRIDES = {
-  'Kimchi stew':'Kimchi jjigae',
-  'Soybean paste stew':'Doenjang jjigae',
-  'Cold noodles':'Naengmyeon',
-  'knife-cut noodles':'Kalguksu',
-  'Fried chicken':'Korean fried chicken',
-  'Rice cake':'Tteok',
-  'Sweet and sour pork':'Tangsuyuk',
-  'Gimbap':'Gimbap',
-  'Bibimbap':'Bibimbap',
-  'Bulgogi':'Bulgogi',
-  'Galbitang':'Galbitang',
-  'Galbi':'Galbi',
-  'Japchae':'Japchae',
-  'Samgyetang':'Samgyetang',
-  'Alien Registration Card (ARC)':'Alien registration card',
-  'Subway station':'Seoul Metropolitan Subway',
-  'KTX':'KTX train',
-  'School':'School building',
-  'Hospital':'Hospital building'
-};
-
-function cleanEnglishLabel(en){
-  return String(en||'')
-    .split('/')[0]
-    .replace(/\(.*?\)/g,'')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-
-// build a clean English query, with light disambiguation per YOUR category keys
-function englishQueryFor(item){
-  let base = cleanEnglishLabel(item.en);
-  if (!base) base = item.ko; // extreme fallback
-  // per-word override (exact, case-insensitive)
-  const hit = Object.keys(WORD_OVERRIDES).find(k => k.toLowerCase() === base.toLowerCase());
-  if (hit) base = WORD_OVERRIDES[hit];
-
-  const suffix = HINT_SUFFIXES[selectedCategory] ?? '';
-  return (base + suffix).trim();
-}
-
-async function fetchWikiThumbByEnglish(query){
-  if(!query) return null;
-  if(IMG_CACHE.has(query)) return IMG_CACHE.get(query);
-
-  const url = `https://en.wikipedia.org/w/api.php` +
-    `?action=query&format=json&origin=*` +
-    `&prop=pageimages&piprop=thumbnail&pithumbsize=520` +
-    `&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(query)}`;
-
-  try{
-    const res = await fetch(url, {mode:'cors', cache:'force-cache'});
-    const json = await res.json();
-    const pages = json?.query?.pages;
-    const first = pages ? Object.values(pages)[0] : null;
-    const src = first?.thumbnail?.source || null;
-    IMG_CACHE.set(query, src);
-    return src;
-  }catch{
-    return null;
+// Ensure global flip-to-front works kahit anong back template mo
+document.addEventListener('click', (e)=>{
+  if(e.target && e.target.id === 'flipToFront'){
+    document.getElementById('flipWrap')?.classList.remove('flipped');
   }
-}
-
-// simple SVG fallback so the card never looks empty
-function svgPlaceholder(koText, enText=''){
-  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
-  <defs>
-    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#0ea5e9"/>
-      <stop offset="100%" stop-color="#67e8f9"/>
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" fill="#061725"/>
-  <rect x="16" y="16" width="768" height="468" rx="20" fill="url(#g)" opacity="0.10" />
-  <text x="50%" y="48%" font-size="64" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">${esc(koText)}</text>
-  <text x="50%" y="64%" font-size="28" fill="#bae6fd" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">${esc(enText)}</text>
-</svg>`;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-}
-
-// preload next image for smoother UX
-function preloadNext(){
-  if (index+1 >= queue.length) return;
-  const nxt = queue[index+1];
-  const q   = englishQueryFor(nxt);
-  fetchWikiThumbByEnglish(q).then(src => {
-    if (!src) return;
-    const im = new Image();
-    im.src = src;
-  }).catch(()=>{});
-}
-
-async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImgFront'){
-  const wrap = document.querySelector(wrapSel);
-  const img  = document.querySelector(imgSel);
-  if(!wrap || !img) return;
-
-  // honor the toggle
-  if(!showPics){
-    wrap.style.display = 'none';
-    return;
-  }
-  wrap.style.display = '';
-  wrap.classList.add('loading');
-  img.removeAttribute('src'); img.alt = '';
-
-  const q   = englishQueryFor(item);
-  const src = await fetchWikiThumbByEnglish(q);
-
-  if(src){
-    img.src = src;
-    img.alt = `${cleanEnglishLabel(item.en)} (${item.ko})`;
-    wrap.classList.remove('loading');
-    preloadNext();
-  }else{
-    wrap.classList.remove('loading');
-    img.src = svgPlaceholder(item.ko, cleanEnglishLabel(item.en));
-  }
-}
-</script>
-
-
-<script>
-// ==== Auto-image (accurate + always visible) ====
-let showPics = true;
-const imgCache = new Map();
-
-// <category> → hint to disambiguate queries
-const CATEGORY_HINTS = {
-  fruits: 'fruit',
-  vegetables_plants: 'vegetable',
-  meat_seafood: 'food ingredient',
-  dishes_fooditems: 'Korean food',
-  ingredients_drinks: 'ingredient',
-  kitchenware: 'kitchenware',
-  furniture_appliances: 'appliance',
-  public_places: 'building',
-  clothing_accessories: 'clothing',
-  tools_equipment: 'tool',
-  workplace_safety: 'safety equipment',
-  culture_media_tech: 'technology',
-  nature_animals: 'animal',
-  body_health: 'human body',
-  colors: 'color',
-  transportation: 'vehicle',
-  numbers_counters: 'icon',
-  time_calendar: 'calendar',
-  identity_nationality: 'people'
-};
-
-// Specific word → better-known page titles (for accuracy)
-const WORD_OVERRIDES = {
-  'Kimchi stew':'Kimchi jjigae',
-  'Soybean paste stew':'Doenjang jjigae',
-  'Cold noodles':'Naengmyeon',
-  'knife-cut noodles':'Kalguksu',
-  'Fried chicken':'Korean fried chicken',
-  'Rice cake':'Tteok',
-  'Sweet and sour pork':'Tangsuyuk',
-  'Gimbap':'Gimbap',
-  'Bibimbap':'Bibimbap',
-  'Bulgogi':'Bulgogi',
-  'Galbitang':'Galbitang',
-  'Galbi':'Galbi',
-  'Japchae':'Japchae',
-  'Samgyetang':'Samgyetang',
-  'Alien Registration Card (ARC)':'Alien registration card',
-  'Subway station':'Seoul Metropolitan Subway',
-  'KTX':'KTX train',
-  'School':'School building',
-  'Hospital':'Hospital building'
-};
-
-function withTimeout(p, ms=3000){
-  return Promise.race([
-    p,
-    new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms))
-  ]);
-}
-
-// Build a more precise search string
-function primaryQueryFromWord(w){
-  // Start from clean English; fall back to Korean
-  let q = (w.en || '').split('/')[0].split('(')[0].split(',')[0].trim();
-  if (!q) q = w.ko;
-
-  // Per-word overrides (exact, case-insensitive)
-  const hit = Object.keys(WORD_OVERRIDES)
-    .find(k => k.toLowerCase() === q.toLowerCase());
-  if (hit) q = WORD_OVERRIDES[hit];
-
-  // Category hint
-  const hint = CATEGORY_HINTS[selectedCategory] || '';
-
-  // Heuristics for accuracy
-  // Colors → color swatch / sample
-  if (selectedCategory === 'colors') q = `${q} color`;
-  // Public places → building photo
-  if (selectedCategory === 'public_places') q = `${q} building`;
-  // Transportation → vehicle
-  if (selectedCategory === 'transportation') q = `${q} vehicle`;
-  // Body/health → anatomy/medical
-  if (selectedCategory === 'body_health') q = `${q} ${/^[A-Za-z]+$/.test(q) ? 'anatomy' : ''}`.trim();
-  // Dishes → Korean food
-  if (selectedCategory === 'dishes_fooditems') q = `Korean food ${q}`;
-  // Ingredients → ingredient photo
-  if (selectedCategory === 'ingredients_drinks') q = `${q} ingredient`;
-  // Tools/equipment
-  if (selectedCategory === 'tools_equipment') q = `${q} tool`;
-
-  // Generic append
-  if (hint && !q.toLowerCase().includes(hint)) q = `${q} ${hint}`.trim();
-
-  // If still too abstract (pronouns, numbers, time, etc.), keep it,
-  // but our fallback will be a nice SVG so card never looks empty.
-  return q;
-}
-
-// Wikipedia (language) → thumbnail URL
-async function fetchWikiThumbFrom(lang, q){
-  const endpoint =
-    `https://${lang}.wikipedia.org/w/api.php` +
-    `?action=query&origin=*&format=json&prop=pageimages|pageterms` +
-    `&piprop=thumbnail&pithumbsize=640&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}`;
-  const res = await withTimeout(fetch(endpoint), 3500);
-  if(!res.ok) throw new Error('wiki fetch failed');
-  const data = await res.json();
-  const pages = data?.query?.pages;
-  const first = pages ? Object.values(pages)[0] : null;
-  const src = first?.thumbnail?.source;
-  if(src) return src;
-  throw new Error('no thumb');
-}
-
-// Wikimedia Commons fallback
-async function fetchCommonsThumb(q){
-  const endpoint =
-    `https://commons.wikimedia.org/w/api.php` +
-    `?action=query&origin=*&format=json&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}` +
-    `&prop=imageinfo&iiprop=url&iiurlwidth=640`;
-  const res = await withTimeout(fetch(endpoint), 3500);
-  if(!res.ok) throw new Error('commons fetch failed');
-  const data = await res.json();
-  const pages = data?.query?.pages;
-  const first = pages ? Object.values(pages)[0] : null;
-  const info = first?.imageinfo?.[0];
-  const src = info?.thumburl || info?.url;
-  if(src) return src;
-  throw new Error('no commons image');
-}
-
-async function getImageUrl(q){
-  if(imgCache.has(q)) return imgCache.get(q);
-  let url = '';
-  try { url = await fetchWikiThumbFrom('en', q); }
-  catch(_) { try { url = await fetchWikiThumbFrom('ko', q); }
-  catch(_) { try { url = await fetchCommonsThumb(q); }
-  catch(_) { url = `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}`; }}}
-  imgCache.set(q, url);
-  return url;
-}
-
-// SVG placeholder so a card is NEVER blank
-function svgPlaceholder(koText, enText=''){
-  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const svg =
-`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
-  <defs>
-    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#0ea5e9"/>
-      <stop offset="100%" stop-color="#67e8f9"/>
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" fill="#061725"/>
-  <rect x="16" y="16" width="768" height="468" rx="20" fill="url(#g)" opacity="0.10" />
-  <text x="50%" y="48%" font-size="64" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">${esc(koText)}</text>
-  <text x="50%" y="64%" font-size="28" fill="#bae6fd" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">${esc(enText)}</text>
-</svg>`;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-}
-
-// Preload next image for smoother UX
-function preloadNext(){
-  if (index+1 >= queue.length) return;
-  const nxt = queue[index+1];
-  const q = primaryQueryFromWord(nxt);
-  getImageUrl(q).then(u => { const im = new Image(); im.src = u; }).catch(()=>{});
-}
-
-async function loadAutoImage(w, wrapSel='#imgWrapFront', imgSel='#autoImgFront'){
-  const wrap = document.querySelector(wrapSel);
-  const imgEl = document.querySelector(imgSel);
-  if(!wrap || !imgEl) return;
-
-  if(!showPics){ wrap.style.display='none'; return; }
-  wrap.style.display='';
-  wrap.classList.add('loading');
-  imgEl.removeAttribute('src'); imgEl.alt = '';
-
-  const q = primaryQueryFromWord(w);
-
-  // Set handlers so we always show something
-  imgEl.onerror = () => {
-    imgEl.src = svgPlaceholder(w.ko, (w.en||'').split('/')[0].split('(')[0]);
-  };
-  imgEl.onload = () => {
-    wrap.classList.remove('loading');
-    // Preload next card once current image is ready
-    preloadNext();
-  };
-
-  try{
-    const url = await getImageUrl(q);
-    imgEl.src = url;            // Triggers onload/onerror
-    imgEl.alt = q;
-  }catch(_){
-    // Last-resort placeholder
-    wrap.classList.remove('loading');
-    imgEl.src = svgPlaceholder(w.ko, (w.en||'').split('/')[0].split('(')[0]);
-  }
-}
+});
 </script>
 
 
