@@ -146,7 +146,7 @@
 
   <header>
     <h1 class="title">VIZKOR Flip Cards</h1>
-    <p class="subtitle">Korean Advanced Verb 101-300 (minus 3)</p>
+    <p class="subtitle">Korean Advanced Verb 150</p>
     <div class="progress" id="progress">&nbsp;</div>
   </header>
 
@@ -186,203 +186,156 @@
   // ===== Data =====
  // ===== 1) WORDS_MASTER =====
 const WORDS_MASTER = [
-  { ko:'굽다', en:'To grill/bake', present:'구워요', past:'구웠어요', future:'구울 거예요' },           // 101
-  { ko:'구하다', en:'To find/save/seek', present:'구해요', past:'구했어요', future:'구할 거예요' },     // 102
-  { ko:'그치다', en:'To stop (rain/snow)', present:'그쳐요', past:'그쳤어요', future:'그칠 거예요' },     // 103
-  { ko:'금연하다', en:'To quit smoking', present:'금연해요', past:'금연했어요', future:'금연할 거예요' }, // 104
-  { ko:'금지하다', en:'To prohibit/forbid', present:'금지해요', past:'금지했어요', future:'금지할 거예요' }, // 105
-  { ko:'기념하다', en:'To commemorate', present:'기념해요', past:'기념했어요', future:'기념할 거예요' },  // 106
-  { ko:'기도하다', en:'To pray', present:'기도해요', past:'기도했어요', future:'기도할 거예요' },        // 107
-  { ko:'내려받다', en:'To download', present:'내려받아요', past:'내려받았어요', future:'내려받을 거예요' }, // 110
-  { ko:'내려오다', en:'To come down', present:'내려와요', past:'내려왔어요', future:'내려올 거예요' },     // 111
-  { ko:'농구하다', en:'To play basketball', present:'농구해요', past:'농구했어요', future:'농구할 거예요' }, // 113
-  { ko:'누르다', en:'To press', present:'눌러요', past:'눌렀어요', future:'누를 거예요' },               // 114
-  { ko:'닦다', en:'To wipe/polish/brush', present:'닦아요', past:'닦았어요', future:'닦을 거예요' },      // 115
-  { ko:'다니다', en:'To attend/go regularly', present:'다녀요', past:'다녔어요', future:'다닐 거예요' },    // 116
-  { ko:'다치다', en:'To get hurt/injured', present:'다쳐요', past:'다쳤어요', future:'다칠 거예요' },        // 117
-  { ko:'달다', en:'To hang/put on', present:'달아요', past:'달았어요', future:'달 거예요' },              // 118
-  { ko:'당기다', en:'To pull', present:'당겨요', past:'당겼어요', future:'당길 거예요' },                 // 119
-  { ko:'대접하다', en:'To treat/serve', present:'대접해요', past:'대접했어요', future:'대접할 거예요' },    // 120
-  { ko:'데우다', en:'To heat up/reheat', present:'데워요', past:'데웠어요', future:'데울 거예요' },          // 121
-  { ko:'돌리다', en:'To turn/operate/spin', present:'돌려요', past:'돌렸어요', future:'돌릴 거예요' },       // 122
-  { ko:'두다', en:'To put/place/leave', present:'둬요', past:'뒀어요', future:'둘 거예요' },               // 123
-  { ko:'들다', en:'To hold/carry/take (age)', present:'들어요', past:'들었어요', future:'들 거예요' },       // 124
-  { ko:'들어가다', en:'To go in', present:'들어가요', past:'들어갔어요', future:'들어갈 거예요' },            // 125
-  { ko:'따라 부르다', en:'To sing along', present:'따라 불러요', past:'따라 불렀어요', future:'따라 부를 거예요' }, // 126
-  { ko:'따라 추다', en:'To dance along', present:'따라 춰요', past:'따라 췄어요', future:'따라 출 거예요' },       // 127
-  { ko:'따다', en:'To pick/open/earn', present:'따요', past:'땄어요', future:'딸 거예요' },               // 128
-  { ko:'떠들다', en:'To make noise/chatter', present:'떠들어요', past:'떠들었어요', future:'떠들 거예요' }, // 129
-  { ko:'떨리다', en:'To tremble/shake', present:'떨려요', past:'떨렸어요', future:'떨릴 거예요' },          // 130
-  { ko:'뛰어다니다', en:'To run around', present:'뛰어다녀요', past:'뛰어다녔어요', future:'뛰어다닐 거예요' }, // 131
-  { ko:'마음에 들다', en:'To like/be pleased with', present:'마음에 들어요', past:'마음에 들었어요', future:'마음에 들 거예요' }, // 132
-  { ko:'마음을 전하다', en:`To express one's feelings`, present:'마음을 전해요', past:'마음을 전했어요', future:'마음을 전할 거예요' }, // 133
-  { ko:'만지다', en:'To touch', present:'만져요', past:'만졌어요', future:'만질 거예요' },                 // 134
-  { ko:'말씀하시다', en:'To speak (honorific)', present:'말씀하세요', past:'말씀하셨어요', future:'말씀하실 거예요' }, // 135
-  { ko:'맛없다', en:'To be tasteless', present:'맛없어요', past:'맛없었어요', future:'맛없을 거예요' },      // 136
-  { ko:'맛이 좋다', en:'To taste good', present:'맛이 좋아요', past:'맛이 좋았어요', future:'맛이 좋을 거예요' }, // 137
-  { ko:'맛있다', en:'To be delicious', present:'맛있어요', past:'맛있었어요', future:'맛있을 거예요' },      // 138
-  { ko:'맞다', en:'To be correct/fit', present:'맞아요', past:'맞았어요', future:'맞을 거예요' },           // 139
-  { ko:'먼지를 털다', en:'To dust off', present:'먼지를 털어요', past:'먼지를 털었어요', future:'먼지를 털 거예요' }, // 140
-  { ko:'모이다', en:'To gather/assemble', present:'모여요', past:'모였어요', future:'모일 거예요' },        // 141
-  { ko:'모집하다', en:'To recruit/gather', present:'모집해요', past:'모집했어요', future:'모집할 거예요' },  // 142
-  { ko:'묵다', en:'To stay (at a place)', present:'묵어요', past:'묵었어요', future:'묵을 거예요' },        // 143
-  { ko:'문의하다', en:'To inquire', present:'문의해요', past:'문의했어요', future:'문의할 거예요' },          // 144
-  { ko:'무단 횡단하다', en:'To jaywalk', present:'무단 횡단해요', past:'무단 횡단했어요', future:'무단 횡단할 거예요' }, // 145
-  { ko:'바쁘다', en:'To be busy', present:'바빠요', past:'바빴어요', future:'바쁠 거예요' },                 // 146
-  { ko:'바람이 불다', en:'Wind blows', present:'바람이 불어요', past:'바람이 불었어요', future:'바람이 불 거예요' }, // 147
-  { ko:'반입하다', en:'To bring in/carry in', present:'반입해요', past:'반입했어요', future:'반입할 거예요' }, // 148
-  { ko:'발급받다', en:'To be issued', present:'발급받아요', past:'발급받았어요', future:'발급받을 거예요' },    // 149
-  { ko:'밝다', en:'To be bright', present:'밝아요', past:'밝았어요', future:'밝을 거예요' },               // 150
-  { ko:'배송하다', en:'To deliver', present:'배송해요', past:'배송했어요', future:'배송할 거예요' },          // 151
-  { ko:'배탈이 나다', en:'To have an upset stomach', present:'배탈이 나요', past:'배탈이 났어요', future:'배탈이 날 거예요' }, // 152
-  { ko:'버튼을 누르다', en:'To press the button', present:'버튼을 눌러요', past:'버튼을 눌렀어요', future:'버튼을 누를 거예요' }, // 153
-  { ko:'번호표를 뽑다', en:'To take a ticket number', present:'번호표를 뽑아요', past:'번호표를 뽑았어요', future:'번호표를 뽑을 거예요' }, // 154
-  { ko:'보이다', en:'To show/be seen', present:'보여요', past:'보였어요', future:'보일 거예요' },            // 155
-  { ko:'보존하다', en:'To preserve/conserve', present:'보존해요', past:'보존했어요', future:'보존할 거예요' }, // 156
-  { ko:'복잡하다', en:'To be complicated/crowded', present:'복잡해요', past:'복잡했어요', future:'복잡할 거예요' }, // 157
-  { ko:'볶다', en:'To stir-fry', present:'볶아요', past:'볶았어요', future:'볶을 거예요' },                // 158
-  { ko:'부러지다', en:'To break (intrans.)', present:'부러져요', past:'부러졌어요', future:'부러질 거예요' },  // 159
-  { ko:'부르다', en:'To call/sing', present:'불러요', past:'불렀어요', future:'부를 거예요' },               // 160
-  { ko:'부치다', en:'To send (mail)/fry', present:'부쳐요', past:'부쳤어요', future:'부칠 거예요' },          // 161
-  { ko:'부족하다', en:'To be lacking', present:'부족해요', past:'부족했어요', future:'부족할 거예요' },       // 162
-  { ko:'부지런하다', en:'To be diligent', present:'부지런해요', past:'부지런했어요', future:'부지런할 거예요' }, // 163
-  { ko:'붙이다', en:'To attach/paste/light', present:'붙여요', past:'붙였어요', future:'붙일 거예요' },       // 164
-  { ko:'비가 오다', en:'To rain', present:'비가 와요', past:'비가 왔어요', future:'비가 올 거예요' },         // 165
-  { ko:'비싸다', en:'To be expensive', present:'비싸요', past:'비쌌어요', future:'비쌀 거예요' },            // 166
-  { ko:'뼈가 부러지다', en:'To break a bone', present:'뼈가 부러져요', past:'뼈가 부러졌어요', future:'뼈가 부러질 거예요' }, // 167
-  { ko:'빨래하다', en:'To do laundry', present:'빨래해요', past:'빨래했어요', future:'빨래할 거예요' },        // 168
-  { ko:'빨래를 널다', en:'To hang the laundry', present:'빨래를 널어요', past:'빨래를 널었어요', future:'빨래를 널 거예요' }, // 169
-  { ko:'빨래를 걷다', en:'To take down the laundry', present:'빨래를 걷어요', past:'빨래를 걷었어요', future:'빨래를 걷을 거예요' }, // 170
-  { ko:'상하다', en:'To go bad/spoil', present:'상해요', past:'상했어요', future:'상할 거예요' },             // 171
-  { ko:'새치기하다', en:'To cut in line', present:'새치기해요', past:'새치기했어요', future:'새치기할 거예요' }, // 172
-  { ko:'서명하다', en:'To sign (document)', present:'서명해요', past:'서명했어요', future:'서명할 거예요' },   // 173
-  { ko:'설거지하다', en:'To do dishes', present:'설거지해요', past:'설거지했어요', future:'설거지할 거예요' },   // 174
-  { ko:'설사하다', en:'To have diarrhea', present:'설사해요', past:'설사했어요', future:'설사할 거예요' },      // 175
-  { ko:'세배하다', en:`To do the New Year's bow`, present:'세배해요', past:'세배했어요', future:'세배할 거예요' }, // 176
-  { ko:'소리를 내다', en:'To make a sound', present:'소리를 내요', past:'소리를 냈어요', future:'소리를 낼 거예요' }, // 177
-  { ko:'소화가 안 되다', en:'To have indigestion', present:'소화가 안 돼요', past:'소화가 안 됐어요', future:'소화가 안 될 거예요' }, // 178
-  { ko:'손이 베이다', en:`To cut one's hand`, present:'손이 베여요', past:'손이 베었어요', future:'손이 벨 거예요' }, // 179
-  { ko:'쇼핑하다', en:'To shop', present:'쇼핑해요', past:'쇼핑했어요', future:'쇼핑할 거예요' },             // 180
-  { ko:'수술하다', en:'To perform surgery', present:'수술해요', past:'수술했어요', future:'수술할 거예요' },    // 181
-  { ko:'수술을 받다', en:'To undergo surgery', present:'수술을 받아요', past:'수술을 받았어요', future:'수술을 받을 거예요' }, // 182
-  { ko:'수영하다', en:'To swim', present:'수영해요', past:'수영했어요', future:'수영할 거예요' },              // 183
-  { ko:'쉽다', en:'To be easy', present:'쉬워요', past:'쉬웠어요', future:'쉬울 거예요' },                    // 184
-  { ko:'시끄럽다', en:'To be noisy', present:'시끄러워요', past:'시끄러웠어요', future:'시끄러울 거예요' },     // 185
-  { ko:'시원하다', en:'To be cool/refreshing', present:'시원해요', past:'시원했어요', future:'시원할 거예요' },  // 186
-  { ko:'싱싱하다', en:'To be fresh', present:'싱싱해요', past:'싱싱했어요', future:'싱싱할 거예요' },          // 187
-  { ko:'싸다', en:'To be cheap/wrap/pack', present:'싸요', past:'쌌어요', future:'쌀 거예요' },               // 188
-  { ko:'썰다', en:'To slice/chop', present:'썰어요', past:'썰었어요', future:'썰 거예요' },                  // 189
-  { ko:'알아보다', en:'To look for/find out', present:'알아봐요', past:'알아봤어요', future:'알아볼 거예요' },   // 190
-  { ko:'약을 먹다', en:'To take medicine', present:'약을 먹어요', past:'약을 먹었어요', future:'약을 먹을 거예요' }, // 191
-  { ko:'약을 뿌리다', en:'To spray medicine', present:'약을 뿌려요', past:'약을 뿌렸어요', future:'약을 뿌릴 거예요' }, // 192
-  { ko:'얌전하다', en:'To be quiet/gentle', present:'얌전해요', past:'얌전했어요', future:'얌전할 거예요' },   // 193
-  { ko:'어둡다', en:'To be dark', present:'어두워요', past:'어두웠어요', future:'어두울 거예요' },            // 194
-  { ko:'어렵다', en:'To be difficult', present:'어려워요', past:'어려웠어요', future:'어려울 거예요' },        // 195
-  { ko:'어리다', en:'To be young', present:'어려요', past:'어렸어요', future:'어릴 거예요' },                 // 196
-  { ko:'열이 나다', en:'To have a fever', present:'열이 나요', past:'열이 났어요', future:'열이 날 거예요' },  // 197
-  { ko:'영향을 주다', en:'To influence', present:'영향을 줘요', past:'영향을 줬어요', future:'영향을 줄 거예요' }, // 198
-  { ko:'올라오다', en:'To come up', present:'올라와요', past:'올라왔어요', future:'올라올 거예요' },          // 199
-  { ko:'올리다', en:'To upload/raise/offer', present:'올려요', past:'올렸어요', future:'올릴 거예요' },        // 200
-  { ko:'운전하다', en:'To drive', present:'운전해요', past:'운전했어요', future:'운전할 거예요' },            // 201
-  { ko:'위반하다', en:'To violate', present:'위반해요', past:'위반했어요', future:'위반할 거예요' },           // 202
-  { ko:'유명하다', en:'To be famous', present:'유명해요', past:'유명했어요', future:'유명할 거예요' },         // 203
-  { ko:'이용하다', en:'To use/utilize', present:'이용해요', past:'이용했어요', future:'이용할 거예요' },        // 204
-  { ko:'이사하다', en:'To move (house)', present:'이사해요', past:'이사했어요', future:'이사할 거예요' },       // 205
-  { ko:'이야기하다', en:'To talk/chat', present:'이야기해요', past:'이야기했어요', future:'이야기할 거예요' },   // 206
-  { ko:'작동하다', en:'To operate (a device)', present:'작동해요', past:'작동했어요', future:'작동할 거예요' },  // 207
-  { ko:'장을 보다', en:'To buy groceries', present:'장을 봐요', past:'장을 봤어요', future:'장을 볼 거예요' },  // 208
-  { ko:'재미없다', en:'To be uninteresting/boring', present:'재미없어요', past:'재미없었어요', future:'재미없을 거예요' }, // 209
-  { ko:'재미있다', en:'To be interesting/fun', present:'재미있어요', past:'재미있었어요', future:'재미있을 거예요' },    // 210
-  { ko:'저장하다', en:'To save/store', present:'저장해요', past:'저장했어요', future:'저장할 거예요' },         // 211
-  { ko:'절하다', en:'To bow', present:'절해요', past:'절했어요', future:'절할 거예요' },                     // 212
-  { ko:'점검하다', en:'To inspect/check', present:'점검해요', past:'점검했어요', future:'점검할 거예요' },      // 213
-  { ko:'정확하다', en:'To be accurate/exact', present:'정확해요', past:'정확했어요', future:'정확할 거예요' },  // 214
-  { ko:'제기차기하다', en:'To play Jegichagi', present:'제기차기해요', past:'제기차기했어요', future:'제기차기할 거예요' }, // 215
-  { ko:'조용하다', en:'To be quiet', present:'조용해요', past:'조용했어요', future:'조용할 거예요' },          // 216
-  { ko:'조이다', en:'To tighten', present:'조여요', past:'조였어요', future:'조일 거예요' },                 // 217
-  { ko:'조깅하다', en:'To jog', present:'조깅해요', past:'조깅했어요', future:'조깅할 거예요' },               // 218
-  { ko:'졸리다', en:'To feel drowsy/sleepy', present:'졸려요', past:'졸렸어요', future:'졸릴 거예요' },       // 219
-  { ko:'좋다', en:'To be good', present:'좋아요', past:'좋았어요', future:'좋을 거예요' },                    // 220
-  { ko:'주무시다', en:'To sleep (honorific)', present:'주무세요', past:'주무셨어요', future:'주무실 거예요' },   // 221
-  { ko:'주사하다', en:'To inject', present:'주사해요', past:'주사했어요', future:'주사할 거예요' },            // 222
-  { ko:'주사를 놓다', en:'To give an injection', present:'주사를 놓아요', past:'주사를 놓았어요', future:'주사를 놓을 거예요' }, // 223
-  { ko:'주사를 맞다', en:'To get an injection', present:'주사를 맞아요', past:'주사를 맞았어요', future:'주사를 맞을 거예요' }, // 224
-  { ko:'주차하다', en:'To park', present:'주차해요', past:'주차했어요', future:'주차할 거예요' },              // 225
-  { ko:'준비하다', en:'To prepare', present:'준비해요', past:'준비했어요', future:'준비할 거예요' },           // 226
-  { ko:'줄다리기하다', en:'To play tug-of-war', present:'줄다리기해요', past:'줄다리기했어요', future:'줄다리기할 거예요' }, // 227
-  { ko:'줄이다', en:'To reduce/decrease', present:'줄여요', past:'줄였어요', future:'줄일 거예요' },           // 228
-  { ko:'지나가다', en:'To pass by', present:'지나가요', past:'지나갔어요', future:'지나갈 거예요' },           // 229
-  { ko:'지내다', en:'To spend time/get along', present:'지내요', past:'지냈어요', future:'지낼 거예요' },       // 230
-  { ko:'짓다', en:'To build/make', present:'지어요', past:'지었어요', future:'지을 거예요' },                 // 231
-  { ko:'찜질하다', en:'To apply a heat compress', present:'찜질해요', past:'찜질했어요', future:'찜질할 거예요' }, // 232
-  { ko:'차례를 지내다', en:'To hold a memorial service', present:'차례를 지내요', past:'차례를 지냈어요', future:'차례를 지낼 거예요' }, // 233
-  { ko:'차례상을 차리다', en:'To set up a memorial table', present:'차례상을 차려요', past:'차례상을 차렸어요', future:'차례상을 차릴 거예요' }, // 234
-  { ko:'착하다', en:'To be kind/good-natured', present:'착해요', past:'착했어요', future:'착할 거예요' },      // 235
-  { ko:'참가하다', en:'To participate', present:'참가해요', past:'참가했어요', future:'참가할 거예요' },         // 236
-  { ko:'참석하다', en:'To attend', present:'참석해요', past:'참석했어요', future:'참석할 거예요' },            // 237
-  { ko:'참여하다', en:'To participate', present:'참여해요', past:'참여했어요', future:'참여할 거예요' },         // 238
-  { ko:'채팅하다', en:'To chat', present:'채팅해요', past:'채팅했어요', future:'채팅할 거예요' },               // 239
-  { ko:'처방하다', en:'To prescribe', present:'처방해요', past:'처방했어요', future:'처방할 거예요' },          // 240
-  { ko:'처방을 받다', en:'To receive a prescription', present:'처방을 받아요', past:'처방을 받았어요', future:'처방을 받을 거예요' }, // 241
-  { ko:'천천히 하다', en:'To do slowly', present:'천천히 해요', past:'천천히 했어요', future:'천천히 할 거예요' }, // 242
-  { ko:'체온을 재다', en:`To take one's temperature`, present:'체온을 재요', past:'체온을 쟀어요', future:'체온을 잴 거예요' }, // 243
-  { ko:'체험하다', en:'To experience', present:'체험해요', past:'체험했어요', future:'체험할 거예요' },          // 244
-  { ko:'초대하다', en:'To invite', present:'초대해요', past:'초대했어요', future:'초대할 거예요' },            // 245
-  { ko:'초대를 받다', en:'To be invited', present:'초대를 받아요', past:'초대를 받았어요', future:'초대를 받을 거예요' }, // 246
-  { ko:'축구하다', en:'To play soccer', present:'축구해요', past:'축구했어요', future:'축구할 거예요' },         // 247
-  { ko:'축하하다', en:'To congratulate', present:'축하해요', past:'축하했어요', future:'축하할 거예요' },         // 248
-  { ko:'출근하다', en:'To go to work', present:'출근해요', past:'출근했어요', future:'출근할 거예요' },          // 249
-  { ko:'출금하다', en:'To withdraw money', present:'출금해요', past:'출금했어요', future:'출금할 거예요' },       // 250
-  { ko:'출발하다', en:'To depart', present:'출발해요', past:'출발했어요', future:'출발할 거예요' },             // 251
-  { ko:'치료하다', en:'To treat (illness)', present:'치료해요', past:'치료했어요', future:'치료할 거예요' },      // 252
-  { ko:'치료를 받다', en:'To receive treatment', present:'치료를 받아요', past:'치료를 받았어요', future:'치료를 받을 거예요' }, // 253
-  { ko:'치우다', en:'To clear away/tidy up', present:'치워요', past:'치웠어요', future:'치울 거예요' },          // 254
-  { ko:'친절하다', en:'To be kind', present:'친절해요', past:'친절했어요', future:'친절할 거예요' },             // 255
-  { ko:'침을 뱉다', en:'To spit', present:'침을 뱉어요', past:'침을 뱉었어요', future:'침을 뱉을 거예요' },       // 256
-  { ko:'탁구를 치다', en:'To play table tennis', present:'탁구를 쳐요', past:'탁구를 쳤어요', future:'탁구를 칠 거예요' }, // 257
-  { ko:'타고 가다', en:'To go by (transport)', present:'타고 가요', past:'타고 갔어요', future:'타고 갈 거예요' }, // 258
-  { ko:'타고 오다', en:'To come by (transport)', present:'타고 와요', past:'타고 왔어요', future:'타고 올 거예요' }, // 259
-  { ko:'태우다', en:'To burn (something)/give a ride', present:'태워요', past:'태웠어요', future:'태울 거예요' }, // 260
-  { ko:'테니스하다', en:'To play tennis', present:'테니스해요', past:'테니스했어요', future:'테니스할 거예요' },   // 261
-  { ko:'토하다', en:'To vomit', present:'토해요', past:'토했어요', future:'토할 거예요' },                    // 262
-  { ko:'퇴근하다', en:'To leave work', present:'퇴근해요', past:'퇴근했어요', future:'퇴근할 거예요' },          // 263
-  { ko:'튀기다', en:'To deep-fry', present:'튀겨요', past:'튀겼어요', future:'튀길 거예요' },                 // 264
-  { ko:'특별하다', en:'To be special', present:'특별해요', past:'특별했어요', future:'특별할 거예요' },          // 265
-  { ko:'피우다', en:'To smoke/light (fire)', present:'피워요', past:'피웠어요', future:'피울 거예요' },          // 266
-  { ko:'포장하다', en:'To pack/wrap', present:'포장해요', past:'포장했어요', future:'포장할 거예요' },           // 267
-  { ko:'풀다', en:'To unpack/solve/untie', present:'풀어요', past:'풀었어요', future:'풀 거예요' },             // 268
-  { ko:'흔들다', en:'To shake/wave', present:'흔들어요', past:'흔들었어요', future:'흔들 거예요' },             // 269
-  { ko:'흡연하다', en:'To smoke', present:'흡연해요', past:'흡연했어요', future:'흡연할 거예요' },              // 270
-  { ko:'힘들다', en:'To be difficult/hard', present:'힘들어요', past:'힘들었어요', future:'힘들 거예요' },       // 271
-  { ko:'검사하다', en:'To inspect', present:'검사해요', past:'검사했어요', future:'검사할 거예요' },            // 272
-  { ko:'검수하다', en:'To inspect/check goods', present:'검수해요', past:'검수했어요', future:'검수할 거예요' },  // 273
-  { ko:'결속하다', en:'To bind/tie together', present:'결속해요', past:'결속했어요', future:'결속할 거예요' },   // 274
-  { ko:'결정하다', en:'To decide', present:'결정해요', past:'결정했어요', future:'결정할 거예요' },             // 275
-  { ko:'경고하다', en:'To warn', present:'경고해요', past:'경고했어요', future:'경고할 거예요' },               // 276
-  { ko:'고르다', en:'To choose/smooth', present:'골라요', past:'골랐어요', future:'고를 거예요' },             // 277
-  { ko:'곰팡이가 피다', en:'Mold grows', present:'곰팡이가 펴요', past:'곰팡이가 폈어요', future:'곰팡이가 필 거예요' }, // 278
-  { ko:'공제하다', en:'To deduct', present:'공제해요', past:'공제했어요', future:'공제할 거예요' },             // 279
-  { ko:'구부리다', en:'To bend', present:'구부려요', past:'구부렸어요', future:'구부릴 거예요' },             // 280
-  { ko:'귀국하다', en:`To return to one's home country`, present:'귀국해요', past:'귀국했어요', future:'귀국할 거예요' }, // 281
-  { ko:'긁어내다', en:'To scrape off', present:'긁어내요', past:'긁어냈어요', future:'긁어낼 거예요' },         // 282
-  { ko:'긋다', en:'To draw (a line)', present:'그어요', past:'그었어요', future:'그을 거예요' },               // 283
-  { ko:'깔다', en:'To lay/spread (mat/carpet)', present:'깔아요', past:'깔았어요', future:'깔 거예요' },        // 284
-  { ko:'깨다', en:'To break/wake up', present:'깨요', past:'깼어요', future:'깰 거예요' },                    // 285
-  { ko:'깨지다', en:'To be broken', present:'깨져요', past:'깨졌어요', future:'깨질 거예요' },                  // 286
-  { ko:'꼬이다', en:'To get tangled/twisted', present:'꼬여요', past:'꼬였어요', future:'꼬일 거예요' },        // 287
-  { ko:'끓이다', en:'To boil (something)', present:'끓여요', past:'끓였어요', future:'끓일 거예요' },          // 288
-  { ko:'끄다', en:'To turn off/extinguish', present:'꺼요', past:'껐어요', future:'끌 거예요' },               // 289
-  { ko:'끌어올리다', en:'To pull up/hoist', present:'끌어올려요', past:'끌어올렸어요', future:'끌어올릴 거예요' }, // 290
-  { ko:'끼다', en:'To wear (gloves/glasses)/get stuck', present:'껴요', past:'꼈어요', future:'낄 거예요' },     // 291
-  { ko:'끼우다', en:'To insert/fit/fasten', present:'끼워요', past:'끼웠어요', future:'끼울 거예요' },         // 292
-  { ko:'나누다', en:'To divide/share', present:'나눠요', past:'나눴어요', future:'나눌 거예요' },               // 293
-  { ko:'나르다', en:'To carry/transport', present:'날라요', past:'날랐어요', future:'나를 거예요' },            // 294
-  { ko:'납입하다', en:'To pay (fees/installments)', present:'납입해요', past:'납입했어요', future:'납입할 거예요' }, // 295
-  { ko:'납품하다', en:'To deliver goods', present:'납품해요', past:'납품했어요', future:'납품할 거예요' },        // 296
-  { ko:'낮추다', en:'To lower/reduce', present:'낮춰요', past:'낮췄어요', future:'낮출 거예요' },              // 297
-  { ko:'넘어지다', en:'To fall down/trip', present:'넘어져요', past:'넘어졌어요', future:'넘어질 거예요' },       // 298
-  { ko:'녹다', en:'To melt/dissolve', present:'녹아요', past:'녹았어요', future:'녹을 거예요' },               // 299
-  { ko:'녹슬다', en:'To rust', present:'녹슬어요', past:'녹슬었어요', future:'녹슬 거예요' },                  // 300
+ { ko:'달다', en:'To hang/put on', present:'달아요', past:'달았어요', future:'달 거예요' },
+{ ko:'어둡다', en:'To be dark', present:'어두워요', past:'어두웠어요', future:'어두울 거예요' },
+{ ko:'밝다', en:'To be bright', present:'밝아요', past:'밝았어요', future:'밝을 거예요' },
+{ ko:'유명하다', en:'To be famous', present:'유명해요', past:'유명했어요', future:'유명할 거예요' },
+{ ko:'복잡하다', en:'To be complicated/crowded', present:'복잡해요', past:'복잡했어요', future:'복잡할 거예요' },
+{ ko:'비가 오다', en:'To rain', present:'비가 와요', past:'비가 왔어요', future:'비가 올 거예요' },
+{ ko:'흐리다',  en:'To be cloudy',          present:'흐려요',  past:'흐렸어요',   future:'흐릴 거예요' },
+{ ko:'바람이 불다', en:'Wind blows', present:'바람이 불어요', past:'바람이 불었어요', future:'바람이 불 거예요' },
+{ ko:'지나가다', en:'To pass by', present:'지나가요', past:'지나갔어요', future:'지나갈 거예요' },
+{ ko:'돌아가다', en:'To go back/rotate/pass away', present:'돌아가요', past:'돌아갔어요', future:'돌아갈 거예요' },
+{ ko:'올리다', en:'To upload/raise/offer', present:'올려요', past:'올렸어요', future:'올릴 거예요' },
+{ ko:'올리다', en:'To raise', present:'올려요', past:'올렸어요', future:'올릴 거예요' },
+{ ko:'올라가다', en:'To go up',              present:'올라가요', past:'올라갔어요', future:'올라갈 거예요' },
+{ ko:'설거지하다', en:'To do dishes', present:'설거지해요', past:'설거지했어요', future:'설거지할 거예요' },
+{ ko:'빨래하다', en:'To do laundry', present:'빨래해요', past:'빨래했어요', future:'빨래할 거예요' },
+{ ko:'치우다', en:'To clear away/tidy up', present:'치워요', past:'치웠어요', future:'치울 거예요' },
+{ ko:'치우다', en:'To tidy up', present:'치워요', past:'치웠어요', future:'치울 거예요' },
+{ ko:'정리하다', en:'To organize/arrange',   present:'정리해요', past:'정리했어요', future:'정리할 거예요' },
+{ ko:'볶다', en:'To stir-fry', present:'볶아요', past:'볶았어요', future:'볶을 거예요' },
+{ ko:'삶다', en:'To boil', present:'삶아요', past:'삶았어요', future:'삶을 거예요' },
+{ ko:'썰다', en:'To slice/chop', present:'썰어요', past:'썰었어요', future:'썰 거예요' },
+{ ko:'썰다', en:'To slice', present:'썰어요', past:'썰었어요', future:'썰 거예요' },
+{ ko:'굽다', en:'To grill/bake', present:'구워요', past:'구웠어요', future:'구울 거예요' },
+{ ko:'이용하다', en:'To use/utilize', present:'이용해요', past:'이용했어요', future:'이용할 거예요' },
+{ ko:'저장하다', en:'To save/store', present:'저장해요', past:'저장했어요', future:'저장할 거예요' },
+{ ko:'신청하다', en:'To apply',              present:'신청해요', past:'신청했어요', future:'신청할 거예요' },
+{ ko:'주문하다', en:'To order',             present:'주문해요', past:'주문했어요', future:'주문할 거예요' },
+{ ko:'확인하다', en:'To confirm/check',      present:'확인해요', past:'확인했어요', future:'확인할 거예요' },
+{ ko:'확인하다', en:'To confirm', present:'확인해요', past:'확인했어요', future:'확인할 거예요' },
+{ ko:'문의하다', en:'To inquire', present:'문의해요', past:'문의했어요', future:'문의할 거예요' },
+{ ko:'서명하다', en:'To sign (document)', present:'서명해요', past:'서명했어요', future:'서명할 거예요' },
+{ ko:'출근하다', en:'To go to work', present:'출근해요', past:'출근했어요', future:'출근할 거예요' },
+{ ko:'퇴근하다', en:'To leave work', present:'퇴근해요', past:'퇴근했어요', future:'퇴근할 거예요' },
+{ ko:'출발하다', en:'To depart', present:'출발해요', past:'출발했어요', future:'출발할 거예요' },
+{ ko:'도착하다', en:'To arrive', present:'도착해요', past:'도착했어요', future:'도착할 거예요' },
+{ ko:'주사를 맞다', en:'To get an injection', present:'주사를 맞아요', past:'주사를 맞았어요', future:'주사를 맞을 거예요' },
+{ ko:'주사를 놓다', en:'To give an injection', present:'주사를 놓아요', past:'주사를 놓았어요', future:'주사를 놓을 거예요' },
+{ ko:'주사하다', en:'To inject', present:'주사해요', past:'주사했어요', future:'주사할 거예요' },
+{ ko:'주사하다', en:'To inject', present:'주사해요', past:'주사했어요', future:'주사할 거예요' },
+{ ko:'치료하다', en:'To treat (illness)', present:'치료해요', past:'치료했어요', future:'치료할 거예요' },
+{ ko:'치료를 받다', en:'To receive treatment', present:'치료를 받아요', past:'치료를 받았어요', future:'치료를 받을 거예요' },
+{ ko:'수술하다', en:'To perform surgery', present:'수술해요', past:'수술했어요', future:'수술할 거예요' },
+{ ko:'수술을 받다', en:'To undergo surgery', present:'수술을 받아요', past:'수술을 받았어요', future:'수술을 받을 거예요' },
+{ ko:'진료하다', en:'To give medical treatment', present:'진료해요', past:'진료했어요', future:'진료할 거예요' },
+{ ko:'체온을 재다', en:`To take one's temperature`, present:'체온을 재요', past:'체온을 쟀어요', future:'체온을 잴 거예요' },
+{ ko:'체하다', en:'To have indigestion', present:'체해요', past:'체했어요', future:'체할 거예요' },
+{ ko:'소화가 안 되다', en:'To have indigestion', present:'소화가 안 돼요', past:'소화가 안 됐어요', future:'소화가 안 될 거예요' },
+{ ko:'보이다', en:'To show/be seen', present:'보여요', past:'보였어요', future:'보일 거예요' },
+{ ko:'두다', en:'To put/place/leave', present:'둬요', past:'뒀어요', future:'둘 거예요' },
+{ ko:'두다', en:'To put/place', present:'둬요', past:'뒀어요', future:'둘 거예요' },
+{ ko:'들다', en:'To hold/carry/take (age)', present:'들어요', past:'들었어요', future:'들 거예요' },
+{ ko:'놓다', en:'To put down/release/let go', present:'놓아요', past:'놓았어요', future:'놓을 거예요' },
+{ ko:'얻다', en:'To get/obtain', present:'얻어요', past:'얻었어요', future:'얻을 거예요' },
+{ ko:'없애다', en:'To get rid of', present:'없애요', past:'없앴어요', future:'없앨 거예요' },
+{ ko:'변경하다', en:'To change/alter', present:'변경해요', past:'변경했어요', future:'변경할 거예요' },
+{ ko:'변하다', en:'To change/turn into', present:'변해요', past:'변했어요', future:'변할 거예요' },
+{ ko:'맞다', en:'To be correct/fit', present:'맞아요', past:'맞았어요', future:'맞을 거예요' },
+{ ko:'맞다', en:'To be correct', present:'맞아요', past:'맞았어요', future:'맞을 거예요' },
+{ ko:'맞추다', en:'To adjust/fit/assemble', present:'맞춰요', past:'맞췄어요', future:'맞출 거예요' },
+{ ko:'풀다', en:'To unpack/solve/untie', present:'풀어요', past:'풀었어요', future:'풀 거예요' },
+{ ko:'잊다',    en:'To forget',            present:'잊어요',  past:'잊었어요',   future:'잊을 거예요' },
+{ ko:'살다',    en:'To live',               present:'살아요',  past:'살았어요',   future:'살 거예요' },
+{ ko:'죽다',    en:'To die',                present:'죽어요',  past:'죽었어요',   future:'죽을 거예요' },
+{ ko:'달리다',  en:'To run (jog)',          present:'달려요',  past:'달렸어요',   future:'달릴 거예요' },
+{ ko:'쓸다',    en:'To sweep',              present:'쓸어요',  past:'쓸었어요',   future:'쓸 거예요' },
+{ ko:'배달하다', en:'To deliver',            present:'배달해요', past:'배달했어요', future:'배달할 거예요' },
+{ ko:'입금하다', en:'To deposit',            present:'입금해요', past:'입금했어요', future:'입금할 거예요' },
+{ ko:'송금하다', en:'To remit/transfer money', present:'송금해요', past:'송금했어요', future:'송금할 거예요' },
+{ ko:'환전하다', en:'To exchange currency',  present:'환전해요', past:'환전했어요', future:'환전할 거예요' },
+{ ko:'갈다',    en:'To grind',              present:'갈아요',  past:'갈았어요',   future:'갈 거예요' },
+{ ko:'갈아입다', en:'To change clothes',     present:'갈아입어요', past:'갈아입었어요', future:'갈아입을 거예요' },
+{ ko:'감다',    en:'To close eyes',         present:'감아요',  past:'감았어요',   future:'감을 거예요' },
+{ ko:'갖다주다', en:'To bring',              present:'갖다줘요', past:'갖다줬어요', future:'갖다줄 거예요' },
+{ ko:'검색하다', en:'To search',             present:'검색해요', past:'검색했어요', future:'검색할 거예요' },
+{ ko:'게임하다', en:'To play a game',        present:'게임해요', past:'게임했어요', future:'게임할 거예요' },
+{ ko:'고정하다', en:'To fix (make fixed)',   present:'고정해요', past:'고정했어요', future:'고정할 거예요' },
+{ ko:'구하다', en:'To find/save/seek', present:'구해요', past:'구했어요', future:'구할 거예요' },
+{ ko:'그치다', en:'To stop (rain/snow)', present:'그쳐요', past:'그쳤어요', future:'그칠 거예요' },
+{ ko:'금연하다', en:'To quit smoking', present:'금연해요', past:'금연했어요', future:'금연할 거예요' },
+{ ko:'금지하다', en:'To prohibit/forbid', present:'금지해요', past:'금지했어요', future:'금지할 거예요' },
+{ ko:'기념하다', en:'To commemorate', present:'기념해요', past:'기념했어요', future:'기념할 거예요' },
+{ ko:'기도하다', en:'To pray', present:'기도해요', past:'기도했어요', future:'기도할 거예요' },
+{ ko:'내려받다', en:'To download', present:'내려받아요', past:'내려받았어요', future:'내려받을 거예요' },
+{ ko:'농구하다', en:'To play basketball', present:'농구해요', past:'농구했어요', future:'농구할 거예요' },
+{ ko:'누르다', en:'To press', present:'눌러요', past:'눌렀어요', future:'누를 거예요' },
+{ ko:'닦다', en:'To wipe/polish/brush', present:'닦아요', past:'닦았어요', future:'닦을 거예요' },
+{ ko:'다니다', en:'To attend/go regularly', present:'다녀요', past:'다녔어요', future:'다닐 거예요' },
+{ ko:'다치다', en:'To get hurt/injured', present:'다쳐요', past:'다쳤어요', future:'다칠 거예요' },
+{ ko:'당기다', en:'To pull', present:'당겨요', past:'당겼어요', future:'당길 거예요' },
+{ ko:'대접하다', en:'To treat/serve', present:'대접해요', past:'대접했어요', future:'대접할 거예요' },
+{ ko:'데우다', en:'To heat up/reheat', present:'데워요', past:'데웠어요', future:'데울 거예요' },
+{ ko:'돌리다', en:'To turn/operate/spin', present:'돌려요', past:'돌렸어요', future:'돌릴 거예요' },
+{ ko:'따라 부르다', en:'To sing along', present:'따라 불러요', past:'따라 불렀어요', future:'따라 부를 거예요' },
+{ ko:'따라 추다', en:'To dance along', present:'따라 춰요', past:'따라 췄어요', future:'따라 출 거예요' },
+{ ko:'따다', en:'To pick/open/earn', present:'따요', past:'땄어요', future:'딸 거예요' },
+{ ko:'떠들다', en:'To make noise/chatter', present:'떠들어요', past:'떠들었어요', future:'떠들 거예요' },
+{ ko:'떨리다', en:'To tremble/shake', present:'떨려요', past:'떨렸어요', future:'떨릴 거예요' },
+{ ko:'뛰어다니다', en:'To run around', present:'뛰어다녀요', past:'뛰어다녔어요', future:'뛰어다닐 거예요' },
+{ ko:'마음에 들다', en:'To like/be pleased with', present:'마음에 들어요', past:'마음에 들었어요', future:'마음에 들 거예요' },
+{ ko:'마음을 전하다', en:`To express one's feelings`, present:'마음을 전해요', past:'마음을 전했어요', future:'마음을 전할 거예요' },
+{ ko:'만지다', en:'To touch', present:'만져요', past:'만졌어요', future:'만질 거예요' },
+{ ko:'말씀하시다', en:'To speak (honorific)', present:'말씀하세요', past:'말씀하셨어요', future:'말씀하실 거예요' },
+{ ko:'맛없다', en:'To be tasteless', present:'맛없어요', past:'맛없었어요', future:'맛없을 거예요' },
+{ ko:'맛이 좋다', en:'To taste good', present:'맛이 좋아요', past:'맛이 좋았어요', future:'맛이 좋을 거예요' },
+{ ko:'맛있다', en:'To be delicious', present:'맛있어요', past:'맛있었어요', future:'맛있을 거예요' },
+{ ko:'먼지를 털다', en:'To dust off', present:'먼지를 털어요', past:'먼지를 털었어요', future:'먼지를 털 거예요' },
+{ ko:'모이다', en:'To gather/assemble', present:'모여요', past:'모였어요', future:'모일 거예요' },
+{ ko:'모집하다', en:'To recruit/gather', present:'모집해요', past:'모집했어요', future:'모집할 거예요' },
+{ ko:'묵다', en:'To stay (at a place)', present:'묵어요', past:'묵었어요', future:'묵을 거예요' },
+{ ko:'무단 횡단하다', en:'To jaywalk', present:'무단 횡단해요', past:'무단 횡단했어요', future:'무단 횡단할 거예요' },
+{ ko:'반입하다', en:'To bring in/carry in', present:'반입해요', past:'반입했어요', future:'반입할 거예요' },
+{ ko:'발급받다', en:'To be issued', present:'발급받아요', past:'발급받았어요', future:'발급받을 거예요' },
+{ ko:'배송하다', en:'To deliver', present:'배송해요', past:'배송했어요', future:'배송할 거예요' },
+{ ko:'배탈이 나다', en:'To have an upset stomach', present:'배탈이 나요', past:'배탈이 났어요', future:'배탈이 날 거예요' },
+{ ko:'버튼을 누르다', en:'To press the button', present:'버튼을 눌러요', past:'버튼을 눌렀어요', future:'버튼을 누를 거예요' },
+{ ko:'번호표를 뽑다', en:'To take a ticket number', present:'번호표를 뽑아요', past:'번호표를 뽑았어요', future:'번호표를 뽑을 거예요' },
+{ ko:'보존하다', en:'To preserve/conserve', present:'보존해요', past:'보존했어요', future:'보존할 거예요' },
+{ ko:'부러지다', en:'To break (intrans.)', present:'부러져요', past:'부러졌어요', future:'부러질 거예요' },
+{ ko:'부치다', en:'To send (mail)/fry', present:'부쳐요', past:'부쳤어요', future:'부칠 거예요' },
+{ ko:'부족하다', en:'To be lacking', present:'부족해요', past:'부족했어요', future:'부족할 거예요' },
+{ ko:'부지런하다', en:'To be diligent', present:'부지런해요', past:'부지런했어요', future:'부지런할 거예요' },
+{ ko:'뼈가 부러지다', en:'To break a bone', present:'뼈가 부러져요', past:'뼈가 부러졌어요', future:'뼈가 부러질 거예요' },
+{ ko:'빨래를 널다', en:'To hang the laundry', present:'빨래를 널어요', past:'빨래를 널었어요', future:'빨래를 널 거예요' },
+{ ko:'빨래를 걷다', en:'To take down the laundry', present:'빨래를 걷어요', past:'빨래를 걷었어요', future:'빨래를 걷을 거예요' },
+{ ko:'상하다', en:'To go bad/spoil', present:'상해요', past:'상했어요', future:'상할 거예요' },
+{ ko:'새치기하다', en:'To cut in line', present:'새치기해요', past:'새치기했어요', future:'새치기할 거예요' },
+{ ko:'설사하다', en:'To have diarrhea', present:'설사해요', past:'설사했어요', future:'설사할 거예요' },
+{ ko:'세배하다', en:`To do the New Year's bow`, present:'세배해요', past:'세배했어요', future:'세배할 거예요' },
+{ ko:'소리를 내다', en:'To make a sound', present:'소리를 내요', past:'소리를 냈어요', future:'소리를 낼 거예요' },
+{ ko:'손이 베이다', en:`To cut one's hand`, present:'손이 베여요', past:'손이 베었어요', future:'손이 벨 거예요' },
+{ ko:'싱싱하다', en:'To be fresh', present:'싱싱해요', past:'싱싱했어요', future:'싱싱할 거예요' },
+{ ko:'약을 뿌리다', en:'To spray medicine', present:'약을 뿌려요', past:'약을 뿌렸어요', future:'약을 뿌릴 거예요' },
+{ ko:'얌전하다', en:'To be quiet/gentle', present:'얌전해요', past:'얌전했어요', future:'얌전할 거예요' },
+{ ko:'어리다', en:'To be young', present:'어려요', past:'어렸어요', future:'어릴 거예요' },
+{ ko:'영향을 주다', en:'To influence', present:'영향을 줘요', past:'영향을 줬어요', future:'영향을 줄 거예요' },
+{ ko:'위반하다', en:'To violate', present:'위반해요', past:'위반했어요', future:'위반할 거예요' },
+{ ko:'작동하다', en:'To operate (a device)', present:'작동해요', past:'작동했어요', future:'작동할 거예요' },
+{ ko:'절하다', en:'To bow', present:'절해요', past:'절했어요', future:'절할 거예요' },
+{ ko:'점검하다', en:'To inspect/check', present:'점검해요', past:'점검했어요', future:'점검할 거예요' },
+{ ko:'정확하다', en:'To be accurate/exact', present:'정확해요', past:'정확했어요', future:'정확할 거예요' },
+{ ko:'제기차기하다', en:'To play Jegichagi', present:'제기차기해요', past:'제기차기했어요', future:'제기차기할 거예요' },
+{ ko:'조이다', en:'To tighten', present:'조여요', past:'조였어요', future:'조일 거예요' },
+{ ko:'조깅하다', en:'To jog', present:'조깅해요', past:'조깅했어요', future:'조깅할 거예요' },
+{ ko:'졸리다', en:'To feel drowsy/sleepy', present:'졸려요', past:'졸렸어요', future:'졸릴 거예요' },
+{ ko:'주무시다', en:'To sleep (honorific)', present:'주무세요', past:'주무셨어요', future:'주무실 거예요' },
+{ ko:'주차하다', en:'To park', present:'주차해요', past:'주차했어요', future:'주차할 거예요' },
+{ ko:'줄다리기하다', en:'To play tug-of-war', present:'줄다리기해요', past:'줄다리기했어요', future:'줄다리기할 거예요' },
+{ ko:'줄이다', en:'To reduce/decrease', present:'줄여요', past:'줄였어요', future:'줄일 거예요' },
+{ ko:'짓다', en:'To build/make', present:'지어요', past:'지었어요', future:'지을 거예요' },
+{ ko:'찜질하다', en:'To apply a heat compress', present:'찜질해요', past:'찜질했어요', future:'찜질할 거예요' },
 ];
 
 
