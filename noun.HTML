@@ -256,6 +256,10 @@
   }
 }
 
+/* Hide MCQ choices when toggle is OFF */
+.hide-choices .choices{ display:none !important; }
+
+
   </style>
 </head>
 <body>
@@ -267,15 +271,23 @@
     <div class="progress" id="progress">&nbsp;</div>
   </header>
 
-  <div class="toolbar">
-    <label for="category-select">Select Noun Category:</label>
-    <select id="category-select">
-      <!-- Options will be populated by JavaScript -->
-    </select>
-	<div style="display:flex;align-items:center;gap:10px">
-  <input type="checkbox" id="togglePics" checked />
-  <label for="togglePics">Show picture</label>
+ <div class="toolbar">
+  <label for="category-select">Select Noun Category:</label>
+  <select id="category-select"></select>
+
+  <!-- existing: Show picture -->
+  <div style="display:flex;align-items:center;gap:10px">
+    <input type="checkbox" id="togglePics" checked />
+    <label for="togglePics">Show picture</label>
+  </div>
+
+  <!-- ADD THIS: Show choices -->
+  <div style="display:flex;align-items:center;gap:10px">
+    <input type="checkbox" id="toggleChoices" checked />
+    <label for="toggleChoices">Show choices</label>
+  </div>
 </div>
+
 
   </div>
 
@@ -2572,6 +2584,26 @@ document.addEventListener('click', (e)=>{
     document.getElementById('flipWrap')?.classList.remove('flipped');
   }
 });
+
+
+// === MCQ Show/Hide Toggle ===
+const toggleChoices = document.getElementById('toggleChoices');
+const CHOICES_KEY = 'vizkor_show_choices';
+
+// set initial from localStorage (default: true)
+const savedChoices = localStorage.getItem(CHOICES_KEY);
+const shouldShow = savedChoices === null ? true : savedChoices === 'true';
+
+document.body.classList.toggle('hide-choices', !shouldShow);
+toggleChoices.checked = shouldShow;
+
+// update on change
+toggleChoices.addEventListener('change', (e) => {
+  const on = e.target.checked;
+  document.body.classList.toggle('hide-choices', !on);
+  localStorage.setItem(CHOICES_KEY, String(on));
+});
+
 </script>
 
 
