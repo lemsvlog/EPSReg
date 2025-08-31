@@ -704,7 +704,7 @@ const EN_TL_FORMS = {
 </script>
 
 <script>
-    // ===== State & Elements =====
+  // ===== State & Elements =====
   let queue = []; let current = null; let index = 0; let audioReady = false;
   const gate = document.getElementById('gate');
   const finish = document.getElementById('finish');
@@ -744,32 +744,98 @@ const EN_TL_FORMS = {
     try{ await player.play(); }catch(e){ console.warn("VoiceRSS play failed; falling back to Web Speech:", e); speakWeb(text); }
   }
 
+  // ===== Smarter EN/TL lines builder =====
+  // Normalizes keys so "to be good" => "good", keeps parentheses, and "/" -> " or "
+  const normalizeForLookup = (en) => {
+    let s = en.trim().toLowerCase();
+    s = s.replace(/^to be\s+/, '').replace(/^to\s+/, ''); // strip "to be"/"to"
+    s = s.replace(/\s*\/\s*/g, ' or ').replace(/\s+/g,' ');
+    return s;
+  };
 
-  const VOWELS = new Set(['a','e','i','o','u']);
-  const stripToBase = (en)=> en.replace(/^to\s+/i,'').replace(/\s*\(.*?\)\s*/g,'').trim().toLowerCase();
-  function pastFormGuess(base){
-    if(base.endsWith('e')) return base+'d';
-    if(base.endsWith('y') && !VOWELS.has(base[base.length-2])) return base.slice(0,-1)+'ied';
-    return base+'ed';
+  // Split a verb phrase into head verb + tail (for phrasal verbs like "cut out")
+  function splitVerbPhrase(s){
+    const m = s.match(/^([a-z]+)(.*)$/i);
+    if(!m) return [s, ''];
+    return [m[1].toLowerCase(), m[2] || ''];
   }
+
+  const IRREGULAR_PAST = {
+    be:'was', have:'had', do:'did', go:'went', come:'came', make:'made',
+    take:'took', see:'saw', get:'got', give:'gave', find:'found', think:'thought',
+    tell:'told', become:'became', leave:'left', feel:'felt', put:'put', bring:'brought',
+    begin:'began', keep:'kept', hold:'held', write:'wrote', stand:'stood', hear:'heard',
+    mean:'meant', meet:'met', run:'ran', pay:'paid', sit:'sat', speak:'spoke',
+    lead:'led', read:'read', grow:'grew', lose:'lost', fall:'fell', send:'sent',
+    build:'built', spend:'spent', cut:'cut', rise:'rose', drive:'drove', buy:'bought',
+    wear:'wore', choose:'chose', eat:'ate', sleep:'slept', teach:'taught', sell:'sold',
+    fight:'fought', catch:'caught', draw:'drew', feed:'fed', fly:'flew', forget:'forgot',
+    forgive:'forgave', freeze:'froze'
+  };
+
+  function thirdPerson(base){
+    if(base === 'be') return 'is';
+    if(base === 'have') return 'has';
+    if(base === 'do') return 'does';
+    if(/(s|sh|ch|x|z)$/.test(base)) return base + 'es';
+    if(/[^aeiou]y$/.test(base)) return base.slice(0,-1) + 'ies';
+    return base + 's';
+  }
+  function pastTense(base){
+    if(base in IRREGULAR_PAST) return IRREGULAR_PAST[base];
+    if(base.endsWith('e')) return base + 'd';
+    if(/[^aeiou]y$/.test(base)) return base.slice(0,-1) + 'ied';
+    return base + 'ed';
+  }
+  function conjPresentPhrase(phrase){
+    const [v, tail] = splitVerbPhrase(phrase);
+    return thirdPerson(v) + tail;
+  }
+  function conjPastPhrase(phrase){
+    const [v, tail] = splitVerbPhrase(phrase);
+    return pastTense(v) + tail;
+  }
+
   function englishLines(en){
-    const base = stripToBase(en);
-    if(EN_TL_FORMS[base]) return EN_TL_FORMS[base];
-    return { present: base, past: pastFormGuess(base), future:`will ${base}` };
+    const key = normalizeForLookup(en);
+    const isBePhrase = /^to be\b/i.test(en);
+
+    // 1) Try exact lookup (with variants)
+    let entry =
+      EN_TL_FORMS[key] ||
+      EN_TL_FORMS[key.replace(/\s*\(.*?\)\s*/,'')] ||
+      (key.includes(' or ') ? EN_TL_FORMS[key.split(' or ')[0]] : undefined);
+
+    if(entry) return entry; // Already "EN/TL" per tense (Tagalog included)
+
+    // 2) Fallback conjugation (no Tagalog if not in dict)
+    if(isBePhrase){
+      const base = en.replace(/^to be\s+/i,'').trim();
+      return {
+        present: `is ${base}`,
+        past:    `was ${base}`,
+        future:  `will be ${base}`,
+      };
+    }else{
+      const base = en.replace(/^to\s+/i,'').trim();
+      return {
+        present: conjPresentPhrase(base),
+        past:    conjPastPhrase(base),
+        future:  `will ${base}`,
+      };
+    }
   }
 
   // ===== Choices (4 small boxes) =====
   function generateChoicesFor(currentWord){
     const correct = currentWord.en;
-    // Build pool of distinct English meanings
     const pool = [];
     for(const w of WORDS_MASTER){
       if(w.en && w.en !== correct && !pool.includes(w.en)) pool.push(w.en);
     }
     shuffle(pool);
     const distractors = pool.slice(0,3);
-    const options = shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
-    return options;
+    return shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
   }
 
   function renderChoicesFor(word){
@@ -786,14 +852,13 @@ const EN_TL_FORMS = {
       btn.textContent = opt.text;
       btn.dataset.correct = opt.correct ? '1' : '0';
       btn.addEventListener('click', (e)=>{
-        e.stopPropagation(); // prevent flip
+        e.stopPropagation();
         if(locked) return;
         locked = true;
         if(opt.correct){
           btn.classList.add('correct');
         }else{
           btn.classList.add('wrong');
-          // glow the correct one
           [...choicesGrid.children].forEach(ch=>{
             if(ch.dataset.correct === '1'){ ch.classList.add('reveal'); }
           });
@@ -866,8 +931,8 @@ const EN_TL_FORMS = {
     renderBack(w);
     flipWrap.classList.remove('flipped');
     updateProgress();
-    renderChoicesFor(w);       // ← build choices for this word
-    playKo(w.ko);              // autoplay base once
+    renderChoicesFor(w);
+    playKo(w.ko);
   }
 
   // ===== Flow =====
@@ -902,7 +967,6 @@ const EN_TL_FORMS = {
       flipWrap.classList.remove('flipped');
       updateProgress();
 
-      // refresh choices for new card
       renderChoicesFor(w);
 
       flipWrap.classList.add('fly-enter');
@@ -925,20 +989,22 @@ const EN_TL_FORMS = {
     else nextCardAnimated();
   });
 
-  // Keyboard accessibility
+  // Keyboard accessibility (fixed double-line bug)
   cardEl.addEventListener('keydown', (e)=>{
     if(e.code==='Enter' || e.code==='Space'){
       e.preventDefault();
-      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
-      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
-      else nextCardAnimated();
+      if(!flipWrap.classList.contains('flipped')) {
+        flipWrap.classList.add('flipped');
+      } else {
+        nextCardAnimated();
+      }
     }
   });
 
   // Start / Restart
   document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
   document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
-  </script>
+</script>
 
   <script>
   // Disable right click
