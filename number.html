@@ -79,16 +79,16 @@
     .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.32) }
 
     /* AM/PM badge */
-    .ampm{ display:inline-flex; align-items:center; gap:6px; padding:3px 7px; border-radius:999px; font-weight:900; font-size:.85rem; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 4px 14px rgba(56,189,248,.3) }
+    .ampm{ display:inline-flex; align-items:center; gap:6px; padding:3px 7px; border-radius:888px; font-weight:900; font-size:.85rem; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 4px 14px rgba(56,189,248,.3) }
 
     /* Sticky bottom mobile bar */
     .mbar{ position:fixed; left:8px; right:8px; bottom:8px; padding-bottom:var(--sa-bottom); border-radius:12px; background:linear-gradient(180deg, #0b2236cc, #081a2dcc); border:1px solid rgba(186,230,253,.24); box-shadow:0 10px 26px rgba(2,12,22,.55); display:flex; gap:6px; justify-content:space-between; align-items:center; padding:6px; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
     .mbar .mbtn{ flex:1; min-width:0; border:none; border-radius:9px; padding:8px 10px; font-weight:900; letter-spacing:.3px; color:#072235; background:linear-gradient(90deg, var(--cyan), var(--accent)); box-shadow:0 4px 14px rgba(56,189,248,.28); font-size:.9rem }
 
-    @media (min-width: 760px){
+    @media (min-width: 660px){
       .mbar{ display:none }
-      body{ padding-bottom:18px }
-      .stage{ height:clamp(250px, 46dvh, 280px) } /* still smaller than before */
+      body{ padding-bottom:5px }
+      .stage{ height:clamp(250px, 20dvh, 280px) } /* still smaller than before */
     }
 
     /* Transitions */
