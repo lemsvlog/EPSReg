@@ -56,20 +56,13 @@
     .play-base:hover{ filter:brightness(1.08) }
 
     .enhead{ font-size:1.1rem; font-weight:900; color:var(--ice-1); margin-top:6px; text-align:left; width:min(460px,96%); }
-	/* bigger + centered adverb on the back */
-.ko-big{
-  font-size: 2rem;        /* palakihin */
-  line-height: 1.15;
-  text-align: center;     /* gitna (horizontal) */
-  width: 100%;
-  margin: 2px 0 4px;      /* konting spacing lang */
-  font-weight: 900;
-  letter-spacing: .5px;
-  color: var(--ice-1);
-}
-@media (max-width:420px){
-  .ko-big{ font-size: 1.8rem; }
-}
+
+    /* bigger + centered adverb on the back */
+    .ko-big{
+      font-size:2rem; line-height:1.15; text-align:center; width:100%;
+      margin:2px 0 4px; font-weight:900; letter-spacing:.5px; color:var(--ice-1);
+    }
+    @media (max-width:420px){ .ko-big{ font-size:1.8rem; } }
 
     .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
     .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
@@ -106,6 +99,7 @@
     }
     #flipToFront:hover{ filter:brightness(1.08); box-shadow:0 0 22px rgba(96,165,250,.65), 0 0 34px rgba(167,139,250,.45); }
 
+    /* 3D icy flip button (front) */
     #flipToBack{
       position:relative; padding:14px 22px !important; border-radius:16px;
       border:1px solid rgba(255,255,255,.75) !important; border-bottom-color:rgba(10,60,90,.45) !important; border-right-color:rgba(10,60,90,.35) !important;
@@ -141,6 +135,42 @@
       z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
     }
     .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+
+    /* ===== Choices (4 boxes) ===== */
+    .quiz{ width:min(520px,94vw); margin:4px auto 0; }
+    .quiz .toggleRow{
+      display:flex; align-items:center; justify-content:center; gap:10px; color:var(--ice-2); margin:4px 0 6px;
+    }
+    .choicesGrid{
+      display:grid; grid-template-columns:repeat(2, minmax(140px,1fr)); gap:10px;
+      width:min(460px,96%); margin:6px auto 0;
+    }
+    .choiceBtn{
+      appearance:none; border:1px solid rgba(186,230,253,.35); background:linear-gradient(180deg,#071c2c,#061725);
+      color:var(--ice-1); font-weight:800; padding:10px 12px; border-radius:12px; cursor:pointer; text-align:center;
+      min-height:44px; box-shadow:0 6px 18px rgba(56,189,248,.20); transition:filter .18s ease, transform .12s ease, box-shadow .18s ease;
+      user-select:none; font-size:.92rem;
+    }
+    .choiceBtn:hover{ filter:brightness(1.08); transform:translateY(-1px) }
+    .choiceBtn.correct{
+      border-color:rgba(56,189,248,.8);
+      box-shadow:0 0 0 2px rgba(56,189,248,.55), 0 0 22px rgba(56,189,248,.45);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+    }
+    .choiceBtn.reveal{
+      border-color:rgba(56,189,248,.9);
+      box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 28px rgba(56,189,248,.6);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+    }
+    @keyframes shakeX{
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-7px)} 40%{transform:translateX(7px)}
+      60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+    }
+    .choiceBtn.wrong{
+      background:linear-gradient(180deg,#2b0a0a,#1a0707); border-color:rgba(255,99,132,.65);
+      animation:shakeX .35s ease;
+    }
   </style>
 </head>
 <body>
@@ -161,9 +191,16 @@
     </div>
   </section>
 
-  <p class="subtitle" style="font-size:.95rem; color:var(--muted)">
-    Click <b>Start</b> to enable audio. Front shows <b>Korean only</b>. Flip to see meanings and a short <b>random sentence</b> with a word-by-word gloss.
-  </p>
+
+
+  <!-- ===== Choices UI (toggle + 4 boxes) ===== -->
+  <section class="quiz" id="quiz">
+    <div class="toggleRow">
+      <input type="checkbox" id="toggleChoices" checked />
+      <label for="toggleChoices">Show choices (English meaning)</label>
+    </div>
+    <div id="choicesGrid" class="choicesGrid" role="group" aria-label="Choices"></div>
+  </section>
 
   <div class="gate" id="gate">
     <div class="panel">
@@ -250,6 +287,10 @@
   const player = document.getElementById('koAudio');
   let isAnimating = false;
 
+  // Choices elements
+  const choicesGrid = document.getElementById('choicesGrid');
+  const toggleChoices = document.getElementById('toggleChoices');
+
   function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
   function updateProgress(){ progressEl.textContent = `${Math.min(index+1, WORDS_MASTER.length)} / ${WORDS_MASTER.length}`; }
 
@@ -286,7 +327,6 @@
   const objectsPool = ['밥을','빵을','물을','커피를','책을','영화를','한국어를','숙제를','방을','집을','연습을','문제를','친구를','시간을'];
   const timeNouns = ['세 시','네 시','내일','주말','다음 주','이번 주','이번 달','올해'];
 
-  // multiple special variants to ensure "new sentence" changes
   const specials = {
     '별로': ['별로 안 먹어요.','별로 안 바빠요.','별로 안 비싸요.'],
     '아직': ['아직 안 가요.','아직 안 끝났어요.','아직 못 했어요.'],
@@ -367,7 +407,6 @@
   };
 
   function randomItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
   function buildGenericSentence(adv){
     const useSubject = Math.random() < 0.5;
     const subj = randomItem(subjects);
@@ -377,33 +416,23 @@
     const left = useSubject ? (subj+' ') : '';
     return `${left}${adv} ${obj}${verb}.`;
   }
-
   function makeSentence(adv, prev=''){
-    // 60% chance generic, 40% special (if exists)
     for(let tries=0; tries<10; tries++){
       let s;
       if(specials[adv] && Math.random()<0.4) s = randomItem(specials[adv]);
       else s = buildGenericSentence(adv);
       if(s !== prev) return s;
     }
-    return buildGenericSentence(adv); // final fallback
+    return buildGenericSentence(adv);
   }
 
   // ===== WORD-BY-WORD GLOSS =====
-  // basic token map used by generator
   const GLOSS = {
-    // pronouns / topics / subjects
     '저는':'I (TOP)','우리는':'we (TOP)','친구는':'friend (TOP)','아이들은':'children (TOP)','선생님은':'teacher (TOP)',
     '그는':'he (TOP)','그녀는':'she (TOP)','사람들은':'people (TOP)','비가':'rain (SUBJ)','고양이는':'cat (TOP)','강아지는':'puppy (TOP)',
-
-    // objects (ACC)
     '밥을':'rice (ACC)','빵을':'bread (ACC)','물을':'water (ACC)','커피를':'coffee (ACC)','책을':'book (ACC)','영화를':'movie (ACC)',
     '한국어를':'Korean (ACC)','숙제를':'homework (ACC)','방을':'room (ACC)','집을':'house (ACC)','연습을':'practice (ACC)',
-    '문제를':'problem (ACC)','친구를':'friend (ACC)','시간을':'time (ACC)',
-    // bare nouns sometimes appear in specials
-    '밥':'rice','빵':'bread','시간':'time','집':'home','집에':'to home','집에서':'at home',
-
-    // adverbs that may also appear in sentences
+    '문제를':'problem (ACC)','친구를':'friend (ACC)','시간을':'time (ACC)','밥':'rice','빵':'bread','시간':'time','집':'home','집에':'to home','집에서':'at home',
     '별로':'not really','아직':'still / not yet','벌써':'already','다시':'again','많이':'a lot','잘':'well','천천히':'slowly',
     '항상':'always','먼저':'first','제일':'most','아주':'very','너무':'too (very)','꼭':'surely','정말':'really',
     '조금':'a little','좀':'a bit','같이':'together','곧':'soon','나중에':'later','아까':'earlier','미리':'in advance',
@@ -417,42 +446,75 @@
     '차례로':'in order','충분히':'sufficiently','최근':'recently','최소한':'at least','최대한':'as much as possible',
     '흔히':'often','현재':'currently','확실히':'surely','훨씬':'much (more)','모두들':'everyone','몰래':'secretly',
     '무조건':'unconditionally','서로서로':'with each other','슬슬':'slowly','억지로':'by force',
-
-    // verbs (polite present)
     '가요':'go','와요':'come','일해요':'work','운동해요':'exercise','쉬어요':'rest','자요':'sleep','공부해요':'study','산책해요':'take a walk',
     '웃어요':'laugh','울어요':'cry','연락해요':'contact','전화해요':'call','출발해요':'depart','도착해요':'arrive','맞아요':'be correct',
     '진행해요':'proceed','시작해요':'start','끝나요':'finish','모여요':'gather','만나요':'meet','떠나요':'leave','나가요':'go out',
     '먹어요':'eat','마셔요':'drink','읽어요':'read','배워요':'learn','기다려요':'wait','만들어요':'make','봐요':'see/watch',
     '청소해요':'clean','준비해요':'prepare','도와요':'help','사요':'buy','팔아요':'sell','좋아해요':'like','계산해요':'pay/calc',
     '참석해요':'attend','기억해요':'remember','확인해요':'check','열어요':'open','응원해요':'support','시도해요':'try',
-    '있어요':'exist/have','좋아요':'is good','좋아져요':'get better','열어요.':'open', // lenient catch
-
-    // time words (may combine with 쯤)
+    '있어요':'exist/have','좋아요':'is good','좋아져요':'get better','열어요.':'open',
     '세':'three','네':'four','시':"o'clock",'시쯤':"around o'clock",'내일':'tomorrow','주말':'weekend','다음':'next','다음 주':'next week',
     '이번':'this','이번 주':'this week','이번 달':'this month','올해':'this year'
   };
 
-  function sanitize(tok){
-    return tok.replace(/[.,!?…]/g,'').trim();
-  }
-
+  const sanitize = (tok)=>tok.replace(/[.,!?…]/g,'').trim();
   function glossForSentence(sentence, adv){
     const advEnglish = current?.en || '';
     const tokens = sentence.split(/\s+/).filter(Boolean);
     const chunks = tokens.map(t=>{
       const clean = sanitize(t);
       let en = GLOSS[clean];
-      // try fallback without 요, or strip polite endings roughly
       if(!en && clean.endsWith('요')) en = GLOSS[clean];
-      // map current adverb explicitly
       if(!en && clean === adv) en = advEnglish;
-      // tiny heuristics
       if(!en && clean.endsWith('쯤')) en = 'around';
       if(!en) en = '—';
       return {ko:t.replace(/\s+/g,' '), en};
     });
     return chunks;
   }
+
+  // ===== CHOICES (English meaning) =====
+  function generateChoicesFor(currentWord){
+    const correct = currentWord.en;
+    const pool = [];
+    for(const w of WORDS_MASTER){
+      if(w.en && w.en !== correct && !pool.includes(w.en)) pool.push(w.en);
+    }
+    shuffle(pool);
+    const distractors = pool.slice(0,3);
+    return shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
+  }
+
+  function renderChoicesFor(word){
+    choicesGrid.innerHTML = '';
+    if(!toggleChoices.checked) { choicesGrid.style.display = 'none'; return; }
+    choicesGrid.style.display = 'grid';
+    const options = generateChoicesFor(word);
+    let locked = false;
+
+    for(const opt of options){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choiceBtn';
+      btn.textContent = opt.text;
+      btn.dataset.correct = opt.correct ? '1' : '0';
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation(); // prevent flip
+        if(locked) return;
+        locked = true;
+        if(opt.correct){
+          btn.classList.add('correct');
+        }else{
+          btn.classList.add('wrong');
+          [...choicesGrid.children].forEach(ch=>{
+            if(ch.dataset.correct === '1'){ ch.classList.add('reveal'); }
+          });
+        }
+      });
+      choicesGrid.appendChild(btn);
+    }
+  }
+  toggleChoices.addEventListener('change', ()=>{ if(current) renderChoicesFor(current); });
 
   // ===== RENDERING =====
   function renderFront(w){
@@ -474,7 +536,7 @@
     const glossChunks = glossForSentence(firstSentence, w.ko);
 
     back.innerHTML = `
-     <div class="enhead ko-big">${w.ko}</div>
+      <div class="enhead ko-big">${w.ko}</div>
       <ul class="enlines">
         <li><b>Meaning</b> <span class="koform">${w.en} / ${w.tl}</span></li>
       </ul>
@@ -517,7 +579,8 @@
     renderBack(w);
     flipWrap.classList.remove('flipped');
     updateProgress();
-    playKo(w.ko); // autoplay base once
+    renderChoicesFor(w);   // ← build choices for this word
+    playKo(w.ko);          // autoplay base once
   }
 
   // ===== FLOW =====
@@ -552,6 +615,9 @@
       flipWrap.classList.remove('flipped');
       updateProgress();
 
+      // refresh choices for new card
+      renderChoicesFor(w);
+
       flipWrap.classList.add('fly-enter');
       const onEnterEnd = (ev)=>{
         if(ev.target !== cardEl) return;
@@ -582,39 +648,22 @@
   });
 
   // Start / Restart
-  document.getElementById('startBtn').addEventListener('click', ()=>{
-    audioReady = true; gate.style.display = 'none'; startRun();
-  });
-  document.getElementById('restartBtn').addEventListener('click', ()=>{
-    gate.style.display = 'none'; audioReady = true; startRun();
-  });
+  document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
+  document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
   </script>
+
   <script>
-// Disable right click
-document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable text selection
-document.addEventListener("selectstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable drag (para hindi madrag palabas yung image/text)
-document.addEventListener("dragstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
-document.addEventListener("keydown", function(e){
-  if (
-    e.key === "F12" || 
-    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
-  ) {
-    e.preventDefault();
-  }
-}, false);
-</script>
+  // Disable right click
+  document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);
+  // Disable text selection
+  document.addEventListener("selectstart", function(e){ e.preventDefault(); }, false);
+  // Disable drag
+  document.addEventListener("dragstart", function(e){ e.preventDefault(); }, false);
+  // Disable certain keys (F12, Ctrl+U/S/C/X/V)
+  document.addEventListener("keydown", function(e){
+    if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) { e.preventDefault(); }
+  }, false);
+  </script>
 
 </body>
 </html>
