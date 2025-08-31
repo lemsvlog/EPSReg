@@ -97,6 +97,10 @@
     @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
     .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
     .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+	.flip{ transform:scale(.9); transform-origin:center; }
+@media (max-width:480px){
+  .flip{ transform:scale(.85); }
+}
 
     .floating-home{ position: fixed; top: 0; right: 0; background: linear-gradient(90deg, var(--cyan), var(--accent)); color: #072235; font-size: 12px; font-weight: 700; text-decoration: none; padding: 6px 10px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35); z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
     .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
@@ -359,17 +363,23 @@ function randomSinoWithDigits(d){
 }
 function generateChoices(item){
   if(mode==='time'){
-    const {h,m}=item;
-    const correct=formatTime12(h,m);
-    const hours=[(h+1)%24,(h+6)%24,(h+11)%24].map(H=>formatTime12(H,m));
-    return shuffle([correct,...hours]).slice(0,4).map(t=>({text:t,correct:t===correct}));
+    const {h, m} = item;
+    const correctKo = timeToKo(h, m); // ex: "오전 한 시 삼십 분" o "오전 한 시 정각"
+    const alts = [(h+1)%24, (h+6)%24, (h+11)%24].map(H => timeToKo(H, m));
+
+    // ensure unique then shuffle → build choice objects
+    const uniq = Array.from(new Set([correctKo, ...alts])).slice(0,4);
+    return shuffle(uniq).map(t => ({ text: t, correct: t === correctKo }));
   }
+
+  // (keep the rest for native/sino as-is)
   const n=item, d=digitsCount(n);
   const pick = mode==='native' ? ()=>randomNativeWithDigits(d) : ()=>randomSinoWithDigits(d);
   const set=new Set([n]);
   while(set.size<4){ set.add(pick()); }
   return shuffle([...set].map(x=>({text:x.toLocaleString('en-US'), correct:x===n})));
 }
+
 function renderChoicesForCurrent(){
   choicesGrid.innerHTML='';
   if(!toggleChoices.checked || !queue.length){ choicesGrid.style.display='none'; return; }
