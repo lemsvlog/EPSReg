@@ -13,7 +13,7 @@
       --accent:#38bdf8; --accent-2:#0ea5e9;
       --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
       --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
-      --border:1px solid rgba(103,232,249,.30);
+      --border:1px solid rgba(186,230,253,.30);
     }
     *{box-sizing:border-box}
     body{
@@ -138,6 +138,42 @@
       z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
     }
     .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+
+    /* ===== Choices (4 boxes) ===== */
+    .quiz{ width:min(520px,94vw); margin:4px auto 0; }
+    .quiz .toggleRow{
+      display:flex; align-items:center; justify-content:center; gap:10px; color:var(--ice-2); margin:4px 0 6px;
+    }
+    .choicesGrid{
+      display:grid; grid-template-columns:repeat(2, minmax(140px,1fr)); gap:10px;
+      width:min(460px,96%); margin:6px auto 0;
+    }
+    .choiceBtn{
+      appearance:none; border:1px solid rgba(186,230,253,.35); background:linear-gradient(180deg,#071c2c,#061725);
+      color:var(--ice-1); font-weight:800; padding:10px 12px; border-radius:12px; cursor:pointer; text-align:center;
+      min-height:44px; box-shadow:0 6px 18px rgba(56,189,248,.20); transition:filter .18s ease, transform .12s ease, box-shadow .18s ease;
+      user-select:none; font-size:.92rem;
+    }
+    .choiceBtn:hover{ filter:brightness(1.08); transform:translateY(-1px) }
+    .choiceBtn.correct{
+      border-color:rgba(56,189,248,.8);
+      box-shadow:0 0 0 2px rgba(56,189,248,.55), 0 0 22px rgba(56,189,248,.45);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+    }
+    .choiceBtn.reveal{
+      border-color:rgba(56,189,248,.9);
+      box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 28px rgba(56,189,248,.6);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+    }
+    @keyframes shakeX{
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-7px)} 40%{transform:translateX(7px)}
+      60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+    }
+    .choiceBtn.wrong{
+      background:linear-gradient(180deg,#2b0a0a,#1a0707); border-color:rgba(255,99,132,.65);
+      animation:shakeX .35s ease;
+    }
   </style>
 </head>
 <body>
@@ -146,7 +182,7 @@
 
   <header>
     <h1 class="title">VIZKOR Flip Cards</h1>
-    <p class="subtitle">Korean Advanced Verb 150</p>
+    <p class="subtitle">Korean BASIC Verb 145</p>
     <div class="progress" id="progress">&nbsp;</div>
   </header>
 
@@ -159,10 +195,16 @@
     </div>
   </section>
 
-  <p class="subtitle" style="font-size:.95rem; color:var(--muted)">
-    Note: Click <b>Start</b> once to enable audio. Each new card auto-plays the <b>base Korean only</b>.
-    Back side shows <b>single English form</b> per tense with <b>Tagalog</b> gloss (e.g., <i>drink/inom</i>, <i>drank/uminom</i>, <i>will drink/iinom</i>).
-  </p>
+  
+
+  <!-- ===== Choices UI (toggle + 4 boxes) ===== -->
+  <section class="quiz" id="quiz">
+    <div class="toggleRow">
+      <input type="checkbox" id="toggleChoices" checked />
+      <label for="toggleChoices">Show choices (English meaning)</label>
+    </div>
+    <div id="choicesGrid" class="choicesGrid" role="group" aria-label="Choices"></div>
+  </section>
 
   <div class="gate" id="gate">
     <div class="panel">
@@ -337,8 +379,9 @@ const WORDS_MASTER = [
 { ko:'짓다', en:'To build/make', present:'지어요', past:'지었어요', future:'지을 거예요' },
 { ko:'찜질하다', en:'To apply a heat compress', present:'찜질해요', past:'찜질했어요', future:'찜질할 거예요' },
 ];
+</script>
 
-
+  <script>
   // ===== State & Elements =====
   let queue = []; let current = null; let index = 0; let audioReady = false;
   const gate = document.getElementById('gate');
@@ -349,11 +392,16 @@ const WORDS_MASTER = [
   const front = document.getElementById('front');
   const back  = document.getElementById('back');
   const player = document.getElementById('koAudio');
+
+  // Choices elements
+  const choicesGrid = document.getElementById('choicesGrid');
+  const toggleChoices = document.getElementById('toggleChoices');
+
   let isAnimating = false;
 
   // ===== Utils =====
   function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, WORDS_MASTER.length)} / ${WORDS_MASTER.length}`; }
+  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length || WORDS_MASTER.length}`; }
 
   // ===== TTS =====
   const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
@@ -377,7 +425,106 @@ const WORDS_MASTER = [
  // ===== English + Tagalog (single form per tense) =====
 // Format per verb: present: "EN/TL", past: "EN/TL", future: "EN/TL"
 const EN_TL_FORMS = {
-  'grill/bake': { present:'grill/bake/iniihaw·binibake', past:'grilled/baked/inihaw·binake', future:'will grill/bake/iihawin·babakehin' }, // 101
+ 'go':                 { present:'go/punta',              past:'went/pumunta',                 future:'will go/pupunta' },
+  'do':                 { present:'do/gawa',               past:'did/ginawa',                   future:'will do/gagawin' },
+  'come':               { present:'come/dating',           past:'came/dumating',                future:'will come/darating' },
+  'eat':                { present:'eat/kain',              past:'ate/kumain',                   future:'will eat/kakain' },
+  'drink':              { present:'drink/inom',            past:'drank/uminom',                 future:'will drink/iinom' },
+  'sleep':              { present:'sleep/tulog',           past:'slept/natulog',                future:'will sleep/matutulog' },
+  'see':                { present:'see/kita',              past:'saw/nakita',                   future:'will see/makikita' },
+  'listen':             { present:'listen/kinig',          past:'listened/nakinig',             future:'will listen/makikinig' },
+  'speak':              { present:'speak/salita',          past:'spoke/nagsalita',              future:'will speak/magsasalita' },
+  'read':               { present:'read/basa',             past:'read/nagbasa',                 future:'will read/magbasa' },
+  'write':              { present:'write/sulat',           past:'wrote/nagsulat',               future:'will write/magsusulat' },
+  'learn':              { present:'learn/tuto',            past:'learned/natuto',               future:'will learn/matututo' },
+  'teach':              { present:'teach/turo',            past:'taught/nagturo',               future:'will teach/magtuturo' },
+  'study':              { present:'study/aral',            past:'studied/nag-aral',             future:'will study/mag-aaral' },
+  'exercise':           { present:'exercise/ehersisyo',    past:'exercised/nag-ehersisyo',      future:'will exercise/mag-eehersisyo' },
+  'make':               { present:'make/gawa',             past:'made/gumawa',                  future:'will make/gagawa' },
+  'buy':                { present:'buy/bili',              past:'bought/bumili',                future:'will buy/bibili' },
+  'sell':               { present:'sell/benta',            past:'sold/nagbenta',                future:'will sell/magbebenta' },
+  'sit':                { present:'sit/upo',               past:'sat/umupo',                    future:'will sit/uupo' },
+  'stand':              { present:'stand/tayo',            past:'stood/tumayo',                 future:'will stand/tatayo' },
+  'give':               { present:'give/bigay',            past:'gave/nagbigay',                future:'will give/magbibigay' },
+  'receive':            { present:'receive/tanggap',       past:'received/natanggap',           future:'will receive/tatanggap' },
+  'open':               { present:'open/bukas',            past:'opened/binuksan',              future:'will open/bubuksan' },
+  'close':              { present:'close/sara',            past:'closed/isinara',               future:'will close/isasara' },
+  'get up':             { present:'get up/bangon',         past:'got up/bumangon',              future:'will get up/babangon' },
+  'laugh':              { present:'laugh/tawa',            past:'laughed/tumawa',               future:'will laugh/tatawa' },
+  'cry':                { present:'cry/iyak',              past:'cried/umiyak',                 future:'will cry/iiyak' },
+  'walk':               { present:'walk/lakad',            past:'walked/naglakad',             future:'will walk/maglalakad' },
+  'run':                { present:'run/takbo',             past:'ran/tumakbo',                  future:'will run/tatakbo' },
+  'meet':               { present:'meet/kita',             past:'met/nakipagkita',              future:'will meet/makikipagkita' },
+  'wear (clothes)':     { present:'wear/suot',             past:'wore/nagsuot',                 future:'will wear/magsusuot' },
+  'wear (shoes)':       { present:'wear/suot',             past:'wore/nagsuot',                 future:'will wear/magsusuot' },
+  'take off':           { present:'take off/tanggal',      past:'took off/nagtanggal',          future:'will take off/magtatanggal' },
+  'like':               { present:'like/gusto',            past:'liked/nagustuhan',             future:'will like/magugustuhan' },
+  'dislike':            { present:'dislike/ayaw',          past:'disliked/hindi nagustuhan',    future:'will dislike/hindi magugustuhan' },
+  'find':               { present:'find/hanap',            past:'found/nahanap',                future:'will find/hahanapin' },
+  'forget':             { present:'forget/limot',          past:'forgot/nakalimutan',           future:'will forget/malilimutan' },
+  'wait':               { present:'wait/hintay',           past:'waited/naghintay',             future:'will wait/maghihintay' },
+  'order':              { present:'order/order',           past:'ordered/nag-order',            future:'will order/mag-oorder' },
+  'call':               { present:'call/tawag',            past:'called/tumawag',               future:'will call/tatawag' },
+  'send':               { present:'send/padala',           past:'sent/nagpadala',               future:'will send/magpapadala' },
+  'travel':             { present:'travel/lakbay',         past:'traveled/naglakbay',           future:'will travel/maglalakbay' },
+  'cook':               { present:'cook/luto',             past:'cooked/nagluto',               future:'will cook/magluluto' },
+  'take a picture':     { present:'take a picture/kuha',   past:'took a picture/kumuha',        future:'will take a picture/kukuha' },
+  'clean':              { present:'clean/linis',           past:'cleaned/naglinis',             future:'will clean/maglilinis' },
+  'rest':               { present:'rest/pahinga',          past:'rested/nagpahinga',            future:'will rest/magpapahinga' },
+  'dance':              { present:'dance/sayaw',           past:'danced/sumayaw',               future:'will dance/sasayaw' },
+  'draw/paint':         { present:'draw/guhit',            past:'drew/gumuhit',                 future:'will draw/guguhit' },
+  'play':               { present:'play/laro',             past:'played/naglaro',               future:'will play/maglaro' },
+  'live':               { present:'live/buhay',            past:'lived/namuhay',                future:'will live/mamumuhay' },
+  'die':                { present:'die/mamatay',           past:'died/namatay',                 future:'will die/mamamatay' },
+  'ride':               { present:'ride/sakay',            past:'rode/sumakay',                 future:'will ride/sasakay' },
+  'get off/descend':    { present:'get off/baba',          past:'got off/bumaba',               future:'will get off/bababa' },
+  'go out':             { present:'go out/labas',          past:'went out/lumabas',             future:'will go out/lalabas' },
+  'come in':            { present:'come in/pasok',         past:'came in/pumasok',              future:'will come in/papasok' },
+  'go up':              { present:'go up/akyat',           past:'went up/umakyat',              future:'will go up/aakyat' },
+  'go down':            { present:'go down/baba',          past:'went down/bumaba',             future:'will go down/bababa' },
+  'start':              { present:'start/simula',          past:'started/nagsimula',            future:'will start/magsisimula' },
+  'end/finish':         { present:'finish/tapos',          past:'finished/natapos',             future:'will finish/matatapos' },
+  'help':               { present:'help/tulong',           past:'helped/tinulungan',            future:'will help/tutulungan' },
+  'fix/repair':         { present:'fix/ayos',              past:'fixed/inayos',                 future:'will fix/aayusin' },
+  'change/exchange':    { present:'change/bago',           past:'changed/binago',               future:'will change/babaguhin' },
+  'throw away':         { present:'throw away/tapon',      past:'threw away/tinapon',           future:'will throw away/tatapon' },
+  'wash':               { present:'wash/hugas',            past:'washed/naghugas',              future:'will wash/maghuhugas' },
+  'organize/arrange':   { present:'organize/ayos',         past:'organized/inayos',             future:'will organize/aayusin' },
+  'sweep':              { present:'sweep/walis',           past:'swept/nagwalis',               future:'will sweep/magwawalis' },
+  'protect/keep/follow':{ present:'protect/protekta',      past:'protected/pinrotektahan',      future:'will protect/poprotektahan' },
+  'know':               { present:'know/alam',             past:'knew/nalaman',                 future:'will know/malalaman' },
+  'not know':           { present:"don't know/hindi alam", past:"didn't know/hindi nalaman",    future:'will not know/hindi malalaman' },
+  'deliver':            { present:'deliver/hatid',         past:'delivered/naghatid',           future:'will deliver/maghahatid' },
+  'deposit':            { present:'deposit/deposito',      past:'deposited/nagdeposito',        future:'will deposit/magdedeposito' },
+  'remit/transfer money':{present:'remit/padala',          past:'remitted/nagpadala ng pera',   future:'will remit/magpapadala ng pera' },
+  'exchange currency':  { present:'exchange/palit',        past:'exchanged/nagpalit ng pera',   future:'will exchange/magpapalit ng pera' },
+  'apply':              { present:'apply/apply',           past:'applied/nag-apply',            future:'will apply/mag-a-apply' },
+  'confirm/check':      { present:'confirm/kumpirma',      past:'confirmed/kinumpirma',         future:'will confirm/kukumpirmahin' },
+  'worry':              { present:'worry/alala',           past:'worried/nag-alala',            future:'will worry/mag-aalala' },
+  'be tired':           { present:'be tired/pagod',        past:'was tired/napagod',            future:'will be tired/mapapagod' },
+  'be happy':           { present:'be happy/masaya',       past:'was happy/naging masaya',      future:'will be happy/magiging masaya' },
+  'be sad':             { present:'be sad/malungkot',      past:'was sad/nalungkot',            future:'will be sad/malulungkot' },
+  'be bored':           { present:'be bored/nababagot',    past:'was bored/nabagot',            future:'will be bored/mababagot' },
+  'be sick/hurt':       { present:'be sick/hurt/nasasaktan', past:'was sick/hurt/nasaktan',     future:'will be sick/hurt/masasaktan' },
+  'be spicy':           { present:'be spicy/maanghang',    past:'was spicy/maanghang',          future:'will be spicy/magiging maanghang' },
+  'be bland':           { present:'be bland/matabang',     past:'was bland/matabang',           future:'will be bland/magiging matabang' },
+  'be sweet':           { present:'be sweet/matamis',      past:'was sweet/matamis',            future:'will be sweet/magiging matamis' },
+  'be salty':           { present:'be salty/maalat',       past:'was salty/maalat',             future:'will be salty/magiging maalat' },
+  'be sour':            { present:'be sour/maasim',        past:'was sour/maasim',              future:'will be sour/magiging maasim' },
+  'be hot (object)':    { present:'be hot/mainit',         past:'was hot/mainit',               future:'will be hot/magiging mainit' },
+  'be cold (object)':   { present:'be cold/malamig',       past:'was cold/malamig',             future:'will be cold/magiging malamig' },
+  'be warm':            { present:'be warm/mainit',        past:'was warm/mainit',              future:'will be warm/magiging mainit' },
+  'be cold (weather)':  { present:'be cold/malamig',       past:'was cold/malamig',             future:'will be cold/magiging malamig' },
+  'be hot (weather)':   { present:'be hot/mainit',         past:'was hot/mainit',               future:'will be hot/magiging mainit' },
+  'be cloudy':          { present:'be cloudy/maulap',      past:'was cloudy/maulap',            future:'will be cloudy/magiging maulap' },
+  'grind':              { present:'grind/giling',          past:'ground/giniling',              future:'will grind/gigilingin' },
+  'change clothes':     { present:'change clothes/palit damit', past:'changed clothes/nagpalit ng damit', future:'will change clothes/magpapalit ng damit' },
+  'close eyes':         { present:'close eyes/pikit',      past:'closed eyes/pumikit',          future:'will close eyes/pipikit' },
+  'bring':              { present:'bring/dala',            past:'brought/dinala',               future:'will bring/dadalhin' },
+  'search':             { present:'search/hanap',          past:'searched/naghanap',            future:'will search/maghahanap' },
+  'play a game':        { present:'play a game/laro',      past:'played a game/naglaro',        future:'will play a game/maglaro' },
+  'fix (make fixed)':   { present:'fix/ayos',              past:'fixed/inayos',                 future:'will fix/aayusin' },
+   'grill/bake': { present:'grill/bake/iniihaw·binibake', past:'grilled/baked/inihaw·binake', future:'will grill/bake/iihawin·babakehin' }, // 101
   'find/save/seek': { present:'find/save/seek/nakikita·nililigtas·naghahanap', past:'found/saved/sought/nakita·nailigtas·hinanap', future:'will find/save/seek/makikita·ililigtas·maghahanap' }, // 102
   'stop (rain/snow)': { present:'stop/humihinto', past:'stopped/huminto', future:'will stop/hihinto' }, // 103
   'quit smoking': { present:'quit smoking/humihinto sa paninigarilyo', past:'quit smoking/huminto sa paninigarilyo', future:'will quit smoking/hihinto sa paninigarilyo' }, // 104
@@ -574,40 +721,240 @@ const EN_TL_FORMS = {
   'fall down/trip': { present:'fall down/natutumba', past:'fell down/natumba', future:'will fall down/matutumba' }, // 298
   'melt/dissolve': { present:'melt/dissolve/natutunaw', past:'melted/dissolved/natunaw', future:'will melt/matutunaw' }, // 299
   'rust': { present:'rust/kinakalawang', past:'rusted/kinalawang', future:'will rust/kakalawangin' }, // 300
+  'adjust/control': { present: 'adjust / inaayos', past: 'adjusted / inayos', future: 'will adjust / aayusin' },
+  'adjust/fit/assemble': { present: 'adjust / inaayos', past: 'adjusted / inayos', future: 'will adjust / aayusin' },
+  'apply/spread': { present: 'apply/spread / inilalapat·ikinakalat', past: 'applied/spread / inilapat·ikinalat', future: 'will apply/spread / ilalapat·ikakalat' },
+  'arrive': { present: 'arrive / dumadating', past: 'arrived / dumating', future: 'will arrive / darating' },
+  'ask/bury': { present: 'ask / nagtatanong', past: 'asked / nagtanong', future: 'will ask / magtatanong' },
+  'attach': { present: 'attach / idinidikit', past: 'attached / idinikit', future: 'will attach / ididikit' },
+  'be active': { present: 'is active / aktibo', past: 'was active / aktibo', future: 'will be active / magiging aktibo' },
+  'be correct': { present: 'is correct / tama', past: 'was correct / tama', future: 'will be correct / magiging tama' },
+  'be damaged': { present: 'is damaged / nasisira', past: 'was damaged / nasira', future: 'will be damaged / masisira' },
+  'be delayed/pushed back': { present: 'is delayed / naaantala Note: \'르\' irregular verb.', past: 'was delayed / naantala', future: 'will be delayed / maaantala' },
+  'be folded': { present: 'is folded / nakatupi', past: 'was folded / nakatupi', future: 'will be folded / matutupi' },
+  'be hard/stiff': { present: 'is hard / matigas', past: 'was hard / matigas', future: 'will be hard / magiging matigas' },
+  'be hospitalized': { present: 'is hospitalized / naaospital', past: 'was hospitalized / naospital', future: 'will be hospitalized / maaospital' },
+  'be many/much': { present: 'is many / marami', past: 'was many / marami', future: 'will be many / magiging marami' },
+  'be scary/afraid': { present: 'is scary / nakakatakot', past: 'was scary / nakakatakot', future: 'will be scary / magiging nakakatakot' },
+  'be smooth': { present: 'is smooth / makinis', past: 'was smooth / makinis', future: 'will be smooth / magiging makinis' },
+  'be surprised/startled': { present: 'am surprised / nagugulat', past: 'was surprised / nagulat', future: 'will be surprised / magugulat' },
+  'become independent': { present: 'become independent / nagiging malaya', past: 'became independent / naging malaya', future: 'will become independent / magiging malaya' },
+  'blast': { present: 'blast / sumasabog', past: 'blasted / sumabog', future: 'will blast / sasabog' },
+  'block/prevent': { present: 'block / hinaharangan', past: 'blocked / hinarangan', future: 'will block / haharangan' },
+  'boil': { present: 'boil / pinapakuluan', past: 'boiled / pinakuluan', future: 'will boil / papakuluan' },
+  'break': { present: 'break / binabasag', past: 'broke / binasag', future: 'will break / babasagin' },
+  'break/destroy': { present: 'break/destroy / binabasag·sinisira', past: 'broke/destroyed / binasag·sinira', future: 'will break/destroy / babasagin·sisirain' },
+  'call/sing': { present: 'call / tumatawag', past: 'called / tumawag', future: 'will call / tatawag' },
+  'catch fire': { present: 'catch fire / nasusunog', past: 'caught fire / nasunog', future: 'will catch fire / masusunog' },
+  'catch/hold': { present: 'catch / nahuhuli', past: 'caught / nahuli', future: 'will catch / mahuhuli' },
+  'change/alter': { present: 'change / binabago', past: 'changed / binago', future: 'will change / babaguhin' },
+  'change/turn into': { present: 'change / nagbabago', past: 'changed / nagbago', future: 'will change / magbabago' },
+  'chop finely/compact': { present: 'chop finely / tinatadtad', past: 'chopped finely / tinadtad', future: 'will chop finely / tatadtarin' },
+  'classify/sort': { present: 'classify / kinakategorya', past: 'classified / kinategorya', future: 'will classify / kakategoryahin' },
+  'collapse/fall apart': { present: 'collapse / gumuguho', past: 'collapsed / gumuho', future: 'will collapse / guguho' },
+  'conclude': { present: 'conclude / tinatapos', past: 'concluded / tinapos', future: 'will conclude / tatapusin' },
+  'confirm': { present: 'confirm / kinukumpirma', past: 'confirmed / kinumpirma', future: 'will confirm / kukumpirmahin' },
+  'construct/execute': { present: 'construct / nagtatayo', past: 'constructed / nagtayo', future: 'will construct / magtatayo' },
+  'corrode': { present: 'corrode / kinakalawang Note: Passive form of verb.', past: 'corroded / kinalawang', future: 'will corrode / kakalawangin' },
+  'cover/put on': { present: 'cover / tinatakpan', past: 'covered / tinakpan', future: 'will cover / tatakpan' },
+  'cut': { present: 'cut / ginugupit', past: 'cut / ginupit', future: 'will cut / gugupitin' },
+  'cut out': { present: 'cut out / pinupuputol', past: 'cut out / pinutol', future: 'will cut out / puputulin' },
+  'cut out/gouge out': { present: 'cut out / pinupuputol', past: 'cut out / pinutol', future: 'will cut out / puputulin' },
+  'cut/slice': { present: 'cut / ginugupit', past: 'cut / gupitin', future: 'will cut / gugupitin' },
+  'demolish': { present: 'demolish / ginigiba', past: 'demolished / giniba', future: 'will demolish / gigibain' },
+  'dig up/mine': { present: 'dig up / hinuhukay', past: 'dug up / hinukay', future: 'will dig up / huhukayin' },
+  'digest': { present: 'digest / natutunaw', past: 'digested / natunaw', future: 'will digest / matutunaw' },
+  'disappear/vanish': { present: 'disappear / nawawala', past: 'disappeared / nawala', future: 'will disappear / mawawala' },
+  'disassemble/decompose': { present: 'disassemble / tinatanggal', past: 'disassembled / tinanggal', future: 'will disassemble / tatanggalin' },
+  'discolor': { present: 'discolor / kumukupas', past: 'discolored / kumupas', future: 'will discolor / kukupas' },
+  'divide into small portions': { present: 'divide / hinahati', past: 'divided / hinati', future: 'will divide / hahatiin' },
+  'drill/pierce': { present: 'drill/pierce / binubutas·tinutusok', past: 'drilled/pierced / binutas·tinusok', future: 'will drill/pierce / bubutasin·tutusukin' },
+  'dry': { present: 'dry / pinapatuyo', past: 'dried / pinatuyo', future: 'will dry / papatuyuin' },
+  'earn': { present: 'earn / kinikita', past: 'earned / kinita', future: 'will earn / kikita' },
+  'eat': { present: 'eat / kumakain', past: 'ate / kumain', future: 'will eat / kakain' },
+  'eat/drink': { present: 'eat/drink / kumakain·umiinom', past: 'ate/drank / kumain·uminom', future: 'will eat/drink / kakain·iinom' },
+  'exchange currency': { present: 'exchange / nagpapalit', past: 'exchanged / nagpalit', future: 'will exchange / magpapalit' },
+  'extinguish/evolve': { present: 'extinguish/evolve / pinapatay·umuunlad', past: 'extinguished/evolved / pinatay·umunlad', future: 'will extinguish/evolve / papatayin·uunlad' },
+  'feed': { present: 'feed / pinapakain', past: 'fed / pinakain', future: 'will feed / papakainin' },
+  'fill/stuff/block': { present: 'fill / pinupuno', past: 'filled / pinuno', future: 'will fill / pupunuin' },
+  'finish/complete': { present: 'finish / tinatapos', past: 'finished / tinapos', future: 'will finish / tatapusin' },
+  'follow around': { present: 'follow around / sinusundan', past: 'followed around / sinundan', future: 'will follow around / susundan' },
+  'follow/pour': { present: 'follow/pour / sinusundan·ibinubuhos', past: 'followed/poured / sinundan·ibinuhos Note: \'르\' irregular verb.', future: 'will follow/pour / susundan·ibubuhos' },
+  'gather': { present: 'gather / nagtitipon', past: 'gathered / nagtipon', future: 'will gather / magtitipon' },
+  'get annoyed': { present: 'get annoyed / naiirita', past: 'got annoyed / nainis', future: 'will get annoyed / maiirita' },
+  'get burned/scalded': { present: 'get burned / napapaso', past: 'got burned / napaso', future: 'will get burned / mapapaso' },
+  'get cut': { present: 'get cut / nasusugatan', past: 'got cut / nasugatan', future: 'will get cut / masusugatan' },
+  'get rid of': { present: 'get rid of / tinatanggal', past: 'got rid of / tinanggal', future: 'will get rid of / tatanggalin' },
+  'get/obtain': { present: 'get / nakukuha', past: 'got / nakuha', future: 'will get / makukuha' },
+  'give': { present: 'give / nagbibigay', past: 'gave / nagbigay', future: 'will give / magbibigay' },
+  'give medical treatment': { present: 'give medical treatment / nagbibigay ng medikal na paggamot', past: 'gave medical treatment / nagbigay ng medikal na paggamot', future: 'will give medical treatment / magbibigay ng medikal na paggamot' },
+  'go back/rotate/pass away': { present: 'go back/rotate / bumabalik·umiikot', past: 'went back/rotated / bumalik·umiikot', future: 'will go back/rotate / babalik·iikot' },
+  'go up and down': { present: 'go up and down / umaakyat at bumababa', past: 'went up and down / umakyat at bumaba', future: 'will go up and down / aakyat at bababa' },
+  'go up/climb': { present: 'go up / umaakyat', past: 'went up / umakyat', future: 'will go up / aakyat' },
+  'handle/cope with': { present: 'handle / pinamamahalaan', past: 'handled / pinamahalaan', future: 'will handle / pamamahalaan' },
+  'have indigestion': { present: 'have indigestion / hindi natutunawan', past: 'had indigestion / hindi natunawan', future: 'will have indigestion / hindi matutunawan' },
+  'hit/play': { present: 'hit/play / pinapalo·tumutugtog', past: 'hit/played / pinalo·tumugtog', future: 'will hit/play / papaluin·tutugtog' },
+  'ignore/disregard': { present: 'ignore / hindi pinapansin', past: 'ignored / hindi pinansin', future: 'will ignore / hindi papansinin' },
+  'increase/improve': { present: 'increase / lumalaki', past: 'increased / lumaki', future: 'will increase / lalaki' },
+  'inject': { present: 'inject / iniiniksyon', past: 'injected / ininiksyon', future: 'will inject / iiniksyon' },
+  'install a net fence': { present: 'install a net fence / naglalagay ng net fence', past: 'installed a net fence / naglagay ng net fence', future: 'will install a net fence / maglalagay ng net fence' },
+  'interpret': { present: 'interpret / nag-i-interpret', past: 'interpreted / nag-interpret', future: 'will interpret / mag-i-interpret' },
+  'know': { present: 'know / nalalaman', past: 'knew / nalaman', future: 'will know / malalaman' },
+  'leak/spill': { present: 'leak / tumatagas', past: 'leaked / tumagas', future: 'will leak / tatagas' },
+  'leave': { present: 'leave / umaalis', past: 'left / umalis', future: 'will leave / aalis' },
+  'light a fire': { present: 'light a fire / sinisindihan ang apoy', past: 'lit a fire / sinindihan ang apoy', future: 'will light a fire / sisindihan ang apoy' },
+  'look around': { present: 'look around / tumitingin sa paligid', past: 'looked around / tumingin sa paligid', future: 'will look around / titingin sa paligid' },
+  'lose': { present: 'lose / nawawala', past: 'lost / nawala', future: 'will lose / mawawala' },
+  'maintain/keep': { present: 'maintain / napapanatili', past: 'maintained / napanatili', future: 'will maintain / mapapanatili' },
+  'make': { present: 'make / gumagawa', past: 'made / gumawa', future: 'will make / gagawa' },
+  'manipulate/operate': { present: 'manipulate / minamanipula', past: 'manipulated / minanipula', future: 'will manipulate / mamanipulahin' },
+  'measure': { present: 'measure / sinusukat', past: 'measured / sinukat', future: 'will measure / susukatin' },
+  'melt/dissolve': { present: 'melt / tinutunaw', past: 'melted / tinunaw', future: 'will melt / tutunawin' },
+  'misunderstand': { present: 'misunderstand / hindi naiintindihan', past: 'misunderstood / hindi naintindihan', future: 'will misunderstand / hindi maiintindihan' },
+  'move': { present: 'move / gumagalaw', past: 'moved / gumalaw', future: 'will move / gagalaw' },
+  'move/transfer': { present: 'move / lumilipat', past: 'moved / lumipat', future: 'will move / lilipat' },
+  'nail/drive in': { present: 'nail / ipinapako', past: 'nailed / ipinako', future: 'will nail / ipapako' },
+  'occur': { present: 'occur / nangyayari', past: 'occurred / nangyari', future: 'will occur / mangyayari' },
+  'occur/happen': { present: 'occur / nangyayari', past: 'occurred / nangyari', future: 'will occur / mangyayari' },
+  'open': { present: 'open / binubuksan', past: 'opened / binuksan', future: 'will open / bubuksan' },
+  'park': { present: 'park / nagpa-park', past: 'parked / nag-park', future: 'will park / magpa-park' },
+  'peel/cut/bargain': { present: 'peel/cut/bargain / binabalatan·pinupuputol·tina-taran', past: 'peeled/cut/bargained / binalatan·pinutol·tina-taran', future: 'will peel/cut/bargain / babalatan·puputulin·ta-taran' },
+  'pick and eat': { present: 'pick and eat / pinipitas at kinakain', past: 'picked and ate / pinitas at kinain', future: 'will pick and eat / pipitasin at kakainin' },
+  'pick up': { present: 'pick up / pinupulot', past: 'picked up / pinulot Note: \'ㅂ\' irregular verb.', future: 'will pick up / pupulutin' },
+  'pick/open': { present: 'pick / pinipitas', past: 'picked / pinitas', future: 'will pick / pipitasin' },
+  'pile up/accumulate': { present: 'pile up / naiipon', past: 'piled up / naipon', future: 'will pile up / maiipon' },
+  'postpone/delay': { present: 'postpone / ipinagpapaliban', past: 'postponed / ipinagpaliban', future: 'will postpone / ipagpapaliban' },
+  'pour concrete': { present: 'pour concrete / nagbubuhos ng konkreto', past: 'poured concrete / nagbuhos ng konkreto', future: 'will pour concrete / magbubuhos ng konkreto' },
+  'prepare': { present: 'prepare / naghahanda', past: 'prepared / naghanda', future: 'will prepare / maghahanda' },
+  'prepare for/be ready for': { present: 'prepare / naghahanda', past: 'prepared / naghanda', future: 'will prepare / maghahanda' },
+  'proceed/progress': { present: 'proceed / nagpapatuloy', past: 'proceeded / nagpatuloy', future: 'will proceed / magpapatuloy' },
+  'protect': { present: 'protect / pinoprotektahan', past: 'protected / pinrotektahan', future: 'will protect / poprotektahan' },
+  'prove': { present: 'prove / pinapatunayan', past: 'proved / pinatunayan', future: 'will prove / papatunayan' },
+  'pull out/choose': { present: 'pull out / hinihila palabas', past: 'pulled out / hinila palabas', future: 'will pull out / hihilahin palabas' },
+  'push': { present: 'push / itinutulak', past: 'pushed / itinulak', future: 'will push / itutulak' },
+  'put down/release/let go': { present: 'put down / inilalagay', past: 'put down / inilagay', future: 'will put down / ilalagay' },
+  'put/place': { present: 'put / inilalagay', past: 'put / inilagay', future: 'will put / ilalagay' },
+  'raise': { present: 'raise / tinataas', past: 'raised / tinaas', future: 'will raise / tataasin' },
+  'raise/heighten': { present: 'raise / tinataas', past: 'raised / tinaas', future: 'will raise / tataasin' },
+  'read': { present: 'read / nagbabasa', past: 'read / nagbasa', future: 'will read / magbasa' },
+  'recycle': { present: 'recycle / nagre-recycle', past: 'recycled / nag-recycle', future: 'will recycle / magre-recycle' },
+  'reduce': { present: 'reduce / binabawasan', past: 'reduced / binawasan', future: 'will reduce / babawasan' },
+  'refund': { present: 'refund / ibinabalik ang bayad', past: 'refunded / ibinalik ang bayad', future: 'will refund / ibabalik ang bayad' },
+  'release goods': { present: 'release goods / inilalabas ang mga kalakal', past: 'released goods / inilabas ang mga kalakal', future: 'will release goods / ilalabas ang mga kalakal' },
+  'remove': { present: 'remove / tinatanggal', past: 'removed / tinanggal', future: 'will remove / tatanggalin' },
+  'reserve': { present: 'reserve / nagre-reserba', past: 'reserved / nagreserba', future: 'will reserve / magre-reserba' },
+  'respect': { present: 'respect / iginagalang', past: 'respected / iginalang', future: 'will respect / igagalang' },
+  'rest': { present: 'rest / nagpapahinga', past: 'rested / nagpahinga', future: 'will rest / magpapahinga' },
+  'rot/decay': { present: 'rot / nabubulok', past: 'rotted / nabulok', future: 'will rot / mabubulok' },
+  'seal hermetically': { present: 'seal / siniselyuhan', past: 'sealed / sinelyuhan', future: 'will seal / selyuhan' },
+  'select/sort out': { present: 'select / pinipili', past: 'selected / pinili', future: 'will select / pipiliin' },
+  'send': { present: 'send / nagpapadala', past: 'sent / nagpadala', future: 'will send / magpadala' },
+  'send/fry': { present: 'send / nagpapadala', past: 'sent / nagpadala', future: 'will send / magpadala' },
+  'ship': { present: 'ship / nagpapadala', past: 'shipped / nagpadala', future: 'will ship / magpadala' },
+  'ship/transport': { present: 'ship / nagpapadala', past: 'shipped / nagpadala', future: 'will ship / magpapadala' },
+  'sit': { present: 'sit / umuupo', past: 'sat / umupo', future: 'will sit / uupo' },
+  'sleep': { present: 'sleep / natutulog', past: 'slept / natulog', future: 'will sleep / matutulog' },
+  'slice': { present: 'slice / hinihiwa', past: 'sliced / hiniwa', future: 'will slice / hihiwain' },
+  'smoke': { present: 'smoke / naninigarilyo', past: 'smoked / nanigarilyo', future: 'will smoke / maninigarilyo' },
+  'spill/pour out': { present: 'spill / nabubuhos', past: 'spilled / nabuhos', future: 'will spill / mabubuhos' },
+  'spray': { present: 'spray / nag-i-spray', past: 'sprayed / nag-spray', future: 'will spray / mag-i-spray' },
+  'spray/jet': { present: 'spray / nag-i-spray', past: 'sprayed / nag-spray', future: 'will spray / mag-i-spray' },
+  'sprinkle': { present: 'sprinkle / winiwisikan', past: 'sprinkled / winisikan', future: 'will sprinkle / wiwisikan' },
+  'stack/pile up': { present: 'stack / itinatambak', past: 'stacked / itinambak', future: 'will stack / itatambak' },
+  'stay': { present: 'stay / nananatili', past: 'stayed / nanatili', future: 'will stay / mananatili' },
+  'steam': { present: 'steam / inisteam', past: 'steamed / inisteam', future: 'will steam / iisteam' },
+  'stir': { present: 'stir / hinahalo', past: 'stirred / hinalo', future: 'will stir / hahaluin' },
+  'stop': { present: 'stop / humihinto', past: 'stopped / huminto', future: 'will stop / hihinto' },
+  'stretch/lengthen': { present: 'stretch / iniuunat', past: 'stretched / iniunat', future: 'will stretch / iuunat' },
+  'suffer/be subjected to': { present: 'suffer / nagdudusa', past: 'suffered / nagdusa', future: 'will suffer / magdudusa' },
+  'take off': { present: 'take off / nagtatanggal', past: 'took off / nagtanggal', future: 'will take off / magtatanggal' },
+  'take off/remove/separate': { present: 'take off/remove / tinatanggal·nililinis', past: 'took off/removed / tinanggal·nilinisan', future: 'will take off/remove / tatanggalin·lilinisin' },
+  'take/stamp': { present: 'take/stamp / kinukuha·tinatakan', past: 'took/stamped / kinuha·tinatakan', future: 'will take/stamp / kukuha·tatatakan' },
+  'tease/make fun of': { present: 'tease / tinutukso', past: 'teased / tinukso', future: 'will tease / tutuksuhin' },
+  'throw away': { present: 'throw away / tinatapon', past: 'threw away / tinapon', future: 'will throw away / tatapon' },
+  'tidy up': { present: 'tidy up / nililinis', past: 'tidied up / nilinis', future: 'will tidy up / lilinisin' },
+  'tie/bind': { present: 'tie / tinatalian', past: 'tied / tinalian', future: 'will tie / tatalian' },
+  'tie/fasten/carry': { present: 'tie/fasten / tinatalian·ikinakabit', past: 'tied/fastened / tinalian·ikinabit', future: 'will tie/fasten / tatalian·ikakabit' },
+  'touch/apply/put on': { present: 'touch/apply / hinahawakan·inilalapat', past: 'touched/applied / hinawakan·inilapat', future: 'will touch/apply / hahawakan·ilalapat' },
+  'train': { present: 'train / nagsasanay', past: 'trained / nagsanay', future: 'will train / magsanay' },
+  'transfer': { present: 'transfer / naglilipat', past: 'transferred / naglipat', future: 'will transfer / maglilipat' },
+  'transport/carry': { present: 'transport / nagdadala', past: 'transported / nagdala', future: 'will transport / magdadala' },
+  'trim/prune/polish': { present: 'trim/polish / tinatrim·pinapakinis', past: 'trimmed/polished / tinrim·pinakinis', future: 'will trim/polish / tatrimin·papakinisin' },
+  'turn on/play': { present: 'turn on/play / binubuksan·tumutugtog', past: 'turned on/played / binuksan·tumugtog', future: 'will turn on/play / bubuksan·tutugtog' },
+  'vomit': { present: 'vomit / sumusuka', past: 'vomited / sumuka', future: 'will vomit / susuka' },
+  'wash with water': { present: 'wash with water / naghuhugas ng tubig', past: 'washed with water / naghugas ng tubig', future: 'will wash with water / maghuhugas ng tubig' },
+  'wash/cleanse': { present: 'wash / hinuhugasan', past: 'washed / hinugasan', future: 'will wash / huhugasan' },
+  'wear': { present: 'wear / nagsusuot', past: 'wore / nagsusuot', future: 'will wear / magsusuot' },
+  'weld': { present: 'weld / naghihinang', past: 'welded / naghinang', future: 'will weld / maghihinang' },
+  'wilt/wither': { present: 'wilt / nalalanta', past: 'wilted / nalanta', future: 'will wilt / malalanta' },
+  'write': { present: 'write / nagsusulat', past: 'wrote / nagsulat', future: 'will write / magsusulat' },
+  'write/fill out': { present: 'write/fill out / nagsusulat·pinupunan', past: 'wrote/filled out / nagsulat·pinunan', future: 'will write/fill out / magsusulat·pupunan' },
+  'yell/shout': { present: 'yell / sumisigaw', past: 'yelled / sumigaw', future: 'will yell / sisigaw' }
 };
 
 
-// ===== Replace your englishLines() with this =====
-const VOWELS = new Set(['a','e','i','o','u']);
-function pastFormGuess(base){
-  if(base.endsWith('e')) return base+'d';
-  if(base.endsWith('y') && !VOWELS.has(base[base.length-2])) return base.slice(0,-1)+'ied';
-  return base+'ed';
-}
-
-function englishLines(en){
-  // raw = lowercased English na tinanggal lang ang leading "to "
-  const raw = en.replace(/^to\s+/i,'').trim().toLowerCase();           // e.g. "stop (rain/snow)"
-  const noParens = raw.replace(/\s*\(.*?\)\s*/g,'').trim();            // e.g. "stop"
-
-  const hit = EN_TL_FORMS[raw] || EN_TL_FORMS[noParens];
-  if(hit){
-    return {
-      present: hit.present,
-      past:    hit.past,
-      future:  hit.future
-    };
+  const VOWELS = new Set(['a','e','i','o','u']);
+  const stripToBase = (en)=> en.replace(/^to\s+/i,'').replace(/\s*\(.*?\)\s*/g,'').trim().toLowerCase();
+  function pastFormGuess(base){
+    if(base.endsWith('e')) return base+'d';
+    if(base.endsWith('y') && !VOWELS.has(base[base.length-2])) return base.slice(0,-1)+'ied';
+    return base+'ed';
+  }
+  function englishLines(en){
+    const base = stripToBase(en);
+    if(EN_TL_FORMS[base]) return EN_TL_FORMS[base];
+    return { present: base, past: pastFormGuess(base), future:`will ${base}` };
   }
 
-  // fallback (English-only) kapag talagang walang entry sa EN_TL_FORMS
-  return {
-    present: noParens,
-    past:    pastFormGuess(noParens),
-    future:  `will ${noParens}`
-  };
-}
+  // ===== Choices (4 small boxes) =====
+  function generateChoicesFor(currentWord){
+    const correct = currentWord.en;
+    // Build pool of distinct English meanings
+    const pool = [];
+    for(const w of WORDS_MASTER){
+      if(w.en && w.en !== correct && !pool.includes(w.en)) pool.push(w.en);
+    }
+    shuffle(pool);
+    const distractors = pool.slice(0,3);
+    const options = shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
+    return options;
+  }
 
+  function renderChoicesFor(word){
+    choicesGrid.innerHTML = '';
+    if(!toggleChoices.checked) { choicesGrid.style.display = 'none'; return; }
+    choicesGrid.style.display = 'grid';
+    const options = generateChoicesFor(word);
+    let locked = false;
 
+    for(const opt of options){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'choiceBtn';
+      btn.textContent = opt.text;
+      btn.dataset.correct = opt.correct ? '1' : '0';
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation(); // prevent flip
+        if(locked) return;
+        locked = true;
+        if(opt.correct){
+          btn.classList.add('correct');
+        }else{
+          btn.classList.add('wrong');
+          // glow the correct one
+          [...choicesGrid.children].forEach(ch=>{
+            if(ch.dataset.correct === '1'){ ch.classList.add('reveal'); }
+          });
+        }
+      });
+      choicesGrid.appendChild(btn);
+    }
+  }
+
+  toggleChoices.addEventListener('change', ()=>{
+    if(!current) return;
+    renderChoicesFor(current);
+  });
 
   // ===== Rendering =====
   function renderFront(w){
@@ -667,7 +1014,8 @@ function englishLines(en){
     renderBack(w);
     flipWrap.classList.remove('flipped');
     updateProgress();
-    playKo(w.ko); // autoplay base once
+    renderChoicesFor(w);       // ← build choices for this word
+    playKo(w.ko);              // autoplay base once
   }
 
   // ===== Flow =====
@@ -702,6 +1050,9 @@ function englishLines(en){
       flipWrap.classList.remove('flipped');
       updateProgress();
 
+      // refresh choices for new card
+      renderChoicesFor(w);
+
       flipWrap.classList.add('fly-enter');
       const onEnterEnd = (ev)=>{
         if(ev.target !== cardEl) return;
@@ -735,32 +1086,19 @@ function englishLines(en){
   document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
   document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
   </script>
+
   <script>
-// Disable right click
-document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable text selection
-document.addEventListener("selectstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable drag (para hindi madrag palabas yung image/text)
-document.addEventListener("dragstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
-document.addEventListener("keydown", function(e){
-  if (
-    e.key === "F12" || 
-    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
-  ) {
-    e.preventDefault();
-  }
-}, false);
-</script>
+  // Disable right click
+  document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);
+  // Disable text selection
+  document.addEventListener("selectstart", function(e){ e.preventDefault(); }, false);
+  // Disable drag
+  document.addEventListener("dragstart", function(e){ e.preventDefault(); }, false);
+  // Disable certain keys
+  document.addEventListener("keydown", function(e){
+    if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) { e.preventDefault(); }
+  }, false);
+  </script>
 
 </body>
 </html>
