@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EPS-TOPIK List (Number First + Audio)</title>
+<style>
+  :root{
+    --bg:#0a1522; --panel:#0f1f33; --ink:#eaf2ff; --muted:#a8bed8;
+    --accent:#38bdf8; --accent-2:#22d3ee; --line:rgba(255,255,255,.08);
+	:root{ --stickTop:4px; 
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    background:linear-gradient(180deg,#08121d,#0a1522 60%,#06101b);
+    color:var(--ink);
+  }
+  header{
+    position:sticky; top:0; z-index:5;
+    background:linear-gradient(180deg,rgba(10,21,34,.95),rgba(10,21,34,.85));
+    backdrop-filter: blur(6px) saturate(120%);
+    padding:16px 14px; border-bottom:1px solid var(--line);
+  }
+  h1{margin:0; font-size:1.2rem; letter-spacing:.4px}
+  .sub{margin:4px 0 0; color:var(--muted); font-size:.9rem}
+  .wrap{max-width:980px; margin:14px auto 60px; padding:0 12px}
+
+  .toolbar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    margin:10px 0 12px;
+  }
+  .toolbar input{
+    flex:1 1 260px; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    background:#0b1a2b; color:var(--ink); outline:none;
+  }
+  .toolbar button{
+    appearance:none; border:none; cursor:pointer;
+    padding:10px 14px; border-radius:10px; font-weight:800; letter-spacing:.3px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#062135;
+  }
+
+  .list{
+    border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    background:linear-gradient(180deg,#0e1e30,#0b1929);
+  }
+  .head, .row{
+    display:grid; grid-template-columns: 50px 1.1fr 1.6fr 54px;
+    align-items:center; gap:2px; padding:2px 12px; border-bottom:1px solid var(--line);
+  }
+  .head{position:sticky; top:0px; background:#0f1f33; z-index:2; font-weight:800; color:#cfe3ff}
+  .row:last-child{border-bottom:none}
+  .num{font-variant-numeric: tabular-nums; color:#b9d8ff; font-weight:800}
+  .ko{font-weight:900; font-size:1.08rem}
+  .en{color:#cfe0fb}
+  .play{
+    justify-self:end; width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
+    background:#0b1a2b; border:1px solid var(--line); cursor:pointer; transition:transform .08s ease, filter .15s ease;
+  }
+  .play:hover{filter:brightness(1.08); transform:translateY(-1px)}
+  .play svg{width:20px; height:20px; fill:#7fd6ff}
+
+  .nohit{padding:18px; color:var(--muted)}
+  mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .2em; border-radius:4px}
+</style>
+</head>
+<body>
+  <header>
+    <h1>EPS-TOPIK BOOK 1 </h1>
+    <p class="sub">Search English or Korean. Click the speaker to hear the Korean. Order preserved exactly as provided.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', 'to go')" />
+      <button id="clearBtn" type="button">Clear</button>
+    </div>
+
+    <div class="list" id="list">
+      <div class="head">
+        <div>Page</div><div>Korean</div><div>English</div><div style="text-align:right">Audio</div>
+      </div>
+      <!-- rows injected here -->
+    </div>
+    <div class="nohit" id="nohit" style="display:none">No matches.</div>
+  </div>
+
+<script>
+/* ========= Raw list (exact order) ========= */
+const RAW = `
+국적 nationality 51
+나라 country 51
+네팔 Nepal 51
+누구 who 51
+동티모르 East Timor 51
+라오스 Laos 51
+몽골 Mongolia 51
+미얀마 Myanmar 51
+방글라데시 Bangladesh 51
+베트남 Vietnam 51
+사람 person 51
+스리랑카 Sri Lanka 51
+어느 which 51
+우즈베키스탄 Uzbekistan 51
+이름 name 51
+인도네시아 Indonesia 51
+중국 China 51
+캄보디아 Cambodia 51
+키르기스스탄 Kyrgyzstan 51
+타지키스탄 Tajikistan 51
+태국 Thailand 51
+파키스탄 Pakistan 51
+필리핀 The Philippines 51
+한국 Republic of Korea 51
+간호사 nurse 54
+경찰관 police officer 54
+공무원 public official 54
+근로자 worker 54
+기술자 technician 54
+네 yes 54
+농부 farmer 54
+목수 carpenter 54
+선생님 teacher (honorific) 54
+소방관 firefighter 54
+씨 Mr./Ms. 54
+아니요 no 54
+어부 fisherperson 54
+요리사 cook 54
+운전기사 driver 54
+의사 doctor 54
+저/나 I 54
+점원 clerk 54
+직업 occupation 54
+학생 student 54
+회사원 company employee 54
+가위 scissors 61
+계산기 calculator 61
+그것 that (thing) 61
+달력 calendar 61
+무엇 what 61
+물건 supply 61
+뭐 what 61
+볼펜 (ballpoint) pen 61
+사무실 office 61
+시계 clock 61
+안경 glasses 61
+연필 pencil 61
+이것 this (thing) 61
+저것 that (thing over there) 61
+ㅋ 칼 boxcutter 61
+컴퓨터 computer 61
+컵 cup 61
+휴대전화 cell phone 61
+휴대폰 cell phone 61
+가방 bag 64
+가족사진 family picture 64
+거울 mirror 64
+베개 pillow 64
+빗 brush 64
+생활용품 daily necessities 64
+여권 passport 64
+열쇠 key 64
+우산 umbrella 64
+이불 blanket 64
+지갑 wallet 64
+화장품 cosmetics (skin care) 64
+휴지 toilet paper 64
+가구 furniture 71
+냉장고 refrigerator 71
+세탁기 washer 71
+소파 sofa 71
+식탁 table 71
+에어컨 air conditioner 71
+옷장 closet 71
+의자 chair 71
+전자레인지 microwave 71
+전자제품 electronics 71
+책상 desk 71
+청소기 vacuum cleaner 71
+침대 bed 71
+텔레비전 television 71
+거기 there 74
+거실 living room 74
+기숙사 dorm (dormitory) 74
+미용실 hair salon 74
+방 room 74
+병원 hospital 74
+부엌 kitchen 74
+슈퍼마켓 supermarket 74
+시장 market 74
+식당 restaurant 74
+약국 pharmacy 74
+어디 where 74
+여기 here 74
+우체국 post office 74
+은행 bank 74
+장소 place 74
+저기 over there 74
+집 house 74
+커피숍 coffee shop 74
+편의점 convenience store 74
+화장실 restroom 74
+회사 workplace 74
+가다 to go 81
+공부(하다) study, to study 81
+쇼핑(하다) shopping, to shop 81
+쉬다 to take a break 81
+오다 to come 81
+요리(하다) cooking, to cook 81
+운동(하다) exercise/sports, to exercise 81
+일(하다) work, to work 81
+일상 everyday life 81
+ㅈ 자다 to sleep 81
+전화(하다) call, to call 81
+하다 to do 81
+과자 snack 84
+마시다 to drink 84
+먹다 to eat 84
+물 water 84
+밥 rice 84
+보다 to watch 84
+빵 bread 84
+사과 apple 84
+신문 newspaper 84
+영화 movie 84
+오늘 today 84
+우유 milk 84
+읽다 to read 84
+주스 juice 84
+지금 now 84
+책 book 84
+커피 coffee 84
+금요일 Friday 91
+내일 tomorrow 91
+매일 everyday 91
+목요일 Thursday 91
+수요일 Wednesday 91
+어제 yesterday 91
+요일 days of the week 91
+월요일 Monday 91
+일요일 Sunday 91
+주말 weekend 91
+토요일 Saturday 91
+평일 weekday 91
+화요일 Tuesday 91
+1월 January 94
+2월 February 94
+3월 March 94
+4월 April 94
+5월 May 94
+6월 June 94
+7월 July 94
+8월 August 94
+9월 September 94
+10월 October 94
+11월 November 94
+12월 December 94
+구 nine 94
+날짜 dates 94
+내년 next year 94
+다음 달 next month 94
+다음 주 next week 94
+미역국 seaweed soup 94
+ㅅ 사 four 94
+삼 three 94
+삼십 thirty 94
+생일 birthday 94
+숫자 number 94
+십 ten 94
+언제 when 94
+오 five 94
+올해 this year 94
+월 month 94
+육 six 94
+이 two 94
+이번 달 this month 94
+이번 주 this week 94
+이십 twenty 94
+일 day 94
+일 one 94
+작년 last year 94
+지난달 last month 94
+지난주 last week 94
+친구 friend 94
+칠 seven 94
+케이크 cake 94
+팔 eight 94
+낮 daytime 101
+몇 시 what time 101
+반 half 101
+밤 night 101
+보통 usually 101
+분 minute 101
+새벽 dawn 101
+시 hour 101
+시간 time 101
+아침 morning 101
+요즘 these days 101
+저녁 evening 101
+점심 afternoon 101
+게임(하다) game, to play a game 104
+공원 park 104
+닦다 to brush/wipe 104
+만나다 to meet 104
+매점 snack bar 104
+사다 to buy 104
+산책(하다) walk, to take a walk 104
+샤워(하다) shower, to take a shower 104
+식사(하다) meal, to have a meal 104
+씻다 to wash 104
+이 tooth 104
+일과 daily routines 104
+일어나다 to get up 104
+장을 보다 to go grocery shopping 104
+청소(하다) clean, to clean 104
+출근(하다) going to work, to go to work 104
+퇴근(하다) leaving work, to leave work 104
+휴게실 lounge 104
+가을 fall/autumn 111
+겨울 winter 111
+계절 seasons 111
+너무 too (much) 111
+덥다 to be hot 111
+따뜻하다 to be warm 111
+뜨겁다 to be hot (for objects) 111
+봄 spring 111
+쉽다 to be easy 111
+시원하다 to be cool 111
+어때요? How is it? 111
+어렵다 to be difficult 111
+여름 summer 111
+영어 English 111
+조금 a little 111
+차갑다 to be cold (for objects) 111
+춥다 to be cold 111
+그치다 to stop 114
+나쁘다 to be bad 114
+날씨 weather 114
+눈이 오다 to snow 114
+많이 many/much 114
+맑다 to be clear 114
+바람이 불다 to be windy 114
+별로 not really 114
+비가 오다 to rain 114
+여보세요? hello? (on the phone) 114
+정말 really/truly 114
+좋다 to be good 114
+흐리다 to be cloudy 114
+가족 family 121
+계시다 to exist (honorific) 121
+ㄴ 나 me 121
+나이 age 121
+남동생 younger brother 121
+남매 brother and sister 121
+남자 man 121
+남편 husband 121
+누나 older sister (to a younger brother) 121
+댁 house (honorific) 121
+드시다 to eat (honorific) 121
+딸 daughter 121
+마당 yard 121
+말(하다) speech, to speak 121
+말씀하시다 to speak (honorific) 121
+부모님 parents 121
+비빔밥 bibimbap 121
+성함 name (honorific) 121
+아내 wife 121
+아들 son 121
+아버지 father 121
+아빠 dad 121
+아프다 to be sick 121
+어머니 mother 121
+언니 older sister (to a younger sister) 121
+엄마 mom 121
+여동생 younger sister 121
+여자 woman 121
+연세 age (honorific) 121
+오빠 older brother (to a younger sister) 121
+있다 to exist 121
+자매 sisters 121
+잡수시다 to eat (honorific) 121
+주무시다 to sleep (honorific) 121
+창문 window 121
+편찮으시다 to be sick (honorific) 121
+피자 pizza 121
+할머니 grandmother 121
+할아버지 grandfather 121
+형 older brother (to a younger brother) 121
+형제 brothers 121
+귀엽다 to be cute 124
+길다 to be long 124
+똑똑하다 to be smart 124
+머리 hair/head 124
+멋있다 to be goodlooking 124
+성격 personality 124
+성격이 급하다 to be impatient 124
+얌전하다 to be calm 124
+예쁘다 to be pretty 124
+외모 looks 124
+잘생기다 to be handsome 124
+재미있다 to be interesting 124
+짧다 to be short 124
+착하다 to be nice 124
+친절하다 to be kind 124
+키가 작다 to be short 124
+키가 크다 to be tall 124
+활발하다 to be active 124
+김밥 gimbap 131
+김치찌개 kimchi-jjigae (kimchi stew) 131
+돈가스 pork cutlet 131
+된장찌개 doenjang-jjigae (soybean paste stew) 131
+ㄹ 라면 ramen 131
+맛없다 to be not delicious 131
+맛있다 to be dilicious 131
+불고기 bulgogi 131
+싫어하다 to dislike 131
+우동 udon 131
+음식 food 131
+자장면 black-bean-sauce noodles 131
+좀 please 131
+좋아하다 to like 131
+치킨 chicken 131
+탕수육 sweet and sour pork 131
+개 thing (classifier) 134
+공기 bowl 134
+권 volume (classifier) 134
+그릇 dish 134
+넷 four 134
+다섯 five 134
+둘 two 134
+마리 animal (classifier) 134
+명 person (classifier) 134
+병 bottle 134
+분 person (honorific, classifier) 134
+분류사 classifiers 134
+셋 three 134
+아홉 nine 134
+여덟 eight 134
+여섯 six 134
+열 ten 134
+일곱 seven 134
+잔 cup 134
+접시 plate 134
+하늘색 one 134
+가볍다 to be light 141
+과일 fruit 141
+딸기 strawberry 141
+많다 to be many/much 141
+무겁다 to be heavy 141
+비싸다 to be expensive 141
+상자 box 141
+상태 state 141
+상하다 to be spoiled 141
+수박 watermelon 141
+싱싱하다 to be fresh 141
+싸다 to be cheap 141
+오렌지 orange 141
+원 won (Korean currency) 141
+작다 to be small 141
+잘 well 141
+적다 to be few 141
+크다 to be big 141
+ㄱ 가격 price 144
+값 price 144
+값을 깎다 to bargain 144
+계산(하다) payment, to pay 144
+교환(하다) exchange, to exchange 144
+구매(하다) purchase, to purchase 144
+넣다 to put in 144
+닫다 to close 144
+돈 money 144
+동전 coin 144
+들다 to hold 144
+만 ten thousand 144
+물품 item 144
+ㅂ 바꾸다 to exchange 144
+바지 pants 144
+백 hundred 144
+상품권 gift certificate 144
+신발 shoes 144
+신용카드 credit card 144
+싸다 to wrap up/pack 144
+어지럽다 to be messy 144
+종이 가방 paper bag 144
+지폐 banknote 144
+천 thousand 144
+포장(하다) packing, to wrap up/pack 144
+함께 together 144
+현금 cash 144
+화폐 currency 144
+환불(하다) refund, to refund 144
+같이 together 151
+그래서 so 151
+따로 separately 151
+버리다 to throw away 151
+분리배출(하다) separation and disposal, to separate and dispose 151
+수거함 collection bin 151
+시작(하다) start, to start 151
+쓰레기 waste/trash 151
+쓰레기봉투 trash bag 151
+쓰레기통 waste bin 151
+옷 clothes 151
+유리 glass 151
+음식물 food 151
+일반쓰레기 general waste 151
+재활용품 recyclable materials 151
+종이 paper 151
+캔 can 151
+플라스틱 plastic 151
+헌 old 151
+갑자기 suddenly 154
+걸레 cleaning cloth 154
+그러면 then 154
+냄비 pot 154
+다리미 iron 154
+도와주다 to help 154
+돌리다 to run 154
+만들다 to make 154
+먼지 dust 154
+먼지를 털다 to dust off 154
+바닥 floor 154
+밥솥 rice cooker 154
+밥을 하다/짓다 to cook rice 154
+빗자루 broom 154
+빨래(하다) laundry/to wash clothes 154
+빨래를 걷다 to take down the laundry 154
+빨래를 널다 to hang the laundry 154
+설거지(하다) dish-washing, to wash the dishes 154
+세탁 세제 laundry detergent 154
+쓸다 to sweep 154
+옷을 개다 to fold clothes 154
+옷을 다리다 to iron clothes 154
+왜 why 154
+전기밥솥 electric rice cooker 154
+정리(하다) organization, to organize 154
+주방 세제 dish soap 154
+집안일 household chores 154
+천천히 slowly 154
+프라이팬 frying pan 154
+KTX Highspeed train (Korea Train Express) 161
+걸리다 (time) it takes 161
+고속버스 express bus 161
+공항 airport 161
+교통수단 means of transportation 161
+기차 train 161
+기차역 train station 161
+마을버스 local bus 161
+배 ship 161
+버스 정류장 bus stop 161
+버스 터미널 bus terminal 161
+번 times 161
+비행기 airplane 161
+시내버스 city bus 161
+시외버스 intercity bus 161
+어떻게 how 161
+얼마나 how much 161
+오토바이 motorcycle 161
+자전거 bicycle 161
+지하철 subway 161
+지하철역 subway station 161
+쯤 about/approximately 161
+타다 to ride 161
+택시 taxi 161
+트럭 truck 161
+가깝다 to be close 164
+갈아타다 to transfer (bus/train/subway) 164
+걷다 to walk 164
+걸어가다 to go on foot 164
+걸어오다 to come on foot 164
+내리다 to get off 164
+늦다 to be late 164
+멀다 to be far 164
+미안하다 to be sorry 164
+이동(하다) movement, to move 164
+지나다 to pass 164
+ㅊ 차가 막히다 to have a traffic jam 164
+출근 시간 work start time 164
+출퇴근 시간 rush hour 164
+ㅌ 타고 가다 to go by (mode of transportation) 164
+타고 오다 to come by (mode of transportation) 164
+퇴근 시간 work end time 164
+환승(하다) transfer, to transfer 164
+고향 hometown 171
+교회 church 171
+기도(하다) prayer, to pray 171
+낮잠 nap 171
+노래를 부르다 to sing (a song) 171
+노래방 karaoke room 171
+모임 meetings 171
+방문(하다) visit, to visit 171
+사원 mosque 171
+생활 life 171
+예불을 드리다 to attend a Buddhist service 171
+운동장 sports field 171
+절 temple 171
+종교 religion 171
+축구(하다) soccer, to play soccer 171
+탁구를 치다 to play table tennis 171
+탁구장 table tennis hall 171
+피시방 PC room 171
+헬스를 하다 to work out 171
+헬스장 gym 171
+활동(하다) activity, to move 171
+휴식 relaxation 171
+기분 mood 174
+기쁘다 to be happy 174
+돼지고기 pork 174
+바쁘다 to be busy 174
+술 alcohol 174
+슬프다 to be sad 174
+심심하다 to be bored 174
+약속 appointment 174
+재미없다 to be uninteresting 174
+즐겁다 to be enjoyable 174
+피곤하다 to be tired 174
+한가하다 to not be busy 174
+건너편 across from 181
+건물 building 181
+그쪽 over there 181
+뒤 behind 181
+맞은편 opposite 181
+밑 beneath 181
+밖 outside 181
+방향 direction 181
+사이 between 181
+아래 under 181
+안 inside 181
+앞 in front of 181
+옆 next to, side 181
+오른쪽 right 181
+왼쪽 left 181
+위 on 181
+위치 location 181
+이쪽 this way 181
+저쪽 that way 181
+쪽 way 181
+층 floor 181
+건너가다 to cross 184
+근처 nearby 184
+나가다 to go out 184
+나오다 to come out 184
+내려가다 to go down 184
+내려오다 to come down 184
+들어가다 to go in 184
+들어오다 to come in 184
+마트 mart 184
+사거리 intersection 184
+옥상 rooftop 184
+올라가다 to go up 184
+올라오다 to come up 184
+육교 overpass 184
+지하 underground 184
+횡단보도 crosswalk 184
+구두 (formal) shoes 191
+모자 hat/cap 191
+반바지 shorts 191
+선글라스 sunglasses 191
+슬리퍼 slippers 191
+신다 to wear (on feet) 191
+쓰다 to wear (on the head) 191
+액세서리 accessories 191
+양말 socks 191
+운동화 sneakers 191
+원피스 dress 191
+입다 to wear 191
+잠바 jacket 191
+장화 rain boots 191
+청바지 jeans 191
+치마 skirt 191
+티셔츠 t-shirt 191
+갈색 brown 194
+결혼식 wedding 194
+까만색 black 194
+노란색 yellow 194
+밝다 to be bright 194
+보라색 violet 194
+분홍색 pink 194
+빨간색 red 194
+색깔 colors 194
+쇼핑몰 shopping mall 194
+어둡다 to be dark 194
+주황색 orange 194
+초록색 green 194
+파란색 blue 194
+ㅎ 하나 sky blue 194
+하얀색 white 194
+회색 gray 194
+계약(하다) contract, to sign the contract 201
+계약금을 내다 to pay the holding deposit 201
+고시원 goshiwon(a small room typically rented by students) 201
+구하다 to find 201
+끝나다 to expire/end 201
+보증금 security deposit 201
+부동산 real estate agency 201
+부탁 favor 201
+빌라 small apartment 201
+아파트 apartment 201
+알아보다 to look for (a house) 201
+오피스텔 officetel 201
+원룸 studio apartment 201
+월세 monthly rent 201
+이사(하다) move, to move 201
+주거 형태 types of housing 201
+주택 house 201
+집을 보다 to view a house 201
+편하다 to be comfortable 201
+교통 transportation 204
+깨끗하다 to be clean 204
+넓다 to be spacious 204
+더럽다 to be dirty 204
+부족하다 to be lacking 204
+불편하다 to be inconvenient 204
+시끄럽다 to be noisy 204
+전망 view 204
+조용하다 to be quiet 204
+좁다 to be narrow/small 204
+주거 환경 residential environment 204
+편리하다 to be convenient 204
+편의 시설 facilities 204
+계획(하다) plan, to plan 211
+그래요? really? 211
+도착(하다) arrival, to arrive 211
+묵다 to stay 211
+민박 B&B (bed and breakfast) 211
+숙소 accommodation 211
+여행(하다) travel/trip, to travel 211
+예약(하다) booking, to book 211
+유스 호스텔 youth hostel 211
+이번 this time 211
+짐 luggage 211
+출발(하다) departure, to depart 211
+콘도 membership resort 211
+펜션 cottage/house rental 211
+표 ticket 211
+풀다 to unpack 211
+호텔 hotel 211
+휴가 vacation 211
+강 river 214
+경치가 좋다 to be scenic 214
+관람(하다) viewing, to view/watch 214
+구경(하다) sightseeing, to sightsee 214
+꼭 definitely 214
+놀이공원 amusement park 214
+다음 next 214
+등산(하다) hiking, to hike 214
+민속촌 folk village 214
+바다 sea 214
+산 moumtain 214
+섬 island 214
+아름답다 to be beautiful 214
+아주 very 214
+여행지 travel destinations 214
+온천 hot spring 214
+유명하다 to be famous 214
+유적지 historic site 214
+해수욕장 beach 214
+호수 lake 214
+경기(하다) game, to play a game 220
+그리다 to draw 220
+그림 picture 220
+기타 guitar 220
+낚시(하다) fish, to fish 220
+노래(하다) song, to sing 220
+독서(하다) reading, to read (books) 220
+듣다 to listen 220
+배우다 to learn 220
+사진 photo 220
+살다 to live 220
+실내 indoor 220
+실외 outdoor 220
+외국어 foreign language 220
+음악 music 220
+인터넷 internet 220
+자주 often 220
+주로 mainly 220
+찍다 to take 220
+추다 dance 220
+취미 hobby 220
+치다 to hit 220
+콘서트 concert 220
+피아노 piano 220
+힘들다 to be difficult 220
+골프 golf 224
+농구(하다) basketball, to paly basketball 224
+동호회 club 224
+배드민턴 badminton 224
+볼링 bowling 224
+수영(하다) swimming, to swim 224
+스케이트 skate 224
+스키 ski 224
+야구(하다) baseball, to play baseball 224
+조깅(하다) jogging, to jog 224
+테니스 tennis 224
+고소하다 to be nutty 231
+교실 class 231
+다니다 to attend 231
+달다 to be sweet 231
+떡볶이 tteokbokki 231
+레몬 lemon 231
+맛 taste 231
+맛이 좋다 to be tasty 231
+맵다 to be spicy 231
+시다 to be sour 231
+싱겁다 to be bland 231
+쓰다 to be bitter 231
+요리법 cooking method 231
+짜다 to be salty 231
+한번 once 231
+간장 soy sauce 234
+계란 egg 234
+고기 meat 234
+굽다 to grill 234
+깎다 to peel 234
+끓이다 to boil (in broth) 234
+닭고기 chicken 234
+당근 carrot 234
+데우다 to reheat 234
+떡 rice cake 234
+ㅁ 마늘 garlic 234
+만두 dumplings 234
+볶다 to stir fry 234
+삶다 to boil (in water) 234
+생선 fish 234
+설탕 sugar 234
+소고기 beef 234
+소금 salt 234
+썰다 to slice 234
+양념 seasonings 234
+양파 onion 234
+재료 ingredient 234
+조리법 cooking method 234
+찌다 to steam 234
+채소 vegetables 234
+튀기다 to deep fry 234
+ㅍ 파 green onion 234
+후추 pepper 234
+검색(하다) search, to search 241
+글 post 241
+로그아웃 log out 241
+로그인 log in 241
+보내다 to send 241
+블로그 blog 241
+비밀번호 password 241
+쓰다 to write 241
+아이디 ID 241
+웹사이트 website 241
+이메일 e-mail 241
+인터넷 카페 internet café 241
+채팅(하다) chatting, to chat 241
+홈페이지 homepage 241
+화상 채팅 video chat 241
+회원 가입 sign up one’s account 241
+회원 탈퇴 delete one’s account 241
+가르치다 to teach 244
+내려받다 to download 244
+다운로드(하다) download, to download 244
+댓글을 달다 to post a comment 244
+맛집 famous restaurant 244
+메시지 message 244
+모바일 메신저 mobile messenger 244
+보이다 to show 244
+스마트폰 smartphone 244
+애플리케이션 (앱) phone application (app) 244
+업로드(하다) upload, to upload 244
+에스엔에스 (SNS) social media, social networking service (SNS) 244
+올리다 to upload 244
+와이파이 wifi 244
+이모티콘 emoticon 244
+이야기(하다) talk, to talk 244
+저장(하다) save, to save 244
+확인(하다) check, to check 244
+기다리다 to wait 251
+보호자 guardian 251
+부르다 to call 251
+수술(하다) surgery, to perform surgery 251
+수술을 받다 to undergo surgery 251
+신분증 identification card 251
+약 medicin 251
+엑스레이를 찍다 to take an X-ray 251
+저희 we/our (humble form of 우리) 251
+전화번호 phone number 251
+접수(하다) registration, to register 251
+주사 injection 251
+주사를 놓다 to give an injection 251
+주사를 맞다 to get an injection 251
+진료(하다) a medical consultation, to provide a medical consultation 251
+진료를 받다 to receive a medical consultation 251
+진료실 consultation room 251
+처방(하다) prescription, to prescribe 251
+처방을 받다 to receive a prescription 251
+처방전 prescription 251
+처음 first time 251
+체온을 재다 to take one's temperature 251
+치료(하다) treatment, to provid treatment 251
+치료를 받다 to receive treatment 251
+가슴 chest 254
+감기에 걸리다 to catch a cold 254
+귀 ear 254
+눈 eye 254
+눈병이 나다 to get an eye infection 254
+다리 leg 254
+다치다 to injure 254
+머리가 아프다 to have a headache 254
+몸 body 254
+무릎 knee 254
+발 foot 254
+발목 ankle 254
+배 stomach 254
+배가 아프다 to have a stomachache 254
+손 hand 254
+손가락 finger 254
+손목 wrist 254
+신체 body parts 254
+어깨 shoulder 254
+얼굴 face 254
+운전(하다) drive, to drive 254
+입 mouth 254
+증상 symptoms 254
+차다 to be cold 254
+코 nose 254
+팔 arm 254
+허리 waist 254
+환자 patient 254
+가렵다 to feel itchy 261
+기침(하다) cough, to cough 261
+마스크 mask 261
+목이 붓다 to have a sore throat 261
+배탈이 나다 to have an upset stomach 261
+보관(하다) storage, to store 261
+비상약 emergency medicine 261
+뼈가 부러지다 to have a broken bone 261
+설사(하다) diarrhea, to have diarrhea 261
+소화가 안 되다 to have indigestion 261
+손이 베이다 to cut one's hand 261
+열 fever 261
+열이 나다/있다 to have a fever 261
+졸리다 to feel drowsy 261
+콧물이 나다 to have a runny nose 261
+토(하다) vomit, to vomit 261
+반창고 adhesive plaster 264
+밴드 band-aid 264
+밴드를 붙이다 to apply a band-aid 264
+붕대 gauze bandage 264
+붕대를 감다 to wrap a bandage 264
+소독(하다) disinfection, to disinfect 264
+소독약 disinfectant 264
+알약 pill 264
+약을 먹다 to take medicine 264
+약을 뿌리다 to spray medicine 264
+연고 ointment 264
+연고를 바르다 to apply ointment 264
+영양제 nutritional supplements 264
+의약품 medications 264
+찜질(하다) fomentation, to apply a heat compress 264
+치료법 (medical) treatment 264
+파스 pain relief patch 264
+파스를 붙이다 to apply a pain relief patch 264
+국내 소포 domestic package 271
+국제 우편 international mail 271
+국제 특급 우편 (EMS) Express Mail Service (EMS) 271
+나흘 four days 271
+등기 소포 registered package 271
+등기 우편 registered mail 271
+받는 사람/ 수취인 recipient 271
+보내는 사람/ 발신인 sender 271
+사흘 three days 271
+선박 우편 surface mail 271
+우체통 mailbox 271
+우편 postal mail 271
+우편물 mail 271
+우편번호 post code 271
+우표 stamp 271
+이틀 two days 271
+익일 특급 next-day delivery 271
+일반 소포 regular package 271
+일반 우편 standard mail 271
+주소 address 271
+택배 packages delivery service 271
+편지 봉투 letter envelope 271
+하루 one day 271
+항공 우편 air mail 271
+무게를 재다 to weigh 274
+받다 to receive 274
+배송(하다) delivery, to deliver 274
+부치다 to send 274
+요금 fee 274
+요금을 내다 to pay a fee 274
+저울 scale 274
+저울에 올리다 to place on a scale 274
+킬로그램(kg) kilogram (kg) 274
+거래 날짜 transaction date 281
+거주지 residence 281
+계좌 bank account 281
+계좌 번호 account number 281
+도장 seal 281
+모바일 뱅킹 mobile banking 281
+번호표를 뽑다 to take a ticket number 281
+서류 document 281
+서명(하다) signature, to sign 281
+신청(하다) application, to apply 281
+신청서 application form 281
+예금주 account holder 281
+이용(하다) use, to use 281
+작성(하다) fill out, to fill out 281
+준비(하다) preparation, to prepare 281
+증명(하다) proof, to prove 281
+창구 counter 281
+체크 카드 debit card 281
+통장 bankbook 281
+거래 내역 transaction history 284
+계좌 이체 bank transfer 284
+달러 dollar 284
+돈을 넣다 to put in money 284
+돈을 보내다 to send moneey 284
+돈을 찾다 to take out money 284
+버튼을 누르다 to press the button 284
+송금(하다) money transfer, to transfer money 284
+예금(하다) deposit, to deposit 284
+외국인 등록증 residence card 284
+입금(하다) deposit, to deposit 284
+잔액 조회 balance inquiry 284
+출금(하다) money-withdrawal, to withdraw money 284
+통장 정리 bankbook update 284
+현금인출기 (ATM) automated teller machine 284
+환율이 내리다 to have a fall in the exchange rate 284
+환율이 오르다 to have a rise in the exchange rate 284
+환전(하다) to exchange currency 284
+고급 advanced 291
+교육(하다) education, to educate 291
+기간 period 291
+내용 content 291
+ㄷ 다 all 291
+맞다 to be right/correct 291
+모집(하다) recruitment, to recruit 291
+문의(하다) inquiries, to inquire 291
+문화 culture 291
+방문 접수 in-person registration 291
+방법 method 291
+법률 legal 291
+상담(하다) consultation, to consult 291
+안전 safety 291
+여러 several 291
+외국인근로자 지원센터 Foreign Workers Support Center 291
+준비반 preparation class 291
+중급 intermediate 291
+체험(하다) experience, to experience 291
+초급 beginner 291
+토픽(TOPIK) TOPIK 291
+프로그램 programs 291
+한국어 Korean language 291
+회화 conversation 291
+훈련(하다) training, to train 291
+갖다주다 to bring 294
+걱정(하다) worry, to be worried 294
+대상 grand prize 294
+1등 1st place 294
+떨리다 to be nervous 294
+모든 all 294
+무료 free 294
+분야 categories 294
+서비스 services 294
+수업 class 294
+시상내용 prize details 294
+인기상 popularity award 294
+자원 봉사 volunteer 294
+증정(하다) giving, to give 294
+참가(하다) participation, to participate in 294
+참가대상 participation eligibility 294
+참가자 participants 294
+참여(하다) participation, to participate in 294
+통역(하다) interpretation, to interpret 294
+행사 event 294
+난방 heating 301
+담 perimeter wall 301
+답답하다 to feel stifled 301
+대문 main gate 301
+둘러보다 to look around 301
+마루 maru (floor space for gathering) 301
+마음에 들다 to like (something) 301
+방문 room door 301
+방바닥 floor 301
+베란다 veranda 301
+온돌 Ondol (Korean floor heating) 301
+주거 housing 301
+지붕 roof 301
+한옥 hanok (traditional Korean house) 301
+현관 entrance 301
+현관문 entrance door 301
+국 soup 304
+김 seaweed 304
+깍두기 cubed radish kimchi 304
+날 day 304
+대접(하다) treat, to serve 304
+동지 winter solstice 304
+반찬 side dish 304
+복날 the hottest days of summer 304
+삼계탕 samgyetang 304
+생선구이 grilled fish 304
+생선회 raw fish 304
+숟가락 spoon 304
+예전 in the past 304
+오곡밥 five-grain rice 304
+젓가락 chopsticks 304
+정월대보름 daeboreum (full moon day of January) 304
+죽 porridge 304
+특별하다 to be special 304
+팥죽 red bean porridge 304
+포크 fork 304
+한식 Korean food 304
+감사(하다) gratitude, to appreciate 311
+개천절 National Foundation Day 311
+광복절 National Liberation Day 311
+국경일 National Holiday 311
+국기 national flag 311
+근로자의 날 Labor Day 311
+기념(하다) commemoration, to commemorate 311
+기념일 Commemorative Day 311
+꽃 flower 311
+달다 to put (up/on) 311
+독립(하다) independence, to be independent 311
+드리다 to give (honorific) 311
+마음을 전하다 to express one’s heart 311
+삼일절 Independence Movement Day 311
+스승의 날 Teacher’s Day 311
+어리다 to be young 311
+어린이날 Children’s Day 311
+어버이날 Parent's Day 311
+이날 this day 311
+조카 niece or nephew 311
+주다 to give 311
+한글날 Hangeul Day 311
+행사(하다) event, to hold an event 311
+금반지 gold ring 314
+돌 first birthday 314
+돌잔치 first birthday party 314
+동료 colleague 314
+ㅇ 아기 baby 314
+아직 not yet 314
+잔치 party 314
+장난감 toy 314
+장례식 funeral 314
+조의금 condolence money 314
+집들이 housewarming party 314
+참석(하다) attendance, to attend 314
+첫 번째 first 314
+초대(하다) invitation, to invite 314
+초대를 받다 invitation, to be invited 314
+축의금 congratulatory money 314
+축하(하다) congratulations, to congratulate 314
+칠순 70th birthday 314
+환갑 60th birthday 314
+회갑 60th birthday 314
+놀이 games 315
+덕담 well-wishing remarks 315
+떡국 tteokguk (sliced rice cake soup) 315
+설날 Lunar New Year 315
+세배하다 to do the New Year's bow 315
+세뱃돈 New Year’s cash gift 315
+연날리기 kite flying 315
+연휴 long holiday 315
+윷놀이 Yunnori 315
+음력 lunar calendar 315
+전통 tradition 315
+절하다 to bow 315
+제기차기 Jegichagi 315
+차례를 지내다 to hold a memorial service for ancestors 315
+차례상을 차리다 to set up memorial table 315
+친척 relative 315
+한복 hanbok (traditional Korean clothing) 315
+강강술래 Ganggangsullae 318
+모이다 to gather 318
+보름달 full moon 318
+뵙다 to see/visit (honorific) 318
+성묘하다 to visit ancestral graves 318
+소원 wish 318
+소원을 빌다 to make a wish 318
+송편 songpyeon 318
+장만(하다) preparation, to prepare 318
+전날 the day before 318
+줄다리기 tug-of-war 318
+차례상 memorial table 318
+추석 Chuseok 318
+공공장소 public places 331
+구역 area 331
+금연(하다) non-smoking, to quit smoking 331
+금지(하다) prohibited, to prohibit 331
+길 street 331
+담배꽁초 cigarette butts 331
+담배를 피우다 to smoke (a cigarette) 331
+도서관 library 331
+떠들다 to make noise 331
+뛰어다니다 to run around 331
+만지다 to touch 331
+먼저 first 331
+무단 횡단(하다) jaywalking, to jaywalk 331
+박물관 museum 331
+반입(하다) bringing in, to bring 331
+새치기(하다) to cut in line 331
+신호 traffic signals 331
+예절 etiquette 331
+위반(하다) violation, to violate 331
+잠깐 for a moment 331
+전시품 exhibits 331
+주차(하다) parking, to park 331
+침을 뱉다 to spit 331
+흡연(하다) smoking, to smoke 331
+다리를 꼬다 to cross one's leg 334
+또 also 334
+반말(하다) non-honorific speech, to speak using non-honorific language 334
+밥그릇 rice bowl 334
+소리를 내다 to make noise 334
+수저 spoon and chopstiks 334
+실수(하다) mistake, to mistake 334
+앉다 to sit 334
+어른 elders 334
+예의에 어긋나다 to act disrespectfully 334
+인사(하다) greeting, to greet 334
+자리 place 334
+지키다 to follow (rules) 334
+코를 풀다 to blow (one's) nose 334
+행동 action 334
+흔들다 to wave 334
+경기장 stadium 341
+관중 spectator 341
+관중석 spectator seat 341
+예매(하다) reservation, to reserve (tickets) 341
+유니폼 uniform 341
+응원(하다) cheering, to cheer 341
+응원가 cheering chant 341
+응원단 cheering squad 341
+인기 popularity 341
+입장권 entry ticket 341
+클럽 club 341
+팀 team 341
+팬 fan 341
+프로 professionnal 341
+K-댄스 K-dance 344
+K-드라마 K-drama 344
+K-뷰티 K-beauty 344
+K-예능 K-variety show 344
+K-웹툰 K-webtoon 344
+K-팝 K-pop 344
+K-푸드 K-food 344
+가사 lyrics 344
+가수 singer 344
+단체 group 344
+따라 부르다 to sing along 344
+따라 추다 to dance along 344
+배우 actor 344
+아이돌 K-pop Idol 344
+영향을 주다 to influence 344
+인기를 끌다 to gain popularity 344
+한류 Hallyu (the Korean Wave) 344
+
+`;
+
+/* ========= Parsing ========= */
+function parseLines(raw){
+  const lines = raw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const out = [];
+  for(const line of lines){
+    // must end with number
+    const m = line.match(/(.+)\s(\d+)$/);
+    if(!m) continue;
+    const page = +m[2];
+    let rest = m[1].trim();
+
+    // drop leading single jamo like "ㅈ " or "ㄱ "
+    rest = rest.replace(/^[\u3131-\u314e]\s+/, '');
+
+    // try to split KO / EN: capture until last Hangul or ')' or ']' before English
+    let ko="", en="";
+    const m2 = rest.match(/^(.+?[가-힣\)\]])\s+(.+)$/);
+    if(m2){
+      ko = m2[1].trim();
+      en = m2[2].trim();
+    }else{
+      // fallback: first token = ko, rest = en
+      const first = rest.split(/\s+/)[0];
+      ko = first;
+      en = rest.slice(first.length).trim();
+    }
+    out.push({page, ko, en, raw: line});
+  }
+  return out;
+}
+
+const DATA = parseLines(RAW);
+
+/* ========= Render ========= */
+const listEl = document.getElementById('list');
+const nohitEl = document.getElementById('nohit');
+
+function render(items){
+  // remove old rows
+  [...listEl.querySelectorAll('.row')].forEach(n=>n.remove());
+  if(!items.length){ nohitEl.style.display = 'block'; return; }
+  nohitEl.style.display = 'none';
+
+  const frag = document.createDocumentFragment();
+  for(const it of items){
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <div class="num">${it.page}</div>
+      <div class="ko">${escapeHtml(it.ko)}</div>
+      <div class="en">${highlight(it.en)}</div>
+      <button class="play" title="Play: ${it.ko}" aria-label="Play ${it.ko}" data-ko="${escapeAttr(it.ko)}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    `;
+    frag.appendChild(row);
+  }
+  listEl.appendChild(frag);
+}
+
+// simple search + highlight (English or Korean)
+const q = document.getElementById('q');
+q.addEventListener('input', applySearch);
+document.getElementById('clearBtn').onclick = ()=>{ q.value=''; applySearch(); };
+
+let lastQuery = '';
+function applySearch(){
+  const term = q.value.trim().toLowerCase();
+  lastQuery = term;
+  if(!term){ render(DATA); return; }
+  const items = DATA.filter(it =>
+    it.ko.toLowerCase().includes(term) || it.en.toLowerCase().includes(term) || (''+it.page).includes(term)
+  );
+  render(items);
+}
+
+// highlight helper for EN column
+function highlight(text){
+  if(!lastQuery) return escapeHtml(text);
+  const re = new RegExp('('+escapeReg(lastQuery)+')','ig');
+  return escapeHtml(text).replace(re,'<mark>$1</mark>');
+}
+
+function escapeHtml(s){ return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escapeAttr(s){ return s.replace(/"/g,'&quot;'); }
+function escapeReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+// initial render
+render(DATA);
+
+/* ========= Audio (Web Speech API) ========= */
+let koVoice = null;
+function pickKoreanVoice(){
+  const voices = speechSynthesis.getVoices();
+  // prefer ko-KR
+  koVoice = voices.find(v => (v.lang || '').toLowerCase().startsWith('ko')) || null;
+}
+pickKoreanVoice();
+window.speechSynthesis.onvoiceschanged = pickKoreanVoice;
+
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.play');
+  if(!btn) return;
+  const text = btn.getAttribute('data-ko') || '';
+  if(!text) return;
+
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    if(koVoice) u.voice = koVoice;
+    u.rate = 0.95; // a little slower
+    u.pitch = 1.0;
+    speechSynthesis.speak(u);
+  }catch(err){
+    alert('TTS not supported in this browser.');
+  }
+});
+</script>
+</body>
+</html>
