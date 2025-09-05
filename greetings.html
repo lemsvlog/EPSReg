@@ -930,40 +930,19 @@
       window.speechSynthesis.onvoiceschanged = () => {};
     }
   </script>
-  <script>
-(() => {
-  const block = e => { e.preventDefault(); e.stopPropagation(); return false; };
 
-  // 1) No right-click
-  document.addEventListener('contextmenu', block, {capture:true});
 
-  // 2) No selection / copy-ish actions
-  ['selectstart','copy','cut','paste','dragstart'].forEach(ev =>
-    document.addEventListener(ev, block, {capture:true})
-  );
-
-  // 3) Disable letters + common shortcuts
-  document.addEventListener('keydown', (e) => {
-    const k = (e.key || '').toLowerCase();
-
-    // Block all letters (a–z)
-    const isLetter = k.length === 1 && k >= 'a' && k <= 'z';
-
-    // Block common dev/copier shortcuts
-    const isCombo =
-      e.ctrlKey || e.metaKey ||
-      k === 'f12' ||
-      (e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) || // Ctrl+Shift+I/J/C (DevTools)
-      ['u','s','p','c','x','v','a'].includes(k);               // Ctrl/Cmd + U,S,P,C,X,V,A
-
-    if (isLetter || isCombo) block(e);
-  }, {capture:true});
-
-  // Some browsers still fire keypress for printable chars
-  document.addEventListener('keypress', block, {capture:true});
-})();
-</script>
+    <script>
+  // Disable right click / selection / drag / certain keys
+  document.addEventListener("contextmenu", e=>e.preventDefault(), false);
+  document.addEventListener("selectstart", e=>e.preventDefault(), false);
+  document.addEventListener("dragstart", e=>e.preventDefault(), false);
+  document.addEventListener("keydown", function(e){
+    if ( e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase())) ) { e.preventDefault(); }
+  }, false);
+  </script>
 
 </body>
 </html>
+
 
