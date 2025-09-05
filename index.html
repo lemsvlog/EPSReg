@@ -8,19 +8,12 @@
   <style>
     /* ===== Sky Blue Freeze Theme ===== */
     :root{
-      --bg-1:#03121f;          /* deep arctic night */
-      --bg-2:#0a1e2e;          /* card/modal base */
-      --ice-1:#ecfeff;         /* near-white ice */
-      --ice-2:#dbeafe;         /* pale sky */
-      --ice-3:#bae6fd;         /* light sky */
-      --text:#eef6ff;          /* main text */
-      --muted:#a9c3d9;         /* muted text */
-      --accent:#38bdf8;        /* sky blue */
-      --accent-2:#0ea5e9;      /* deeper sky */
-      --cyan:#67e8f9;          /* icier cyan */
-      --cyan-2:#22d3ee;
-      --navy:#0b2440;
-      --danger:#ef4444;
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee;
+      --navy:#0b2440; --danger:#ef4444;
 
       --shadow:0 14px 38px rgba(0,0,0,.55);
       --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
@@ -38,118 +31,85 @@
       font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
       color:var(--text);
       min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      display:flex; flex-direction:column; align-items:center;
       overflow-x:hidden;
       background:
         radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
         radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
         linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
-      position:relative;
-      isolation:isolate;
+      position:relative; isolation:isolate;
     }
 
     /* Animated aurora sheet */
     body::before{
-      content:"";
-      position:fixed; inset:-20%;
-      background:
-        conic-gradient(from 200deg at 60% 40%,
-          rgba(186,230,253,.12),
-          rgba(34,211,238,.10),
-          rgba(56,189,248,.14),
-          rgba(186,230,253,.10),
-          rgba(34,211,238,.10));
+      content:""; position:fixed; inset:-20%;
+      background: conic-gradient(from 200deg at 60% 40%,
+        rgba(186,230,253,.12),
+        rgba(34,211,238,.10),
+        rgba(56,189,248,.14),
+        rgba(186,230,253,.10),
+        rgba(34,211,238,.10));
       filter:blur(48px);
       animation: drift 20s linear infinite;
-      z-index:-1;
-      opacity:.9;
+      z-index:-1; opacity:.9;
     }
     @keyframes drift{
-      0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);} 
-      50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05);} 
-      100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);} 
+      0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
+      50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05);}
+      100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
     }
 
     /* ===== Header ===== */
     header{
-      width:100%;
-      text-align:center;
-      padding:24px 12px 14px;
+      width:100%; text-align:center; padding:24px 12px 14px;
       background: linear-gradient(90deg, rgba(56,189,248,.10), rgba(103,232,249,.10));
       border-bottom:1px solid rgba(103,232,249,.30);
       box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(0,0,0,.55);
       position:sticky; top:0; z-index:100;
-      backdrop-filter:saturate(140%) blur(8px);
-      -webkit-backdrop-filter:saturate(140%) blur(8px);
+      backdrop-filter:saturate(140%) blur(8px); -webkit-backdrop-filter:saturate(140%) blur(8px);
     }
     .brand{ display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center; }
     .brand .title-main{
-      margin:0;
-      font-size:3.4rem; line-height:1; font-weight:900; letter-spacing:3px; text-transform:uppercase; color:#fff;
+      margin:0; font-size:3.4rem; line-height:1; font-weight:900; letter-spacing:3px; text-transform:uppercase; color:#fff;
       background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
       text-shadow: 0 0 10px rgba(255,255,255,.75), 0 0 24px rgba(56,189,248,.55), 0 0 40px rgba(103,232,249,.45);
     }
     .brand .title-sub{ font-size:1.05rem; font-weight:600; letter-spacing:.6px; color:var(--ice-2); text-shadow:0 0 10px rgba(186,230,253,.55); margin-top:2px; }
 
-    /* ===== Simple Countdown Bar (centered) ===== */
+    /* ===== Announcement Styles ===== */
     .countdown-wrap {
       margin: 12px auto 0;
       width: min(940px, 92vw);
-      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      background: var(--bg-2);
       border: 1px solid rgba(186,230,253,.35);
       border-radius: 12px;
       padding: 12px 16px;
       box-shadow: 0 6px 18px rgba(2,12,22,.35);
-
-      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0;
+      display: flex; flex-direction: column; align-items: center; text-align: left; gap: 8px;
     }
-    .countdown-title, .countdown-date, $1
+    .announce-head{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:2px; }
+    .announce-head h3{ margin:0; font-size:1.1rem; font-weight:900; letter-spacing:.3px; color:var(--ice-1); }
+    .btn.small{ padding:8px 10px; font-size:.85rem; border-radius:8px; box-shadow: 0 4px 12px rgba(56,189,248,.25); }
+    .announce-body[hidden]{ display:none; }
+    .announce-body{ width:100%; display:grid; gap:10px; }
+    .announce-body h4{ margin:6px 0 4px; font-size:1rem; font-weight:800; color:var(--ice-1); }
+    .announce-list{ margin:0; padding-left:18px; display:grid; gap:4px; }
+    .announce-list li{ color:var(--ice-1); }
+    .announce-list strong{ color:#fff; }
 
-/* ===== Announcement Styles ===== */
-.countdown-wrap{ gap:8px; background: var(--bg-2); border:1px solid rgba(186,230,253,.35); }
-.announce-head{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; }
-.announce-head h3{ margin:0; font-size:1.1rem; font-weight:900; letter-spacing:.3px; color:var(--ice-1); }
-.btn.small{ padding:8px 10px; font-size:.85rem; border-radius:8px; box-shadow: 0 4px 12px rgba(56,189,248,.25); }
-.announce-body[hidden]{ display:none; }
-.announce-body{ width:100%; text-align:left; display:grid; gap:10px; }
-.announce-body h4{ margin:6px 0 4px; font-size:1rem; font-weight:800; color:var(--ice-1); }
-.announce-list{ margin:0; padding-left:18px; display:grid; gap:4px; }
-.announce-list li{ color:var(--ice-1); }
-.announce-list strong{ color:#fff; }
-.rounds-grid{ display:grid; gap:8px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-.rounds-grid .round{ background:#0f2033; border: 1px solid rgba(186,230,253,.25); border-radius:10px; padding:10px; }
-.rounds-grid h5{ margin:0 0 4px; font-size:.95rem; color:var(--ice-2); }
-.rounds-grid p{ margin:0; font-size:.9rem; color:var(--muted); }
-.timeline, .quota{ width:100%; border-collapse:collapse; background:var(--bg-2); border:1px solid rgba(186,230,253,.25); border-radius:10px; overflow:hidden; }
-.timeline th, .timeline td, .quota th, .quota td{ padding:10px; border-bottom:1px solid rgba(186,230,253,.18); vertical-align:top; }
-.timeline thead th, .quota thead th{ background:#103049; color:#fff; text-align:left; font-weight:800; }
-.timeline tbody tr:nth-child(even), .quota tbody tr:nth-child(even){ background:#0c2234; }
-.note{ margin:6px 0 2px; color:var(--muted); font-size:.86rem; }
-@media (max-width:900px){ .rounds-grid{ grid-template-columns:1fr; } }
-
-    .countdown-title { font-weight: 800; letter-spacing: .3px; color: var(--ice-1); text-shadow: 0 0 8px rgba(186,230,253,.35); }
-    .countdown-date { color: var(--muted); font-weight: 600; }
-    #countdown { font-weight: 900; font-size: 3rem; background: linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 12px rgba(56,189,248,.55); }
-
-    /* ===== Cards Grid (centered) ===== */
+    /* ===== Cards Grid ===== */
     .container{
-      display:flex; flex-wrap:wrap; gap:1.4rem; justify-content:center; align-items:center; 
-      padding:2rem 1rem 3rem; width:min(1100px, 96vw); margin-inline:auto; 
+      display:flex; flex-wrap:wrap; gap:1.4rem; justify-content:center; align-items:center;
+      padding:2rem 1rem 3rem; width:min(1100px, 96vw); margin-inline:auto;
     }
-
-    /* ===== Card (SINGLE definition — text perfectly centered) ===== */
     .card{
       width:var(--card-w); height:var(--card-h);
       background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88));
       border-radius:18px; border:1px solid rgba(255,255,255,.65);
       box-shadow:0 12px 26px rgba(2,12,22,.45);
       color:#0c253a; text-decoration:none; font-weight:800; cursor:pointer;
-
-      display:grid; place-items:center; text-align:center; 
-      padding:14px; position:relative; overflow:hidden;
+      display:grid; place-items:center; text-align:center; padding:14px; position:relative; overflow:hidden;
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
     .card::before{
@@ -169,11 +129,10 @@
     .card:hover::after{ transform:rotate(18deg) translateX(120%); }
 
     .card span{
-      display:block; width:100%;
-      position:relative; z-index:1; 
+      display:block; width:100%; position:relative; z-index:1;
       font-size: clamp(.86rem, 2.8vw, 1.02rem); line-height:1.2; letter-spacing:.4px;
       text-shadow:0 1px 0 rgba(255,255,255,.6);
-      white-space:normal; word-break:keep-all; overflow-wrap:anywhere; text-wrap:balance; /* keep long labels centered */
+      white-space:normal; word-break:keep-all; overflow-wrap:anywhere; text-wrap:balance;
       margin:0 auto;
     }
 
@@ -182,7 +141,6 @@
       .card{ width:92vw; max-width:460px; height: var(--card-h); }
       .brand .title-main{ font-size:2.4rem; }
       .countdown-wrap{ padding:10px 12px; }
-      #countdown{ font-size:2rem; }
     }
 
     /* ===== Password Modal ===== */
@@ -200,20 +158,22 @@
     .btn:active{ transform: translateY(0); }
     .err{ margin-top:10px; min-height:18px; font-size:12px; color:var(--danger); text-align:center; }
 
-    /* ===== Optional: Floating micro-particles ===== */
+    /* Optional flakes */
     .flakes{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2; opacity:.25; }
     .flake{ position:absolute; width:2px; height:2px; border-radius:50%; background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.4) 70%, rgba(255,255,255,0) 100%); animation: fall linear infinite; filter:drop-shadow(0 0 4px rgba(255,255,255,.9)); }
     @keyframes fall{ 0%{ transform:translateY(-10vh) translateX(0); opacity:0; } 10%{ opacity:1; } 100%{ transform:translateY(110vh) translateX(20px); opacity:0; } }
 
-    @media (prefers-reduced-motion: reduce){ body::before{ animation:none; } .card::after{ transition:none; } .flake{ animation-duration:12s !important; } }
+    @media (prefers-reduced-motion: reduce){
+      body::before{ animation:none; }
+      .card::after{ transition:none; }
+      .flake{ animation-duration:12s !important; }
+    }
 
-    /* Center the canvas block inside modal on small screens too */
     #patternCanvas { display:block; margin:0 auto; background: linear-gradient(180deg, #071c2c, #061725); border: 1px solid rgba(186,230,253,.35); border-radius: 12px; touch-action: none; }
   </style>
 </head>
 <body>
 
-  <!-- subtle floating ice particles -->
   <div class="flakes" aria-hidden="true" id="flakes"></div>
 
   <!-- Top Banner -->
@@ -222,62 +182,34 @@
       <h1 class="title-main">VIZKOR</h1>
       <div class="title-sub">Korean Language Learning Academy</div>
 
-      <!-- ===== Simple Countdown (centered) ===== -->
+      <!-- ===== Announcement (shown by default) ===== -->
       <div class="countdown-wrap" role="region" aria-label="Announcement">
-  <div class="announce-head">
-    <h3>Official Announcement</h3>
-    <button id="toggleAnn" class="btn small" aria-expanded="false" aria-controls="announcement">Show</button>
-  </div>
- <div id="announcement" class="announce-body" hidden>
-  <h4>Online Registration</h4>
-  <p><strong>Opens:</strong> Aug 25, 2025, 10:00 AM • Until <strong>2,500</strong> slots are filled.</p>
-  <ul class="announce-list">
-    <li><strong>Payment:</strong> TBA</li>
-    <li><strong>UBT schedule notice:</strong> Sep 15, 2025</li>
-    <li><strong>UBT:</strong> Sep 22–30, 2025 @ DMW Bldg., Mandaluyong</li>
-    <li><strong>UBT results:</strong> Oct 14, 2025</li>
-  </ul>
+        <div class="announce-head">
+          <h3>UBT 1st batch 2025</h3>
+          <button id="toggleAnn" class="btn small" aria-expanded="true" aria-controls="announcement">Hide</button>
+        </div>
 
-  <h4>Selection Rounds</h4>
-  <div class="rounds-grid">
-    <div class="round">
-      <h5>1) EPS-TOPIK</h5>
-      <p>CVD screening; shortlist to <strong>1.1×</strong> of quota.</p>
-    </div>
-    <div class="round">
-      <h5>2) Skills Test</h5>
-      <p><strong>Required:</strong> Skills • <strong>Optional:</strong> Job Capacity.</p>
-    </div>
-    <div class="round">
-      <h5>3) Final</h5>
-      <p>Highest total score (Round 1 + 2).</p>
-    </div>
-  </div>
+        <div id="announcement" class="announce-body">
+          <ul class="announce-list">
+            <li><strong>Payment:</strong> To be announce by EPS DMW</li>
+            <li><strong>UBT schedule notice:</strong> Sep 15, 2025</li>
+            <li><strong>UBT:</strong> Sep 22–30, 2025 @ DMW Bldg., Mandaluyong</li>
+            <li><strong>UBT  exam results:</strong> Oct 14, 2025</li>
+          </ul>
 
-  <h4>Timeline</h4>
-  <table class="timeline">
-    <thead><tr><th>Stage</th><th>Date</th></tr></thead>
-    <tbody>
-      <tr><td>Notice</td><td>Aug 12</td></tr>
-      <tr><td>Apply</td><td>Aug 25–27</td></tr>
-      <tr><td>UBT Date/Venue Notice</td><td>Sep 15</td></tr>
-      <tr><td>UBT (Round 1)</td><td>Sep 22–30</td></tr>
-      <tr><td>Passers & Round 2 Info</td><td>Oct 14</td></tr>
-      <tr><td>Docs Submission</td><td>Oct 16–20</td></tr>
-      <tr><td>Round 2 Date/Venue Notice</td><td>Oct 30</td></tr>
-      <tr><td>Skills Test (+ JCA)</td><td>Nov 8–9</td></tr>
-      <tr><td>Final List</td><td>Nov 17</td></tr>
-    </tbody>
-  </table>
-  
+          <h4>Skills Test</h4>
+          <ul class="announce-list">
+            <li><strong>Announcement/Venue:</strong> Oct 30, 2025</li>
+            <li><strong>Date:</strong> Nov 8–9, 2025</li>
+            <li><strong>Final Result:</strong> Nov 17, 2025</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <!-- ===== Cards (centered; removed stray <br>) ===== -->
+  <!-- ===== Cards ===== -->
   <div class="container">
-    <!-- <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
-    <a href="epsdmw.html" class="card"><span>NEW REGISTRATION</span></a>
-    <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div> -->
-
     <a href="vocabulary.html" class="card"><span>FLIPCARDS VOCABULARY</span></a>
     <a href="book1.html" class="card"><span>EPS BOOK 1 VOCABULARY LIST</span></a>
     <a href="book2.html" class="card"><span>EPS BOOK 2 VOCABULARY LIST</span></a>
@@ -356,19 +288,22 @@
   canvas.addEventListener("touchstart",startDraw); canvas.addEventListener("touchmove",moveDraw); window.addEventListener("touchend",endDraw);
   setupGrid();
 
-/* ===== Announcement Toggle ===== */
-(function(){
-  const btn = document.getElementById('toggleAnn');
-  const body = document.getElementById('announcement');
-  if(!btn || !body) return;
-  btn.addEventListener('click', ()=>{
-    const isHidden = body.hasAttribute('hidden');
-    if(isHidden){ body.removeAttribute('hidden'); btn.textContent='Hide'; btn.setAttribute('aria-expanded','true'); }
-    else{ body.setAttribute('hidden',''); btn.textContent='Show'; btn.setAttribute('aria-expanded','false'); }
-  });
-})();
+  /* ===== Announcement Toggle ===== */
+  (function(){
+    const btn = document.getElementById('toggleAnn');
+    const body = document.getElementById('announcement');
+    if(!btn || !body) return;
+    btn.addEventListener('click', ()=>{
+      const isHidden = body.hasAttribute('hidden');
+      if(isHidden){
+        body.removeAttribute('hidden'); btn.textContent='Hide'; btn.setAttribute('aria-expanded','true');
+      }else{
+        body.setAttribute('hidden',''); btn.textContent='Show'; btn.setAttribute('aria-expanded','false');
+      }
+    });
+  })();
 
-  /* ===== Countdown ===== */
+  /* ===== Countdown (safe no-op if #countdown absent) ===== */
   (function initCountdown(){
     const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
     const el = document.getElementById("countdown");
@@ -388,13 +323,10 @@
   </script>
 
   <script>
-  // Disable right click
+  // Disable right click / selection / drag / certain keys
   document.addEventListener("contextmenu", e=>e.preventDefault(), false);
-  // Disable text selection
   document.addEventListener("selectstart", e=>e.preventDefault(), false);
-  // Disable drag
   document.addEventListener("dragstart", e=>e.preventDefault(), false);
-  // Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
   document.addEventListener("keydown", function(e){
     if ( e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase())) ) { e.preventDefault(); }
   }, false);
