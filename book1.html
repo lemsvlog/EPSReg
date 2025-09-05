@@ -95,33 +95,20 @@
     display:none; border-bottom-left-radius:12px; border-bottom-right-radius:12px;
   }
   .row.open + .exp{display:block}
-/* ===== Compact Tense Panel (stacked lines) ===== */
-.tenses{ display:flex; flex-direction:column; gap:8px; }
-.tense{
-  border:1px solid var(--line); border-radius:10px; background:#091728;
-  padding:10px 10px 8px; display:flex; flex-direction:column; gap:6px;
-}
-.t-head{
-  display:flex; align-items:center; justify-content:space-between; gap:8px;
-}
-.t-head b{ font-weight:800; color:#9bd7ff; font-size:.92rem; }
-.play-mini{
-  width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
-  background:#0b1a2b; display:grid; place-items:center; cursor:pointer; flex:0 0 auto;
-}
-.play-mini svg{ width:16px; height:16px; fill:#7fd6ff; }
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{
+    padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#0b1a2b;
+    display:flex; gap:10px; align-items:center;
+  }
+  .chip b{ font-weight:800; color:#9bd7ff }
+  .chip .form{ font-weight:800 }
+  .chip small{ color:var(--muted) }
+  .play-mini{
+    width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
+    background:#0b1a2b; display:grid; place-items:center; cursor:pointer;
+  }
+  .play-mini svg{width:16px; height:16px; fill:#7fd6ff}
 
-.t-form{ font-weight:900; font-size:.98rem; line-height:1.1; }
-.t-eng{ color:var(--muted); font-size:.86rem; line-height:1.15; }
-
-/* mobile tightening */
-@media (max-width:520px){
-  .tense{ padding:8px 8px 6px; gap:4px; }
-  .t-head b{ font-size:.88rem; }
-  .t-form{ font-size:.94rem; }
-  .t-eng{ font-size:.82rem; }
-  .play-mini{ width:28px; height:28px; border-radius:7px; }
-}
   .nohit{padding:18px; color:var(--muted)}
   mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .18em; border-radius:4px}
 
@@ -1689,41 +1676,35 @@ function renderList(items, term){
       const exp = document.createElement('div');
       exp.className = 'exp';
       exp.innerHTML = `
-  <div class="tenses">
-    <div class="tense">
-      <div class="t-head">
-        <b>Present</b>
-        <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-      </div>
-      <div class="t-form">${escapeHtml(pres)}</div>
-      <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</div>
-    </div>
-
-    <div class="tense">
-      <div class="t-head">
-        <b>Past</b>
-        <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-      </div>
-      <div class="t-form">${escapeHtml(past)}</div>
-      <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</div>
-    </div>
-
-    <div class="tense">
-      <div class="t-head">
-        <b>Future</b>
-        <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-      </div>
-      <div class="t-form">${escapeHtml(futu)}</div>
-      <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</div>
-    </div>
-  </div>
-`;
+        <div class="chips">
+          <div class="chip">
+            <b>Present</b>
+            <span class="form">${escapeHtml(pres)}</span>
+            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</small>
+            <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <div class="chip">
+            <b>Past</b>
+            <span class="form">${escapeHtml(past)}</span>
+            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</small>
+            <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <div class="chip">
+            <b>Future</b>
+            <span class="form">${escapeHtml(futu)}</span>
+            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</small>
+            <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+      frag.appendChild(exp);
+    }
   }
   listEl.appendChild(frag);
 }
@@ -1809,5 +1790,3 @@ console.log('읽다', presentPolite('읽다','verb')==='읽어요', pastPolite('
 </script>
 </body>
 </html>
-
-
