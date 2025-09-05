@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Registration Hub (Sky Blue Freeze)</title>
+  <title>Registration Hub (Sky Blue Freeze) — Centered</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -27,6 +27,9 @@
       --frost:rgba(255,255,255,.08);
       --glass:rgba(255,255,255,.06);
       --border:1px solid rgba(103,232,249,.30);
+
+      --card-w: 280px;
+      --card-h: 80px;
     }
 
     *{box-sizing:border-box}
@@ -64,9 +67,9 @@
       opacity:.9;
     }
     @keyframes drift{
-      0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
-      50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05);}
-      100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);}
+      0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);} 
+      50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05);} 
+      100%{transform:translate3d(0,0,0) rotate(0deg) scale(1);} 
     }
 
     /* ===== Header ===== */
@@ -81,255 +84,108 @@
       backdrop-filter:saturate(140%) blur(8px);
       -webkit-backdrop-filter:saturate(140%) blur(8px);
     }
-    .brand{
-      display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
-    }
+    .brand{ display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center; }
     .brand .title-main{
       margin:0;
-      font-size:3.4rem;
-      line-height:1;
-      font-weight:900;
-      letter-spacing:3px;
-      text-transform:uppercase;
-      color:#fff;
+      font-size:3.4rem; line-height:1; font-weight:900; letter-spacing:3px; text-transform:uppercase; color:#fff;
       background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      text-shadow:
-        0 0 10px rgba(255,255,255,.75),
-        0 0 24px rgba(56,189,248,.55),
-        0 0 40px rgba(103,232,249,.45);
+      text-shadow: 0 0 10px rgba(255,255,255,.75), 0 0 24px rgba(56,189,248,.55), 0 0 40px rgba(103,232,249,.45);
     }
-    .brand .title-sub{
-      font-size:1.05rem;
-      font-weight:600;
-      letter-spacing:.6px;
-      color:var(--ice-2);
-      text-shadow:0 0 10px rgba(186,230,253,.55);
-      margin-top:2px;
+    .brand .title-sub{ font-size:1.05rem; font-weight:600; letter-spacing:.6px; color:var(--ice-2); text-shadow:0 0 10px rgba(186,230,253,.55); margin-top:2px; }
+
+    /* ===== Simple Countdown Bar (centered) ===== */
+    .countdown-wrap {
+      margin: 12px auto 0;
+      width: min(940px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border: 1px solid rgba(186,230,253,.35);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 6px 18px rgba(2,12,22,.35);
+
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0;
     }
+    .countdown-title, .countdown-date, #countdown { margin: 0; padding: 0; }
+    .countdown-title { font-weight: 800; letter-spacing: .3px; color: var(--ice-1); text-shadow: 0 0 8px rgba(186,230,253,.35); }
+    .countdown-date { color: var(--muted); font-weight: 600; }
+    #countdown { font-weight: 900; font-size: 3rem; background: linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 12px rgba(56,189,248,.55); }
 
-   /* ===== Simple Countdown Bar (under subtitle) ===== */
-  .countdown-wrap {
-  margin: 12px auto 0;
-  width: min(940px, 92vw);
-  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
-  border: 1px solid rgba(186,230,253,.35);
-  border-radius: 12px;
-  padding: 12px 16px;
-  box-shadow: 0 6px 18px rgba(2,12,22,.35);
-
-  display: flex;
-  flex-direction: column;   /* vertical layout */
-  align-items: center;
-  text-align: center;
-  gap: 0;                   /* wala nang puwang */
-}
-
-.countdown-title,
-.countdown-date,
-#countdown {
-  margin: 0;   /* tanggal lahat ng default margin */
-  padding: 0;
-}
-
-.countdown-title {
-  font-weight: 800;
-  letter-spacing: .3px;
-  color: var(--ice-1);
-  text-shadow: 0 0 8px rgba(186,230,253,.35);
-}
-
-.countdown-date {
-  color: var(--muted);
-  font-weight: 600;
-}
-
-#countdown {
-  font-weight: 900;
-  font-size: 3rem;
-  background: linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 12px rgba(56,189,248,.55);
-}
-
-
-  /* ===== Smaller Cards ===== */
- .card{
-  width:180px; 
-  height:80px !important;
-  background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88));
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.65);
-  box-shadow:0 6px 14px rgba(2,12,22,.45);
-  color:#0c253a;
-  display:flex; align-items:center; justify-content:center;
-  text-decoration:none; font-weight:800;
-  position:relative; overflow:hidden;
-  cursor:pointer;
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-}
-
-.card span{
-  position:relative; z-index:1;
-  font-size:0.95rem; 
-  letter-spacing:.5px;
-  text-shadow:0 1px 0 rgba(255,255,255,.6);
-}
-
-@media (max-width:768px){
-  .card{ width:80vw; max-width:300px; height:100px; }
-}
-
-    /* ===== Cards Grid ===== */
+    /* ===== Cards Grid (centered) ===== */
     .container{
-      display:flex; gap:1.4rem; flex-wrap:wrap;
-      justify-content:center; padding:2rem 1rem 3rem;
-      width:min(1100px, 96vw);
+      display:flex; flex-wrap:wrap; gap:1.4rem; justify-content:center; align-items:center; 
+      padding:2rem 1rem 3rem; width:min(1100px, 96vw); margin-inline:auto; 
     }
 
-    /* White Frosted Cards */
+    /* ===== Card (SINGLE definition — text perfectly centered) ===== */
     .card{
-      width:280px; height:190px;
+      width:var(--card-w); height:var(--card-h);
       background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88));
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.65);
+      border-radius:18px; border:1px solid rgba(255,255,255,.65);
       box-shadow:0 12px 26px rgba(2,12,22,.45);
-      color:#0c253a;
-      display:flex; align-items:center; justify-content:center;
-      text-decoration:none; font-weight:800;
-      position:relative; overflow:hidden;
-      cursor:pointer;
+      color:#0c253a; text-decoration:none; font-weight:800; cursor:pointer;
+
+      display:grid; place-items:center; text-align:center; 
+      padding:14px; position:relative; overflow:hidden;
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
-
     .card::before{
-      content:"";
-      position:absolute; inset:-1px;
+      content:""; position:absolute; inset:-1px;
       background:
         radial-gradient(600px 200px at -10% 0%, rgba(56,189,248,.22), transparent 60%),
         radial-gradient(600px 200px at 110% 100%, rgba(103,232,249,.20), transparent 60%);
-      mix-blend-mode:screen;
-      opacity:.75;
-      transform:translateX(-15%);
-      transition:transform .6s ease;
-      pointer-events:none;
+      mix-blend-mode:screen; opacity:.75; transform:translateX(-15%); transition:transform .6s ease; pointer-events:none;
     }
     .card::after{
-      content:"";
-      position:absolute; top:-60%; left:-40%;
-      width:60%; height:220%;
+      content:""; position:absolute; top:-60%; left:-40%; width:60%; height:220%;
       background:linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.65) 48%, rgba(255,255,255,0) 100%);
-      transform:rotate(18deg) translateX(-40%);
-      transition: transform .7s ease;
-      pointer-events:none;
-      filter:blur(1px);
-      opacity:.9;
+      transform:rotate(18deg) translateX(-40%); transition: transform .7s ease; pointer-events:none; filter:blur(1px); opacity:.9;
     }
-
-    .card:hover{
-      transform: translateY(-10px) scale(1.035);
-      border-color:rgba(103,232,249,.95);
-      box-shadow:
-        0 0 18px rgba(186,230,253,.75),
-        0 0 36px rgba(56,189,248,.55);
-    }
+    .card:hover{ transform: translateY(-10px) scale(1.035); border-color:rgba(103,232,249,.95); box-shadow: 0 0 18px rgba(186,230,253,.75), 0 0 36px rgba(56,189,248,.55); }
     .card:hover::before{ transform:translateX(0%); }
     .card:hover::after{ transform:rotate(18deg) translateX(120%); }
 
     .card span{
-      position:relative; z-index:1;
-      font-size:1.08rem; letter-spacing:.5px;
+      display:block; width:100%;
+      position:relative; z-index:1; 
+      font-size:1.06rem; line-height:1.2; letter-spacing:.4px;
       text-shadow:0 1px 0 rgba(255,255,255,.6);
+      white-space:normal; word-break:keep-all; overflow-wrap:anywhere; text-wrap:balance; /* keep long labels centered */
+      margin:0 auto;
     }
 
     @media (max-width:768px){
-      .container{ flex-direction:column; gap:1rem; }
-      .card{ width:92vw; max-width:460px; }
+      .container{ gap:1rem; }
+      .card{ width:92vw; max-width:460px; height:min(200px, 40vh); }
       .brand .title-main{ font-size:2.4rem; }
       .countdown-wrap{ padding:10px 12px; }
       #countdown{ font-size:2rem; }
     }
 
     /* ===== Password Modal ===== */
-    .modal{
-      display:none; position:fixed; inset:0;
-      background: rgba(1,7,13,.55);
-      backdrop-filter: blur(6px) saturate(130%);
-      -webkit-backdrop-filter: blur(6px) saturate(130%);
-      z-index:9999; align-items:center; justify-content:center; padding:1rem;
-    }
+    .modal{ display:none; position:fixed; inset:0; background: rgba(1,7,13,.55); backdrop-filter: blur(6px) saturate(130%); -webkit-backdrop-filter: blur(6px) saturate(130%); z-index:9999; align-items:center; justify-content:center; padding:1rem; }
     .modal.show{ display:flex; }
-
-    .modal-content{
-      width:340px; max-width:92vw;
-      background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94));
-      border: var(--border);
-      border-radius:16px;
-      padding:22px 18px 16px;
-      text-align:center;
-      box-shadow: var(--ring);
-      animation: pop .25s ease-out;
-    }
+    .modal-content{ width:340px; max-width:92vw; background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border: var(--border); border-radius:16px; padding:22px 18px 16px; text-align:center; box-shadow: var(--ring); animation: pop .25s ease-out; margin-inline:auto; }
     @keyframes pop{ from{opacity:0; transform: translateY(8px) scale(.96);} to{opacity:1; transform: translateY(0) scale(1);} }
-
-    .modal-content h2{
-      margin:0 0 10px; font-size:20px; font-weight:800;
-      color:var(--ice-1);
-      text-shadow:0 0 10px rgba(186,230,253,.45);
-    }
+    .modal-content h2{ margin:0 0 10px; font-size:20px; font-weight:800; color:var(--ice-1); text-shadow:0 0 10px rgba(186,230,253,.45); }
     .hint{ margin:0 0 14px; font-size:12px; color:var(--muted); }
-
     .field{ display:flex; gap:8px; justify-content:center; align-items:center; }
-    .modal-content input{
-      width:70%; padding:11px 12px;
-      background:linear-gradient(180deg, #071c2c, #061725);
-      border:1px solid rgba(186,230,253,.35);
-      color:var(--text); border-radius:10px; outline:none;
-      transition:border-color .2s ease, box-shadow .2s ease, transform .1s ease;
-    }
-    .modal-content input:focus{
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56,189,248,.25), 0 0 0 6px rgba(103,232,249,.18);
-      transform: translateY(-1px);
-    }
-
-    .btn{
-      background: linear-gradient(90deg, var(--cyan), var(--accent));
-      color:#072235;
-      border:none; padding:11px 14px;
-      border-radius:10px; cursor:pointer; font-weight:900;
-      letter-spacing:.25px;
-      transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
-      box-shadow: 0 6px 18px rgba(56,189,248,.35);
-    }
+    .modal-content input{ width:70%; padding:11px 12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.35); color:var(--text); border-radius:10px; outline:none; transition:border-color .2s ease, box-shadow .2s ease, transform .1s ease; }
+    .modal-content input:focus{ border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.25), 0 0 0 6px rgba(103,232,249,.18); transform: translateY(-1px); }
+    .btn{ background: linear-gradient(90deg, var(--cyan), var(--accent)); color:#072235; border:none; padding:11px 14px; border-radius:10px; cursor:pointer; font-weight:900; letter-spacing:.25px; transition: transform .12s ease, filter .2s ease, box-shadow .2s ease; box-shadow: 0 6px 18px rgba(56,189,248,.35); }
     .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); box-shadow: var(--ring); }
     .btn:active{ transform: translateY(0); }
-
-    .err{ margin-top:10px; min-height:18px; font-size:12px; color:var(--danger); }
+    .err{ margin-top:10px; min-height:18px; font-size:12px; color:var(--danger); text-align:center; }
 
     /* ===== Optional: Floating micro-particles ===== */
-    .flakes{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2;
-      opacity:.25;
-    }
-    .flake{
-      position:absolute; width:2px; height:2px; border-radius:50%;
-      background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.4) 70%, rgba(255,255,255,0) 100%);
-      animation: fall linear infinite;
-      filter:drop-shadow(0 0 4px rgba(255,255,255,.9));
-    }
-    @keyframes fall{
-      0%{ transform:translateY(-10vh) translateX(0); opacity:0; }
-      10%{ opacity:1; }
-      100%{ transform:translateY(110vh) translateX(20px); opacity:0; }
-    }
+    .flakes{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2; opacity:.25; }
+    .flake{ position:absolute; width:2px; height:2px; border-radius:50%; background: radial-gradient(circle, #fff 0%, rgba(255,255,255,.4) 70%, rgba(255,255,255,0) 100%); animation: fall linear infinite; filter:drop-shadow(0 0 4px rgba(255,255,255,.9)); }
+    @keyframes fall{ 0%{ transform:translateY(-10vh) translateX(0); opacity:0; } 10%{ opacity:1; } 100%{ transform:translateY(110vh) translateX(20px); opacity:0; } }
 
-    @media (prefers-reduced-motion: reduce){
-      body::before{ animation:none; }
-      .card::after{ transition:none; }
-      .flake{ animation-duration:12s !important; }
-    }
+    @media (prefers-reduced-motion: reduce){ body::before{ animation:none; } .card::after{ transition:none; } .flake{ animation-duration:12s !important; } }
+
+    /* Center the canvas block inside modal on small screens too */
+    #patternCanvas { display:block; margin:0 auto; background: linear-gradient(180deg, #071c2c, #061725); border: 1px solid rgba(186,230,253,.35); border-radius: 12px; touch-action: none; }
   </style>
 </head>
 <body>
@@ -343,236 +199,130 @@
       <h1 class="title-main">VIZKOR</h1>
       <div class="title-sub">Korean Language Learning Academy</div>
 
-      <!-- ===== Simple Countdown (inserted here) ===== -->
-    <div class="countdown-wrap" role="region" aria-label="Registration countdown">
-  <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
-  <p class="countdown-date">August 25, 2025 — 10:00 AM</p>
-  <p id="countdown" aria-live="polite"></p>
-</div>
-
-   </div>
+      <!-- ===== Simple Countdown (centered) ===== -->
+      <div class="countdown-wrap" role="region" aria-label="Registration countdown">
+        <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
+        <p class="countdown-date">August 25, 2025 — 10:00 AM</p>
+        <p id="countdown" aria-live="polite"></p>
+      </div>
+    </div>
   </header>
 
-      <!-- ===== End Countdown ===== -->
-
- 
-
+  <!-- ===== Cards (centered; removed stray <br>) ===== -->
   <div class="container">
-   <!-- =====  <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
+    <!-- <a href="oldreg.html" class="card"><span>OLD REGISTRATION</span></a>
     <a href="epsdmw.html" class="card"><span>NEW REGISTRATION</span></a>
-    <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div> ===== -->
-	<a href="vocabulary.html" class="card"><span>FLIPCARDS VOCABULARY</span></a>
-	  <a href="book1.html" class="card"><span>EPS BOOK 1 VOCABULARY LIST</span></a>
-	  <a href="book2.html" class="card"><span>EPS BOOK 2 VOCABULARY LIST</span></a><br>
-	   <a href="greetings.html" class="card"><span>Popular Greetings and Situational Phrases</span></a>
+    <div class="card" onclick="openModal()"><span>RESIZE ID/Passport</span></div> -->
+
+    <a href="vocabulary.html" class="card"><span>FLIPCARDS VOCABULARY</span></a>
+    <a href="book1.html" class="card"><span>EPS BOOK 1 VOCABULARY LIST</span></a>
+    <a href="book2.html" class="card"><span>EPS BOOK 2 VOCABULARY LIST</span></a>
+    <a href="greetings.html" class="card"><span>Popular Greetings and Situational Phrases</span></a>
   </div>
 
   <!-- ===== Password Modal with 9-Dot Pattern ===== -->
-<div class="modal" id="passwordModal" aria-modal="true" role="dialog">
-  <div class="modal-content">
-    <h2>Draw Unlock Pattern</h2>
-    <p class="hint">Drag across 5 dots to continue</p>
-    <canvas id="patternCanvas" width="300" height="300"></canvas>
-    <div class="err" id="errMsg"></div>
+  <div class="modal" id="passwordModal" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <h2>Draw Unlock Pattern</h2>
+      <p class="hint">Drag across 5 dots to continue</p>
+      <canvas id="patternCanvas" width="300" height="300"></canvas>
+      <div class="err" id="errMsg"></div>
+    </div>
   </div>
-</div>
 
-<style>
-#patternCanvas {
-  background: linear-gradient(180deg, #071c2c, #061725);
-  border: 1px solid rgba(186,230,253,.35);
-  border-radius: 12px;
-  touch-action: none; /* disable scroll while drawing */
-  display:block;
-  margin:0 auto;
-}
-</style>
+  <script>
+  /* ===== Modal Logic ===== */
+  const modal = document.getElementById('passwordModal');
+  const errMsg = document.getElementById('errMsg');
+  function openModal(){ modal.classList.add('show'); errMsg.textContent = ''; }
+  function closeModal(){ modal.classList.remove('show'); }
+  window.addEventListener('click', (e)=>{ if(e.target === modal){ closeModal(); } });
 
-<script>
-/* ===== Modal Logic ===== */
-const modal = document.getElementById('passwordModal');
-const errMsg = document.getElementById('errMsg');
+  /* ===== Pattern Lock ===== */
+  const canvas = document.getElementById("patternCanvas");
+  const ctx = canvas.getContext("2d");
+  const size = 3; // 3x3 grid
+  const radius = 20;
+  const nodes = [];
+  let pattern = [], isDrawing = false, lastX=0, lastY=0;
+  const correctPattern = [0,1,2,5,8]; // set your own
 
-function openModal(){
-  modal.classList.add('show');
-  errMsg.textContent = '';
-}
-function closeModal(){
-  modal.classList.remove('show');
-}
-window.addEventListener('click', (e)=>{
-  if(e.target === modal){ closeModal(); }
-});
-
-/* ===== Pattern Lock ===== */
-const canvas = document.getElementById("patternCanvas");
-const ctx = canvas.getContext("2d");
-const size = 3; // 3x3 grid
-const radius = 20;
-const nodes = [];
-let pattern = [], isDrawing = false, lastX=0, lastY=0;
-
-// ===== SET YOUR PASSWORD PATTERN HERE =====
-const correctPattern = [0,1,2,5,8];  
-
-function setupGrid(){
-  nodes.length = 0;
-  const gap = canvas.width / (size+1);
-  for(let row=0; row<size; row++){
-    for(let col=0; col<size; col++){
-      nodes.push({
-        x:(col+1)*gap,
-        y:(row+1)*gap,
-        id: row*size+col,
-        active:false
-      });
+  function setupGrid(){
+    nodes.length = 0;
+    const gap = canvas.width / (size+1);
+    for(let row=0; row<size; row++){
+      for(let col=0; col<size; col++){
+        nodes.push({ x:(col+1)*gap, y:(row+1)*gap, id: row*size+col, active:false });
+      }
     }
+    draw();
   }
-  draw();
-}
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // draw glow lines
-  if(pattern.length > 0){
-    const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-    gradient.addColorStop(0, "#38bdf8");
-    gradient.addColorStop(1, "#22d3ee");
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = 6;
-    ctx.shadowBlur = 18;
-    ctx.shadowColor = "#38bdf8";
-
-    ctx.beginPath();
-    pattern.forEach((id,i)=>{
-      const n=nodes[id];
-      if(i===0) ctx.moveTo(n.x,n.y);
-      else ctx.lineTo(n.x,n.y);
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // glow lines
+    if(pattern.length > 0){
+      const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+      gradient.addColorStop(0, "#38bdf8");
+      gradient.addColorStop(1, "#22d3ee");
+      ctx.strokeStyle = gradient; ctx.lineWidth = 6; ctx.shadowBlur = 18; ctx.shadowColor = "#38bdf8";
+      ctx.beginPath();
+      pattern.forEach((id,i)=>{ const n=nodes[id]; if(i===0) ctx.moveTo(n.x,n.y); else ctx.lineTo(n.x,n.y); });
+      if(isDrawing) ctx.lineTo(lastX,lastY);
+      ctx.stroke(); ctx.shadowBlur = 0;
+    }
+    // dots
+    nodes.forEach(n=>{
+      ctx.beginPath(); ctx.arc(n.x,n.y,radius,0,Math.PI*2);
+      if(n.active){
+        const g = ctx.createRadialGradient(n.x,n.y,5,n.x,n.y,radius+8);
+        g.addColorStop(0,"#67e8f9"); g.addColorStop(1,"#0ea5e9");
+        ctx.fillStyle = g; ctx.shadowBlur = 25; ctx.shadowColor = "#38bdf8";
+      }else{ ctx.fillStyle="#0a1e2e"; ctx.shadowBlur=0; }
+      ctx.fill();
+      ctx.strokeStyle="rgba(186,230,253,.5)"; ctx.lineWidth=2; ctx.stroke();
     });
-    if(isDrawing) ctx.lineTo(lastX,lastY);
-    ctx.stroke();
-    ctx.shadowBlur = 0;
   }
 
-  // draw glowing dots
-  nodes.forEach(n=>{
-    ctx.beginPath();
-    ctx.arc(n.x,n.y,radius,0,Math.PI*2);
+  function getNode(x,y){ return nodes.find(n=>{ const dx=x-n.x, dy=y-n.y; return Math.hypot(dx,dy) < radius+5; }); }
+  function startDraw(e){ isDrawing=true; pattern=[]; nodes.forEach(n=>n.active=false); moveDraw(e); }
+  function moveDraw(e){ if(!isDrawing) return; const rect=canvas.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top; lastX=x; lastY=y; const node=getNode(x,y); if(node && !node.active){ node.active=true; pattern.push(node.id); } draw(); }
+  function endDraw(){ if(!isDrawing) return; isDrawing=false; if(pattern.length===correctPattern.length && pattern.every((v,i)=>v===correctPattern[i])){ window.location.href="resize.html"; }else{ errMsg.textContent="Incorrect pattern. Try again."; } draw(); }
+  canvas.addEventListener("mousedown",startDraw); canvas.addEventListener("mousemove",moveDraw); window.addEventListener("mouseup",endDraw);
+  canvas.addEventListener("touchstart",startDraw); canvas.addEventListener("touchmove",moveDraw); window.addEventListener("touchend",endDraw);
+  setupGrid();
 
-    if(n.active){
-      const g = ctx.createRadialGradient(n.x,n.y,5,n.x,n.y,radius+8);
-      g.addColorStop(0,"#67e8f9");
-      g.addColorStop(1,"#0ea5e9");
-      ctx.fillStyle = g;
-      ctx.shadowBlur = 25;
-      ctx.shadowColor = "#38bdf8";
-    }else{
-      ctx.fillStyle="#0a1e2e";
-      ctx.shadowBlur=0;
+  /* ===== Countdown ===== */
+  (function initCountdown(){
+    const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
+    const el = document.getElementById("countdown");
+    if(!el) return;
+    function tick(){
+      const now = Date.now();
+      const diff = TARGET - now;
+      if(diff <= 0){ el.textContent = "Started"; return; }
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const s = Math.floor((diff % (1000*60)) / 1000);
+      el.textContent = ` ${d}d ${h}h ${m}m ${s}s`;
     }
-    ctx.fill();
+    tick(); setInterval(tick, 1000);
+  })();
+  </script>
 
-    ctx.strokeStyle="rgba(186,230,253,.5)";
-    ctx.lineWidth=2;
-    ctx.stroke();
-  });
-}
+  <script>
+  // Disable right click
+  document.addEventListener("contextmenu", e=>e.preventDefault(), false);
+  // Disable text selection
+  document.addEventListener("selectstart", e=>e.preventDefault(), false);
+  // Disable drag
+  document.addEventListener("dragstart", e=>e.preventDefault(), false);
+  // Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+  document.addEventListener("keydown", function(e){
+    if ( e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase())) ) { e.preventDefault(); }
+  }, false);
+  </script>
 
-function getNode(x,y){
-  return nodes.find(n=>{
-    const dx=x-n.x, dy=y-n.y;
-    return Math.sqrt(dx*dx+dy*dy) < radius+5;
-  });
-}
-
-function startDraw(e){ isDrawing=true; pattern=[]; nodes.forEach(n=>n.active=false); moveDraw(e); }
-function moveDraw(e){
-  if(!isDrawing) return;
-  const rect=canvas.getBoundingClientRect();
-  const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
-  const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
-  lastX=x; lastY=y;
-  const node=getNode(x,y);
-  if(node && !node.active){ node.active=true; pattern.push(node.id); }
-  draw();
-}
-function endDraw(){
-  if(!isDrawing) return;
-  isDrawing=false;
-  if(pattern.length===correctPattern.length &&
-     pattern.every((v,i)=>v===correctPattern[i])){
-    window.location.href="resize.html";
-  }else{
-    errMsg.textContent="Incorrect pattern. Try again.";
-  }
-  draw();
-}
-
-canvas.addEventListener("mousedown",startDraw);
-canvas.addEventListener("mousemove",moveDraw);
-window.addEventListener("mouseup",endDraw);
-canvas.addEventListener("touchstart",startDraw);
-canvas.addEventListener("touchmove",moveDraw);
-window.addEventListener("touchend",endDraw);
-
-setupGrid();
-/* ===== Countdown (simple & clean) ===== */
-(function initCountdown(){
-  const TARGET = new Date("August 25, 2025 10:00:00 GMT+0800").getTime();
-  const el = document.getElementById("countdown");
-  if(!el) return;
-
-  function tick(){
-    const now = Date.now();
-    const diff = TARGET - now;
-
-    if(diff <= 0){
-      el.textContent = "Started";
-      return;
-    }
-
-    const d = Math.floor(diff / (1000*60*60*24));
-    const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-    const m = Math.floor((diff % (1000*60*60)) / (1000*60));
-    const s = Math.floor((diff % (1000*60)) / 1000);
-
-    el.textContent = ` ${d}d ${h}h ${m}m ${s}s`;
-  }
-
-  tick();
-  setInterval(tick, 1000);
-})();
-
-</script>
-
-<script>
-// Disable right click
-document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable text selection
-document.addEventListener("selectstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable drag (para hindi madrag palabas yung image/text)
-document.addEventListener("dragstart", function(e){
-  e.preventDefault();
-}, false);
-
-// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
-document.addEventListener("keydown", function(e){
-  if (
-    e.key === "F12" || 
-    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
-  ) {
-    e.preventDefault();
-  }
-}, false);
-</script>
-
- 
 </body>
 </html>
