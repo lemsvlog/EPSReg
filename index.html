@@ -29,7 +29,7 @@
       --border:1px solid rgba(103,232,249,.30);
 
       --card-w: 280px;
-      --card-h: 80px;
+      --card-h: 120px;
     }
 
     *{box-sizing:border-box}
@@ -106,7 +106,30 @@
 
       display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0;
     }
-    .countdown-title, .countdown-date, #countdown { margin: 0; padding: 0; }
+    .countdown-title, .countdown-date, $1
+
+/* ===== Announcement Styles ===== */
+.countdown-wrap{ gap:8px; background: var(--bg-2); border:1px solid rgba(186,230,253,.35); }
+.announce-head{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; }
+.announce-head h3{ margin:0; font-size:1.1rem; font-weight:900; letter-spacing:.3px; color:var(--ice-1); }
+.btn.small{ padding:8px 10px; font-size:.85rem; border-radius:8px; box-shadow: 0 4px 12px rgba(56,189,248,.25); }
+.announce-body[hidden]{ display:none; }
+.announce-body{ width:100%; text-align:left; display:grid; gap:10px; }
+.announce-body h4{ margin:6px 0 4px; font-size:1rem; font-weight:800; color:var(--ice-1); }
+.announce-list{ margin:0; padding-left:18px; display:grid; gap:4px; }
+.announce-list li{ color:var(--ice-1); }
+.announce-list strong{ color:#fff; }
+.rounds-grid{ display:grid; gap:8px; grid-template-columns: repeat(3, minmax(0,1fr)); }
+.rounds-grid .round{ background:#0f2033; border: 1px solid rgba(186,230,253,.25); border-radius:10px; padding:10px; }
+.rounds-grid h5{ margin:0 0 4px; font-size:.95rem; color:var(--ice-2); }
+.rounds-grid p{ margin:0; font-size:.9rem; color:var(--muted); }
+.timeline, .quota{ width:100%; border-collapse:collapse; background:var(--bg-2); border:1px solid rgba(186,230,253,.25); border-radius:10px; overflow:hidden; }
+.timeline th, .timeline td, .quota th, .quota td{ padding:10px; border-bottom:1px solid rgba(186,230,253,.18); vertical-align:top; }
+.timeline thead th, .quota thead th{ background:#103049; color:#fff; text-align:left; font-weight:800; }
+.timeline tbody tr:nth-child(even), .quota tbody tr:nth-child(even){ background:#0c2234; }
+.note{ margin:6px 0 2px; color:var(--muted); font-size:.86rem; }
+@media (max-width:900px){ .rounds-grid{ grid-template-columns:1fr; } }
+
     .countdown-title { font-weight: 800; letter-spacing: .3px; color: var(--ice-1); text-shadow: 0 0 8px rgba(186,230,253,.35); }
     .countdown-date { color: var(--muted); font-weight: 600; }
     #countdown { font-weight: 900; font-size: 3rem; background: linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 12px rgba(56,189,248,.55); }
@@ -148,7 +171,7 @@
     .card span{
       display:block; width:100%;
       position:relative; z-index:1; 
-      font-size:1.06rem; line-height:1.2; letter-spacing:.4px;
+      font-size: clamp(.86rem, 2.8vw, 1.02rem); line-height:1.2; letter-spacing:.4px;
       text-shadow:0 1px 0 rgba(255,255,255,.6);
       white-space:normal; word-break:keep-all; overflow-wrap:anywhere; text-wrap:balance; /* keep long labels centered */
       margin:0 auto;
@@ -156,7 +179,7 @@
 
     @media (max-width:768px){
       .container{ gap:1rem; }
-      .card{ width:92vw; max-width:460px; height:min(200px, 40vh); }
+      .card{ width:92vw; max-width:460px; height: var(--card-h); }
       .brand .title-main{ font-size:2.4rem; }
       .countdown-wrap{ padding:10px 12px; }
       #countdown{ font-size:2rem; }
@@ -200,11 +223,72 @@
       <div class="title-sub">Korean Language Learning Academy</div>
 
       <!-- ===== Simple Countdown (centered) ===== -->
-      <div class="countdown-wrap" role="region" aria-label="Registration countdown">
-        <p class="countdown-title">EPS-TOPIK Registration for UBT Pilot</p>
-        <p class="countdown-date">August 25, 2025 — 10:00 AM</p>
-        <p id="countdown" aria-live="polite"></p>
+      <div class="countdown-wrap" role="region" aria-label="Announcement">
+  <div class="announce-head">
+    <h3>Official Announcement</h3>
+    <button id="toggleAnn" class="btn small" aria-expanded="false" aria-controls="announcement">Show</button>
+  </div>
+  <div id="announcement" class="announce-body" hidden>
+    <h4>Online Registration Period</h4>
+    <p>Registration starts on <strong>August 25, 2025 (10:00 AM)</strong> and will remain open until the maximum of <strong>2,500 registrants</strong> is reached.</p>
+    <ul class="announce-list">
+      <li><strong>Payment Schedule:</strong> To be announced</li>
+      <li><strong>UBT Schedule Announcement:</strong> Sept. 15, 2025</li>
+      <li><strong>Period of UBT:</strong> Sept. 22 – Sept. 30, 2025 (9 days)</li>
+      <li><strong>UBT Venue:</strong> DMW Building, Mandaluyong City</li>
+      <li><strong>UBT Results Announcement:</strong> Oct. 14, 2025</li>
+    </ul>
+
+    <h4>Point‑Based Selection System (Rounds)</h4>
+    <div class="rounds-grid">
+      <div class="round">
+        <h5>1st Round — EPS‑TOPIK</h5>
+        <p>With Color Vision Deficiency screening; shortlist down to <strong>1.1×</strong> of the recruitment quota.</p>
       </div>
+      <div class="round">
+        <h5>2nd Round — Skills Test</h5>
+        <p><strong>Skills Test</strong> (Obligational) + <strong>Job Capacity Assessment</strong> (Optional).</p>
+      </div>
+      <div class="round">
+        <h5>Final Selection</h5>
+        <p>Selecting highest‑scoring candidates based on combined 1st + 2nd round scores.</p>
+      </div>
+    </div>
+
+    <h4>Timeline</h4>
+    <table class="timeline">
+      <thead>
+        <tr><th>Stage</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Notice</td><td>Aug. 12, 2025</td></tr>
+        <tr><td>Application Submission</td><td>Aug. 25 – Aug. 27, 2025</td></tr>
+        <tr><td>Announcement of Date & Venue (1st Round)</td><td>Sep. 15, 2025</td></tr>
+        <tr><td>Implementation — EPS‑TOPIK (1st Round)</td><td>Sep. 22 – Sep. 30, 2025</td></tr>
+        <tr><td>Announcement of Successful Candidates & 2nd Round Timeline</td><td>Oct. 14, 2025</td></tr>
+        <tr><td>Document Submission</td><td>Oct. 16 – Oct. 20, 2025</td></tr>
+        <tr><td>Announcement of Date & Venue (2nd Round)</td><td>Oct. 30, 2025</td></tr>
+        <tr><td>Implementation — Skills Test (+ Job Capacity Assessment)</td><td>Nov. 8 – Nov. 9, 2025</td></tr>
+        <tr><td>Announcement of Final Successful Candidates</td><td>Nov. 17, 2025</td></tr>
+      </tbody>
+    </table>
+    <p class="note">* The above timeline is subject to change depending on the number of applicants and on‑site conditions.</p>
+
+    <h4>Recruitment Quota (Scheduled)</h4>
+    <table class="quota">
+      <thead>
+        <tr><th>Industry</th><th>Recruitment Quota</th><th>Criteria for Final Selection</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Manufacturing</td>
+          <td>1,000 persons</td>
+          <td>Highest‑scoring applicants based on combined results from the 1st and 2nd rounds to reach the preset recruitment quota for each industry. <em>Including ties; excluding those with color vision deficiency.</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     </div>
   </header>
 
@@ -291,6 +375,18 @@
   canvas.addEventListener("mousedown",startDraw); canvas.addEventListener("mousemove",moveDraw); window.addEventListener("mouseup",endDraw);
   canvas.addEventListener("touchstart",startDraw); canvas.addEventListener("touchmove",moveDraw); window.addEventListener("touchend",endDraw);
   setupGrid();
+
+/* ===== Announcement Toggle ===== */
+(function(){
+  const btn = document.getElementById('toggleAnn');
+  const body = document.getElementById('announcement');
+  if(!btn || !body) return;
+  btn.addEventListener('click', ()=>{
+    const isHidden = body.hasAttribute('hidden');
+    if(isHidden){ body.removeAttribute('hidden'); btn.textContent='Hide'; btn.setAttribute('aria-expanded','true'); }
+    else{ body.setAttribute('hidden',''); btn.textContent='Show'; btn.setAttribute('aria-expanded','false'); }
+  });
+})();
 
   /* ===== Countdown ===== */
   (function initCountdown(){
