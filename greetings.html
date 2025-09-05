@@ -8,7 +8,7 @@
     :root{
       --bg:#0a1522; --bg2:#0d1b2a; --panel:#0f2033; --ink:#eaf2ff; --muted:#a8bed8;
       --accent:#38bdf8; --accent-2:#22d3ee; --line:rgba(255,255,255,.08);
-      --stickTop:66px;
+      --ink-dark:#072235;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -35,103 +35,134 @@
     }
     .btn{
       background:linear-gradient(180deg,#15a7d6,#0ea5e9); color:white; border:none;
-      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
-      box-shadow:0 6px 20px rgba(56,189,248,.25); transition:transform .05s ease;
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:700;
+      box-shadow:0 6px 20px rgba(56,189,248,.25); transition:transform .06s ease, filter .15s ease;
     }
+    .btn:hover{filter:brightness(1.07)}
     .btn:active{transform:translateY(1px)}
     .btn.secondary{background:var(--panel); border:1px solid var(--line); color:var(--ink)}
-    .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink)}
 
     /* Toggle switch */
     .toggle{display:flex; gap:10px; align-items:center}
     .tiny{font-size:.92rem; color:var(--muted)}
     .switch{position:relative; display:inline-block; width:44px; height:24px}
     .switch input{opacity:0; width:0; height:0}
-    .slider{position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#24364d; transition:.2s; border-radius:999px}
+    .slider{position:absolute; cursor:pointer; inset:0; background:#24364d; transition:.2s; border-radius:999px}
     .slider:before{position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:white; transition:.2s; border-radius:50%}
     input:checked + .slider{background:#22d3ee}
     input:checked + .slider:before{transform:translateX(20px)}
 
-    /* Main (list/grid) */
+    /* Main (list) */
     main{max-width:1100px; margin:0 auto; padding:18px 16px 60px}
     section{border:1px solid var(--line); background:rgba(255,255,255,.02); border-radius:16px; margin:16px 0}
-    section header{position:sticky; top:var(--stickTop); background:rgba(13,27,42,.92); border-bottom:1px solid var(--line)}
+    /* NO floating/sticky category headers */
+    section header{position:static; background:rgba(13,27,42,.92); border-bottom:1px solid var(--line)}
     section h2{margin:0; padding:10px 16px; font-size:1.05rem}
     .grid{display:grid; grid-template-columns:repeat(2,minmax(280px,1fr)); gap:10px; padding:12px}
     @media (max-width:760px){ .grid{grid-template-columns:1fr} }
 
-    /* Original list card */
+    /* List card */
     .card{background:linear-gradient(180deg,#0c1a2b,#0c1927); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start}
-    .k{font-weight:700; line-height:1.45}
+    .k{font-weight:800; line-height:1.45}
     .e{color:var(--muted); margin-top:4px}
     .act{margin-left:auto; display:flex; gap:6px; align-items:center}
-    .pill{border:1px solid var(--line); background:rgba(255,255,255,.03); border-radius:999px; padding:6px 10px; font-size:.85rem; color:var(--ink)}
 
     footer{max-width:1100px; margin:18px auto 80px; color:var(--muted); padding:0 16px}
     .hint{font-size:.9rem}
 
-    /* === Flip card look (shared by grid and trainer) === */
+    /* Flip faces (trainer) */
     .face3d{
       position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden;
       display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:16px;
       box-shadow:0 12px 26px rgba(2,12,22,.35);
     }
     .front3d{
-      color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.90));
+      color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));
       border:1px solid rgba(255,255,255,.65);
     }
     .back3d{
       transform:rotateY(180deg);
-      background: linear-gradient(180deg, rgba(10,30,46,.90), rgba(7,22,36,.96));
-      border:1px solid rgba(103,232,249,.30);
+      background: linear-gradient(180deg, rgba(10,30,46,.92), rgba(7,22,36,.98));
+      border:1px solid rgba(103,232,249,.35);
       box-shadow:0 0 18px rgba(56,189,248,.35), 0 0 32px rgba(103,232,249,.25);
       color:#e6f6ff;
     }
     .koBig{ font-size:2rem; font-weight:900; letter-spacing:.3px }
     .enBig{ font-size:1.15rem; color:#cfe9ff }
-    .play-base{
-      appearance:none; border:none; cursor:pointer; border-radius:10px; padding:10px 14px; font-weight:900;
-      color:#072235; background:linear-gradient(90deg,#67e8f9,#38bdf8); box-shadow:0 6px 18px rgba(56,189,248,.35);
-    }
-    .play-base:hover{ filter:brightness(1.08) }
-    .miniHint{ font-size:.85rem; opacity:.8 }
 
-    /* Grid flip (old toggle, kept) */
-    .fwrap{ perspective:1200px; cursor:pointer; user-select:none; touch-action:manipulation; }
-    .fcard{ position:relative; width:100%; aspect-ratio: 16/10; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
-    .fwrap.flipped .fcard{ transform:rotateY(180deg); }
-
-    /* === Trainer (single random card) === */
-    .trainerStage{ max-width:680px; margin:10px auto 18px; }
+    /* ===== Trainer box (new layout/colors/fixes) ===== */
+    .trainerStage{ max-width:720px; margin:10px auto 18px; }
     .progressRow{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0 12px; }
-    .progressText{ color:var(--muted); font-weight:700 }
-    .stageS{ width:min(520px, 96vw); height:360px; margin:0 auto; }
-    .flipS{ perspective:1200px; width:100%; height:100%; cursor:pointer; user-select:none; touch-action:manipulation; }
-    .cardS{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
-    .flipS.flipped .cardS{ transform:rotateY(180deg); }
-    .controlsRow{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:12px 0 6px }
-    .finishPanel{ display:none; text-align:center; margin-top:10px; padding:14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02) }
+    .progressText{ color:var(--muted); font-weight:800 }
 
-    /* Responsive */
-    @media (max-width: 900px){
-      :root{ --stickTop:58px; }
-      .wrap{ padding:12px }
-      h1{ font-size:1.15rem }
-      .controls{ grid-template-columns:1fr } /* stack rows */
-      .row{ gap:8px }
-      .row > *{ flex:1 1 100% }
-      .btn{ width:100%; min-height:44px }
+    .stageS{
+      position:relative; z-index:0;
+      width:min(620px, 96vw); height:380px; margin:0 auto;
+      border-radius:20px; border:1px solid rgba(103,232,249,.25);
+      background:
+        radial-gradient(1200px 800px at 80% -100%, rgba(56,189,248,.15), transparent 60%),
+        linear-gradient(180deg,#0b1d2f,#0b1a29);
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        inset 0 0 0 1px rgba(255,255,255,.04);
+      overflow:hidden;
     }
-    @media (max-width: 600px){
-      :root{ --stickTop:54px; }
-      h1{ font-size:1.05rem }
-      input[type="search"], select{ font-size:16px } /* prevent iOS zoom */
-      .stageS{ height:320px }
+
+    .flipS{ position:absolute; inset:0; perspective:1200px; cursor:pointer; user-select:none; touch-action:manipulation; z-index:1; }
+    .cardS{ position:absolute; inset:14px; border-radius:18px; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipS.flipped .cardS{ transform:rotateY(180deg); }
+
+    /* Controls on top of flip area */
+    .navBtn{
+      position:absolute; top:50%; transform:translateY(-50%);
+      background:linear-gradient(180deg,#67e8f9,#38bdf8); color:var(--ink-dark);
+      border:1px solid rgba(103,232,249,.6);
+      width:48px; height:48px; border-radius:999px; font-size:20px; font-weight:900;
+      cursor:pointer; box-shadow:0 6px 18px rgba(56,189,248,.35); z-index:3;
+    }
+    .navBtn:hover{ filter:brightness(1.1) }
+    .navBtn:disabled{ opacity:.45; cursor:not-allowed; filter:none }
+    .navLeft{ left:10px }
+    .navRight{ right:10px }
+
+    .playTop{
+      position:absolute; top:12px; right:12px; z-index:3;
+      background:linear-gradient(90deg,#67e8f9,#22d3ee); color:var(--ink-dark);
+      border:1px solid rgba(103,232,249,.6);
+      border-radius:12px; padding:8px 12px; font-weight:900; cursor:pointer;
+      box-shadow:0 6px 18px rgba(56,189,248,.35);
+    }
+    .playTop:hover{ filter:brightness(1.1) }
+
+    .centerControls{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3;
+      display:flex; gap:12px;
+    }
+    .pillBtn{
+      background:linear-gradient(180deg,#67e8f9,#38bdf8); color:var(--ink-dark);
+      border:none; border-radius:999px; padding:12px 18px; font-weight:900; cursor:pointer;
+      box-shadow:0 8px 22px rgba(56,189,248,.35);
+    }
+    .pillBtn.alt{
+      background:linear-gradient(180deg,#22d3ee,#06b6d4);
+    }
+    .pillBtn:hover{ filter:brightness(1.08) }
+
+    .belowControls{ display:flex; justify-content:center; margin-top:12px }
+    .belowControls .btn{ min-width:140px; background:var(--panel); border:1px solid rgba(103,232,249,.35); color:#cfe9ff }
+
+    .finishPanel{ display:none; text-align:center; margin-top:12px; padding:14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02) }
+
+    /* Responsive tweaks for controls */
+    @media (max-width: 640px){
+      .stageS{ height:360px }
       .koBig{ font-size:1.8rem }
+      .navBtn{ width:44px; height:44px; }
     }
-    @media (max-width: 400px){
-      h1{ font-size:1rem }
-      .koBig{ font-size:1.6rem }
+    @media (max-width: 430px){
+      .navLeft{ left:6px } .navRight{ right:6px }
+      .playTop{ top:8px; right:8px }
+      .pillBtn{ padding:10px 14px }
     }
   </style>
 </head>
@@ -141,13 +172,10 @@
       <h1>Korean Situational Phrases and Greetings</h1>
 
       <div class="controls">
-        <!-- Row 1: Search -->
         <div class="row" role="search">
           <input id="search" type="search" placeholder="Search Korean or English… (e.g., 화장실 / restroom / taxi)" aria-label="Search" />
-          <button class="btn secondary" id="clearSearch" title="Clear search">Clear</button>
         </div>
 
-        <!-- Row 2: Category + Show English + View buttons -->
         <div class="row">
           <select id="catSel" aria-label="Select category"></select>
 
@@ -159,9 +187,6 @@
             </span>
           </label>
 
-          <button class="btn" id="flipGridBtn" title="Grid flip view (all)">
-            Flip Cards (Grid)
-          </button>
           <button class="btn" id="trainerBtn" title="Random one-by-one flip practice">
             Practice (Random)
           </button>
@@ -169,37 +194,32 @@
       </div>
     </div>
   </header>
-  
-  
+
   <a href="index.html" class="floating-home">Home</a>
+  <style>
+    .floating-home{
+      position:fixed; top:0; right:0;
+      background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
+      color:#072235; font-size:14px; font-weight:700; text-decoration:none;
+      padding:8px 16px; border-radius:0 0 0 10px;
+      box-shadow:0 6px 18px rgba(56,189,248,.35);
+      z-index:9999; transition:all .25s ease;
+      backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%);
+    }
+    .floating-home:hover{
+      filter:brightness(1.12);
+      box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
+      transform:translateY(-1px);
+    }
+  </style>
 
-<style>
-  /* Floating Home Button (Sky Blue Freeze) */
-  .floating-home{
-    position:fixed; top:0; right:0;
-    background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
-    color:#072235; font-size:14px; font-weight:700; text-decoration:none;
-    padding:8px 16px; border-radius:0 0 0 10px;
-    box-shadow:0 6px 18px rgba(56,189,248,.35);
-    z-index:9999; transition:all .25s ease;
-    backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%);
-  }
-  .floating-home:hover{
-    filter:brightness(1.12);
-    box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
-    transform:translateY(-1px);
-  }
-</style>
-
-  <!-- Main list OR trainer will render here -->
   <main id="content"></main>
 
   <footer class="hint">
-    <p>Tip: Tap ▶ to hear the Korean phrase. In Practice mode, flip then Next — it shuffles everything in your current filter.</p>
+    <p>Tip: Tap 🔊 to hear the Korean phrase. In Practice mode, use ◀ ▶, Flip/Next in the box, and Shuffle below.</p>
   </footer>
 
   <script>
-   
    
     // === DATA (Hangul + English only — NO Romanization) ===
     const DATA = {      "인사 (Greetings)": [
@@ -630,50 +650,47 @@
       ]
     };
   
-    // === Elements ===
+    // Elements
     const content   = document.getElementById('content');
-    const search    = document.getElementById('search');
-    const clearSearch = document.getElementById('clearSearch');
+    const searchEl  = document.getElementById('search');
     const toggleEN  = document.getElementById('toggleEN');
     const catSel    = document.getElementById('catSel');
-    const flipGridBtn = document.getElementById('flipGridBtn');
-    const trainerBtn  = document.getElementById('trainerBtn');
+    const trainerBtn= document.getElementById('trainerBtn');
 
     let activeCat = 'All';
-    let gridFlip = false;     // grid flip view on/off
-    let trainerMode = false;  // single-card random practice
+    let trainerMode = false;
 
-    // === Utils ===
+    // Utils
     function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
     function getFilteredItems(){
-      const term = (search.value||'').trim().toLowerCase();
+      const term = (searchEl.value||'').trim().toLowerCase();
       const catsToShow = activeCat==='All' ? Object.keys(DATA) : [activeCat];
       const out = [];
       catsToShow.forEach(cat=>{
-        for(const [ko,en] of DATA[cat]){
+        (DATA[cat]||[]).forEach(([ko,en])=>{
           if(!term || ko.toLowerCase().includes(term) || en.toLowerCase().includes(term)){
             out.push([ko,en,cat]);
           }
-        }
+        });
       });
       return out;
     }
 
-    // === Category Dropdown ===
+    // Category dropdown
     function buildCategoryDropdown(){
-      const opts = ['All (모두)', ...Object.keys(DATA)];
+      const keys = Object.keys(DATA);
+      const opts = ['All (모두)', ...keys];
       catSel.innerHTML = opts.map(cat => `<option value="${cat}">${cat}</option>`).join('');
       catSel.value = 'All (모두)';
       catSel.addEventListener('change', ()=>{
         activeCat = catSel.value === 'All (모두)' ? 'All' : catSel.value;
-        // If trainer is active, restart with new pool
         if(trainerMode){ startTrainer(true); } else { render(); }
         updateTrainerButtonState();
       });
     }
 
-    // === TTS ===
+    // TTS
     function pickVoice(){
       if(!('speechSynthesis' in window)) return null;
       const all = window.speechSynthesis.getVoices();
@@ -692,8 +709,8 @@
       window.speechSynthesis.speak(u);
     }
 
-    // === Views ===
-    function renderListOrGrid(){
+    // List (no grid flip)
+    function renderList(){
       content.innerHTML='';
       const items = getFilteredItems();
       if(items.length === 0){
@@ -704,11 +721,8 @@
         return;
       }
 
-      // Group by category
       const byCat = {};
-      for(const [ko,en,cat] of items){
-        (byCat[cat] ||= []).push([ko,en]);
-      }
+      for(const [ko,en,cat] of items){ (byCat[cat] ||= []).push([ko,en]); }
 
       Object.keys(byCat).forEach(cat=>{
         const sec = document.createElement('section');
@@ -721,47 +735,19 @@
         const grid = document.createElement('div'); grid.className='grid';
 
         byCat[cat].forEach(([ko,en])=>{
-          if(!gridFlip){
-            // Standard list card
-            const card = document.createElement('div'); card.className='card';
-            const text = document.createElement('div');
-            const k = document.createElement('div'); k.className='k'; k.textContent=ko; text.appendChild(k);
-            const e = document.createElement('div'); e.className='e'; e.textContent=en; e.style.display = toggleEN.checked? 'block':'none'; text.appendChild(e);
+          const card = document.createElement('div'); card.className='card';
+          const text = document.createElement('div');
+          const k = document.createElement('div'); k.className='k'; k.textContent=ko; text.appendChild(k);
+          const e = document.createElement('div'); e.className='e'; e.textContent=en;
+          e.style.display = toggleEN.checked ? 'block':'none';
+          text.appendChild(e);
 
-            const act = document.createElement('div'); act.className='act';
-            const play = document.createElement('button'); play.className='btn'; play.textContent='▶'; play.title='Play Korean'; play.onclick=()=>speak(ko);
-            const hide = document.createElement('button'); hide.className='btn secondary'; hide.textContent='EN'; hide.title='Show/Hide English for this card'; hide.onclick=()=>{ e.style.display = (e.style.display==='none') ? 'block':'none'; };
-            act.appendChild(play); act.appendChild(hide);
+          const act = document.createElement('div'); act.className='act';
+          const play = document.createElement('button'); play.className='btn'; play.textContent='🔊'; play.title='Play Korean'; play.onclick=()=>speak(ko);
+          const hide = document.createElement('button'); hide.className='btn secondary'; hide.textContent='EN'; hide.title='Show/Hide English for this card'; hide.onclick=()=>{ e.style.display = (e.style.display==='none') ? 'block':'none'; };
+          act.appendChild(play); act.appendChild(hide);
 
-            card.appendChild(text); card.appendChild(act); grid.appendChild(card);
-          } else {
-            // Grid flip card
-            const wrap = document.createElement('div'); wrap.className='fwrap'; wrap.tabIndex = 0;
-            if(toggleEN.checked) wrap.classList.add('flipped');
-
-            const fcard = document.createElement('div'); fcard.className='fcard';
-
-            const front = document.createElement('div'); front.className='face3d front3d';
-            front.innerHTML = `
-              <div class="koBig">${ko}</div>
-              <button class="play-base" title="Play">🔊 Play</button>
-              <div class="miniHint">Click / tap to flip</div>
-            `;
-
-            const back = document.createElement('div'); back.className='face3d back3d';
-            back.innerHTML = `
-              <div class="koBig" style="opacity:.95">${ko}</div>
-              <div class="enBig">${en}</div>
-              <div class="miniHint">Click to flip back</div>
-            `;
-
-            front.querySelector('.play-base').addEventListener('click', (e)=>{ e.stopPropagation(); speak(ko); });
-            const toggleFlip = ()=> wrap.classList.toggle('flipped');
-            wrap.addEventListener('click', (e)=>{ if(!e.target.closest('.play-base')) toggleFlip(); });
-            wrap.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleFlip(); }});
-
-            fcard.appendChild(front); fcard.appendChild(back); wrap.appendChild(fcard); grid.appendChild(wrap);
-          }
+          card.appendChild(text); card.appendChild(act); grid.appendChild(card);
         });
 
         sec.appendChild(grid);
@@ -769,7 +755,7 @@
       });
     }
 
-    // === Trainer (single-card random) ===
+    // ===== Trainer (improved) =====
     let trainerQueue = [];
     let trainerIndex = 0;
 
@@ -779,72 +765,75 @@
       const stage = document.createElement('section');
       stage.className = 'trainerStage';
 
-      // Progress row
       const progressRow = document.createElement('div');
       progressRow.className = 'progressRow';
       progressRow.innerHTML = `
         <div class="progressText" id="progressText"></div>
-        <div>
-          <button class="btn ghost" id="exitTrainerBtn">Exit</button>
-        </div>
+        <div><button class="btn secondary" id="exitTrainerBtn">Exit</button></div>
       `;
       stage.appendChild(progressRow);
 
-      // Card stage
       const stageBox = document.createElement('div');
       stageBox.className = 'stageS';
       stageBox.innerHTML = `
+        <button class="navBtn navLeft" id="navLeft" aria-label="Previous">‹</button>
+        <button class="navBtn navRight" id="navRight" aria-label="Next">›</button>
+
+        <button class="playTop" id="playTop" title="Play">🔊 Play</button>
+
         <div class="flipS" id="flipS">
           <div class="cardS" id="cardS">
             <div class="face3d front3d" id="frontS"></div>
             <div class="face3d back3d" id="backS"></div>
           </div>
         </div>
+
+        <div class="centerControls">
+          <button class="pillBtn" id="flipBtn">Flip</button>
+          <button class="pillBtn alt" id="nextBtn">Next ▶</button>
+        </div>
       `;
       stage.appendChild(stageBox);
 
-      // Controls
-      const controls = document.createElement('div');
-      controls.className = 'controlsRow';
-      controls.innerHTML = `
-        <button class="btn" id="playBtn">🔊 Play</button>
-        <button class="btn" id="flipBtn">Flip</button>
-        <button class="btn" id="nextBtn">Next ▶</button>
-        <button class="btn secondary" id="restartBtn">Restart (Shuffle)</button>
-      `;
-      stage.appendChild(controls);
+      const below = document.createElement('div');
+      below.className = 'belowControls';
+      below.innerHTML = `<button class="btn" id="shuffleBtn">Shuffle</button>`;
+      stage.appendChild(below);
 
-      // Finish panel
       const finish = document.createElement('div');
       finish.className = 'finishPanel';
       finish.id = 'finishPanel';
-      finish.innerHTML = `
-        <p style="margin:6px 0 12px">Finished! 🎉 You saw every card in this set.</p>
-        <div class="controlsRow">
-          <button class="btn" id="reshuffleBtn">Restart (Shuffle)</button>
-          <button class="btn ghost" id="exit2Btn">Exit</button>
-        </div>
-      `;
+      finish.innerHTML = `<p style="margin:6px 0 0">Finished! 🎉 You saw every card in this set.</p>`;
       stage.appendChild(finish);
 
       content.appendChild(stage);
 
-      // Wire buttons
+      // Wire
       document.getElementById('exitTrainerBtn').addEventListener('click', exitTrainer);
-      document.getElementById('exit2Btn')?.addEventListener('click', exitTrainer);
-      document.getElementById('playBtn').addEventListener('click', ()=>{ const [ko]=trainerQueue[trainerIndex]; speak(ko); });
-      document.getElementById('flipBtn').addEventListener('click', ()=> document.getElementById('flipS').classList.toggle('flipped'));
-      document.getElementById('nextBtn').addEventListener('click', nextTrainer);
-      document.getElementById('restartBtn').addEventListener('click', ()=> startTrainer(true));
-      document.getElementById('reshuffleBtn')?.addEventListener('click', ()=> startTrainer(true));
 
-      // Card click + keyboard
+      document.getElementById('playTop').addEventListener('click', (e)=>{ e.stopPropagation(); const [ko]=trainerQueue[trainerIndex]; speak(ko); });
+
+      document.getElementById('flipBtn').addEventListener('click', (e)=>{ e.stopPropagation(); document.getElementById('flipS').classList.toggle('flipped'); });
+      document.getElementById('nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextTrainer(); });
+
+      document.getElementById('navLeft').addEventListener('click', (e)=>{ e.stopPropagation(); prevTrainer(); });
+      document.getElementById('navRight').addEventListener('click', (e)=>{ e.stopPropagation(); nextTrainer(); });
+
+      document.getElementById('shuffleBtn').addEventListener('click', (e)=>{ e.stopPropagation(); startTrainer(true); });
+
+      // Flip card by clicking empty area only
       const flipS = document.getElementById('flipS');
       flipS.addEventListener('click', ()=> flipS.classList.toggle('flipped'));
-      document.getElementById('cardS').addEventListener('keydown', (e)=>{
-        if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flipS.classList.toggle('flipped'); }
-        if(e.key==='ArrowRight' || e.key.toLowerCase()==='n'){ nextTrainer(); }
-      });
+
+      // Keyboard support
+      document.addEventListener('keydown', trainerKeyHandler);
+    }
+
+    function trainerKeyHandler(e){
+      if(!trainerMode) return;
+      if(e.key==='ArrowLeft') prevTrainer();
+      if(e.key==='ArrowRight') nextTrainer();
+      if(e.key===' ' || e.key==='Enter'){ e.preventDefault(); document.getElementById('flipS').classList.toggle('flipped'); }
     }
 
     function showTrainerCard(){
@@ -858,24 +847,18 @@
 
       front.innerHTML = `
         <div class="koBig">${ko}</div>
-        <button class="play-base" title="Play">🔊 Play</button>
-        <div class="miniHint">Click / tap to flip</div>
+        <div class="enBig" style="opacity:.0; user-select:none">‎</div>
       `;
       back.innerHTML = `
         <div class="koBig" style="opacity:.95">${ko}</div>
         <div class="enBig">${en}</div>
-        <div class="miniHint">Click to flip back</div>
       `;
 
-      front.querySelector('.play-base').addEventListener('click', (e)=>{ e.stopPropagation(); speak(ko); });
-
-      // Respect Show English toggle
       if(toggleEN.checked) flipS.classList.add('flipped');
       else flipS.classList.remove('flipped');
 
-      // Focus for keyboard users
-      document.getElementById('cardS').setAttribute('tabindex','0');
-      document.getElementById('cardS').focus();
+      document.getElementById('navLeft').disabled  = (trainerIndex===0);
+      document.getElementById('navRight').disabled = (trainerIndex===trainerQueue.length-1);
     }
 
     function nextTrainer(){
@@ -886,9 +869,15 @@
         document.getElementById('finishPanel').style.display = 'block';
       }
     }
+    function prevTrainer(){
+      if(trainerIndex > 0){
+        trainerIndex--;
+        showTrainerCard();
+      }
+    }
 
     function startTrainer(reshuffle=false){
-      trainerMode = true; gridFlip = false;
+      trainerMode = true;
       const items = getFilteredItems();
       if(items.length===0){
         alert('No cards in this filter to practice.');
@@ -905,48 +894,22 @@
 
     function exitTrainer(){
       trainerMode = false;
+      document.removeEventListener('keydown', trainerKeyHandler);
       render();
     }
 
-    // === Main render switch ===
-    function render(){
-      if(trainerMode) { renderTrainerUI(); showTrainerCard(); }
-      else { renderListOrGrid(); }
-    }
+    // Main render
+    function render(){ trainerMode ? (renderTrainerUI(), showTrainerCard()) : renderList(); }
 
-    // === Events ===
-    search.addEventListener('input', ()=>{
-      if(trainerMode){ startTrainer(true); } else { render(); }
-      updateTrainerButtonState();
-    });
-    clearSearch.addEventListener('click', ()=>{ search.value=''; if(trainerMode){ startTrainer(true); } else { render(); } updateTrainerButtonState(); });
-    toggleEN.addEventListener('change', ()=>{
-      if(trainerMode){
-        // Just re-apply flipped state for current card
-        const flipS = document.getElementById('flipS');
-        if(flipS){
-          if(toggleEN.checked) flipS.classList.add('flipped');
-          else flipS.classList.remove('flipped');
-        }
-      }else{
-        render();
-      }
-    });
-
-    flipGridBtn.addEventListener('click', ()=>{
-      trainerMode = false;
-      gridFlip = !gridFlip;
-      render();
-    });
-
+    // Events
+    searchEl.addEventListener('input', ()=>{ if(trainerMode){ startTrainer(true); } else { render(); } updateTrainerButtonState(); });
+    toggleEN.addEventListener('change', ()=>{ if(trainerMode){ showTrainerCard(); } else { render(); } });
     trainerBtn.addEventListener('click', ()=> startTrainer(true));
 
-    function updateTrainerButtonState(){
-      trainerBtn.disabled = getFilteredItems().length === 0;
-    }
+    function updateTrainerButtonState(){ trainerBtn.disabled = getFilteredItems().length === 0; }
 
-    // === Init ===
-    toggleEN.checked = false;     // start hidden
+    // Init
+    toggleEN.checked = false;
     buildCategoryDropdown();
     updateTrainerButtonState();
     render();
