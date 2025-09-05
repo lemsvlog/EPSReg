@@ -95,19 +95,23 @@
     display:none; border-bottom-left-radius:12px; border-bottom-right-radius:12px;
   }
   .row.open + .exp{display:block}
-  .chips{display:flex; gap:8px; flex-wrap:wrap}
-  .chip{
-    padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#0b1a2b;
-    display:flex; gap:10px; align-items:center;
+
+  /* ===== Compact Tense Panel (stacked lines) ===== */
+  .tenses{ display:flex; flex-direction:column; gap:8px; }
+  .tense{
+    border:1px solid var(--line); border-radius:10px; background:#091728;
+    padding:10px 10px 8px; display:flex; flex-direction:column; gap:6px;
   }
-  .chip b{ font-weight:800; color:#9bd7ff }
-  .chip .form{ font-weight:800 }
-  .chip small{ color:var(--muted) }
+  .t-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .t-head b{ font-weight:800; color:#9bd7ff; font-size:.92rem; }
   .play-mini{
     width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
-    background:#0b1a2b; display:grid; place-items:center; cursor:pointer;
+    background:#0b1a2b; display:grid; place-items:center; cursor:pointer; flex:0 0 auto;
   }
-  .play-mini svg{width:16px; height:16px; fill:#7fd6ff}
+  .play-mini svg{ width:16px; height:16px; fill:#7fd6ff; }
+
+  .t-form{ font-weight:900; font-size:.98rem; line-height:1.1; }
+  .t-eng{ color:var(--muted); font-size:.86rem; line-height:1.15; }
 
   .nohit{padding:18px; color:var(--muted)}
   mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .18em; border-radius:4px}
@@ -119,8 +123,12 @@
     .ko-line{ font-size:.96rem; }
     .en-line{ font-size:.86rem; }
     .play{ width:36px; height:36px; border-radius:8px; }
-    .chip{ padding:7px 8px; }
-    .chip .form{ font-size:.95em; }
+
+    .tense{ padding:8px 8px 6px; gap:4px; }
+    .t-head b{ font-size:.88rem; }
+    .t-form{ font-size:.94rem; }
+    .t-eng{ font-size:.82rem; }
+    .play-mini{ width:28px; height:28px; border-radius:7px; }
     .wrap{ margin:10px auto 56px; }
   }
 </style>
@@ -307,7 +315,6 @@ const RAW = `
 마시다 to drink 84
 먹다 to eat 84
 물 water 84
-밥 rice 84
 보다 to watch 84
 빵 bread 84
 사과 apple 84
@@ -1432,7 +1439,7 @@ function tagPOS(entry){
     EN_ADVERB_PATTERN.test(entry.en)
   ) {
     pos = 'adverb';
-  } else if (enStartsTo || /\(하다\)/.test(ko) || /다$/.test(baseKo)) {
+  } else if (enStartsTo || /(\(하다\))/.test(ko) || /다$/.test(baseKo)) {
     pos = enToBe ? 'adjective' : 'verb';
   } else if (ADVERB_HINTS.some(w => en.includes(w))) {
     pos = 'adverb';
@@ -1446,7 +1453,7 @@ function tagPOS(entry){
 
 /* ========== Hangul helpers & conjugation (unchanged) ========== */
 const SBASE=0xAC00, LCOUNT=19, VCOUNT=21, TCOUNT=28, NCOUNT=VCOUNT*TCOUNT;
-const T = ['','ᆨ','ᆩ','ᆪ','ᆫ','ᆬ','ᆭ','ᆮ','ᆯ','ᆰ','ᆱ','ᆲ','ᆳ','ᆴ','ᆵ','ᆶ','ᆷ','ᆸ','ᆹ','ᆺ','ᆻ','ᆼ','ᆽ','ᆾ','ᆿ','ᇀ','ᇁ','ᇂ'];
+const T = ['', 'ᆨ','ᆩ','ᆪ','ᆫ','ᆬ','ᆭ','ᆮ','ᆯ','ᆰ','ᆱ','ᆲ','ᆳ','ᆴ','ᆵ','ᆶ','ᆷ','ᆸ','ᆹ','ᆺ','ᆻ','ᆼ','ᆽ','ᆾ','ᆿ','ᇀ','ᇁ','ᇂ'];
 const T_SSIOT = 20, T_L = 8, T_B = 17;
 const V = ['ᅡ','ᅢ','ᅣ','ᅤ','ᅥ','ᅦ','ᅧ','ᅨ','ᅩ','ᅪ','ᅫ','ᅬ','ᅭ','ᅮ','ᅯ','ᅰ','ᅱ','ᅲ','ᅳ','ᅴ','ᅵ'];
 const V_A=0, V_EO=4, V_O=8, V_WA=9, V_U=13, V_WO=14, V_I=20, V_E=5, V_YEO=6, V_YU=17;
@@ -1454,7 +1461,7 @@ const V_EU=18;
 
 function isHangulSyll(ch){const c=ch.charCodeAt(0); return c>=0xAC00 && c<=0xD7A3;}
 function decompose(ch){const n=ch.charCodeAt(0)-SBASE; const li=Math.floor(n/NCOUNT); const vi=Math.floor((n%NCOUNT)/TCOUNT); const ti=n%TCOUNT; return {li,vi,ti};}
-function compose(li,vi,ti){return String.fromCharCode(SBASE + (li*NCOUNT) + (vi*TCOUNT) + ti);}
+function compose(li,vi,ti){return String.fromCharCode(SBASE + (li*NCOUNT) + (vi*TCOUNT) + ti);} 
 function lastSyllable(str){ for(let i=str.length-1;i>=0;i--){ if(isHangulSyll(str[i])) return {ch:str[i], idx:i}; } return null; }
 function replaceLastSyllable(str, fn){ const last=lastSyllable(str); if(!last) return str; const d=decompose(last.ch); const r=fn({...d}); const ch2=compose(r.li,r.vi,r.ti); return str.slice(0,last.idx)+ch2+str.slice(last.idx+1); }
 function setFinal(str, ti){ return replaceLastSyllable(str, s=>({li:s.li,vi:s.vi,ti})); }
@@ -1676,30 +1683,38 @@ function renderList(items, term){
       const exp = document.createElement('div');
       exp.className = 'exp';
       exp.innerHTML = `
-        <div class="chips">
-          <div class="chip">
-            <b>Present</b>
-            <span class="form">${escapeHtml(pres)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
+        <div class="tenses">
+          <div class="tense">
+            <div class="t-head">
+              <b>Present</b>
+              <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="t-form">${escapeHtml(pres)}</div>
+            <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</div>
           </div>
-          <div class="chip">
-            <b>Past</b>
-            <span class="form">${escapeHtml(past)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
+
+          <div class="tense">
+            <div class="t-head">
+              <b>Past</b>
+              <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="t-form">${escapeHtml(past)}</div>
+            <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</div>
           </div>
-          <div class="chip">
-            <b>Future</b>
-            <span class="form">${escapeHtml(futu)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
+
+          <div class="tense">
+            <div class="t-head">
+              <b>Future</b>
+              <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <div class="t-form">${escapeHtml(futu)}</div>
+            <div class="t-eng">— ${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</div>
           </div>
         </div>
       `;
@@ -1770,7 +1785,6 @@ applyFilters();
 /* ========= Quick self-checks ========= */
 console.log('덥다', presentPolite('덥다','adjective')==='더워요', pastPolite('덥다','adjective')==='더웠어요', futurePolite('덥다','adjective')==='더울 거예요');
 console.log('춥다', presentPolite('춥다','adjective')==='추워요', pastPolite('춥다','adjective')==='추웠어요', futurePolite('춥다','adjective')==='추울 거예요');
-console.log('쉽다', presentPolite('쉽다','adjective')==='쉬워요', pastPolite('쉽다','adjective')==='쉬웠어요', futurePolite('쉽다','adjective')==='쉬울 거예요');
 
 console.log('돕다', presentPolite('돕다','verb')==='도와요', pastPolite('돕다','verb')==='도왔어요', futurePolite('돕다','verb')==='도울 거예요');
 console.log('곱다', presentPolite('곱다','adjective')==='고와요', pastPolite('곱다','adjective')==='고왔어요', futurePolite('곱다','adjective')==='고울 거예요');
