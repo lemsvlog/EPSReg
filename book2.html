@@ -95,19 +95,34 @@
     display:none; border-bottom-left-radius:12px; border-bottom-right-radius:12px;
   }
   .row.open + .exp{display:block}
-  .chips{display:flex; gap:8px; flex-wrap:wrap}
-  .chip{
-    padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#0b1a2b;
-    display:flex; gap:10px; align-items:center;
-  }
-  .chip b{ font-weight:800; color:#9bd7ff }
-  .chip .form{ font-weight:800 }
-  .chip small{ color:var(--muted) }
-  .play-mini{
-    width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
-    background:#0b1a2b; display:grid; place-items:center; cursor:pointer;
-  }
-  .play-mini svg{width:16px; height:16px; fill:#7fd6ff}
+.chips{display:flex; gap:10px; flex-wrap:wrap}
+.chip{
+  padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#0b1a2b;
+  display:flex; flex-direction:column; gap:6px; align-items:flex-start;
+}
+.chip-title{ font-weight:800; color:#9bd7ff; line-height:1 }
+.chip-ko{ display:flex; align-items:center; gap:8px; }
+.chip .form{
+  font-weight:800;
+  white-space:nowrap;           /* keep Korean on one line */
+  overflow-x:auto;              /* allow sideways scroll on small screens */
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.chip .form::-webkit-scrollbar{ display:none; } /* hide scrollbar for WebKit */
+.chip-en{ color:var(--muted); line-height:1.2 }
+.play-mini{
+  width:30px; height:30px; border-radius:8px; border:1px solid var(--line);
+  background:#0b1a2b; display:grid; place-items:center; cursor:pointer;
+}
+.play-mini svg{ width:16px; height:16px; fill:#7fd6ff }
+
+/* Mobile spacing */
+@media (max-width:520px){
+  .chip{ gap:5px; }
+  .chip-title{ font-size:.95rem; }
+  .chip-en{ font-size:.94rem; }
+}
 
   .nohit{padding:18px; color:var(--muted)}
   mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .18em; border-radius:4px}
@@ -1692,36 +1707,49 @@ function renderList(items, term){
       const pres=presentPolite(da,it.pos);
       const past=pastPolite(da,it.pos);
       const futu=futurePolite(da,it.pos);
-      const exp=document.createElement('div');
-      exp.className='exp';
-      exp.innerHTML=`
-        <div class="chips">
-          <div class="chip">
-            <b>Present</b>
-            <span class="form">${escapeHtml(pres)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-          </div>
-          <div class="chip">
-            <b>Past</b>
-            <span class="form">${escapeHtml(past)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-          </div>
-          <div class="chip">
-            <b>Future</b>
-            <span class="form">${escapeHtml(futu)}</span>
-            <small>— ${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</small>
-            <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
-              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </button>
-          </div>
-        </div>
-      `;
+	  
+  const exp=document.createElement('div');
+exp.className='exp';
+exp.innerHTML = `
+  <div class="chips">
+    <!-- Present -->
+    <div class="chip">
+      <div class="chip-title">Present</div>
+      <div class="chip-ko">
+        <span class="form">${escapeHtml(pres)}</span>
+        <button class="play-mini" title="Play ${escapeAttr(pres)}" data-ko="${escapeAttr(pres)}">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+      <div class="chip-en">${escapeHtml(tenseMeaning(it.en, it.pos, 'pres'))}</div>
+    </div>
+
+    <!-- Past -->
+    <div class="chip">
+      <div class="chip-title">Past</div>
+      <div class="chip-ko">
+        <span class="form">${escapeHtml(past)}</span>
+        <button class="play-mini" title="Play ${escapeAttr(past)}" data-ko="${escapeAttr(past)}">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+      <div class="chip-en">${escapeHtml(tenseMeaning(it.en, it.pos, 'past'))}</div>
+    </div>
+
+    <!-- Future -->
+    <div class="chip">
+      <div class="chip-title">Future</div>
+      <div class="chip-ko">
+        <span class="form">${escapeHtml(futu)}</span>
+        <button class="play-mini" title="Play ${escapeAttr(futu)}" data-ko="${escapeAttr(futu)}">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+      <div class="chip-en">${escapeHtml(tenseMeaning(it.en, it.pos, 'futu'))}</div>
+    </div>
+  </div>
+`;
+
       frag.appendChild(exp);
     }
   }
@@ -1765,3 +1793,4 @@ applyFilters();
 </script>
 </body>
 </html>
+
