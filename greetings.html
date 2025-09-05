@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Korean Situational Phrases – Audio (Hangul + English)</title>
+  <style>
+    :root{
+      --bg:#0a1522; --bg2:#0d1b2a; --panel:#0f2033; --ink:#eaf2ff; --muted:#a8bed8;
+      --accent:#38bdf8; --accent-2:#22d3ee; --line:rgba(255,255,255,.08);
+      --stickTop:66px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#08121d,#0a1522 60%,#06101b);
+      color:var(--ink);
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(180deg,rgba(10,21,34,.95),rgba(10,21,34,.85));
+      backdrop-filter: blur(6px) saturate(120%);
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:16px}
+    h1{margin:0; font-size:1.35rem; letter-spacing:.3px}
+
+    /* Header controls */
+    .controls{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    input[type="search"], select{
+      background:var(--panel); border:1px solid var(--line); color:var(--ink);
+      padding:10px 12px; border-radius:10px; outline:none; width:100%;
+    }
+    .btn{
+      background:linear-gradient(180deg,#15a7d6,#0ea5e9); color:white; border:none;
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
+      box-shadow:0 6px 20px rgba(56,189,248,.25); transition:transform .05s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:var(--panel); border:1px solid var(--line); color:var(--ink)}
+    .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--ink)}
+
+    /* Toggle switch */
+    .toggle{display:flex; gap:10px; align-items:center}
+    .tiny{font-size:.92rem; color:var(--muted)}
+    .switch{position:relative; display:inline-block; width:44px; height:24px}
+    .switch input{opacity:0; width:0; height:0}
+    .slider{position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#24364d; transition:.2s; border-radius:999px}
+    .slider:before{position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:white; transition:.2s; border-radius:50%}
+    input:checked + .slider{background:#22d3ee}
+    input:checked + .slider:before{transform:translateX(20px)}
+
+    /* Main (list/grid) */
+    main{max-width:1100px; margin:0 auto; padding:18px 16px 60px}
+    section{border:1px solid var(--line); background:rgba(255,255,255,.02); border-radius:16px; margin:16px 0}
+    section header{position:sticky; top:var(--stickTop); background:rgba(13,27,42,.92); border-bottom:1px solid var(--line)}
+    section h2{margin:0; padding:10px 16px; font-size:1.05rem}
+    .grid{display:grid; grid-template-columns:repeat(2,minmax(280px,1fr)); gap:10px; padding:12px}
+    @media (max-width:760px){ .grid{grid-template-columns:1fr} }
+
+    /* Original list card */
+    .card{background:linear-gradient(180deg,#0c1a2b,#0c1927); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start}
+    .k{font-weight:700; line-height:1.45}
+    .e{color:var(--muted); margin-top:4px}
+    .act{margin-left:auto; display:flex; gap:6px; align-items:center}
+    .pill{border:1px solid var(--line); background:rgba(255,255,255,.03); border-radius:999px; padding:6px 10px; font-size:.85rem; color:var(--ink)}
+
+    footer{max-width:1100px; margin:18px auto 80px; color:var(--muted); padding:0 16px}
+    .hint{font-size:.9rem}
+
+    /* === Flip card look (shared by grid and trainer) === */
+    .face3d{
+      position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:16px;
+      box-shadow:0 12px 26px rgba(2,12,22,.35);
+    }
+    .front3d{
+      color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.90));
+      border:1px solid rgba(255,255,255,.65);
+    }
+    .back3d{
+      transform:rotateY(180deg);
+      background: linear-gradient(180deg, rgba(10,30,46,.90), rgba(7,22,36,.96));
+      border:1px solid rgba(103,232,249,.30);
+      box-shadow:0 0 18px rgba(56,189,248,.35), 0 0 32px rgba(103,232,249,.25);
+      color:#e6f6ff;
+    }
+    .koBig{ font-size:2rem; font-weight:900; letter-spacing:.3px }
+    .enBig{ font-size:1.15rem; color:#cfe9ff }
+    .play-base{
+      appearance:none; border:none; cursor:pointer; border-radius:10px; padding:10px 14px; font-weight:900;
+      color:#072235; background:linear-gradient(90deg,#67e8f9,#38bdf8); box-shadow:0 6px 18px rgba(56,189,248,.35);
+    }
+    .play-base:hover{ filter:brightness(1.08) }
+    .miniHint{ font-size:.85rem; opacity:.8 }
+
+    /* Grid flip (old toggle, kept) */
+    .fwrap{ perspective:1200px; cursor:pointer; user-select:none; touch-action:manipulation; }
+    .fcard{ position:relative; width:100%; aspect-ratio: 16/10; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .fwrap.flipped .fcard{ transform:rotateY(180deg); }
+
+    /* === Trainer (single random card) === */
+    .trainerStage{ max-width:680px; margin:10px auto 18px; }
+    .progressRow{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0 12px; }
+    .progressText{ color:var(--muted); font-weight:700 }
+    .stageS{ width:min(520px, 96vw); height:360px; margin:0 auto; }
+    .flipS{ perspective:1200px; width:100%; height:100%; cursor:pointer; user-select:none; touch-action:manipulation; }
+    .cardS{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipS.flipped .cardS{ transform:rotateY(180deg); }
+    .controlsRow{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:12px 0 6px }
+    .finishPanel{ display:none; text-align:center; margin-top:10px; padding:14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02) }
+
+    /* Responsive */
+    @media (max-width: 900px){
+      :root{ --stickTop:58px; }
+      .wrap{ padding:12px }
+      h1{ font-size:1.15rem }
+      .controls{ grid-template-columns:1fr } /* stack rows */
+      .row{ gap:8px }
+      .row > *{ flex:1 1 100% }
+      .btn{ width:100%; min-height:44px }
+    }
+    @media (max-width: 600px){
+      :root{ --stickTop:54px; }
+      h1{ font-size:1.05rem }
+      input[type="search"], select{ font-size:16px } /* prevent iOS zoom */
+      .stageS{ height:320px }
+      .koBig{ font-size:1.8rem }
+    }
+    @media (max-width: 400px){
+      h1{ font-size:1rem }
+      .koBig{ font-size:1.6rem }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Korean Situational Phrases and Greetings</h1>
+
+      <div class="controls">
+        <!-- Row 1: Search -->
+        <div class="row" role="search">
+          <input id="search" type="search" placeholder="Search Korean or English… (e.g., 화장실 / restroom / taxi)" aria-label="Search" />
+          <button class="btn secondary" id="clearSearch" title="Clear search">Clear</button>
+        </div>
+
+        <!-- Row 2: Category + Show English + View buttons -->
+        <div class="row">
+          <select id="catSel" aria-label="Select category"></select>
+
+          <label class="toggle" title="Show/Hide English meanings">
+            <span class="tiny">Show English</span>
+            <span class="switch">
+              <input id="toggleEN" type="checkbox" />
+              <span class="slider"></span>
+            </span>
+          </label>
+
+          <button class="btn" id="flipGridBtn" title="Grid flip view (all)">
+            Flip Cards (Grid)
+          </button>
+          <button class="btn" id="trainerBtn" title="Random one-by-one flip practice">
+            Practice (Random)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  
+  <a href="index.html" class="floating-home">Home</a>
+
+<style>
+  /* Floating Home Button (Sky Blue Freeze) */
+  .floating-home{
+    position:fixed; top:0; right:0;
+    background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
+    color:#072235; font-size:14px; font-weight:700; text-decoration:none;
+    padding:8px 16px; border-radius:0 0 0 10px;
+    box-shadow:0 6px 18px rgba(56,189,248,.35);
+    z-index:9999; transition:all .25s ease;
+    backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%);
+  }
+  .floating-home:hover{
+    filter:brightness(1.12);
+    box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
+    transform:translateY(-1px);
+  }
+</style>
+
+  <!-- Main list OR trainer will render here -->
+  <main id="content"></main>
+
+  <footer class="hint">
+    <p>Tip: Tap ▶ to hear the Korean phrase. In Practice mode, flip then Next — it shuffles everything in your current filter.</p>
+  </footer>
+
+  <script>
+   
+   
+    // === DATA (Hangul + English only — NO Romanization) ===
+    const DATA = {      "인사 (Greetings)": [
+        ["안녕하세요.", "Hello."],
+        ["안녕?", "Hi. (casual)"],
+        ["처음 뵙겠습니다.", "Pleased to meet you."],
+        ["만나서 반갑습니다.", "Nice to meet you."],
+        ["오랜만이에요.", "Long time no see."],
+        ["잘 지내세요?", "How have you been?"],
+        ["안녕히 가세요.", "Goodbye (to someone leaving)."],
+        ["안녕히 계세요.", "Goodbye (to someone staying)."],
+        ["수고하세요.", "Keep up the good work."],
+        ["수고하셨습니다.", "Good work / Thank you for your effort."],
+        ["잘 부탁드립니다.", "Please take good care of me."],
+        ["감사합니다.", "Thank you."],
+        ["죄송합니다.", "I'm sorry."],
+        ["실례합니다.", "Excuse me."],
+        ["어서 오세요.", "Welcome."],
+        ["환영합니다.", "Welcome."],
+        ["좋은 하루 되세요.", "Have a good day."],
+        ["안녕히 주무세요.", "Good night."],
+        ["다녀오세요.", "See you when you get back."],
+        ["다녀왔습니다.", "I'm back."]
+      ],
+      "호텔 (Hotel)": [
+        ["체크인 해주세요.", "Please check me in."],
+        ["체크아웃 하겠습니다.", "I would like to check out."],
+        ["방 키를 잃어버렸어요.", "I lost my room key."],
+        ["방을 바꿔 주실 수 있나요?", "Could I change rooms?"],
+        ["방에 문제가 있어요.", "There's a problem with my room."],
+        ["조식 시간은 언제인가요?", "When is breakfast?"],
+        ["짐 좀 맡아 주실 수 있나요?", "Could you hold my luggage?"],
+        ["수건 좀 더 주실 수 있나요?", "Could I get more towels?"],
+        ["택시 불러주세요.", "Please call a taxi."],
+        ["가장 가까운 지하철역이 어디예요?", "Where is the nearest subway station?"]
+      ],
+      "식당 (Restaurant)": [
+        ["메뉴판 주세요.", "Please give me the menu."],
+        ["주문할게요.", "I'd like to order."],
+        ["이것으로 할게요.", "I'll have this."],
+        ["추천 메뉴가 있나요?", "Do you have any recommendations?"],
+        ["뭐가 제일 맛있어요?", "What's the most delicious?"],
+        ["물 좀 주세요.", "Please give me some water."],
+        ["반찬 더 주세요.", "Please give me more side dishes."],
+        ["맵지 않게 해주세요.", "Please make it not spicy."],
+        ["포장해 주세요.", "Please pack it to go."],
+        ["계산서 주세요.", "Please give me the bill."],
+        ["화장실이 어디예요?", "Where is the restroom?"],
+        ["맛있게 잘 먹었습니다.", "I ate well and it was delicious."]
+      ],
+      "병원 (Hospital)": [
+        ["어디가 아프세요?", "Where does it hurt?"],
+        ["머리가 아파요.", "My head hurts."],
+        ["배가 아파요.", "My stomach hurts."],
+        ["열이 나요.", "I have a fever."],
+        ["감기 걸렸어요.", "I caught a cold."],
+        ["예약했어요.", "I have an appointment."],
+        ["보험이 되나요?", "Is this covered by insurance?"],
+        ["진료를 받고 싶어요.", "I want to see a doctor."],
+        ["약 처방해주세요.", "Please prescribe medicine."],
+        ["언제 다시 와야 해요?", "When should I come back?"]
+      ],
+      "사무실 (Office)": [
+        ["안녕하세요.", "Hello."],
+        ["감사합니다.", "Thank you."],
+        ["죄송합니다.", "I'm sorry."],
+        ["잠시만요.", "Just a moment."],
+        ["회의 시작할까요?", "Shall we start the meeting?"],
+        ["보고서 제출했습니다.", "I submitted the report."],
+        ["도와드릴까요?", "Can I help you?"],
+        ["궁금한 점이 있습니다.", "I have a question."],
+        ["수고하셨습니다.", "You worked hard/Good job."],
+        ["다음에 뵙겠습니다.", "See you next time."]
+      ],
+      "교실 (Classroom)": [
+        ["선생님, 안녕하세요.", "Hello, teacher."],
+        ["질문 있습니다.", "I have a question."],
+        ["다시 설명해 주시겠어요?", "Could you explain it again?"],
+        ["이해했어요.", "I understand."],
+        ["이해 못 했어요.", "I don't understand."],
+        ["숙제가 뭐예요?", "What's the homework?"],
+        ["따라 읽어 보세요.", "Please read along."],
+        ["칠판을 보세요.", "Look at the blackboard."],
+        ["책을 펴세요.", "Open your book."],
+        ["조용히 하세요.", "Please be quiet."]
+      ],
+      "지하철 (Subway)": [
+        ["어디로 가세요?", "Where are you going?"],
+        ["이 지하철이 ___으로 가나요?", "Does this subway go to ___?"],
+        ["다음 역은 어디예요?", "What's the next station?"],
+        ["몇 정거장 더 가야 해요?", "How many more stops?"],
+        ["환승해야 해요.", "I need to transfer."],
+        ["내릴 역이에요.", "This is my stop."],
+        ["실례합니다.", "Excuse me."],
+        ["자리 있나요?", "Is there a seat available?"],
+        ["문 닫습니다.", "Doors are closing."],
+        ["이번 역은 ___입니다.", "This stop is ___."]
+      ],
+      "가게 (Shop)": [
+        ["얼마예요?", "How much is it?"],
+        ["이거 주세요.", "Please give me this."],
+        ["다른 색깔도 있나요?", "Are there other colors?"],
+        ["사이즈가 어떻게 되세요?", "What's your size?"],
+        ["입어 볼 수 있나요?", "Can I try it on?"],
+        ["너무 비싸요.", "It's too expensive."],
+        ["좀 깎아 주실 수 있나요?", "Could you give me a discount?"],
+        ["봉투에 넣어 주세요.", "Please put it in a bag."],
+        ["현금으로 계산할게요.", "I'll pay with cash."],
+        ["카드로 계산할게요.", "I'll pay with card."],
+        ["영수증 주세요.", "Please give me the receipt."]
+      ],
+      "공항 (Airport)": [
+        ["수하물 검사.", "Baggage inspection."],
+        ["탑승 수속.", "Check-in."],
+        ["어디로 가세요?", "Where are you going?"],
+        ["여권 보여주세요.", "Please show me your passport."],
+        ["항공권 주세요.", "Please give me your ticket."],
+        ["몇 시 비행기예요?", "What time is the flight?"],
+        ["수하물은 몇 개예요?", "How many pieces of luggage?"],
+        ["면세점이 어디예요?", "Where is the duty-free shop?"],
+        ["입국 심사.", "Immigration."],
+        ["출국 심사.", "Departure immigration."],
+        ["도착 로비.", "Arrivals lobby."],
+        ["출발 로비.", "Departures lobby."],
+        ["비행기가 연착됐어요.", "The flight is delayed."],
+        ["탑승구 번호는 몇 번이에요?", "What's the gate number?"]
+      ],
+      "거리 (Street)": [
+        ["실례합니다.", "Excuse me."],
+        ["저기요.", "Excuse me/Hey there."],
+        ["길 좀 물어볼게요.", "I'd like to ask for directions."],
+        ["___ 가는 길 좀 알려주세요.", "Please tell me the way to ___."],
+        ["직진하세요.", "Go straight."],
+        ["왼쪽으로 가세요.", "Go left."],
+        ["오른쪽으로 가세요.", "Go right."],
+        ["여기서 멀어요?", "Is it far from here?"],
+        ["가까워요.", "It's close."],
+        ["조심하세요.", "Be careful."],
+        ["사람 많네요.", "There are many people."],
+        ["날씨 좋네요.", "The weather is good."]
+      ],
+      "친구와 만날 때 (With Friends)": [
+        ["오랜만이야!", "Long time no see!"],
+        ["잘 지냈어?", "How have you been?"],
+        ["밥 먹었어?", "Have you eaten?"],
+        ["뭐 해?", "What are you doing?"],
+        ["어디서 만날까?", "Where shall we meet?"],
+        ["나중에 봐!", "See you later!"],
+        ["연락할게.", "I'll contact you."],
+        ["같이 갈래?", "Want to go together?"],
+        ["재밌었다!", "It was fun!"],
+        ["피곤해.", "I'm tired."]
+      ],
+      "감정 표현 (Emotions)": [
+        ["기뻐요.", "I'm happy."],
+        ["슬퍼요.", "I'm sad."],
+        ["화나요.", "I'm angry."],
+        ["놀랐어요.", "I'm surprised."],
+        ["무서워요.", "I'm scared."],
+        ["괜찮아요.", "It's okay / I'm okay."],
+        ["걱정돼요.", "I'm worried."],
+        ["신나요!", "I'm excited!"],
+        ["지루해요.", "I'm bored."],
+        ["힘들어요.", "It's difficult / I'm having a hard time."]
+      ],
+      "의견 (Opinions)": [
+        ["제 생각에는…", "In my opinion..."],
+        ["동의해요.", "I agree."],
+        ["동의하지 않아요.", "I don't agree."],
+        ["그렇군요.", "I see."],
+        ["맞아요.", "That's right."],
+        ["틀렸어요.", "That's wrong."],
+        ["잘 모르겠어요.", "I'm not sure."],
+        ["어때요?", "How is it?"],
+        ["좋아요.", "It's good."],
+        ["별로예요.", "It's not good / It's so-so."]
+      ],
+      "일상생활 (Daily Life)": [
+        ["오늘 뭐 했어요?", "What did you do today?"],
+        ["내일 뭐 할 거예요?", "What are you going to do tomorrow?"],
+        ["집에 가야 해요.", "I need to go home."],
+        ["일해야 해요.", "I need to work."],
+        ["쉬고 싶어요.", "I want to rest."],
+        ["잠깐만요.", "Just a moment."],
+        ["도와주셔서 감사합니다.", "Thank you for your help."],
+        ["다음에 또 만나요.", "Let's meet again next time."],
+        ["잘 부탁드립니다.", "Please take good care of me."],
+        ["수고하세요.", "Keep up the good work."],
+        ["주말 잘 보내세요.", "Have a good weekend."],
+        ["점심 드셨어요?", "Did you eat lunch?"],
+        ["저녁 드세요.", "Have dinner."],
+        ["안녕히 주무세요.", "Good night."],
+        ["안녕히 계세요.", "Goodbye – to someone staying."],
+        ["안녕히 가세요.", "Goodbye – to someone leaving."]
+      ],
+      "대중교통 (Public Transport)": [
+        ["버스 정류장이 어디예요?", "Where is the bus stop?"],
+        ["이 버스가 ___로 가나요?", "Does this bus go to ___?"],
+        ["교통 카드 있어요?", "Do you have a T-money card?"],
+        ["충전해주세요.", "Please recharge it."]
+      ],
+      "쇼핑 (Shopping – Extra)": [
+        ["환불하고 싶어요.", "I want a refund."],
+        ["교환하고 싶어요.", "I want to exchange it."],
+        ["이거 신상품이에요?", "Is this a new product?"],
+        ["세일해요?", "Is it on sale?"],
+        ["선물 포장해주세요.", "Please gift-wrap it."]
+      ],
+      "약국 (Pharmacy)": [
+        ["약사님.", "Pharmacist."],
+        ["이 약은 어떻게 먹어요?", "How do I take this medicine?"],
+        ["하루에 몇 번 먹어요?", "How many times a day do I take it?"],
+        ["식후에 먹는 약인가요?", "Is this medicine taken after meals?"],
+        ["두통약 주세요.", "Please give me headache medicine."],
+        ["소화제 주세요.", "Please give me digestive medicine."]
+      ],
+      "경찰서 (Police)": [
+        ["도와주세요.", "Please help me."],
+        ["지갑을 잃어버렸어요.", "I lost my wallet."],
+        ["휴대폰을 잃어버렸어요.", "I lost my phone."],
+        ["신고하고 싶어요.", "I want to report something."],
+        ["가장 가까운 경찰서가 어디예요?", "Where is the nearest police station?"]
+      ],
+      "부동산 (Real Estate)": [
+        ["집을 구하고 있어요.", "I'm looking for a house."],
+        ["월세예요, 전세예요?", "Is it monthly rent or jeonse?"],
+        ["방 보러 갈 수 있나요?", "Can I go see the room?"],
+        ["계약금은 얼마예요?", "How much is the deposit?"]
+      ],
+      "미용실·이발소 (Salon/Barber)": [
+        ["머리 자르고 싶어요.", "I want to get a haircut."],
+        ["파마하고 싶어요.", "I want a perm."],
+        ["염색하고 싶어요.", "I want to dye my hair."],
+        ["어떻게 해드릴까요?", "How would you like it?"],
+        ["조금만 잘라 주세요.", "Please cut only a little."],
+        ["짧게 잘라 주세요.", "Please cut it short."]
+      ],
+      "은행 (Bank)": [
+        ["계좌를 만들고 싶어요.", "I want to open an account."],
+        ["환전하고 싶어요.", "I want to exchange currency."],
+        ["현금 인출하고 싶어요.", "I want to withdraw cash."],
+        ["입금하고 싶어요.", "I want to deposit money."],
+        ["해외 송금하고 싶어요.", "I want to send money overseas."],
+        ["은행 문은 몇 시에 닫아요?", "What time does the bank close?"]
+      ],
+      "우체국 (Post Office)": [
+        ["소포 보내고 싶어요.", "I want to send a package."],
+        ["우표 주세요.", "Please give me a stamp."],
+        ["등기로 보내 주세요.", "Please send it by registered mail."],
+        ["언제 도착해요?", "When will it arrive?"]
+      ],
+      "사진 (Photos)": [
+        ["사진 찍어주세요.", "Please take a picture for me."],
+        ["같이 사진 찍을까요?", "Shall we take a picture together?"],
+        ["하나, 둘, 셋!", "One, two, three!"],
+        ["김치!", "Kimchi! (for photos)"],
+        ["예쁘게 찍어 주세요.", "Please take a pretty picture."]
+      ],
+      "인터넷/와이파이 (Internet/Wi‑Fi)": [
+        ["와이파이 비밀번호가 뭐예요?", "What's the Wi‑Fi password?"],
+        ["인터넷이 안 돼요.", "The internet isn't working."],
+        ["데이터 다 썼어요.", "I've used all my data."]
+      ],
+      "날씨 (Weather)": [
+        ["오늘 날씨 어때요?", "How's the weather today?"],
+        ["비 와요.", "It's raining."],
+        ["눈 와요.", "It's snowing."],
+        ["더워요.", "It's hot."],
+        ["추워요.", "It's cold."],
+        ["날씨가 좋아요.", "The weather is good."],
+        ["날씨가 나빠요.", "The weather is bad."]
+      ],
+      "전화 (Phone Call)": [
+        ["여보세요.", "Hello (on the phone)."],
+        ["___ 씨 계세요?", "Is Mr./Ms. ___ there?"],
+        ["잠시만 기다려 주세요.", "Please wait a moment."],
+        ["나중에 다시 전화할게요.", "I'll call again later."],
+        ["전화 끊을게요.", "I'm hanging up the phone."],
+        ["통화 중이에요.", "The line is busy."],
+        ["문자 보낼게요.", "I'll send a text message."]
+      ],
+      "취미/여가 (Hobbies)": [
+        ["무슨 취미 있어요?", "What are your hobbies?"],
+        ["영화 보러 갈까요?", "Shall we go see a movie?"],
+        ["카페 갈까요?", "Shall we go to a cafe?"],
+        ["산책할까요?", "Shall we take a walk?"],
+        ["운동 좋아하세요?", "Do you like exercising?"],
+        ["주말에 뭐 할 거예요?", "What are you going to do this weekend?"],
+        ["같이 놀아요!", "Let's hang out together!"]
+      ],
+      "컴퓨터/IT": [
+        ["컴퓨터 켰어요.", "I turned on the computer."],
+        ["컴퓨터 껐어요.", "I turned off the computer."],
+        ["저장했어요.", "I saved it."],
+        ["삭제했어요.", "I deleted it."],
+        ["파일 보냈어요.", "I sent the file."],
+        ["비밀번호가 뭐예요?", "What's the password?"]
+      ],
+      "긴급 상황 (Emergency)": [
+        ["불이야!", "Fire!"],
+        ["도와주세요!", "Help me!"],
+        ["경찰 불러주세요.", "Please call the police."],
+        ["119에 전화해주세요.", "Please call 119."],
+        ["괜찮으세요?", "Are you okay?"],
+        ["다쳤어요.", "I got hurt."],
+        ["여기로 오세요.", "Come here."]
+      ],
+      "축하/격려 (Congrats/Encouragement)": [
+        ["축하해요!", "Congratulations!"],
+        ["생일 축하해요!", "Happy birthday!"],
+        ["잘했어요!", "Well done!"],
+        ["힘내세요!", "Cheer up!"],
+        ["수고 많으셨습니다.", "You've worked very hard."]
+      ],
+      "일반 표현 (General)": [
+        ["정말요?", "Really?"],
+        ["아니요.", "No."],
+        ["네.", "Yes."],
+        ["글쎄요.", "Well, I'm not sure."],
+        ["알겠습니다.", "I understand / Okay."],
+        ["모르겠습니다.", "I don't know."],
+        ["다음에 봐요.", "See you next time."],
+        ["몸 조심하세요.", "Take care of yourself."],
+        ["좋은 하루 되세요.", "Have a good day."],
+        ["잘 지내세요.", "Be well."]
+      ],
+      "문화/식사 예절": [
+        ["잘 먹겠습니다.", "(Before a meal) I will eat well."],
+        ["잘 먹었습니다.", "(After a meal) I ate well."],
+        ["원샷!", "Bottoms up!"],
+        ["건배!", "Cheers!"]
+      ],
+      "안부 (Well‑being)": [
+        ["어떻게 지내세요?", "How have you been?"],
+        ["가족들은 잘 계세요?", "How is your family doing?"],
+        ["건강하세요.", "Stay healthy."]
+      ],
+      "소개 (Introductions)": [
+        ["이름이 뭐예요?", "What's your name?"],
+        ["저는 ___입니다.", "My name is ___."],
+        ["어디서 오셨어요?", "Where are you from?"],
+        ["만나서 반갑습니다.", "Nice to meet you."]
+      ],
+      "여행 (Travel)": [
+        ["어디 구경할 만한 곳 있어요?", "Any places worth visiting?"],
+        ["지도 주세요.", "Please give me a map."],
+        ["사진 찍어도 돼요?", "Can I take pictures?"],
+        ["기념품 사고 싶어요.", "I want to buy souvenirs."],
+        ["여행 잘 하세요.", "Have a good trip."]
+      ],
+      "약속 (Plans)": [
+        ["몇 시에 만날까요?", "What time shall we meet?"],
+        ["내일 시간 있으세요?", "Are you free tomorrow?"],
+        ["약속 있어요.", "I have an appointment."],
+        ["취소할게요.", "I'll cancel it."],
+        ["바꿀 수 있나요?", "Can I change it?"]
+      ],
+      "방향 (Directions – Extra)": [
+        ["오른쪽에 있어요.", "It's on the right."],
+        ["왼쪽에 있어요.", "It's on the left."],
+        ["앞에 있어요.", "It's in front."],
+        ["뒤에 있어요.", "It's behind."],
+        ["위에 있어요.", "It's on top."],
+        ["아래에 있어요.", "It's underneath."],
+        ["저기요.", "Over there."],
+        ["여기요.", "Here."]
+      ],
+      "사과/감사 (Apology/Thanks)": [
+        ["미안합니다.", "I'm sorry."],
+        ["괜찮습니다.", "It's alright."],
+        ["천만에요.", "You're welcome."],
+        ["고맙습니다.", "Thank you."]
+      ]
+    };
+  
+    // === Elements ===
+    const content   = document.getElementById('content');
+    const search    = document.getElementById('search');
+    const clearSearch = document.getElementById('clearSearch');
+    const toggleEN  = document.getElementById('toggleEN');
+    const catSel    = document.getElementById('catSel');
+    const flipGridBtn = document.getElementById('flipGridBtn');
+    const trainerBtn  = document.getElementById('trainerBtn');
+
+    let activeCat = 'All';
+    let gridFlip = false;     // grid flip view on/off
+    let trainerMode = false;  // single-card random practice
+
+    // === Utils ===
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+    function getFilteredItems(){
+      const term = (search.value||'').trim().toLowerCase();
+      const catsToShow = activeCat==='All' ? Object.keys(DATA) : [activeCat];
+      const out = [];
+      catsToShow.forEach(cat=>{
+        for(const [ko,en] of DATA[cat]){
+          if(!term || ko.toLowerCase().includes(term) || en.toLowerCase().includes(term)){
+            out.push([ko,en,cat]);
+          }
+        }
+      });
+      return out;
+    }
+
+    // === Category Dropdown ===
+    function buildCategoryDropdown(){
+      const opts = ['All (모두)', ...Object.keys(DATA)];
+      catSel.innerHTML = opts.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+      catSel.value = 'All (모두)';
+      catSel.addEventListener('change', ()=>{
+        activeCat = catSel.value === 'All (모두)' ? 'All' : catSel.value;
+        // If trainer is active, restart with new pool
+        if(trainerMode){ startTrainer(true); } else { render(); }
+        updateTrainerButtonState();
+      });
+    }
+
+    // === TTS ===
+    function pickVoice(){
+      if(!('speechSynthesis' in window)) return null;
+      const all = window.speechSynthesis.getVoices();
+      if(!all || !all.length) return null;
+      const ko = all.filter(v => /ko/i.test(v.lang||''));
+      return (ko[0] || all[0]) || null;
+    }
+    function speak(text){
+      if(!('speechSynthesis' in window)) { alert('Text-to-Speech not supported in this browser.'); return; }
+      if(window.speechSynthesis.paused) window.speechSynthesis.resume();
+      try{ window.speechSynthesis.cancel(); }catch(e){}
+      const u = new SpeechSynthesisUtterance(text);
+      const v = pickVoice();
+      if(v){ u.voice = v; u.lang = v.lang; } else { u.lang = 'ko-KR'; }
+      u.rate = 1;
+      window.speechSynthesis.speak(u);
+    }
+
+    // === Views ===
+    function renderListOrGrid(){
+      content.innerHTML='';
+      const items = getFilteredItems();
+      if(items.length === 0){
+        const empty = document.createElement('p');
+        empty.style.color = 'var(--muted)';
+        empty.textContent = 'No matches.';
+        content.appendChild(empty);
+        return;
+      }
+
+      // Group by category
+      const byCat = {};
+      for(const [ko,en,cat] of items){
+        (byCat[cat] ||= []).push([ko,en]);
+      }
+
+      Object.keys(byCat).forEach(cat=>{
+        const sec = document.createElement('section');
+        const headerEl = document.createElement('header');
+        const h = document.createElement('h2');
+        h.textContent = cat;
+        headerEl.appendChild(h);
+        sec.appendChild(headerEl);
+
+        const grid = document.createElement('div'); grid.className='grid';
+
+        byCat[cat].forEach(([ko,en])=>{
+          if(!gridFlip){
+            // Standard list card
+            const card = document.createElement('div'); card.className='card';
+            const text = document.createElement('div');
+            const k = document.createElement('div'); k.className='k'; k.textContent=ko; text.appendChild(k);
+            const e = document.createElement('div'); e.className='e'; e.textContent=en; e.style.display = toggleEN.checked? 'block':'none'; text.appendChild(e);
+
+            const act = document.createElement('div'); act.className='act';
+            const play = document.createElement('button'); play.className='btn'; play.textContent='▶'; play.title='Play Korean'; play.onclick=()=>speak(ko);
+            const hide = document.createElement('button'); hide.className='btn secondary'; hide.textContent='EN'; hide.title='Show/Hide English for this card'; hide.onclick=()=>{ e.style.display = (e.style.display==='none') ? 'block':'none'; };
+            act.appendChild(play); act.appendChild(hide);
+
+            card.appendChild(text); card.appendChild(act); grid.appendChild(card);
+          } else {
+            // Grid flip card
+            const wrap = document.createElement('div'); wrap.className='fwrap'; wrap.tabIndex = 0;
+            if(toggleEN.checked) wrap.classList.add('flipped');
+
+            const fcard = document.createElement('div'); fcard.className='fcard';
+
+            const front = document.createElement('div'); front.className='face3d front3d';
+            front.innerHTML = `
+              <div class="koBig">${ko}</div>
+              <button class="play-base" title="Play">🔊 Play</button>
+              <div class="miniHint">Click / tap to flip</div>
+            `;
+
+            const back = document.createElement('div'); back.className='face3d back3d';
+            back.innerHTML = `
+              <div class="koBig" style="opacity:.95">${ko}</div>
+              <div class="enBig">${en}</div>
+              <div class="miniHint">Click to flip back</div>
+            `;
+
+            front.querySelector('.play-base').addEventListener('click', (e)=>{ e.stopPropagation(); speak(ko); });
+            const toggleFlip = ()=> wrap.classList.toggle('flipped');
+            wrap.addEventListener('click', (e)=>{ if(!e.target.closest('.play-base')) toggleFlip(); });
+            wrap.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleFlip(); }});
+
+            fcard.appendChild(front); fcard.appendChild(back); wrap.appendChild(fcard); grid.appendChild(wrap);
+          }
+        });
+
+        sec.appendChild(grid);
+        content.appendChild(sec);
+      });
+    }
+
+    // === Trainer (single-card random) ===
+    let trainerQueue = [];
+    let trainerIndex = 0;
+
+    function renderTrainerUI(){
+      content.innerHTML = '';
+
+      const stage = document.createElement('section');
+      stage.className = 'trainerStage';
+
+      // Progress row
+      const progressRow = document.createElement('div');
+      progressRow.className = 'progressRow';
+      progressRow.innerHTML = `
+        <div class="progressText" id="progressText"></div>
+        <div>
+          <button class="btn ghost" id="exitTrainerBtn">Exit</button>
+        </div>
+      `;
+      stage.appendChild(progressRow);
+
+      // Card stage
+      const stageBox = document.createElement('div');
+      stageBox.className = 'stageS';
+      stageBox.innerHTML = `
+        <div class="flipS" id="flipS">
+          <div class="cardS" id="cardS">
+            <div class="face3d front3d" id="frontS"></div>
+            <div class="face3d back3d" id="backS"></div>
+          </div>
+        </div>
+      `;
+      stage.appendChild(stageBox);
+
+      // Controls
+      const controls = document.createElement('div');
+      controls.className = 'controlsRow';
+      controls.innerHTML = `
+        <button class="btn" id="playBtn">🔊 Play</button>
+        <button class="btn" id="flipBtn">Flip</button>
+        <button class="btn" id="nextBtn">Next ▶</button>
+        <button class="btn secondary" id="restartBtn">Restart (Shuffle)</button>
+      `;
+      stage.appendChild(controls);
+
+      // Finish panel
+      const finish = document.createElement('div');
+      finish.className = 'finishPanel';
+      finish.id = 'finishPanel';
+      finish.innerHTML = `
+        <p style="margin:6px 0 12px">Finished! 🎉 You saw every card in this set.</p>
+        <div class="controlsRow">
+          <button class="btn" id="reshuffleBtn">Restart (Shuffle)</button>
+          <button class="btn ghost" id="exit2Btn">Exit</button>
+        </div>
+      `;
+      stage.appendChild(finish);
+
+      content.appendChild(stage);
+
+      // Wire buttons
+      document.getElementById('exitTrainerBtn').addEventListener('click', exitTrainer);
+      document.getElementById('exit2Btn')?.addEventListener('click', exitTrainer);
+      document.getElementById('playBtn').addEventListener('click', ()=>{ const [ko]=trainerQueue[trainerIndex]; speak(ko); });
+      document.getElementById('flipBtn').addEventListener('click', ()=> document.getElementById('flipS').classList.toggle('flipped'));
+      document.getElementById('nextBtn').addEventListener('click', nextTrainer);
+      document.getElementById('restartBtn').addEventListener('click', ()=> startTrainer(true));
+      document.getElementById('reshuffleBtn')?.addEventListener('click', ()=> startTrainer(true));
+
+      // Card click + keyboard
+      const flipS = document.getElementById('flipS');
+      flipS.addEventListener('click', ()=> flipS.classList.toggle('flipped'));
+      document.getElementById('cardS').addEventListener('keydown', (e)=>{
+        if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flipS.classList.toggle('flipped'); }
+        if(e.key==='ArrowRight' || e.key.toLowerCase()==='n'){ nextTrainer(); }
+      });
+    }
+
+    function showTrainerCard(){
+      const [ko,en] = trainerQueue[trainerIndex];
+      const front = document.getElementById('frontS');
+      const back  = document.getElementById('backS');
+      const flipS = document.getElementById('flipS');
+      const prog  = document.getElementById('progressText');
+
+      prog.textContent = `${Math.min(trainerIndex+1, trainerQueue.length)} / ${trainerQueue.length}`;
+
+      front.innerHTML = `
+        <div class="koBig">${ko}</div>
+        <button class="play-base" title="Play">🔊 Play</button>
+        <div class="miniHint">Click / tap to flip</div>
+      `;
+      back.innerHTML = `
+        <div class="koBig" style="opacity:.95">${ko}</div>
+        <div class="enBig">${en}</div>
+        <div class="miniHint">Click to flip back</div>
+      `;
+
+      front.querySelector('.play-base').addEventListener('click', (e)=>{ e.stopPropagation(); speak(ko); });
+
+      // Respect Show English toggle
+      if(toggleEN.checked) flipS.classList.add('flipped');
+      else flipS.classList.remove('flipped');
+
+      // Focus for keyboard users
+      document.getElementById('cardS').setAttribute('tabindex','0');
+      document.getElementById('cardS').focus();
+    }
+
+    function nextTrainer(){
+      if(trainerIndex < trainerQueue.length - 1){
+        trainerIndex++;
+        showTrainerCard();
+      }else{
+        document.getElementById('finishPanel').style.display = 'block';
+      }
+    }
+
+    function startTrainer(reshuffle=false){
+      trainerMode = true; gridFlip = false;
+      const items = getFilteredItems();
+      if(items.length===0){
+        alert('No cards in this filter to practice.');
+        trainerMode = false;
+        render();
+        return;
+      }
+      trainerQueue = items.map(([ko,en])=>[ko,en]);
+      if(reshuffle || true) shuffle(trainerQueue);
+      trainerIndex = 0;
+      renderTrainerUI();
+      showTrainerCard();
+    }
+
+    function exitTrainer(){
+      trainerMode = false;
+      render();
+    }
+
+    // === Main render switch ===
+    function render(){
+      if(trainerMode) { renderTrainerUI(); showTrainerCard(); }
+      else { renderListOrGrid(); }
+    }
+
+    // === Events ===
+    search.addEventListener('input', ()=>{
+      if(trainerMode){ startTrainer(true); } else { render(); }
+      updateTrainerButtonState();
+    });
+    clearSearch.addEventListener('click', ()=>{ search.value=''; if(trainerMode){ startTrainer(true); } else { render(); } updateTrainerButtonState(); });
+    toggleEN.addEventListener('change', ()=>{
+      if(trainerMode){
+        // Just re-apply flipped state for current card
+        const flipS = document.getElementById('flipS');
+        if(flipS){
+          if(toggleEN.checked) flipS.classList.add('flipped');
+          else flipS.classList.remove('flipped');
+        }
+      }else{
+        render();
+      }
+    });
+
+    flipGridBtn.addEventListener('click', ()=>{
+      trainerMode = false;
+      gridFlip = !gridFlip;
+      render();
+    });
+
+    trainerBtn.addEventListener('click', ()=> startTrainer(true));
+
+    function updateTrainerButtonState(){
+      trainerBtn.disabled = getFilteredItems().length === 0;
+    }
+
+    // === Init ===
+    toggleEN.checked = false;     // start hidden
+    buildCategoryDropdown();
+    updateTrainerButtonState();
+    render();
+
+    if('speechSynthesis' in window){
+      window.speechSynthesis.onvoiceschanged = () => {};
+    }
+  </script>
+</body>
+</html>
