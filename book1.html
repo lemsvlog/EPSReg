@@ -1802,5 +1802,40 @@ console.log('가다', presentPolite('가다','verb')==='가요', pastPolite('가
 console.log('오다', presentPolite('오다','verb')==='와요', pastPolite('오다','verb')==='왔어요', futurePolite('오다','verb')==='올 거예요');
 console.log('읽다', presentPolite('읽다','verb')==='읽어요', pastPolite('읽다','verb')==='읽었어요', futurePolite('읽다','verb')==='읽을 거예요');
 </script>
+  <script>
+(() => {
+  const block = e => { e.preventDefault(); e.stopPropagation(); return false; };
+
+  // 1) No right-click
+  document.addEventListener('contextmenu', block, {capture:true});
+
+  // 2) No selection / copy-ish actions
+  ['selectstart','copy','cut','paste','dragstart'].forEach(ev =>
+    document.addEventListener(ev, block, {capture:true})
+  );
+
+  // 3) Disable letters + common shortcuts
+  document.addEventListener('keydown', (e) => {
+    const k = (e.key || '').toLowerCase();
+
+    // Block all letters (a–z)
+    const isLetter = k.length === 1 && k >= 'a' && k <= 'z';
+
+    // Block common dev/copier shortcuts
+    const isCombo =
+      e.ctrlKey || e.metaKey ||
+      k === 'f12' ||
+      (e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) || // Ctrl+Shift+I/J/C (DevTools)
+      ['u','s','p','c','x','v','a'].includes(k);               // Ctrl/Cmd + U,S,P,C,X,V,A
+
+    if (isLetter || isCombo) block(e);
+  }, {capture:true});
+
+  // Some browsers still fire keypress for printable chars
+  document.addEventListener('keypress', block, {capture:true});
+})();
+</script>
+
 </body>
 </html>
+
