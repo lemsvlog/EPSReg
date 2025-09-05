@@ -51,17 +51,32 @@
     border:1px solid var(--line); border-radius:14px; overflow:hidden;
     background:linear-gradient(180deg,#0e1e30,#0b1929);
   }
+  /* ➜ 3 columns na lang: Page | KO/EN | Audio */
   .head, .row{
-    display:grid; grid-template-columns: 64px 1.2fr 1.5fr 90px 54px;
+    display:grid; grid-template-columns: 48px 1fr 54px;
     align-items:center; gap:6px; padding:10px 12px; border-bottom:1px solid var(--line);
   }
   .head{position:sticky; top:0px; background:#10213a; z-index:5; font-weight:800; color:#cfe3ff}
   .row{position:relative}
   .row:last-child{border-bottom:none}
-  .num{font-variant-numeric: tabular-nums; color:#b9d8ff; font-weight:800}
-  .ko{font-weight:900; font-size:1.05rem}
-  .en{color:#cfe0fb}
-  .cat{justify-self:start; font-size:.84rem; color:#9ec9ff; opacity:.9}
+
+  /* Page number mas maliit */
+  .num{
+    font-variant-numeric: tabular-nums; color:#b9d8ff; font-weight:800;
+    font-size:.85rem; opacity:.95;
+  }
+
+  /* Pinagsamang KO + EN */
+  .koen{display:flex; flex-direction:column; gap:4px; min-width:0}
+  .ko-line{
+    font-weight:900; font-size:1.02rem; display:flex; align-items:center; gap:8px;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+  .en-line{
+    color:#cfe0fb; font-size:.93rem; line-height:1.15;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+
   .play{
     justify-self:end; width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
     background:#0b1a2b; border:1px solid var(--line); cursor:pointer; transition:transform .08s ease, filter .15s ease;
@@ -71,8 +86,10 @@
 
   .toggle{
     width:18px; height:18px; border:1px solid var(--line); border-radius:4px; display:inline-grid; place-items:center;
-    background:#092039; font-size:12px; line-height:1; cursor:pointer; user-select:none; margin-right:8px;
+    background:#092039; font-size:12px; line-height:1; cursor:pointer; user-select:none;
+    flex:0 0 auto;
   }
+
   .exp{
     grid-column: 1 / -1; padding:10px 14px 12px; background:rgba(255,255,255,.03); border-top:1px solid var(--line);
     display:none; border-bottom-left-radius:12px; border-bottom-right-radius:12px;
@@ -94,34 +111,27 @@
 
   .nohit{padding:18px; color:var(--muted)}
   mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .18em; border-radius:4px}
+
+  /* ===== Mobile tweaks (para kasya lahat sa box) ===== */
+  @media (max-width: 520px){
+    .head, .row{ grid-template-columns: 42px 1fr 46px; gap:6px; padding:8px 10px; }
+    .num{ font-size:.8rem; }
+    .ko-line{ font-size:.96rem; }
+    .en-line{ font-size:.86rem; }
+    .play{ width:36px; height:36px; border-radius:8px; }
+    .chip{ padding:7px 8px; }
+    .chip .form{ font-size:.95em; }
+    .wrap{ margin:10px auto 56px; }
+  }
 </style>
 </head>
 <body>
-  <a href="index.html" class="floating-home">Home</a>
-
-<style>
-  /* Floating Home Button (Sky Blue Freeze) */
-  .floating-home{
-    position:fixed; top:0; right:0;
-    background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
-    color:#072235; font-size:14px; font-weight:700; text-decoration:none;
-    padding:8px 16px; border-radius:0 0 0 10px;
-    box-shadow:0 6px 18px rgba(56,189,248,.35);
-    z-index:9999; transition:all .25s ease;
-    backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%);
-  }
-  .floating-home:hover{
-    filter:brightness(1.12);
-    box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
-    transform:translateY(-1px);
-  }
-</style>
   <header>
     <h1>EPS-TOPIK BOOK 1 — Vocabulary Trainer</h1>
   </header>
 
   <div class="wrap">
-    <!-- CATEGORY FILTERS -->
+    <!-- CATEGORY FILTERS (kept) -->
     <div class="filters" id="filters">
       <span class="pill active" data-cat="all">ALL</span>
       <span class="pill" data-cat="noun">Nouns</span>
@@ -139,7 +149,7 @@
     <!-- TABLE -->
     <div class="list" id="list">
       <div class="head">
-        <div>Page</div><div>Korean</div><div>English</div><div>Category</div><div style="text-align:right">Audio</div>
+        <div>Pg</div><div>Term (Korean / English)</div><div style="text-align:right">Audio</div>
       </div>
       <!-- rows injected here -->
     </div>
@@ -1312,7 +1322,6 @@ K-푸드 K-food 344
 인기를 끌다 to gain popularity 344
 한류 Hallyu (the Korean Wave) 344
 `;
-
 /* ========= Parse & patch data ========= */
 function parseLines(raw){
   const lines = raw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
@@ -1348,19 +1357,15 @@ function parseLines(raw){
 
 // Patch obvious data swaps: "하늘색 one" (134) ↔ "하나 sky blue" (194)
 function patchEntries(arr){
-  // fix #1: 134 "하늘색 one" -> "하나 one"
   const a = arr.find(e=>e.page===134 && e.ko==='하늘색' && /one/i.test(e.en));
   if(a){ a.ko='하나'; a.en='one'; }
-  // fix #2: 194 "하나 sky blue" -> "하늘색 sky blue"
   const b = arr.find(e=>e.page===194 && e.ko==='하나' && /sky blue/i.test(e.en));
   if(b){ b.ko='하늘색'; b.en='sky blue'; }
   return arr;
 }
 
-/* ========= POS tagging (accurate nouns/adverbs) ========= */
-// ✅ Your full adverb set (plus trainer-friendly deictics & tokens)
+/* ========= POS tagging ========= */
 const ADVERB_KO = new Set([
-  // time/freq/degree/manner
   '보통','요즘','오늘','지금','어제','내일','매일','언제나','날마다','최근','현재',
   '자주','주로','종종','흔히','줄곧','자꾸',
   '정말','아주','조금','너무','많이','별로','훨씬','덜','제일',
@@ -1369,34 +1374,24 @@ const ADVERB_KO = new Set([
   '몰래','함부로','억지로','차례로','빠짐없이',
   '같이','함께','따로','먼저','우선','그냥','또','그래도','그래서','그러면','혹시','혹은',
   '갑자기','그동안','미리','아까','나중에','특히','모두','모두들','서로','서로서로',
-  // deictic places → adverbs in this trainer
   '여기','거기','저기',
-  // interrogatives
   '왜','어떻게','얼마나','어디','언제',
-  // bare tokens used in adverbial patterns
   '이번','다음','지난','작년','올해','내년'
 ]);
-
-// simple English hints fallback so tagPOS() doesn't crash
 const ADVERB_HINTS = [
   'usually','these days','today','now','yesterday','tomorrow','everyday','often','mainly',
   'really','very','a little','too','much','not really','definitely','about','approximately',
   'slowly','well','together','separately','then','first','also','suddenly','already','still',
   'not yet','again','later','earlier','in advance','especially','mostly','directly'
 ];
-
-
-// Force a few to stay NOUNS even if used adverbially
 const FORCE_NOUN = new Set([
   '이날','몇 시','낮','밤','아침','점심','저녁',
   '주말','평일','하루','이틀','사흘','나흘',
   '날짜','월','일','시간','시','분','반'
 ]);
-
-// Pattern helpers: treat “이번/지난/다음 + 주/달” and year words as adverbs
 const KO_ADVERB_PATTERNS = [
-  /^(이번|지난|다음)\s*(주|달)$/,  // 이번 주, 지난달, 다음 주 …
-  /^(작년|올해|내년)$/            // 작년/올해/내년
+  /^(이번|지난|다음)\s*(주|달)$/,
+  /^(작년|올해|내년)$/
 ];
 const EN_ADVERB_PATTERN = /(this|next|last)\s+(week|month|year)\b/i;
 function tagPOS(entry){
@@ -1405,11 +1400,9 @@ function tagPOS(entry){
   const koBare = ko;
   let baseKo = ko.includes('(하다)') ? ko.replace('(하다)','하다') : ko;
 
-  // English hints
   const enStartsTo = /^to\s+[a-z]/.test(en);
   const enToBe = /^to\s+be\b/.test(en) || /^\b(be|is|are)\b/.test(en);
 
-  // Decide POS with hard locks first
   let pos = 'noun';
   if (FORCE_NOUN.has(koBare) || /요일$/.test(koBare)) {
     pos = 'noun';
@@ -1431,8 +1424,7 @@ function tagPOS(entry){
   return {...entry, pos, baseKo};
 }
 
-
-/* ========== Hangul helpers ========== */
+/* ========== Hangul helpers & conjugation (unchanged) ========== */
 const SBASE=0xAC00, LCOUNT=19, VCOUNT=21, TCOUNT=28, NCOUNT=VCOUNT*TCOUNT;
 const T = ['','ᆨ','ᆩ','ᆪ','ᆫ','ᆬ','ᆭ','ᆮ','ᆯ','ᆰ','ᆱ','ᆲ','ᆳ','ᆴ','ᆵ','ᆶ','ᆷ','ᆸ','ᆹ','ᆺ','ᆻ','ᆼ','ᆽ','ᆾ','ᆿ','ᇀ','ᇁ','ᇂ'];
 const T_SSIOT = 20, T_L = 8, T_B = 17;
@@ -1459,69 +1451,45 @@ function getPrevVowelIndex(stem){
   return V_A;
 }
 
-// small sets
-const BIEUP_SET = new Set(['돕다','곱다']);           // special ㅂ verbs → 와
-const D_IRR_SET  = new Set(['걷다','듣다','묻다']);   // ㄷ→ㄹ (묻다=ask)
-const S_IRR_SET  = new Set(['짓다','낫다','젓다','붓다']); // drop ㅅ
+const BIEUP_SET = new Set(['돕다','곱다']);
+const D_IRR_SET  = new Set(['걷다','듣다','묻다']);
+const S_IRR_SET  = new Set(['짓다','낫다','젓다','붓다']);
 
 function presentBaseStrict(da, pos){
   if(/하다$/.test(da)) return da.replace(/하다$/,'해');
-
   let stem = da.replace(/다$/,'');
-  const last = lastSyllable(stem);
   const vt = getLastVT(stem);
 
-  // ㅂ-final syllable
-  if (last && vt.ti === T_B){
-    if (pos === 'adjective'){                   // e.g., 덥다/춥다/가볍다/무겁다…
-      return setFinal(stem,0) + '워';
-    }
-    if (BIEUP_SET.has(da)){                     // 돕다/곱다 → 도와/고와
-      return setFinal(stem,0) + '와';
-    }
-    // regular ㅂ verb (e.g., 잡다/입다) → just add 아/어
+  if (vt.ti === 17){ // ㅂ
+    if (pos === 'adjective'){ return setFinal(stem,0) + '워'; }
+    if (BIEUP_SET.has(da)){ return setFinal(stem,0) + '와'; }
     return (vt.vi===V_A || vt.vi===V_O) ? (stem+'아') : (stem+'어');
   }
-
-  // ㄷ irregular → ㄹ + 어
   if (D_IRR_SET.has(da)){ stem = setFinal(stem, T_L); return stem + '어'; }
-
-  // ㅅ irregular → drop ㅅ then add 아/어 (지어요/나아요/부어요)
   if (S_IRR_SET.has(da)){ stem = setFinal(stem,0); return (getLastVT(stem).vi===V_A || getLastVT(stem).vi===V_O) ? (stem+'아') : (stem+'어'); }
-
-  // 르 irregular
   if (/르다$/.test(da)){
     const prevPart = stem.slice(0,-1);
-    const prev = lastSyllable(prevPart);
-    const prevVi = prev ? decompose(prev.ch).vi : V_EO;
     const prevFixed = replaceLastSyllable(prevPart, s=>({li:s.li,vi:s.vi,ti:T_L}));
+    const prevVi = getLastVT(prevPart).vi;
     const useA = (prevVi===V_A || prevVi===V_O || prevVi===V_WA);
     return prevFixed + (useA ? '라' : '러');
   }
-
-  // ㅡ vowel rule (크다→커/바쁘다→바빠)
   if (vt.vi === V_EU){
     const useA = (getPrevVowelIndex(stem)===V_A || getPrevVowelIndex(stem)===V_O || getPrevVowelIndex(stem)===V_WA);
-    const newStem = setVowel(stem, useA?V_A:V_EO);
-    return newStem;
+    return setVowel(stem, useA?V_A:V_EO);
   }
-
-  // closed syllable default
   if (vt.ti > 0) return (vt.vi===V_A || vt.vi===V_O) ? (stem+'아') : (stem+'어');
-
-  // open syllable vowel-combining
-  if (vt.vi===V_A) return stem;                       // 가다 → 가
-  if (vt.vi===V_O) return setVowel(stem, V_WA);       // 오다 → 와
-  if (vt.vi===V_U) return setVowel(stem, V_WO);       // 배우다 → 배워
-  if (vt.vi===V_I) return setVowel(stem, V_YEO);      // 마시다 → 마셔
-  if (vt.vi===V_EO || vt.vi===V_YEO || vt.vi===V_E) return stem; // 서다/켜다…
+  if (vt.vi===V_A) return stem;
+  if (vt.vi===V_O) return setVowel(stem, V_WA);
+  if (vt.vi===V_U) return setVowel(stem, V_WO);
+  if (vt.vi===V_I) return setVowel(stem, V_YEO);
+  if (vt.vi===V_EO || vt.vi===V_YEO || vt.vi===V_E) return stem;
   return stem+'어';
 }
 function presentPolite(da, pos){ return presentBaseStrict(da, pos) + '요'; }
-
 function addSsiotToLast(str){
-  const last = lastSyllable(str); if(!last) return str+'었';
-  const d = decompose(last.ch);
+  const last=lastSyllable(str); if(!last) return str+'었';
+  const d=decompose(last.ch);
   if(d.ti===0){ const withSs = compose(d.li,d.vi,T_SSIOT); return str.slice(0,last.idx)+withSs+str.slice(last.idx+1); }
   return str + '었';
 }
@@ -1535,19 +1503,14 @@ function futurePolite(da, pos){
   const stem = da.replace(/다$/,'');
   const last = lastSyllable(stem);
   const d = last ? decompose(last.ch):null;
-
-  // ㅂ
-  if(d && d.ti===T_B){
-    if (pos==='adjective' || BIEUP_SET.has(da)) return setFinal(stem,0) + '울 거예요'; // 덥다/돕다
-    // regular ㅂ verb (잡다) → 을 거예요
+  if(d && d.ti===17){
+    if (pos==='adjective' || BIEUP_SET.has(da)) return setFinal(stem,0) + '울 거예요';
     return stem + '을 거예요';
   }
-  // ㄷ, ㅅ, 르
   if(D_IRR_SET.has(da)) return setFinal(stem, T_L) + '을 거예요';
   if(S_IRR_SET.has(da)) return setFinal(stem, 0)   + '을 거예요';
   if(/르다$/.test(da))  return setFinal(stem, T_L) + ' 거예요';
-
-  if(d && d.ti===T_L) return stem + ' 거예요';      // 살다
+  if(d && d.ti===T_L) return stem + ' 거예요';
   return (d && d.ti===0) ? (setFinal(stem, T_L) + ' 거예요') : (stem + '을 거예요');
 }
 
@@ -1564,30 +1527,21 @@ function normalizeVerbAdjEnglish(enRaw){
   if(/^to\s+/i.test(en)) return {type:'verb', base: en.replace(/^to\s+/i,'').trim()};
   return {type:'other', base: en};
 }
-const IRREG_PAST = {
-  go:'went', come:'came', do:'did', eat:'ate', drink:'drank', read:'read',
-  buy:'bought', meet:'met', make:'made', give:'gave', take:'took', write:'wrote',
-  run:'ran', see:'saw', watch:'watched', sleep:'slept', drive:'drove',
-  speak:'spoke', say:'said', have:'had', put:'put', cut:'cut', teach:'taught',
-  catch:'caught', think:'thought', feel:'felt', leave:'left', find:'found',
-  sing:'sang', sit:'sat', stand:'stood', begin:'began', become:'became',
-  hear:'heard', hold:'held', keep:'kept', pay:'paid'
-};
-function toIng(word){
-  const w = word.trim();
-  const lw = w.toLowerCase();
+const IRREG_PAST = {go:'went', come:'came', do:'did', eat:'ate', drink:'drank', read:'read', buy:'bought', meet:'met', make:'made', give:'gave', take:'took', write:'wrote', run:'ran', see:'saw', watch:'watched', sleep:'slept', drive:'drove', speak:'spoke', say:'said', have:'had', put:'put', cut:'cut', teach:'taught', catch:'caught', think:'thought', feel:'felt', leave:'left', find:'found', sing:'sang', sit:'sat', stand:'stood', begin:'began', become:'became', hear:'heard', hold:'held', keep:'kept', pay:'paid'};
+function toIng(w){
+  const lw=w.toLowerCase();
   if(lw==='be') return 'being';
   if(/ie$/i.test(w)) return w.slice(0,-2)+'ying';
   if(/e$/i.test(w) && !/(ee|ye|oe)$/i.test(w)) return w.slice(0,-1)+'ing';
   if(/[^aeiou][aeiou][^aeiouwxy]$/i.test(w) && w.length<=5) return w + w.slice(-1) + 'ing';
   return w+'ing';
 }
-function pastOf(word){
-  const w = word.trim().toLowerCase();
-  if(IRREG_PAST[w]) return IRREG_PAST[w];
-  if(/e$/.test(w)) return w+'d';
-  if(/[^aeiou]y$/.test(w)) return w.slice(0,-1)+'ied';
-  return w+'ed';
+function pastOf(w){
+  const lw=w.trim().toLowerCase();
+  if(IRREG_PAST[lw]) return IRREG_PAST[lw];
+  if(/e$/.test(lw)) return lw+'d';
+  if(/[^aeiou]y$/.test(lw)) return lw.slice(0,-1)+'ied';
+  return lw+'ed';
 }
 function tenseMeaning(enRaw, pos, tense){
   const info = normalizeVerbAdjEnglish(enRaw);
@@ -1675,19 +1629,18 @@ function renderList(items, term){
     row.className = 'row';
     row.dataset.pos = it.pos;
 
-    const catLabel = it.pos[0].toUpperCase()+it.pos.slice(1);
-    const koCell = `
-      <div class="ko">
-        ${isVA ? '<span class="toggle" title="Expand/Collapse">▸</span>' : ''}
-        <span>${highlightAny(it.baseKo || it.ko, term)}</span>
+    const toggle = isVA ? '<span class="toggle" title="Expand/Collapse">▸</span>' : '';
+
+    const koenCell = `
+      <div class="koen">
+        <div class="ko-line">${toggle}<span>${highlightAny(it.baseKo || it.ko, term)}</span></div>
+        <div class="en-line">${highlightAny(it.en, term)}</div>
       </div>
     `;
 
     row.innerHTML = `
       <div class="num">${(''+it.page)}</div>
-      ${koCell}
-      <div class="en">${highlightAny(it.en, term)}</div>
-      <div class="cat">${highlightAny(catLabel, term)}</div>
+      ${koenCell}
       <button class="play" title="Play: ${escapeAttr(it.baseKo || it.ko)}" aria-label="Play ${escapeAttr(it.baseKo || it.ko)}" data-ko="${escapeAttr(it.baseKo || it.ko)}">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -1733,19 +1686,15 @@ function renderList(items, term){
       frag.appendChild(exp);
     }
   }
-
-  // IMPORTANT: actually attach rows to the DOM
   listEl.appendChild(frag);
 }
-
-
 
 /* ========= Row toggles & audio ========= */
 listEl.addEventListener('click', (e)=>{
   // accordion open/close for verb/adj rows
   if (
     e.target.classList.contains('toggle') ||
-    (e.target.closest('.ko') &&
+    (e.target.closest('.ko-line') &&
      e.target.closest('.row')?.dataset.pos !== 'noun' &&
      e.target.closest('.row')?.dataset.pos !== 'adverb')
   ) {
@@ -1798,8 +1747,7 @@ function speakKo(txt){
 /* ========= Initial run ========= */
 applyFilters();
 
-/* ========= Quick self-checks (open DevTools console) ========= */
-// Should print true for all:
+/* ========= Quick self-checks ========= */
 console.log('덥다', presentPolite('덥다','adjective')==='더워요', pastPolite('덥다','adjective')==='더웠어요', futurePolite('덥다','adjective')==='더울 거예요');
 console.log('춥다', presentPolite('춥다','adjective')==='추워요', pastPolite('춥다','adjective')==='추웠어요', futurePolite('춥다','adjective')==='추울 거예요');
 console.log('쉽다', presentPolite('쉽다','adjective')==='쉬워요', pastPolite('쉽다','adjective')==='쉬웠어요', futurePolite('쉽다','adjective')==='쉬울 거예요');
@@ -1819,8 +1767,6 @@ console.log('예쁘다', presentPolite('예쁘다','adjective')==='예뻐요', p
 console.log('가다', presentPolite('가다','verb')==='가요', pastPolite('가다','verb')==='갔어요', futurePolite('가다','verb')==='갈 거예요');
 console.log('오다', presentPolite('오다','verb')==='와요', pastPolite('오다','verb')==='왔어요', futurePolite('오다','verb')==='올 거예요');
 console.log('읽다', presentPolite('읽다','verb')==='읽어요', pastPolite('읽다','verb')==='읽었어요', futurePolite('읽다','verb')==='읽을 거예요');
-
 </script>
 </body>
 </html>
-
