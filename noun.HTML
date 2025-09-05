@@ -2021,6 +2021,9 @@ for (const categoryKey in CATEGORIZED_NOUNS) {
 }
 </script>
 
+
+
+
 <script>
 // =================== GLOBAL STATE ===================
 let showPics = document.getElementById('togglePics')?.checked ?? true;
@@ -2302,6 +2305,10 @@ function preloadNext(){
   getImageUrl(q).then(src => { const im = new Image(); im.src = src; }).catch(()=>{});
 }
 
+
+
+
+
 async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImgFront'){
   const wrap = document.querySelector(wrapSel);
   const img  = document.querySelector(imgSel);
@@ -2320,7 +2327,8 @@ async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImg
     const src = await getImageUrl(q);
     img.onerror = ()=>{
       wrap.classList.remove('loading');
-      img.src = svgPlaceholder(item.ko, cleanEnglishLabel(item.en));
+      img.src = svgPlaceholder(item.ko);
+
     };
     img.onload = ()=>{
       wrap.classList.remove('loading');
@@ -2330,7 +2338,8 @@ async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImg
     img.alt = `${cleanEnglishLabel(item.en)} (${item.ko})`;
   }catch{
     wrap.classList.remove('loading');
-    img.src = svgPlaceholder(item.ko, cleanEnglishLabel(item.en));
+   img.src = svgPlaceholder(item.ko);
+
   }
 }
 
@@ -2604,6 +2613,8 @@ toggleChoices.addEventListener('change', (e) => {
   localStorage.setItem(CHOICES_KEY, String(on));
 });
 
+
+
 </script>
 
 
@@ -2637,3 +2648,4 @@ document.addEventListener("keydown", function(e){
 
 </body>
 </html>
+
