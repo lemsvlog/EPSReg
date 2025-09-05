@@ -51,17 +51,32 @@
     border:1px solid var(--line); border-radius:14px; overflow:hidden;
     background:linear-gradient(180deg,#0e1e30,#0b1929);
   }
+  /* 3 columns: Page | KO/EN | Audio */
   .head, .row{
-    display:grid; grid-template-columns: 64px 1.2fr 1.5fr 90px 54px;
+    display:grid; grid-template-columns: 48px 1fr 54px;
     align-items:center; gap:6px; padding:10px 12px; border-bottom:1px solid var(--line);
   }
   .head{position:sticky; top:0px; background:#10213a; z-index:5; font-weight:800; color:#cfe3ff}
   .row{position:relative}
   .row:last-child{border-bottom:none}
-  .num{font-variant-numeric: tabular-nums; color:#b9d8ff; font-weight:800}
-  .ko{font-weight:900; font-size:1.05rem}
-  .en{color:#cfe0fb}
-  .cat{justify-self:start; font-size:.84rem; color:#9ec9ff; opacity:.9}
+
+  /* Page number smaller */
+  .num{
+    font-variant-numeric: tabular-nums; color:#b9d8ff; font-weight:800;
+    font-size:.85rem; opacity:.95;
+  }
+
+  /* Combined KO + EN */
+  .koen{display:flex; flex-direction:column; gap:4px; min-width:0}
+  .ko-line{
+    font-weight:900; font-size:1.02rem; display:flex; align-items:center; gap:8px;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+  .en-line{
+    color:#cfe0fb; font-size:.93rem; line-height:1.15;
+    overflow-wrap:anywhere; word-break:break-word;
+  }
+
   .play{
     justify-self:end; width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
     background:#0b1a2b; border:1px solid var(--line); cursor:pointer; transition:transform .08s ease, filter .15s ease;
@@ -71,8 +86,10 @@
 
   .toggle{
     width:18px; height:18px; border:1px solid var(--line); border-radius:4px; display:inline-grid; place-items:center;
-    background:#092039; font-size:12px; line-height:1; cursor:pointer; user-select:none; margin-right:8px;
+    background:#092039; font-size:12px; line-height:1; cursor:pointer; user-select:none;
+    flex:0 0 auto;
   }
+
   .exp{
     grid-column: 1 / -1; padding:10px 14px 12px; background:rgba(255,255,255,.03); border-top:1px solid var(--line);
     display:none; border-bottom-left-radius:12px; border-bottom-right-radius:12px;
@@ -94,13 +111,8 @@
 
   .nohit{padding:18px; color:var(--muted)}
   mark{background:rgba(56,189,248,.22); color:#e8fbff; padding:0 .18em; border-radius:4px}
-</style>
-</head>
-<body>
-  <a href="index.html" class="floating-home">Home</a>
 
-<style>
-  /* Floating Home Button (Sky Blue Freeze) */
+  /* ===== Floating Home button (unchanged) ===== */
   .floating-home{
     position:fixed; top:0; right:0;
     background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
@@ -115,7 +127,23 @@
     box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
     transform:translateY(-1px);
   }
+
+  /* ===== Mobile tweaks ===== */
+  @media (max-width: 520px){
+    .head, .row{ grid-template-columns: 42px 1fr 46px; gap:6px; padding:8px 10px; }
+    .num{ font-size:.8rem; }
+    .ko-line{ font-size:.96rem; }
+    .en-line{ font-size:.86rem; }
+    .play{ width:36px; height:36px; border-radius:8px; }
+    .chip{ padding:7px 8px; }
+    .chip .form{ font-size:.95em; }
+    .wrap{ margin:10px auto 56px; }
+  }
 </style>
+</head>
+<body>
+  <a href="index.html" class="floating-home">Home</a>
+
   <header>
     <h1>EPS-TOPIK BOOK 2 — Vocabulary Trainer</h1>
   </header>
@@ -136,7 +164,7 @@
 
     <div class="list" id="list">
       <div class="head">
-        <div>Page</div><div>Korean</div><div>English</div><div>Category</div><div style="text-align:right">Audio</div>
+        <div>Pg</div><div>Term (Korean / English)</div><div style="text-align:right">Audio</div>
       </div>
     </div>
     <div class="nohit" id="nohit" style="display:none">No matches.</div>
@@ -1430,15 +1458,13 @@ const ADVERB_WHITELIST = new Set([
 
 function tagPOS(entry){
   const koRaw = entry.ko.replace(/\s+/g,' ').trim();
-  const koNorm = koRaw;                 // match exactly as written in RAW
+  const koNorm = koRaw; // as written
   const enLower = entry.en.toLowerCase();
 
-  // 1) Force adverbs by whitelist
   if (ADVERB_WHITELIST.has(koNorm)) {
     return {...entry, pos:'adverb', baseKo: koNorm};
   }
 
-  // 2) Otherwise, infer verb/adj/noun (same logic as before, minus adverb hints)
   let baseKo = koRaw.includes('(하다)') ? koRaw.replace('(하다)','하다') : koRaw;
   const enStartsTo = /^to\s+[a-z]/.test(enLower);
   const enToBe = /^to\s+be\b/.test(enLower) || /^\b(be|is|are)\b/.test(enLower);
@@ -1644,18 +1670,17 @@ function renderList(items, term){
     row.className='row';
     row.dataset.pos=it.pos;
 
-    const catLabel=it.pos[0].toUpperCase()+it.pos.slice(1);
-    const koCell=`
-      <div class="ko">
-        ${isVA ? '<span class="toggle" title="Expand/Collapse">▸</span>' : ''}
-        <span>${highlightAny(it.baseKo||it.ko, term)}</span>
+    const toggle = isVA ? '<span class="toggle" title="Expand/Collapse">▸</span>' : '';
+    const koenCell = `
+      <div class="koen">
+        <div class="ko-line">${toggle}<span>${highlightAny(it.baseKo||it.ko, term)}</span></div>
+        <div class="en-line">${highlightAny(it.en, term)}</div>
       </div>
     `;
+
     row.innerHTML = `
       <div class="num">${(''+it.page)}</div>
-      ${koCell}
-      <div class="en">${highlightAny(it.en, term)}</div>
-      <div class="cat">${highlightAny(catLabel, term)}</div>
+      ${koenCell}
       <button class="play" title="Play: ${escapeAttr(it.baseKo||it.ko)}" aria-label="Play ${escapeAttr(it.baseKo||it.ko)}" data-ko="${escapeAttr(it.baseKo||it.ko)}">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -1707,7 +1732,7 @@ function renderList(items, term){
 listEl.addEventListener('click', (e)=>{
   if (
     e.target.classList.contains('toggle') ||
-    (e.target.closest('.ko') &&
+    (e.target.closest('.ko-line') &&
      e.target.closest('.row')?.dataset.pos !== 'noun' &&
      e.target.closest('.row')?.dataset.pos !== 'adverb')
   ) {
@@ -1740,4 +1765,3 @@ applyFilters();
 </script>
 </body>
 </html>
-
