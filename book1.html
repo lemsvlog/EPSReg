@@ -126,6 +126,26 @@
 </style>
 </head>
 <body>
+  <!-- Floating Home Button -->
+<a href="index.html" class="floating-home" aria-label="Go to Home">Home</a>
+
+<style>
+  .floating-home{
+    position:fixed; top:0; right:0;
+    background:linear-gradient(90deg, var(--cyan, #67e8f9), var(--accent, #38bdf8));
+    color:#072235; font-size:14px; font-weight:700; text-decoration:none;
+    padding:8px 16px; border-radius:0 0 0 10px;
+    box-shadow:0 6px 18px rgba(56,189,248,.35);
+    z-index:9999; transition:all .25s ease;
+    backdrop-filter:blur(8px) saturate(140%); -webkit-backdrop-filter:blur(8px) saturate(140%);
+  }
+  .floating-home:hover{
+    filter:brightness(1.12);
+    box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
+    transform:translateY(-1px);
+  }
+</style>
+
   <header>
     <h1>EPS-TOPIK BOOK 1 — Vocabulary Trainer</h1>
   </header>
@@ -1770,3 +1790,4 @@ console.log('읽다', presentPolite('읽다','verb')==='읽어요', pastPolite('
 </script>
 </body>
 </html>
+
