@@ -154,6 +154,33 @@
     .chip .form{ font-size:.95em; }
     .wrap{ margin:10px auto 56px; }
   }
+  /* ==== Toolbar layout: input + compact button group ==== */
+.toolbar{
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0 10px;
+}
+.toolbar .left{ flex:1 1 280px; display:flex; gap:10px; }
+.toolbar .right{ flex:0 0 auto; display:flex; gap:8px; align-items:center; }
+
+.toolbar input{
+  flex:1 1 200px;
+  padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+  background:#0b1a2b; color:var(--ink); outline:none;
+}
+.toolbar button{
+  appearance:none; border:none; cursor:pointer;
+  padding:10px 12px; border-radius:10px; font-weight:800; letter-spacing:.3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#062135;
+  min-width:44px;
+}
+.toolbar button.secondary{
+  background:#0b1a2b; color:#cfe3ff; border:1px solid var(--line);
+}
+.toolbar small{ opacity:.75 }
+@media (max-width:520px){
+  .toolbar{ gap:8px }
+  .toolbar .left{ flex-basis:100% }
+}
+
 </style>
 </head>
 <body>
@@ -172,10 +199,19 @@
       <span class="pill" data-cat="adverb">Adverbs</span>
     </div>
 
-    <div class="toolbar">
-      <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', '94')" />
-      <button id="clearBtn" type="button">Clear</button>
-    </div>
+<div class="toolbar">
+  <div class="left">
+    <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', '94')" />
+    <button id="clearBtn" type="button" class="secondary">Clear</button>
+  </div>
+  <div class="right">
+    <button id="playAllBtn" type="button">▶ Play All</button>
+    <button id="stopAllBtn" type="button" class="secondary" style="display:none">■ Stop</button>
+    <button id="randomPlayBtn" type="button">🔀 Random Play</button>
+    <small id="playStatus"></small>
+  </div>
+</div>
+
 
     <div class="list" id="list">
       <div class="head">
@@ -1801,9 +1837,163 @@ applyFilters();
     if ( e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase())) ) { e.preventDefault(); }
   }, false);
   </script>
+  <script>
+// ===== Extra voices (EN) =====
+let enVoice = null;
+function pickEnglishVoice(){
+  const voices = speechSynthesis.getVoices();
+  enVoice = voices.find(v => (v.lang||'').toLowerCase().startsWith('en-us')) ||
+            voices.find(v => (v.lang||'').toLowerCase().startsWith('en')) || null;
+}
+pickEnglishVoice();
+window.speechSynthesis.onvoiceschanged = () => { pickKoreanVoice(); pickEnglishVoice(); };
+
+// ===== Helpers =====
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function speak(text, {lang='ko-KR', voice=null, rate=0.95, pitch=1.0}={}){
+  return new Promise((resolve,reject)=>{
+    try{
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      if(voice) u.voice = voice;
+      u.rate = rate; u.pitch = pitch;
+      u.onend = () => resolve();
+      u.onerror = (e) => reject(e.error || e);
+      speechSynthesis.speak(u);
+    }catch(err){ reject(err); }
+  });
+}
+
+function getCurrentFilteredItems(){
+  let items = DATA.slice();
+  if(state.cat!=='all') items = items.filter(it => it.pos === state.cat);
+  const term = (state.query||'').toLowerCase();
+  if(term){
+    items = items.filter(it =>
+      it.ko.toLowerCase().includes(term) ||
+      it.en.toLowerCase().includes(term) ||
+      (''+it.page).includes(term)
+    );
+  }
+  items.sort((a,b)=> a.page - b.page);
+  return items;
+}
+
+// ===== Autoplay engine (Play All / Random Play) =====
+let isPlayingAll = false;
+
+async function playSequence(items){
+  if(!items.length){ alert('Walang items sa kasalukuyang filter/search.'); return; }
+
+  const playBtn = document.getElementById('playAllBtn');
+  const stopBtn = document.getElementById('stopAllBtn');
+  const randBtn = document.getElementById('randomPlayBtn');
+  const statusEl = document.getElementById('playStatus');
+
+  isPlayingAll = true;
+  playBtn.disabled = true; randBtn.disabled = true;
+  stopBtn.style.display='inline-block';
+  statusEl.textContent = `Playing ${items.length} item(s)…`;
+
+  try{ speechSynthesis.cancel(); }catch(e){}
+
+  for(let i=0; i<items.length && isPlayingAll; i++){
+    const it = items[i];
+    const ko = it.baseKo || it.ko;
+    const en = it.en;
+
+   await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95}).catch(()=>{});
+if(!isPlayingAll) break;
+await sleep(1500);
+
+await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95}).catch(()=>{});
+if(!isPlayingAll) break;
+await sleep(1200);
+
+await speak(en, {lang:'en-US', voice:enVoice, rate:1.0}).catch(()=>{});
+if(!isPlayingAll) break;
+
+// ---- status + quick chime, then long pause before next item ----
+statusEl.textContent = `Playing ${i+1}/${items.length}…`;
+
+// short delay then TING (quick)
+await sleep(320);
+playTing(980, 990);     // 220ms chime at ~990Hz
+
+// long delay before next Korean starts
+await sleep(1600);
+
+statusEl.textContent = `Playing ${i+1}/${items.length}…`;
+await sleep(800); // small pause after the chime
+
+  }
+  
+  // simple "ting" via WebAudio (no external file)
+function playTing(durationMs=200, freq=880){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durationMs/1000);
+    o.start();
+    o.stop(ctx.currentTime + durationMs/1000 + 0.02);
+    setTimeout(()=>ctx.close(), durationMs+150);
+  }catch(e){}
+}
+
+
+  isPlayingAll = false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  playBtn.disabled = false; randBtn.disabled = false;
+  stopBtn.style.display='none';
+  statusEl.textContent = '';
+}
+
+function playAllSequence(){
+  if(isPlayingAll) return;
+  const items = getCurrentFilteredItems();
+  playSequence(items);
+}
+
+function playRandomSequence(){
+  if(isPlayingAll) return;
+  const items = getCurrentFilteredItems();
+  // shuffle (Fisher–Yates)
+  for(let i=items.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [items[i],items[j]]=[items[j],items[i]];
+  }
+  playSequence(items);
+}
+
+function stopAll(){
+  isPlayingAll = false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  document.getElementById('playAllBtn').disabled = false;
+  document.getElementById('randomPlayBtn').disabled = false;
+  document.getElementById('stopAllBtn').style.display = 'none';
+  const statusEl = document.getElementById('playStatus');
+  if(statusEl) statusEl.textContent = '';
+}
+
+// buttons
+document.getElementById('playAllBtn').addEventListener('click', playAllSequence);
+document.getElementById('randomPlayBtn').addEventListener('click', playRandomSequence);
+document.getElementById('stopAllBtn').addEventListener('click', stopAll);
+
+// auto-stop when filters/search change
+document.getElementById('filters').addEventListener('click', ()=>{ if(isPlayingAll) stopAll(); });
+document.getElementById('q').addEventListener('input', ()=>{ if(isPlayingAll) stopAll(); });
+</script>
+
 	
 </body>
 </html>
-
 
 
