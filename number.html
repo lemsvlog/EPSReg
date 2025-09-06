@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VIZKOR Numbers Trainer – Native, Sino & Time (Analog)</title>
+  <title>VIZKOR Numbers Trainer – Native, Sino, Time (Analog) + Counters & Y/M/D</title>
   <style>
     :root{
       --bg-1:#03121f; --bg-2:#0a1e2e;
@@ -88,7 +88,7 @@
     @media (min-width: 680px){
       .mbar{ display:none }
       body{ padding-bottom:5px }
-      .stage{ height:clamp(290px, 30dvh, 290px) } /* still smaller than before */
+      .stage{ height:clamp(290px, 30dvh, 290px) }
     }
 
     /* Transitions */
@@ -97,10 +97,8 @@
     @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
     .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
     .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
-	.flip{ transform:scale(.9); transform-origin:center; }
-@media (max-width:480px){
-  .flip{ transform:scale(.85); }
-}
+    .flip{ transform:scale(.9); transform-origin:center; }
+    @media (max-width:480px){ .flip{ transform:scale(.85); } }
 
     .floating-home{ position: fixed; top: 0; right: 0; background: linear-gradient(90deg, var(--cyan), var(--accent)); color: #072235; font-size: 12px; font-weight: 700; text-decoration: none; padding: 6px 10px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35); z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
     .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
@@ -108,29 +106,13 @@
     /* ===== Choices (4 boxes) – compressed ===== */
     .quiz{ width:min(420px,94vw); margin:4px auto 0; }
     .quiz .toggleRow{ display:flex; align-items:center; justify-content:center; gap:8px; color:var(--ice-2); margin:2px 0 4px; font-size:.9rem; }
-    .choicesGrid{
-      display:grid; grid-template-columns:repeat(2, minmax(110px,1fr)); gap:8px;
-      width:min(400px,96%); margin:6px auto 0;
-    }
-    .choiceBtn{
-      appearance:none; border:1px solid rgba(186,230,253,.32); background:linear-gradient(180deg,#071c2c,#061725);
-      color:var(--ice-1); font-weight:800; padding:8px 10px; border-radius:10px; cursor:pointer; text-align:center;
-      min-height:34px; box-shadow:0 4px 14px rgba(56,189,248,.20); transition:filter .18s ease, transform .12s ease, box-shadow .18s ease;
-      user-select:none; font-size:.9rem;
-    }
+    .choicesGrid{ display:grid; grid-template-columns:repeat(2, minmax(110px,1fr)); gap:8px; width:min(400px,96%); margin:6px auto 0; }
+    .choiceBtn{ appearance:none; border:1px solid rgba(186,230,253,.32); background:linear-gradient(180deg,#071c2c,#061725); color:var(--ice-1); font-weight:800; padding:8px 10px; border-radius:10px; cursor:pointer; text-align:center; min-height:34px; box-shadow:0 4px 14px rgba(56,189,248,.20); transition:filter .18s ease, transform .12s ease, box-shadow .18s ease; user-select:none; font-size:.9rem; }
     .choiceBtn:hover{ filter:brightness(1.08); transform:translateY(-1px) }
-    .choiceBtn.correct{
-      border-color:rgba(56,189,248,.8);
-      box-shadow:0 0 0 2px rgba(56,189,248,.55), 0 0 18px rgba(56,189,248,.4);
-      background:linear-gradient(180deg,#0b2a42,#08314e);
-    }
+    .choiceBtn.correct{ border-color:rgba(56,189,248,.8); box-shadow:0 0 0 2px rgba(56,189,248,.55), 0 0 18px rgba(56,189,248,.4); background:linear-gradient(180deg,#0b2a42,#08314e); }
     @keyframes shakeX{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
     .choiceBtn.wrong{ background:linear-gradient(180deg,#2b0a0a,#1a0707); border-color:rgba(255,99,132,.65); animation:shakeX .35s ease; }
-    .choiceBtn.reveal{
-      border-color:rgba(56,189,248,.9);
-      box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 24px rgba(56,189,248,.55);
-      background:linear-gradient(180deg,#0b2a42,#08314e);
-    }
+    .choiceBtn.reveal{ border-color:rgba(56,189,248,.9); box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 24px rgba(56,189,248,.55); background:linear-gradient(180deg,#0b2a42,#08314e); }
 
     /* ===== Minimal modal (kept for future) ===== */
     .modalBack{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(3,13,22,.66); backdrop-filter: blur(6px) saturate(140%); -webkit-backdrop-filter: blur(6px) saturate(140%); z-index:10000; }
@@ -138,7 +120,6 @@
     .modal h3{ margin:0 0 6px; font-size:1rem; color:var(--ice-1) }
     .modal p{ margin:6px 0 10px; color:var(--ice-2); font-weight:800 }
     .modal .btn{ padding:8px 10px; font-size:.9rem }
-	
   </style>
 </head>
 <body>
@@ -146,7 +127,7 @@
 
   <header>
     <h1 class="title">VIZKOR Numbers Trainer</h1>
-    <p class="subtitle">Native (0–99) • Sino (1–9 digits) • Time (Analog)</p>
+    <p class="subtitle">Native (0–99) • Sino (1–9 digits) • Time (Analog) • <b>Counters</b> • <b>Date (Y/M/D)</b></p>
     <div class="progress" id="progress">&nbsp;</div>
   </header>
 
@@ -160,6 +141,8 @@
           <option value="native" selected>Native(99)</option>
           <option value="sino">Sino(9digits)</option>
           <option value="time">Time(Analog)</option>
+          <option value="count">Counting Units</option>
+          <option value="date">Date (Y/M/D)</option>
         </select>
 
         <span class="label" id="frontNumWrapLabel"></span>
@@ -182,6 +165,46 @@
           <input type="radio" name="digits" id="dg8" value="8"><label for="dg8">8</label>
           <input type="radio" name="digits" id="dg9" value="9"><label for="dg9">9</label>
         </div>
+      </div>
+
+      <!-- Counting Units -->
+      <div class="toolrow" id="countOptions" style="display:none">
+        <span class="label">Counter:</span>
+        <select id="unitSelect" class="select" aria-label="Counter Unit">
+          <option value="random" selected>Random (mix)</option>
+          <optgroup label="Native-based">
+            <option value="gae">개 — items</option>
+            <option value="myeong">명 — people</option>
+            <option value="saram">사람 — people (casual)</option>
+            <option value="sal">살 — years old</option>
+            <option value="byeong">병 — bottles</option>
+            <option value="mari">마리 — animals</option>
+            <option value="gwon">권 — books</option>
+            <option value="dae">대 — vehicles</option>
+            <option value="beon">번 — times</option>
+            <option value="sigan">시간 — hours (duration)</option>
+          </optgroup>
+          <optgroup label="Sino-based">
+            <option value="bun">분 — minutes</option>
+            <option value="won">원 — won (₩)</option>
+            <option value="cheung">층 — floor</option>
+            <option value="gwa">과 — lessons</option>
+            <option value="ju">주 — weeks</option>
+            <option value="gaeweol">개월 — months (duration)</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Date (Y/M/D) -->
+      <div class="toolrow" id="dateOptions" style="display:none">
+        <span class="label">Year:</span>
+        <select id="yearSelect" class="select" aria-label="Year"></select>
+        <span class="label">Month:</span>
+        <select id="monthSelect" class="select" aria-label="Month"></select>
+        <span class="label">Day:</span>
+        <select id="daySelect" class="select" aria-label="Day"></select>
+        <button class="btn" id="applyDateBtn" type="button">Use</button>
+        <button class="btn ghost" id="randDateBtn" type="button">Random</button>
       </div>
     </div>
   </details>
@@ -274,6 +297,10 @@ function romanizeSino(n){
   return parts.join(' ').split(' ').filter(Boolean).join(' ');
 }
 
+/* ===== Year (special reading: no 만/억) ===== */
+function toSinoYear(y){ return under10000(y); }
+function romanizeYear(y){ return tokensUnder10000(y).map(romanizeTokenSino).join(' '); }
+
 /* =================== TIME (ANALOG) =================== */
 const HOUR_NATIVE_FORMS=['','한','두','세','네','다섯','여섯','일곱','여덟','아홉','열','열한','열두'];
 const HOUR_NATIVE_ROMA=['','han','du','se','ne','daseot','yeoseot','ilgop','yeodeol','ahop','yeol','yeolhan','yeoldu'];
@@ -297,6 +324,70 @@ function drawClock(canvas,h24,m){
   ctx.beginPath(); ctx.arc(cx,cy,5*DPR,0,Math.PI*2); ctx.fillStyle='rgba(10,30,46,0.95)'; ctx.fill();
 }
 
+/* =================== COUNTERS =================== */
+const COUNTERS=[
+  {key:'gae', ko:'개', rr:'gae', en:'items (generic)', system:'native', range:[1,99]},
+  {key:'myeong', ko:'명', rr:'myeong', en:'people', system:'native', range:[1,50]},
+  {key:'saram', ko:'사람', rr:'saram', en:'people (casual)', system:'native', range:[1,50]},
+  {key:'sal', ko:'살', rr:'sal', en:'years old', system:'native', range:[1,99]},
+  {key:'byeong', ko:'병', rr:'byeong', en:'bottles', system:'native', range:[1,60]},
+  {key:'mari', ko:'마리', rr:'mari', en:'animals', system:'native', range:[1,60]},
+  {key:'gwon', ko:'권', rr:'gwon', en:'books', system:'native', range:[1,60]},
+  {key:'dae', ko:'대', rr:'dae', en:'vehicles', system:'native', range:[1,60]},
+  {key:'beon', ko:'번', rr:'beon', en:'times (occurrences)', system:'native', range:[1,99]},
+  {key:'sigan', ko:'시간', rr:'sigan', en:'hours (duration)', system:'native', range:[1,24]},
+  {key:'bun', ko:'분', rr:'bun', en:'minutes', system:'sino', range:[1,59]},
+  {key:'won', ko:'원', rr:'won', en:'won (₩)', system:'sino', range:[1,9999]},
+  {key:'cheung', ko:'층', rr:'cheung', en:'floor (storey)', system:'sino', range:[1,70]},
+  {key:'gwa', ko:'과', rr:'gwa', en:'lessons/chapters', system:'sino', range:[1,50]},
+  {key:'ju', ko:'주', rr:'ju', en:'weeks', system:'sino', range:[1,52]},
+  {key:'gaeweol', ko:'개월', rr:'gae-wol', en:'months (duration)', system:'sino', range:[1,36]},
+];
+function getUnitByKey(k){ return COUNTERS.find(c=>c.key===k) || COUNTERS[0]; }
+function nativeCountForm(n){
+  if(n===0) return '영';
+  const t=Math.floor(n/10), u=n%10;
+  let tens = t? N_TENS[t] : '';
+  // 20 exact uses 스무
+  if(t===2 && u===0) tens='스무';
+  let unit='';
+  if(u===0){ unit=''; }
+  else if(u===1){ unit='한'; }
+  else if(u===2){ unit='두'; }
+  else if(u===3){ unit='세'; }
+  else if(u===4){ unit='네'; }
+  else { unit=N_UNITS[u]; }
+  return (tens+unit) || '영';
+}
+function romanizeNativeCount(n){
+  if(n===0) return 'yeong';
+  const t=Math.floor(n/10), u=n%10;
+  let tens = t? N_TENS_RR[t] : '';
+  if(t===2 && u===0) tens='seumu';
+  let unit='';
+  if(u===0){ unit=''; }
+  else if(u===1){ unit='han'; }
+  else if(u===2){ unit='du'; }
+  else if(u===3){ unit='se'; }
+  else if(u===4){ unit='ne'; }
+  else { unit=N_UNITS_RR[u]; }
+  return (tens + (tens && unit? ' ' : '') + unit).trim() || 'yeong';
+}
+function formatCountKO(n, unitObj){
+  if(unitObj.system==='native') return `${nativeCountForm(n)} ${unitObj.ko}`;
+  return `${toSino(n)} ${unitObj.ko}`;
+}
+function formatCountRR(n, unitObj){
+  if(unitObj.system==='native') return `${romanizeNativeCount(n)} ${unitObj.rr}`;
+  return `${romanizeSino(n)} ${unitObj.rr}`;
+}
+
+/* =================== DATE (Y/M/D) =================== */
+function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
+function dateToKo(y,m,d){ return `${toSinoYear(y)}년 ${toSino(m)}월 ${toSino(d)}일`; }
+function dateToRR(y,m,d){ return `${romanizeYear(y)} nyeon ${romanizeSino(m)} wol ${romanizeSino(d)} il`; }
+function formatDateDigits(y,m,d){ return `${String(y)}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
 /* =================== UTIL / STATE =================== */
 const progressEl=document.getElementById('progress');
 const flipWrap=document.getElementById('flipWrap');
@@ -309,6 +400,14 @@ const modeSelect=document.getElementById('modeSelect');
 const sinoOptions=document.getElementById('sinoOptions');
 const showNumLabel=document.getElementById('frontNumWrapLabel');
 const showNumChk=document.getElementById('showNumber');
+const countOptions=document.getElementById('countOptions');
+const unitSelect=document.getElementById('unitSelect');
+const dateOptions=document.getElementById('dateOptions');
+const yearSelect=document.getElementById('yearSelect');
+const monthSelect=document.getElementById('monthSelect');
+const daySelect=document.getElementById('daySelect');
+const applyDateBtn=document.getElementById('applyDateBtn');
+const randDateBtn=document.getElementById('randDateBtn');
 
 let queue=[], index=0, mode='native', showFrontNumber=false, isAnimating=false;
 let score=0, lockedChoice=false;
@@ -316,92 +415,60 @@ let score=0, lockedChoice=false;
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function digitsCount(n){ return String(Math.abs(n)).length; }
 function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-function randomWithDigits(d, allowZero=false){
-  if(d===1){ return allowZero ? randInt(0,9) : randInt(1,9); }
-  const min=Math.pow(10,d-1), max=Math.pow(10,d)-1; return randInt(min,max);
-}
+function randomWithDigits(d, allowZero=false){ if(d===1){ return allowZero ? randInt(0,9) : randInt(1,9); } const min=Math.pow(10,d-1), max=Math.pow(10,d)-1; return randInt(min,max); }
 function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length} • Score: ${score}`; }
 function resetScore(){ score=0; updateProgress(); }
 
 function selectedSinoDigits(){ const r=document.querySelector('input[name="digits"]:checked'); return r? parseInt(r.value,10) : 1; }
-function deckLength(){
-  if(mode==='sino'){ const d=selectedSinoDigits(); return 20; }
-  if(mode==='native') return 20;
-  return 20;
-}
+function deckLength(){ if(mode==='sino'){ return 20; } if(mode==='native'){ return 20; } if(mode==='count'){ return 20; } if(mode==='date'){ return 12; } return 20; }
 
 /* =================== DECK BUILDERS =================== */
-function buildNativeDeck(){
-  const want=deckLength();
-  const pool=Array.from({length:100},(_,i)=>i); // 0..99
-  return shuffle(pool).slice(0,want);
-}
-function buildSinoDeck(){
-  const d=selectedSinoDigits(), want=deckLength(), set=new Set(); let guard=0;
-  while(set.size<want && guard<want*200){
-    let n=randomWithDigits(d,false); // 1-digit sino: 1..9 (no 0)
-    if(n<=MAX_SINO) set.add(n);
-    guard++;
-  }
-  return Array.from(set);
-}
-function buildTimeDeck(){
-  const want=deckLength(); const set=new Set();
-  while(set.size<want){ const h=randInt(0,23), m=randInt(0,59); set.add(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`); }
-  return Array.from(set).map(s=>{const [hh,mm]=s.split(':').map(x=>+x); return {h:hh,m:mm};});
-}
+function buildNativeDeck(){ const want=deckLength(); const pool=Array.from({length:100},(_,i)=>i); return shuffle(pool).slice(0,want); }
+function buildSinoDeck(){ const d=selectedSinoDigits(), want=deckLength(), set=new Set(); let guard=0; while(set.size<want && guard<want*200){ let n=randomWithDigits(d,false); if(n<=MAX_SINO) set.add(n); guard++; } return Array.from(set); }
+function buildTimeDeck(){ const want=deckLength(); const set=new Set(); while(set.size<want){ const h=randInt(0,23), m=randInt(0,59); set.add(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`); } return Array.from(set).map(s=>{const [hh,mm]=s.split(':').map(x=>+x); return {h:hh,m:mm};}); }
+function buildCountDeck(){ const want=deckLength(); const items=[]; for(let i=0;i<want;i++){ let unitKey=unitSelect.value; if(unitKey==='random'){ const pick=COUNTERS[randInt(0,COUNTERS.length-1)]; unitKey=pick.key; }
+  const unitObj=getUnitByKey(unitKey); const [min,max]=unitObj.range; const n=randInt(min,max); items.push({n,unitKey}); } return items; }
+function randomValidDate(){ const y=randInt(1990,2035); const m=randInt(1,12); const dMax=daysInMonth(y,m); const d=randInt(1,dMax); return {y,m,d}; }
+function buildDateDeck(){ const want=deckLength(); const arr=[]; for(let i=0;i<want;i++){ arr.push(randomValidDate()); } return arr; }
 
 /* =================== CHOICES (4) =================== */
-toggleChoices.addEventListener('change', ()=>{ choicesGrid.style.display = toggleChoices.checked ? 'grid' : 'none'; });
+ toggleChoices.addEventListener('change', ()=>{ choicesGrid.style.display = toggleChoices.checked ? 'grid' : 'none'; });
 
-function randomNativeWithDigits(d){
-  if(d===1) return randInt(0,9);
-  return randInt(10,99);
-}
-function randomSinoWithDigits(d){
-  return randomWithDigits(d,false);
-}
+function randomNativeWithDigits(d){ if(d===1) return randInt(0,9); return randInt(10,99); }
+function randomSinoWithDigits(d){ return randomWithDigits(d,false); }
 function generateChoices(item){
   if(mode==='time'){
-    const {h, m} = item;
-    const correctKo = timeToKo(h, m); // ex: "오전 한 시 삼십 분" o "오전 한 시 정각"
+    const {h, m} = item; const correctKo = timeToKo(h, m);
     const alts = [(h+1)%24, (h+6)%24, (h+11)%24].map(H => timeToKo(H, m));
-
-    // ensure unique then shuffle → build choice objects
     const uniq = Array.from(new Set([correctKo, ...alts])).slice(0,4);
     return shuffle(uniq).map(t => ({ text: t, correct: t === correctKo }));
   }
-
-  // (keep the rest for native/sino as-is)
+  if(mode==='count'){
+    const {n, unitKey}=item; const unitObj=getUnitByKey(unitKey);
+    const correct=formatCountKO(n, unitObj);
+    const d=digitsCount(n); const pick=unitObj.system==='native'? ()=>randInt(1, Math.max(9, Math.min(99, (10**d)-1))) : ()=>randomSinoWithDigits(d);
+    const set=new Set([n]); while(set.size<4){ set.add(pick()); }
+    const opts=[...set].map(x=>formatCountKO(x, unitObj));
+    return shuffle(opts.map(t=>({text:t, correct:t===correct})));
+  }
+  if(mode==='date'){
+    const {y,m,d}=item; const correct=dateToKo(y,m,d);
+    const alts=[]; const d1=Math.max(1, Math.min(daysInMonth(y,m), d+1)); const d2=Math.max(1, Math.min(daysInMonth(y,m), (d+7)>daysInMonth(y,m)? d-7 : d+7)); const m2=((m%12)+1); const y2= m===12? y+1 : y; const d3=Math.min(d, daysInMonth(y2,m2)); alts.push(dateToKo(y,m,d1)); alts.push(dateToKo(y,m,d2)); alts.push(dateToKo(y2,m2,d3));
+    const uniq=Array.from(new Set([correct, ...alts])).slice(0,4);
+    return shuffle(uniq).map(t=>({text:t, correct:t===correct}));
+  }
+  // native/sino numbers
   const n=item, d=digitsCount(n);
   const pick = mode==='native' ? ()=>randomNativeWithDigits(d) : ()=>randomSinoWithDigits(d);
-  const set=new Set([n]);
-  while(set.size<4){ set.add(pick()); }
+  const set=new Set([n]); while(set.size<4){ set.add(pick()); }
   return shuffle([...set].map(x=>({text:x.toLocaleString('en-US'), correct:x===n})));
 }
 
 function renderChoicesForCurrent(){
   choicesGrid.innerHTML='';
   if(!toggleChoices.checked || !queue.length){ choicesGrid.style.display='none'; return; }
-  choicesGrid.style.display='grid';
-  lockedChoice=false;
-  const opts=generateChoices(queue[index]);
-  for(const opt of opts){
-    const btn=document.createElement('button');
-    btn.type='button'; btn.className='choiceBtn'; btn.textContent=opt.text; btn.dataset.correct=opt.correct?'1':'0';
-    btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      if(lockedChoice) return;
-      lockedChoice=true;
-      if(opt.correct){
-        btn.classList.add('correct'); score+=1; updateProgress();
-      }else{
-        btn.classList.add('wrong');
-        [...choicesGrid.children].forEach(ch=>{ if(ch.dataset.correct==='1') ch.classList.add('reveal'); });
-      }
-    });
-    choicesGrid.appendChild(btn);
-  }
+  choicesGrid.style.display='grid'; lockedChoice=false; const opts=generateChoices(queue[index]);
+  for(const opt of opts){ const btn=document.createElement('button'); btn.type='button'; btn.className='choiceBtn'; btn.textContent=opt.text; btn.dataset.correct=opt.correct?'1':'0'; btn.addEventListener('click', (e)=>{ e.stopPropagation(); if(lockedChoice) return; lockedChoice=true; if(opt.correct){ btn.classList.add('correct'); score+=1; updateProgress(); }else{ btn.classList.add('wrong'); [...choicesGrid.children].forEach(ch=>{ if(ch.dataset.correct==='1') ch.classList.add('reveal'); }); } }); choicesGrid.appendChild(btn); }
 }
 
 /* =================== RENDERING =================== */
@@ -474,9 +541,78 @@ function renderBackTime(t){
   back.querySelector('#playKoBack').addEventListener('click', e=>{ e.stopPropagation(); playKo(ko); });
 }
 
+function renderFrontCount(it){
+  const unitObj=getUnitByKey(it.unitKey);
+  const ko=formatCountKO(it.n, unitObj);
+  front.innerHTML = `
+    <div class="ko-row">
+      <div class="ko-big">${ko}</div>
+      <button class="play-base" id="playBaseFront">🔊 Play</button>
+    </div>
+    ${showFrontNumber? `<div class="big-num" style="opacity:.8">${it.n.toLocaleString('en-US')} ${unitObj.en}</div>` : ''}
+    <div class="controls" style="margin-top:4px"><button class="btn" id="flipToBack">Flip</button></div>`;
+  front.querySelector('#playBaseFront').addEventListener('click', e=>{ e.stopPropagation(); playKo(ko); });
+  front.querySelector('#flipToBack').addEventListener('click', e=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+}
+function renderBackCount(it){
+  const unitObj=getUnitByKey(it.unitKey);
+  const ko=formatCountKO(it.n, unitObj);
+  const rr=formatCountRR(it.n, unitObj);
+  const parts = unitObj.system==='native' ? breakdownNative(it.n) : breakdownSino(it.n);
+  back.innerHTML = `
+    <div class="big-num-hero">${it.n.toLocaleString('en-US')} — ${unitObj.en}</div>
+    <ul class="enlines">
+      <li><b>KOREAN:</b> <span class="ko-big" style="font-size:1.2rem">${ko}</span></li>
+      <li><b>ROMANIZATION:</b> <span class="ko-big" style="font-size:1rem">${rr}</span></li>
+    </ul>
+    <div class="gloss">${parts.map(c=>`<span class=\"gchunk\"><span class=\"gko\">${c.ko}</span><span class=\"gen\">${c.num.toLocaleString('en-US')}</span></span>`).join('')}
+      <span class="gchunk"><span class="gko">${unitObj.ko}</span><span class="gen">${unitObj.en}</span></span>
+    </div>
+    <div class="controls" style="margin-top:4px">
+      <button class="btn ghost" id="flipToFront">Back</button>
+      <button class="btn" id="nextBtn">Next ▶</button>
+      <button class="btn" id="playKoBack">🔊 Play</button>
+    </div>`;
+  back.querySelector('#nextBtn').addEventListener('click', e=>{ e.stopPropagation(); nextCardAnimated(); });
+  back.querySelector('#flipToFront').addEventListener('click', e=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+  back.querySelector('#playKoBack').addEventListener('click', e=>{ e.stopPropagation(); playKo(ko); });
+}
+
+function renderFrontDate(it){
+  const digits=formatDateDigits(it.y,it.m,it.d);
+  front.innerHTML = `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:6px">
+      <div class="big-num" style="opacity:.95">${digits}</div>
+    </div>
+    <div class="controls" style="margin-top:6px"><button class="btn" id="flipToBack">Flip</button></div>`;
+  front.querySelector('#flipToBack').addEventListener('click', e=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+}
+function renderBackDate(it){
+  const digits=formatDateDigits(it.y,it.m,it.d);
+  const ko=dateToKo(it.y,it.m,it.d);
+  const rr=dateToRR(it.y,it.m,it.d);
+  back.innerHTML = `
+    <div class="big-num-hero">${digits}</div>
+    <ul class="enlines">
+      <li><b>KOREAN:</b> <span class="ko-big" style="font-size:1.2rem">${ko}</span></li>
+      <li><b>ROMANIZATION:</b> <span class="ko-big" style="font-size:1rem">${rr}</span></li>
+    </ul>
+    <div class="controls" style="margin-top:4px">
+      <button class="btn ghost" id="flipToFront">Back</button>
+      <button class="btn" id="nextBtn">Next ▶</button>
+      <button class="btn" id="playKoBack">🔊 Play</button>
+    </div>`;
+  back.querySelector('#nextBtn').addEventListener('click', e=>{ e.stopPropagation(); nextCardAnimated(); });
+  back.querySelector('#flipToFront').addEventListener('click', e=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+  back.querySelector('#playKoBack').addEventListener('click', e=>{ e.stopPropagation(); playKo(ko); });
+}
+
 function renderCurrent(){
   const item=queue[index];
-  if(mode==='time'){ renderFrontTime(item); renderBackTime(item); } else { renderFrontNumber(item); renderBackNumber(item); }
+  if(mode==='time'){ renderFrontTime(item); renderBackTime(item); }
+  else if(mode==='count'){ renderFrontCount(item); renderBackCount(item); }
+  else if(mode==='date'){ renderFrontDate(item); renderBackDate(item); }
+  else { renderFrontNumber(item); renderBackNumber(item); }
   renderChoicesForCurrent();
 }
 
@@ -484,19 +620,25 @@ function renderCurrent(){
 function buildDeck(){
   mode=modeSelect.value;
   sinoOptions.style.display = (mode==='sino') ? 'flex' : 'none';
-  const showControls = (mode!=='time');
+  countOptions.style.display = (mode==='count') ? 'flex' : 'none';
+  dateOptions.style.display = (mode==='date') ? 'flex' : 'none';
+  const showControls = (mode!=='time'); // keep checkbox visible for numbers, count, date
   showNumLabel.style.display = showControls? 'inline-block':'none';
   showNumChk.style.display = showControls? 'inline-block':'none';
   showFrontNumber = showControls ? showNumChk.checked : false;
 
   if(mode==='native'){ queue=buildNativeDeck(); }
   else if(mode==='sino'){ queue=buildSinoDeck(); }
-  else { queue=buildTimeDeck(); }
+  else if(mode==='time'){ queue=buildTimeDeck(); }
+  else if(mode==='count'){ queue=buildCountDeck(); }
+  else { queue=buildDateDeck(); }
 
   index=0; resetScore();
   flipWrap.classList.remove('flipped');
   renderCurrent();
-  if(mode!=='time'){ playKo(koReadingNumber(queue[index])); }
+  if(mode==='native' || mode==='sino'){ playKo(koReadingNumber(queue[index])); }
+  if(mode==='count'){ const it=queue[index]; playKo(formatCountKO(it.n, getUnitByKey(it.unitKey))); }
+  if(mode==='date'){ const it=queue[index]; playKo(dateToKo(it.y,it.m,it.d)); }
 }
 
 function nextCardAnimated(){
@@ -522,7 +664,9 @@ function nextCardAnimated(){
       flipWrap.removeEventListener('animationend', onEnterEnd);
       flipWrap.classList.remove('fly-enter','animating');
       isAnimating=false;
-      if(mode!=='time'){ playKo(koReadingNumber(queue[index])); }
+      if(mode==='native' || mode==='sino'){ playKo(koReadingNumber(queue[index])); }
+      if(mode==='count'){ const it=queue[index]; playKo(formatCountKO(it.n, getUnitByKey(it.unitKey))); }
+      if(mode==='date'){ const it=queue[index]; playKo(dateToKo(it.y,it.m,it.d)); }
     };
     flipWrap.addEventListener('animationend', onEnterEnd);
   };
@@ -548,17 +692,34 @@ cardEl.addEventListener('keydown', (e)=>{
 });
 
 modeSelect.addEventListener('change', buildDeck);
-document.querySelectorAll('input[name="digits"]').forEach(r=> r.addEventListener('change', ()=>{ if(modeSelect.value==='sino') buildDeck(); }));
-showNumChk.addEventListener('change', ()=>{ showFrontNumber=showNumChk.checked; if(queue.length && mode!=='time') renderCurrent(); });
+[...document.querySelectorAll('input[name="digits"]')].forEach(r=> r.addEventListener('change', ()=>{ if(modeSelect.value==='sino') buildDeck(); }));
+showNumChk.addEventListener('change', ()=>{ showFrontNumber=showNumChk.checked; if(queue.length) renderCurrent(); });
+unitSelect.addEventListener('change', ()=>{ if(modeSelect.value==='count') buildDeck(); });
+
+/* Date dropdowns */
+function fillYearMonthDay(){
+  yearSelect.innerHTML=''; monthSelect.innerHTML=''; daySelect.innerHTML='';
+  for(let y=1990;y<=2035;y++){ const opt=document.createElement('option'); opt.value=String(y); opt.textContent=String(y); if(y===2025) opt.selected=true; yearSelect.appendChild(opt); }
+  for(let m=1;m<=12;m++){ const opt=document.createElement('option'); opt.value=String(m); opt.textContent=String(m); if(m===9) opt.selected=true; monthSelect.appendChild(opt); }
+  updateDayOptions();
+}
+function updateDayOptions(){ const y=parseInt(yearSelect.value,10)||2025; const m=parseInt(monthSelect.value,10)||9; const max=daysInMonth(y,m); const cur=parseInt(daySelect.value,10)||1; daySelect.innerHTML=''; for(let d=1; d<=max; d++){ const opt=document.createElement('option'); opt.value=String(d); opt.textContent=String(d); if(d===Math.min(cur,max)) opt.selected=true; daySelect.appendChild(opt); } }
+[yearSelect, monthSelect].forEach(el=> el.addEventListener('change', ()=>{ updateDayOptions(); if(modeSelect.value==='date'){ // live update current card
+  if(queue.length){ queue[index]={ y:parseInt(yearSelect.value,10), m:parseInt(monthSelect.value,10), d:parseInt(daySelect.value,10)}; renderCurrent(); }
+}}));
+daySelect.addEventListener('change', ()=>{ if(modeSelect.value==='date' && queue.length){ queue[index]={ y:parseInt(yearSelect.value,10), m:parseInt(monthSelect.value,10), d:parseInt(daySelect.value,10)}; renderCurrent(); } });
+applyDateBtn.addEventListener('click', ()=>{ if(modeSelect.value!=='date') return; if(!queue.length) queue.push({y:2025,m:9,d:6}); queue[index]={ y:parseInt(yearSelect.value,10), m:parseInt(monthSelect.value,10), d:parseInt(daySelect.value,10)}; renderCurrent(); });
+randDateBtn.addEventListener('click', ()=>{ if(modeSelect.value!=='date') return; const r=randomValidDate(); if(!queue.length){ queue=[r]; index=0; } else { queue[index]=r; } yearSelect.value=String(r.y); monthSelect.value=String(r.m); updateDayOptions(); daySelect.value=String(r.d); renderCurrent(); });
 
 /* mobile bar */
-function speakCurrent(){ if(!queue.length) return; if(mode==='time'){ const t=queue[index]; playKo(timeToKo(t.h,t.m)); } else { playKo(koReadingNumber(queue[index])); } }
+function speakCurrent(){ if(!queue.length) return; if(mode==='time'){ const t=queue[index]; playKo(timeToKo(t.h,t.m)); } else if(mode==='count'){ const it=queue[index]; playKo(formatCountKO(it.n, getUnitByKey(it.unitKey))); } else if(mode==='date'){ const it=queue[index]; playKo(dateToKo(it.y,it.m,it.d)); } else { playKo(koReadingNumber(queue[index])); } }
 document.getElementById('mFlip').addEventListener('click', e=>{ e.stopPropagation(); if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); });
 document.getElementById('mPlay').addEventListener('click', e=>{ e.stopPropagation(); speakCurrent(); });
 document.getElementById('mNext').addEventListener('click', e=>{ e.stopPropagation(); nextCardAnimated(); });
 
 /* init */
 showFrontNumber = showNumChk.checked;
+fillYearMonthDay();
 buildDeck();
 </script>
 
