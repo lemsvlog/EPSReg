@@ -27,6 +27,7 @@
   .toolbar{
     display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; margin:12px 0 10px;
   }
+  
   .toolbar input{
     padding:10px 12px; border-radius:10px; border:1px solid var(--line);
     background:#0b1a2b; color:var(--ink); outline:none;
@@ -131,6 +132,7 @@
     .play-mini{ width:28px; height:28px; border-radius:7px; }
     .wrap{ margin:10px auto 56px; }
   }
+  
 </style>
 </head>
 <body>
@@ -172,7 +174,14 @@
     <div class="toolbar">
       <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', '94')" />
       <button id="clearBtn" type="button">Clear</button>
+	  <button id="playAllBtn" type="button">▶ Play All	</button>
+<button id="stopAllBtn" type="button" style="display:none">■ Stop</button>
+<button id="randomPlayBtn" type="button">🔀 Random Play</button>
+
+<small id="playStatus" style="opacity:.75;margin-left:8px"></small>
+
     </div>
+	
 
     <!-- TABLE -->
     <div class="list" id="list">
@@ -1779,8 +1788,9 @@ function speakKo(txt){
   }
 }
 
-/* ========= Initial run ========= */
 applyFilters();
+
+
 
 /* ========= Quick self-checks ========= */
 console.log('덥다', presentPolite('덥다','adjective')==='더워요', pastPolite('덥다','adjective')==='더웠어요', futurePolite('덥다','adjective')==='더울 거예요');
@@ -1812,8 +1822,209 @@ console.log('읽다', presentPolite('읽다','verb')==='읽어요', pastPolite('
     if ( e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase())) ) { e.preventDefault(); }
   }, false);
   </script>
+  <script>
+// ===== Extra voices (EN) =====
+let enVoice = null;
+function pickEnglishVoice(){
+  const voices = speechSynthesis.getVoices();
+  // Prefer en-US female-ish if available, else any English
+  enVoice = voices.find(v => (v.lang||'').toLowerCase().startsWith('en-us')) ||
+            voices.find(v => (v.lang||'').toLowerCase().startsWith('en')) || null;
+}
+pickEnglishVoice();
+window.speechSynthesis.onvoiceschanged = () => { pickKoreanVoice(); pickEnglishVoice(); };
+
+// ===== Helpers =====
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function speak(text, {lang='ko-KR', voice=null, rate=0.95, pitch=1.0}={}){
+  return new Promise((resolve,reject)=>{
+    try{
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      if(voice) u.voice = voice;
+      u.rate = rate; u.pitch = pitch;
+      u.onend = () => resolve();
+      u.onerror = (e) => reject(e.error || e);
+      speechSynthesis.speak(u);
+    }catch(err){ reject(err); }
+  });
+}
+
+// simple "ting" via WebAudio (no external file)
+function playTing(durationMs=200, freq=880){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durationMs/1000);
+    o.start();
+    o.stop(ctx.currentTime + durationMs/1000 + 0.02);
+    // close context after a tick
+    setTimeout(()=>ctx.close(), durationMs+150);
+  }catch(e){}
+}
+
+// kumuha ng items ayon sa kasalukuyang filter + search
+function getCurrentFilteredItems(){
+  let items = DATA.slice();
+  if(state.cat!=='all') items = items.filter(it => it.pos === state.cat);
+  const term = (state.query||'').toLowerCase();
+  if(term){
+    items = items.filter(it =>
+      it.ko.toLowerCase().includes(term) ||
+      it.en.toLowerCase().includes(term) ||
+      (''+it.page).includes(term)
+    );
+  }
+  items.sort((a,b)=> a.page - b.page);
+  return items;
+}
+
+// ===== Autoplay engine =====
+let isPlayingAll = false;
+
+async function playAllSequence(){
+  if(isPlayingAll) return;
+  const playBtn = document.getElementById('playAllBtn');
+  const stopBtn = document.getElementById('stopAllBtn');
+  const statusEl = document.getElementById('playStatus');
+
+  const items = getCurrentFilteredItems();
+  if(!items.length){ alert('Walang items sa kasalukuyang filter/search.'); return; }
+
+  isPlayingAll = true;
+  playBtn.disabled = true; stopBtn.style.display='inline-block';
+  statusEl && (statusEl.textContent = `Playing ${items.length} item(s)…`);
+
+  // Cancel any ongoing TTS first
+  try{ speechSynthesis.cancel(); }catch(e){}
+
+  for(let i=0; i<items.length && isPlayingAll; i++){
+    const it = items[i];
+    const ko = it.baseKo || it.ko;
+    const en = it.en;
+
+    // 1) Korean
+    await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+    await sleep(2000);
+
+    // 2) Korean (ulit)
+    await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+    await sleep(2000);
+
+    // 3) English
+    await speak(en, {lang:'en-US', voice:enVoice, rate:1.0, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+
+    // ting + 1s bago next
+    playTing(980, 990);
+    await sleep(2000);
+
+    statusEl && (statusEl.textContent = `Playing ${i+1}/${items.length}…`);
+  }
+
+  // wrap-up
+  isPlayingAll = false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  playBtn.disabled = false; stopBtn.style.display='none';
+  statusEl && (statusEl.textContent = '');
+}
+
+function stopAll(){
+  isPlayingAll = false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  const playBtn = document.getElementById('playAllBtn');
+  const stopBtn = document.getElementById('stopAllBtn');
+  const statusEl = document.getElementById('playStatus');
+  playBtn.disabled = false;
+  stopBtn.style.display = 'none';
+  statusEl && (statusEl.textContent = '');
+}
+
+// buttons
+document.getElementById('playAllBtn').addEventListener('click', playAllSequence);
+document.getElementById('stopAllBtn').addEventListener('click', stopAll);
+
+// kapag nagpalit ka ng filter pills or nag-search habang tumutugtog, auto-stop para hindi magulo
+document.getElementById('filters').addEventListener('click', ()=>{ if(isPlayingAll) stopAll(); });
+q.addEventListener('input', ()=>{ if(isPlayingAll) stopAll(); });
+
+
+
+// --- Fisher–Yates shuffle ---
+function shuffleInPlace(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+async function playRandomSequence(){
+  if(isPlayingAll) return; // prevent overlap with any running sequence
+  const playBtn = document.getElementById('randomPlayBtn');
+  const stopBtn = document.getElementById('stopAllBtn');
+  const statusEl = document.getElementById('playStatus');
+
+  let items = getCurrentFilteredItems();
+  if(!items.length){ alert('Walang items sa kasalukuyang filter/search.'); return; }
+  items = shuffleInPlace(items);
+
+  isPlayingAll = true;
+  // disable both play buttons para iwas double-play
+  document.getElementById('playAllBtn').disabled = true;
+  playBtn.disabled = true; 
+  stopBtn.style.display='inline-block';
+  statusEl && (statusEl.textContent = `Random: ${items.length} item(s)…`);
+
+  try{ speechSynthesis.cancel(); }catch(e){}
+
+  for(let i=0; i<items.length && isPlayingAll; i++){
+    const it = items[i];
+    const ko = it.baseKo || it.ko;
+    const en = it.en;
+
+    await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+    await sleep(1000);
+
+    await speak(ko, {lang:'ko-KR', voice:koVoice, rate:0.95, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+    await sleep(1000);
+
+    await speak(en, {lang:'en-US', voice:enVoice, rate:1.0, pitch:1.0}).catch(()=>{});
+    if(!isPlayingAll) break;
+
+    playTing(980, 990);
+    await sleep(2000);
+
+    statusEl && (statusEl.textContent = `Random ${i+1}/${items.length}…`);
+  }
+
+  isPlayingAll = false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  document.getElementById('playAllBtn').disabled = false;
+  playBtn.disabled = false; 
+  stopBtn.style.display='none';
+  statusEl && (statusEl.textContent = '');
+}
+
+// hook up
+document.getElementById('randomPlayBtn').addEventListener('click', playRandomSequence);
+
+// auto-stop if filters/search change habang tumutugtog (reuse existing listeners)
+</script>
+
+
 
 </body>
 </html>
-
 
