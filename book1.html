@@ -154,6 +154,57 @@
     box-shadow:0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45);
     transform:translateY(-1px);
   }
+  /* Toolbar: input on the left, controls on the right */
+.toolbar{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:10px;
+  align-items:center;
+}
+
+/* Group the buttons + status neatly */
+.actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;            /* wrap nicely on small screens */
+}
+
+/* Uniform buttons */
+.btn{
+  appearance:none; border:none; cursor:pointer;
+  padding:10px 14px;
+  min-height:40px;            /* equal height */
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:10px; font-weight:800; letter-spacing:.3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#062135; white-space:nowrap;   /* keep labels in one line */
+}
+
+/* Match input look/height */
+.toolbar input{
+  padding:10px 12px;
+  min-height:40px;
+  border-radius:10px; border:1px solid var(--line);
+  background:#0b1a2b; color:var(--ink); outline:none;
+}
+
+/* Status text */
+.status{
+  opacity:.75;
+  margin-left:4px;
+  white-space:nowrap;
+}
+
+/* Mobile: stack into two rows if needed */
+@media (max-width: 560px){
+  .toolbar{
+    grid-template-columns: 1fr;     /* input on first row, buttons below */
+    gap:8px;
+  }
+  .actions{justify-content:flex-start}
+}
+
 </style>
 
   <header>
@@ -172,15 +223,17 @@
 
     <!-- SEARCH -->
     <div class="toolbar">
-      <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', '94')" />
-      <button id="clearBtn" type="button">Clear</button>
-	  <button id="playAllBtn" type="button">▶ Play All	</button>
-<button id="stopAllBtn" type="button" style="display:none">■ Stop</button>
-<button id="randomPlayBtn" type="button">🔀 Random Play</button>
+  <input id="q" type="search" placeholder="Search… (e.g., 'doctor', '병원', '94')" />
 
-<small id="playStatus" style="opacity:.75;margin-left:8px"></small>
+  <div class="actions">
+    <button id="clearBtn" type="button" class="btn">Clear</button><
+    <button id="playAllBtn" type="button" class="btn">▶ Play All</button>
+    <button id="stopAllBtn" type="button" class="btn" style="display:none">■ Stop</button>
+    <button id="randomPlayBtn" type="button" class="btn">🔀 Random Play</button>
 
-    </div>
+    <small id="playStatus" class="status"> </small>
+  </div>
+</div>
 	
 
     <!-- TABLE -->
