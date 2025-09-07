@@ -208,6 +208,42 @@
       background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
       pointer-events:none;
     }
+	
+	
+	/* One-line subfilters (never wrap) */
+.subfilters{
+  display:none;
+  gap:8px;
+  align-items:center;
+  justify-content:center;   /* center on wide screens */
+  margin:6px 0 0;
+  flex-wrap: nowrap;        /* <<< no wrapping */
+  overflow-x: auto;         /* allow horizontal scroll if needed */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 6px 6px;     /* little space for scrollbar */
+}
+.subfilters.active{ display:flex; }
+
+/* Keep each button on one line and prevent shrinking */
+.subfilters .seg{
+  flex: 0 0 auto;           /* don’t shrink */
+  white-space: nowrap;      /* keep label in one line */
+}
+
+/* On mobile, left-align so scrolling starts from the first item */
+@media (max-width: 768px){
+  .subfilters{ justify-content: flex-start; }
+}
+
+/* (Optional) nicer thin scrollbar */
+.subfilters::-webkit-scrollbar{ height:6px }
+.subfilters::-webkit-scrollbar-thumb{
+  background: rgba(186,230,253,.35); border-radius:6px;
+}
+.subfilters::-webkit-scrollbar-track{ background: transparent }
+
+
   </style>
 </head>
 <body>
