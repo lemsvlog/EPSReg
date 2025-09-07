@@ -43,7 +43,7 @@
 
     .toolbar {
         width: min(520px, 94vw);
-        margin-top: 10px; margin-bottom: 2px;
+        margin-top: 10px;
         padding: 15px;
         border-radius: 18px;
         background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94));
@@ -62,25 +62,13 @@
         background-repeat: no-repeat; background-position: right 8px top 50%; background-size: 24px auto; cursor: pointer;
     }
 
-    /* Segmented buttons (All / Book 1 / Book 2) */
-    .segmented{display:flex; gap:8px;}
-    .segmented input{display:none}
-    .segmented label{
-      user-select:none; cursor:pointer; padding:10px 12px; border-radius:10px; font-weight:900; letter-spacing:.3px;
-      background:linear-gradient(180deg,#0a2032,#081a2a); color:var(--ice-2); border:1px solid rgba(186,230,253,.25);
-      box-shadow:0 6px 16px rgba(2,12,22,.18);
-    }
-    .segmented input:checked + label{
-      color:#072235; background:linear-gradient(90deg,var(--cyan),var(--accent)); border-color:transparent; box-shadow:0 6px 18px rgba(56,189,248,.35);
-    }
-
-    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:8px; }
+    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
     .flip{ perspective:1200px; width:100%; height:100%; }
-    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
     .flipped .card{ transform:rotateY(180deg); }
 
     .face{ position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; padding:18px; }
-    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.9)); border:1px solid rgba(255,255,255,.7); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
     .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
 
     .ko{ font-size:2.6rem; font-weight:900; letter-spacing:.5px; text-shadow:0 1px 0 rgba(255,255,255,.7); color:#0c253a }
@@ -95,7 +83,6 @@
     @media (max-width:420px){ .ko-big{ font-size:1.8rem; } }
 
     .meta{ font-weight:800; color:var(--ice-3); opacity:.9 }
-    .front .meta{ color:#000; } /* Page/Book on front = black */
 
     .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
     .enlines li{ padding:8px 10px; margin:6px 0; border-radius:12px; background:linear-gradient(180deg, #071c2c, #061725); border:1px solid rgba(186,230,253,.2); color:var(--ice-2) }
@@ -113,9 +100,51 @@
 
     @media (max-width:768px){ .stage{ height:420px } .ko{ font-size:2.8rem } }
 
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    #flipToFront{
+      background: linear-gradient(90deg, #a78bfa, #60a5fa) !important; color:#07162a !important; border:none !important;
+      font-weight:900; letter-spacing:.6px; text-transform:uppercase;
+      box-shadow:0 10px 26px rgba(96,165,250,.45), 0 0 26px rgba(167,139,250,.35);
+    }
+    #flipToFront:hover{ filter:brightness(1.08); box-shadow:0 0 22px rgba(96,165,250,.65), 0 0 34px rgba(167,139,250,.45); }
+
+    #flipToBack{
+      position:relative; padding:14px 22px !important; border-radius:16px;
+      border:1px solid rgba(255,255,255,.75) !important; border-bottom-color:rgba(10,60,90,.45) !important; border-right-color:rgba(10,60,90,.35) !important;
+      background:linear-gradient(180deg, rgba(236,254,255,.98) 0%, rgba(219,234,254,.96) 38%, rgba(56,189,248,.93) 100%) !important;
+      color:#062136 !important; text-transform:uppercase; letter-spacing:.8px; font-weight:900;
+      box-shadow:0 14px 28px rgba(56,189,248,.35), 0 6px 0 rgba(6,26,43,.65), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -8px 20px rgba(7,34,53,.25);
+      transform:translateY(-1px); transition:transform .18s ease, box-shadow .22s ease, filter .22s ease; overflow:hidden; isolation:isolate;
+    }
+    #flipToBack::before{ content:""; position:absolute; inset:2px 2px 10px 2px; border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 60%); pointer-events:none; mix-blend-mode:screen; }
+    #flipToBack::after{
+      content:""; position:absolute; inset:-45% -70%;
+      background:
+        radial-gradient(12px 12px at 22% 32%, rgba(255,255,255,.85), transparent 60%),
+        radial-gradient(10px 10px at 72% 65%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.45) 50%, rgba(255,255,255,0) 65%);
+      transform:translateX(-120%) rotate(8deg); animation:icySweep 2.6s ease-in-out infinite; pointer-events:none; mix-blend-mode:screen;
+    }
+    #flipToBack:hover{ filter:brightness(1.06); transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(56,189,248,.45), 0 8px 0 rgba(6,26,43,.6), inset 0 1px 0 rgba(255,255,255,1), inset 0 -10px 24px rgba(7,34,53,.28); }
+    #flipToBack:active{ transform:translateY(0); box-shadow:0 8px 16px rgba(56,189,248,.35), 0 3px 0 rgba(6,26,43,.7),
+      inset 0 1px 0 rgba(255,255,255,.95), inset 0 -6px 16px rgba(7,34,53,.28); }
+    @keyframes icySweep{ 0%{transform:translateX(-120%) rotate(8deg); opacity:.95} 50%{opacity:1} 100%{transform:translateX(120%) rotate(8deg); opacity:.95} }
+
+    .koform{ font-size:1.24rem; font-weight:400; letter-spacing:.3px; color:var(--ice-1); }
+    @media (max-width:420px){ .koform{ font-size:1.1rem; } }
+
+    .floating-home { position: fixed; top: 0; right: 0; background: linear-gradient(90deg, var(--cyan), var(--accent)); color: #072235; font-size: 14px; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35); z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+
     /* ==== Auto image box ==== */
     .img-wrap{ width:min(460px,96%); height:180px; border-radius:12px; overflow:hidden; position:relative; border:1px solid rgba(186,230,253,.2); background:linear-gradient(180deg,#071c2c,#061725); display:flex; align-items:center; justify-content:center; margin-top:6px; }
-    .choices-on .img-wrap{ height:240px; } /* Larger when choices shown */
     .img-wrap.loading::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.08),rgba(255,255,255,0)); animation:sweep 1.4s infinite; }
     .img-wrap img{ width:100%; height:100%; object-fit:contain; display:block; background:#061725; }
     @keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
@@ -134,14 +163,6 @@
 
     /* Hide MCQ choices when toggle is OFF */
     .hide-choices .choices{ display:none !important; }
-
-    /* Play controls row */
-    .playbar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; }
-    .mini{ padding:8px 10px; font-size:.95rem }
-    .note{ color:var(--muted); font-size:.9rem; text-align:center }
-
-    .floating-home { position: fixed; top: 0; right: 0; background: linear-gradient(90deg, var(--cyan), var(--accent)); color: #072235; font-size: 14px; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35); z-index: 9999; transition: all 0.25s ease; backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%); }
-    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -153,26 +174,10 @@
     <div class="progress" id="progress">&nbsp;</div>
   </header>
 
-  <div class="toolbar" id="toolbar">
-    <!-- Scope buttons: ALL / BOOK 1 / BOOK 2 -->
-    <div class="segmented" role="group" aria-label="Book Filter">
-      <input type="radio" name="scope" id="scope-all" value="all" checked>
-      <label for="scope-all">ALL</label>
-      <input type="radio" name="scope" id="scope-b1" value="1">
-      <label for="scope-b1">Book 1</label>
-      <input type="radio" name="scope" id="scope-b2" value="2">
-      <label for="scope-b2">Book 2</label>
-    </div>
-
+  <div class="toolbar">
     <label for="category-select">Select Noun Category:</label>
     <select id="category-select"></select>
 
-    <div class="playbar">
-      <button class="btn mini" id="playAllBtn">▶ Play All</button>
-      <button class="btn mini" id="randomPlayBtn">🔀 Random Play</button>
-      <button class="btn mini ghost" id="stopBtn">⏹ Stop</button>
-    </div>
-    <div class="note">Plays: Korean → (1s) Korean → (1s) English → (1s) ✨Ting → next</div>
 
     <div style="display:flex;align-items:center;gap:10px">
       <input type="checkbox" id="togglePics" checked />
@@ -217,12 +222,11 @@
   <audio id="koAudio" preload="auto"></audio>
 
 <script>
-/* ========================= DATA (truncate/keep yours) ========================= */
+/* ========================= DATA ========================= */
 const CATEGORIZED_NOUNS = {
-all: { name:{en:"All", ko:"전체"}, data:[] },
+  all: { name:{en:"All", ko:"전체"}, data:[] },
 
-
-"pronouns": {
+  "pronouns": {
     "name": { "en": "Pronouns", "ko": "대명사", "tl": "Mga Panghalip" },
     "data": [
       { "ko": "저", "en": "I / Me (Formal)", "tl": "ako", "page": 0, "book": 1 },
@@ -1939,163 +1943,259 @@ all: { name:{en:"All", ko:"전체"}, data:[] },
 
 };
 
+// Fill 'all' category
+for (const categoryKey in CATEGORIZED_NOUNS) {
+  if (categoryKey !== 'all' && CATEGORIZED_NOUNS.hasOwnProperty(categoryKey)) {
+    CATEGORIZED_NOUNS['all'].data = CATEGORIZED_NOUNS['all'].data.concat(CATEGORIZED_NOUNS[categoryKey].data);
+  }
+}
+</script>
 
-/* ========================= UTILITIES ========================= */
-const el = s=>document.querySelector(s);
-const front = el('#front');
-const back = el('#back');
-const cardWrap = el('#flipWrap');
-const progressEl = el('#progress');
-const categorySelect = el('#category-select');
-const scopeRadios = [...document.querySelectorAll('input[name="scope"]')];
-const togglePics = el('#togglePics');
-const toggleChoices = el('#toggleChoices');
+<script>
+// =================== GLOBAL STATE ===================
+let showPics = document.getElementById('togglePics')?.checked ?? true;
+let queue = [];
+let current = null;
+let index = 0;
+let audioReady = false;
+let selectedCategory = 'all';
 
-const startBtn = el('#startBtn');
-const restartBtn = el('#restartBtn');
-const gate = el('#gate');
-const finish = el('#finish');
+const gate = document.getElementById('gate');
+const finish = document.getElementById('finish');
+const progressEl = document.getElementById('progress');
+const flipWrap = document.getElementById('flipWrap');
+const cardEl = document.getElementById('card');
+const front = document.getElementById('front');
+const back  = document.getElementById('back');
+const player = document.getElementById('koAudio');
+let isAnimating = false;
 
-const playAllBtn = el('#playAllBtn');
-const randomPlayBtn = el('#randomPlayBtn');
-const stopBtn = el('#stopBtn');
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function randomItem(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length}`; }
 
-let voicesReady = false;
-let koVoice = null, enVoice = null;
+// =================== AUDIO ===================
+const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE"; // leave blank to use Web Speech
+const audioCache = new Map();
+const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
 
-const state = {
-  scope: 'all', // 'all' | '1' | '2'
-  categoryKey: 'all', // 'all' | category id
-  items: [], // filtered list
-  i: 0,
-  isPlayingAll: false,
-  abortController: null,
+let speakTimer = 0;
+let koVoice = null;
+
+function stopAllAudio(){
+  try { window.speechSynthesis?.cancel(); } catch(_) {}
+  try { player.pause(); player.currentTime = 0; } catch(_) {}
+}
+
+function pickKoVoice(){
+  if (!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  koVoice = voices.find(v => (v.lang||'').toLowerCase().startsWith('ko')) || null;
+}
+if ('speechSynthesis' in window){
+  pickKoVoice();
+  window.speechSynthesis.onvoiceschanged = pickKoVoice;
+}
+
+function speakWeb(text){
+  if (!('speechSynthesis' in window)) return;
+  stopAllAudio();
+  clearTimeout(speakTimer);
+  const phrase = String(text||'').trim();
+  speakTimer = setTimeout(()=>{
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.lang  = 'ko-KR';
+    u.rate  = 0.95;
+    u.pitch = 1.0;
+    if (koVoice) u.voice = koVoice;
+    window.speechSynthesis.speak(u);
+  }, 180);
+}
+
+async function playKo(text){
+  if(!audioReady){ speakWeb(text); return; }
+  stopAllAudio();
+  if(VOICERSS_KEY && VOICERSS_KEY !== "YOUR_VOICERSS_KEY_HERE"){
+    let url = audioCache.get(text);
+    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
+    player.src = url;
+    try{ await player.play(); } catch(e){ speakWeb(text); }
+  }else{ speakWeb(text); }
+}
+
+// =================== IMAGE FETCH ===================
+const IMG_CACHE = new Map();
+const HINT_SUFFIXES = {
+  pronouns: ' (pronoun)',
+  interrogatives: ' (question word)',
+  people_relations: ' (person)',
+  nationality: ' (nationality)',
+  food_drinks: ' (food or drink)',
+  home_goods: ' (household item)',
+  places: ' (place)',
+  transportation_places: ' (transport location)',
+  transportation: ' (vehicle)',
+  clothing_accessories: ' (clothing)',
+  school_office_supplies: ' (stationery)',
+  materials: ' (material)',
+  nature_weather: ' (nature)',
+  body_health: ' (anatomy)',
+  activities: ' (activity)',
+  time_numbers: ' (time/number)',
+  colors: ' (color)',
+  animals: ' (animal)',
+  emotions_qualities: ' (emotion)',
+  technology_modern_life: ' (technology)',
+  education_study: ' (education)',
+  travel_tourism: ' (travel)',
+  health_medicine: ' (medicine)',
+  banking_finance: ' (finance)',
+  public_services: ' (public service)',
+  events_occasions: ' (event)',
+  work_career: ' (work)',
+  attributes_conditions: ' (concept)',
+  daily_life: ' (daily life)'
 };
 
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+const WORD_OVERRIDES = {
+  'Kimchi stew':'Kimchi jjigae',
+  'Soybean paste stew':'Doenjang jjigae',
+  'Cold noodles':'Naengmyeon',
+  'knife-cut noodles':'Kalguksu',
+  'Fried chicken':'Korean fried chicken',
+  'Rice cake':'Tteok',
+  'Sweet and sour pork':'Tangsuyuk',
+  'Gimbap':'Gimbap',
+  'Bibimbap':'Bibimbap',
+  'Bulgogi':'Bulgogi',
+  'Galbitang':'Galbitang',
+  'Galbi':'Galbi',
+  'Japchae':'Japchae',
+  'Samgyetang':'Samgyetang',
+  'Alien Registration Card (ARC)':'Alien registration card',
+  'Subway station':'Seoul Metropolitan Subway',
+  'KTX':'KTX train',
+  'School':'School building',
+  'Hospital':'Hospital building'
+};
 
-function svgPlaceholder(koText){
-  const safe = (koText||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'>
-    <defs>
-      <linearGradient id='g' x1='0' x2='0' y1='0' y2='1'>
-        <stop offset='0' stop-color='#0b2740'/>
-        <stop offset='1' stop-color='#061726'/>
-      </linearGradient>
-    </defs>
-    <rect width='100%' height='100%' fill='url(#g)'/>
-    <g font-family='Segoe UI, Noto Sans KR, Arial' text-anchor='middle'>
-      <text x='400' y='280' font-size='64' fill='#dbeafe' font-weight='900'>${safe}</text>
-      <text x='400' y='338' font-size='18' fill='#a9c3d9'>VIZKOR Placeholder</text>
-    </g>
+function cleanEnglishLabel(en){
+  return String(en||'').split('/')[0].replace(/\(.*?\)/g,'').replace(/\s+/g,' ').trim();
+}
+
+function englishQueryFor(item){
+  let base = cleanEnglishLabel(item.en);
+  if (!base) base = item.ko;
+  const hit = Object.keys(WORD_OVERRIDES).find(k => k.toLowerCase() === base.toLowerCase());
+  if (hit) base = WORD_OVERRIDES[hit];
+  const suffix = HINT_SUFFIXES[selectedCategory] ?? '';
+  return (base + suffix).trim();
+}
+
+function withTimeout(p, ms=3500){ return Promise.race([ p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms)) ]); }
+
+async function fetchWikiThumbFrom(lang, q){
+  const endpoint = `https://${lang}.wikipedia.org/w/api.php`+
+    `?action=query&origin=*&format=json&prop=pageimages|pageterms`+
+    `&piprop=thumbnail&pithumbsize=640&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('wiki fetch failed');
+  const data = await res.json();
+  const pages = data?.query?.pages; const first = pages ? Object.values(pages)[0] : null;
+  const src = first?.thumbnail?.source; if(src) return src; throw new Error('no thumb');
+}
+async function fetchCommonsThumb(q){
+  const endpoint = `https://commons.wikimedia.org/w/api.php`+
+    `?action=query&origin=*&format=json&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(q)}`+
+    `&prop=imageinfo&iiprop=url&iiurlwidth=640`;
+  const res = await withTimeout(fetch(endpoint), 3500);
+  if(!res.ok) throw new Error('commons fetch failed');
+  const data = await res.json(); const pages = data?.query?.pages; const first = pages ? Object.values(pages)[0] : null;
+  const info = first?.imageinfo?.[0]; const src = info?.thumburl || info?.url; if(src) return src; throw new Error('no commons image');
+}
+async function getImageUrl(q){
+  if(IMG_CACHE.has(q)) return IMG_CACHE.get(q);
+  let url = '';
+  try { url = await fetchWikiThumbFrom('en', q); }
+  catch(_) { try { url = await fetchWikiThumbFrom('ko', q); }
+  catch(_) { try { url = await fetchCommonsThumb(q); }
+  catch(_) { url = `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}`; }}}
+  IMG_CACHE.set(q, url); return url;
+}
+
+function svgPlaceholder(koText, enText=''){
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+    <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#67e8f9"/>
+    </linearGradient></defs>
+    <rect width="100%" height="100%" fill="#061725"/>
+    <rect x="16" y="16" width="768" height="468" rx="20" fill="url(#g)" opacity="0.10" />
+    <text x="50%" y="48%" font-size="64" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-weight="800" text-anchor="middle">${esc(koText)}</text>
+    <text x="50%" y="64%" font-size="28" fill="#bae6fd" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">${esc(enText)}</text>
   </svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
-function buildAllList(){
-  const all = [];
-  Object.entries(CATEGORIZED_NOUNS).forEach(([key,grp])=>{
-    if(key==='all') return;
-    grp.data.forEach(it=> all.push({...it, __cat:key}) );
-  });
-  CATEGORIZED_NOUNS.all.data = all;
+function preloadNext(){ if (index+1 >= queue.length) return; const nxt = queue[index+1]; const q = englishQueryFor(nxt); getImageUrl(q).then(src => { const im = new Image(); im.src = src; }).catch(()=>{}); }
+
+async function loadAutoImage(item, wrapSel = '#imgWrapFront', imgSel = '#autoImgFront'){
+  const wrap = document.querySelector(wrapSel); const img  = document.querySelector(imgSel);
+  if(!wrap || !img) return; if(!showPics){ wrap.style.display = 'none'; return; }
+  wrap.style.display = ''; wrap.classList.add('loading'); img.removeAttribute('src'); img.alt = '';
+  const q = englishQueryFor(item);
+  try{
+    const src = await getImageUrl(q);
+    img.onerror = ()=>{ wrap.classList.remove('loading'); img.src = svgPlaceholder(item.ko); };
+    img.onload = ()=>{ wrap.classList.remove('loading'); preloadNext(); };
+    img.src = src; img.alt = `${cleanEnglishLabel(item.en)} (${item.ko})`;
+  }catch{ wrap.classList.remove('loading'); img.src = svgPlaceholder(item.ko); }
 }
 
-function filterItems(){
-  const scope = state.scope; // 'all','1','2'
-  const cat = state.categoryKey; // 'all' or specific
+// =================== MCQ (FRONT) ===================
+const _shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+
+function getCurrentPool(){
+  const sel = document.getElementById('category-select'); const key = sel?.value || 'all'; selectedCategory = key;
   let pool = [];
-
-  if(cat==='all'){
-    pool = CATEGORIZED_NOUNS.all.data;
-  }else{
-    pool = (CATEGORIZED_NOUNS[cat]?.data)||[];
-  }
-  if(scope!=='all'){
-    const b = Number(scope);
-    pool = pool.filter(x=> Number(x.book)===b);
-  }
-  // sort by book asc, page asc, then KO
-  pool.sort((a,b)=> (a.book||0)-(b.book||0) || (a.page||0)-(b.page||0) || String(a.ko).localeCompare(String(b.ko),'ko'));
-  state.items = pool;
-  state.i = 0;
-  updateProgress();
+  if(key && CATEGORIZED_NOUNS[key]?.data?.length){ pool = CATEGORIZED_NOUNS[key].data; }
+  else { pool = CATEGORIZED_NOUNS.all.data; }
+  return pool;
 }
 
-function updateProgress(){
-  progressEl.textContent = state.items.length ? `Card ${state.i+1} / ${state.items.length}` : 'No items in this view';
-}
-
-function categoriesForScope(){
-  const keys = Object.keys(CATEGORIZED_NOUNS).filter(k=>k!=='all');
-  const result = [];
-  for(const k of keys){
-    const arr = CATEGORIZED_NOUNS[k].data||[];
-    let has = false;
-    if(state.scope==='all') has = arr.length>0;
-    else has = arr.some(x=> String(x.book)===state.scope);
-    if(has) result.push(k);
+function makeChoices(item){
+  const pool = getCurrentPool().filter(x => x && (x.en || x.tl || x.ko) && x.ko !== item.ko);
+  const cleanEN = s => cleanEnglishLabel(s || '').trim();
+  const norm = s => cleanEN(s).toLowerCase();
+  const correctText = cleanEN(item.en || item.tl || item.ko);
+  const used = new Set([norm(correctText)]);
+  const distractors = [];
+  for(const x of _shuffle(pool)){
+    const txt = cleanEN(x.en || x.tl || x.ko); const key = norm(txt);
+    if(!txt || used.has(key)) continue; used.add(key); distractors.push({ text: txt, correct:false }); if(distractors.length >= 3) break;
   }
-  return result;
+  const correct = { text: correctText, correct:true }; return _shuffle([correct, ...distractors]).slice(0,4);
 }
 
-function populateCategorySelect(){
-  categorySelect.innerHTML = '';
-  const optAll = document.createElement('option');
-  optAll.value = 'all';
-  optAll.textContent = 'All categories';
-  categorySelect.appendChild(optAll);
-
-  for(const k of categoriesForScope()){
-    const o = document.createElement('option');
-    o.value = k; o.textContent = `${CATEGORIZED_NOUNS[k].name?.en||k}`;
-    categorySelect.appendChild(o);
-  }
-  // keep current if still valid; else reset
-  if([...categorySelect.options].some(o=>o.value===state.categoryKey)){
-    categorySelect.value = state.categoryKey;
-  }else{
-    state.categoryKey = 'all';
-    categorySelect.value = 'all';
-  }
+function onPickChoice(evt){
+  evt.stopPropagation(); const el = evt.currentTarget; const wrap = el.parentElement; const all = [...wrap.querySelectorAll('.choice')];
+  all.forEach(c => c.classList.add('disabled')); const isCorrect = el.dataset.correct === 'true';
+  if(isCorrect){ el.classList.add('correct','pulse'); }
+  else{ el.classList.add('wrong'); const right = all.find(c => c.dataset.correct === 'true'); if(right){ right.classList.add('correct','pulse'); } }
 }
 
-function setScope(scope){
-  state.scope = scope; // 'all'|'1'|'2'
-  populateCategorySelect();
-  filterItems();
-  render();
-}
-
-/* ========================= RENDER ========================= */
-function render(){
-  if(!state.items.length){
-    front.innerHTML = `<div class="ko" style="font-size:1.2rem;color:#0c253a">No items found for this filter.</div>`;
-    back.innerHTML = '';
-    return;
-  }
-  const it = state.items[state.i];
-  renderFront(it);
-  renderBack(it);
-}
-
-function renderFront(item){
-  const picsOn = togglePics.checked;
-  const choicesOn = toggleChoices.checked;
-  document.body.classList.toggle('hide-choices', !choicesOn);
-  document.body.classList.toggle('choices-on', choicesOn);
-
-  const imgBox = `<div class="img-wrap${picsOn?'':' loading'}"><img id="autoImgFront" alt="${item.ko}" /></div>`;
-
+function renderFrontWithChoices(item){
   front.innerHTML = `
     <div class="ko-row">
       <div class="ko" aria-label="Korean">${item.ko}</div>
       <button class="play-base" id="playBaseFront" type="button">🔊 Play</button>
     </div>
 
-    <div class="meta">Page ${item.page ?? '-'} • Book ${item.book ?? '-'}</div>
+    <div class="meta">Page ${item.page} • Book ${item.book}</div>
 
-    ${picsOn ? imgBox : ''}
+    <div class="img-wrap" id="imgWrapFront" role="img" aria-label="photo area" style="height: 240px; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+      <img id="autoImgFront" alt="${item.ko}" style="max-width:100%; max-height:100%; object-fit:contain;" />
+    </div>
 
     <div class="choices" id="choices"></div>
 
@@ -2104,211 +2204,103 @@ function renderFront(item){
     </div>
   `;
 
-  // image placeholder (KO only)
-  if(picsOn){
-    const img = document.getElementById('autoImgFront');
-    img.src = svgPlaceholder(item.ko);
-  }
+  front.querySelector('#playBaseFront')?.addEventListener('click', (e)=>{ e.stopPropagation(); playKo(item.ko); });
+  front.querySelector('#flipToBack')?.addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+  loadAutoImage(item, '#imgWrapFront', '#autoImgFront');
 
-  // build MCQ choices (English)
-  const choicesEl = el('#choices');
-  if(choicesEl){
-    const opts = makeChoices(item, 4); // 1 correct + 3 distractors
-    choicesEl.innerHTML = opts.map((o,ix)=> `
-      <div class="choice" data-corr="${o.correct?1:0}">
-        <span class="badge">${ix+1}</span>${o.label}
-      </div>`).join('');
-    choicesEl.querySelectorAll('.choice').forEach(ch=>{
-      ch.addEventListener('click', ()=>{
-        if(Number(ch.dataset.corr)){
-          ch.classList.add('correct','pulse');
-          speak(item.ko,{lang:'ko-KR',voice:koVoice,rate:0.95});
-        }else{
-          ch.classList.add('wrong');
-        }
-        // disable others
-        choicesEl.querySelectorAll('.choice').forEach(x=>x.classList.add('disabled'));
-      });
-    });
-  }
-
-  el('#playBaseFront')?.addEventListener('click', ()=>{
-    speak(item.ko,{lang:'ko-KR',voice:koVoice,rate:0.95});
-  });
-  el('#flipToBack')?.addEventListener('click', ()=>{
-    cardWrap.classList.add('flipped');
+  const opts = makeChoices(item); const letters = ['A','B','C','D']; const box = document.getElementById('choices'); box.innerHTML = '';
+  opts.forEach((opt, i) => {
+    const div = document.createElement('div'); div.className = 'choice'; div.dataset.correct = String(!!opt.correct);
+    div.innerHTML = `<span class="badge">${letters[i]}</span>${opt.text}`;
+    div.addEventListener('click', onPickChoice, { once:true }); div.addEventListener('click', (e)=>e.stopPropagation()); box.appendChild(div);
   });
 }
 
-function renderBack(item){
+function renderBack(w){
   back.innerHTML = `
-    <div class="enhead">English — ${item.en}</div>
+    <div class="ko-big">${w.ko}</div>
+    <div class="meta">Page ${w.page} • Book ${w.book}</div>
+
     <ul class="enlines">
-      <li><b>KOREAN:</b> <span class="ko-big">${item.ko}</span></li>
-      <li><b>TAGALOG:</b> ${item.tl || ''}</li>
+      <li><b>English:</b> <span class="koform">${w.en}</span></li>
+      <li><b>Tagalog:</b> <span class="koform">${w.tl}</span></li>
     </ul>
-    <div class="meta">Page ${item.page ?? '-'} • Book ${item.book ?? '-'}</div>
-    <div class="controls"><button class="btn ghost" id="flipToFront">Back</button></div>
+
+    <div class="controls" style="margin-top:10px">
+      <button class="btn ghost" id="flipToFront">◀ Back</button>
+      <button class="btn" id="nextBtn">Next ▶</button>
+      <button class="btn" id="playBaseBack">🔊 Base</button>
+    </div>
   `;
-  el('#flipToFront')?.addEventListener('click', ()=>{
-    cardWrap.classList.remove('flipped');
-  });
+  back.querySelector('#nextBtn').onclick = (e)=>{ e.stopPropagation(); nextCardAnimated(); };
+  back.querySelector('#playBaseBack').onclick = (e)=>{ e.stopPropagation(); playKo(w.ko); };
+  back.querySelector('#flipToFront').onclick = (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); };
 }
 
-function makeChoices(item, total){
-  const correct = {label: item.en, correct:true};
-  // Pick random distractors from current pool with different English labels
-  const pool = state.items.filter(x=>x!==item);
-  const shuffled = [...pool].sort(()=>Math.random()-0.5);
-  const seen = new Set([String(item.en)]);
-  const distract = [];
-  for(const it of shuffled){
-    const lab = String(it.en);
-    if(!seen.has(lab)) { distract.push({label:lab, correct:false}); seen.add(lab); }
-    if(distract.length>=total-1) break;
-  }
-  const arr = [correct, ...distract];
-  return arr.sort(()=>Math.random()-0.5);
+function showCard(w){ current = w; renderFrontWithChoices(w); renderBack(w); flipWrap.classList.remove('flipped'); updateProgress(); }
+
+function autoplayCurrentOnce(){ if (!queue.length) return; setTimeout(()=> playKo(queue[index].ko), 220); }
+
+function buildDeck(){
+  const sel = document.getElementById('category-select'); selectedCategory = sel?.value || 'all';
+  const dataForDeck = CATEGORIZED_NOUNS[selectedCategory]?.data?.length ? CATEGORIZED_NOUNS[selectedCategory].data : CATEGORIZED_NOUNS.all.data;
+  queue = shuffle([...dataForDeck]); index = 0; gate.style.display = 'none'; finish.style.display = 'none';
+  if (!queue.length) { front.innerHTML = '<p>No cards in this category.</p>'; return; }
+  showCard(queue[index]); if (audioReady) autoplayCurrentOnce();
 }
 
-/* ========================= AUDIO (TTS + Ting) ========================= */
-function ensureVoices(){
-  if(voicesReady) return;
-  const list = window.speechSynthesis.getVoices();
-  if(list && list.length){
-    koVoice = list.find(v=> v.lang && v.lang.startsWith('ko')) || null;
-    enVoice = list.find(v=> v.lang && v.lang.startsWith('en')) || null;
-    voicesReady = true;
-  }
-}
-window.speechSynthesis.onvoiceschanged = ()=>{ voicesReady=false; ensureVoices(); };
-
-function speak(text, opts={}){
-  return new Promise(res=>{
-    try{
-      ensureVoices();
-      const u = new SpeechSynthesisUtterance(String(text||''));
-      u.lang = (opts.lang)||'ko-KR';
-      if(opts.voice) u.voice = opts.voice;
-      if(typeof opts.rate==='number') u.rate = opts.rate;
-      u.onend = ()=> res();
-      u.onerror = ()=> res();
-      window.speechSynthesis.speak(u);
-    }catch(e){ res(); }
-  });
+function nextCardAnimated(){
+  if(isAnimating) return; isAnimating = true; stopAllAudio(); flipWrap.classList.add('animating','fly-exit');
+  const onExitEnd = (e)=>{
+    if(e.target !== cardEl) return; flipWrap.removeEventListener('animationend', onExitEnd); flipWrap.classList.remove('fly-exit'); index++;
+    if(index >= queue.length){ flipWrap.classList.remove('animating'); isAnimating = false; finish.style.display='flex'; return; }
+    showCard(queue[index]); flipWrap.classList.add('fly-enter');
+    const onEnterEnd = (ev)=>{ if(ev.target !== cardEl) return; flipWrap.removeEventListener('animationend', onEnterEnd); flipWrap.classList.remove('fly-enter','animating'); isAnimating = false; if (audioReady) autoplayCurrentOnce(); };
+    flipWrap.addEventListener('animationend', onEnterEnd);
+  };
+  flipWrap.addEventListener('animationend', onExitEnd);
 }
 
-function playTing(durationMs=300, freq=880){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = 'sine'; o.frequency.value = freq;
-    o.connect(g); g.connect(ctx.destination);
-    g.gain.setValueAtTime(0.0001, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime+0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + durationMs/1000);
-    o.start();
-    o.stop(ctx.currentTime + durationMs/1000 + 0.01);
-  }catch(e){}
-}
+flipWrap.addEventListener('click', (e)=>{ if(!queue.length || isAnimating) return; if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); });
 
-async function playSequence(order){
-  if(!order.length) return;
-  state.isPlayingAll = true;
-  state.abortController = new AbortController();
-  const sig = state.abortController.signal;
+cardEl.addEventListener('keydown', (e)=>{
+  if(e.code==='Enter' || e.code==='Space'){ e.preventDefault(); if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped'); else nextCardAnimated(); }
+  if(e.code==='ArrowRight'){ e.preventDefault(); nextCardAnimated(); }
+  if(e.code==='ArrowLeft'){ e.preventDefault(); flipWrap.classList.remove('flipped'); }
+});
 
-  for(let idx=0; idx<order.length; idx++){
-    if(sig.aborted) break;
-    const it = order[idx];
-    // Render the card to match the item being played
-    state.i = Math.max(0, state.items.findIndex(x=>x===it));
-    render(); updateProgress();
+(function populateCategories(){
+  const sel = document.getElementById('category-select'); if (!sel) return; sel.innerHTML = '';
+  for (const key in CATEGORIZED_NOUNS) { const opt = document.createElement('option'); opt.value = key; opt.textContent = CATEGORIZED_NOUNS[key].name?.en || key; sel.appendChild(opt); }
+  sel.value = 'all';
+})();
 
-    await speak(it.ko,{lang:'ko-KR', voice:koVoice, rate:0.95}); if(sig.aborted) break; await sleep(1000);
-    await speak(it.ko,{lang:'ko-KR', voice:koVoice, rate:0.95}); if(sig.aborted) break; await sleep(1000);
-    await speak(it.en,{lang:'en-US', voice:enVoice, rate:1.0}); if(sig.aborted) break; await sleep(1000);
-    playTing(220, 980); if(sig.aborted) break; await sleep(800);
-  }
-  state.isPlayingAll = false;
-  state.abortController = null;
-}
+document.getElementById('startBtn').onclick = ()=>{ audioReady = true; gate.style.display = 'none'; try { window.speechSynthesis?.cancel(); } catch(_) {} buildDeck(); };
+document.getElementById('restartBtn').onclick = ()=>{ finish.style.display='none'; buildDeck(); };
+document.getElementById('category-select').addEventListener('change', buildDeck);
 
-function stopPlayback(){
-  try{ window.speechSynthesis.cancel(); }catch(e){}
-  if(state.abortController){ state.abortController.abort(); }
-  state.isPlayingAll = false;
-}
+const picsToggle = document.getElementById('togglePics');
+if(picsToggle){ picsToggle.addEventListener('change', (e)=>{ showPics = e.target.checked; if(queue.length){ showCard(queue[index]); } }); }
 
-/* ========================= NAVIGATION ========================= */
-function nextCard(){
-  if(!state.items.length) return;
-  state.i = (state.i + 1) % state.items.length;
-  render(); updateProgress();
-}
-function prevCard(){
-  if(!state.items.length) return;
-  state.i = (state.i - 1 + state.items.length) % state.items.length;
-  render(); updateProgress();
-}
+document.addEventListener('click', (e)=>{ if(e.target && e.target.id === 'flipToFront'){ document.getElementById('flipWrap')?.classList.remove('flipped'); } });
 
-/* ========================= INIT ========================= */
-function init(){
-  buildAllList();
-  populateCategorySelect();
-  filterItems();
-  render();
-
-  // Start gate
-  startBtn.addEventListener('click', ()=>{
-    ensureVoices(); gate.style.display='none';
-  });
-  restartBtn.addEventListener('click', ()=>{ finish.style.display='none'; shuffle(state.items); state.i=0; render(); });
-
-  // Scope radio changes
-  scopeRadios.forEach(r=> r.addEventListener('change', (e)=>{
-    if(e.target.checked){ setScope(e.target.value); }
-  }));
-
-  // Category select
-  categorySelect.addEventListener('change', ()=>{
-    state.categoryKey = categorySelect.value;
-    filterItems(); render();
-  });
-
-  // Toggles
-  togglePics.addEventListener('change', ()=> render());
-  toggleChoices.addEventListener('change', ()=> render());
-
-  // Keyboard shortcuts
-  window.addEventListener('keydown', (ev)=>{
-    if(ev.key==='ArrowRight') nextCard();
-    if(ev.key==='ArrowLeft') prevCard();
-    if(ev.key.toLowerCase()==='f') cardWrap.classList.toggle('flipped');
-  });
-
-  // Play buttons
-  playAllBtn.addEventListener('click', ()=>{
-    stopPlayback();
-    const order = [...state.items]; // current order
-    playSequence(order);
-  });
-  randomPlayBtn.addEventListener('click', ()=>{
-    stopPlayback();
-    const order = shuffle([...state.items]);
-    playSequence(order);
-  });
-  stopBtn.addEventListener('click', ()=> stopPlayback());
-}
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-  return a;
-}
-
-// Boot
-init();
+const toggleChoices = document.getElementById('toggleChoices');
+const CHOICES_KEY = 'vizkor_show_choices';
+const savedChoices = localStorage.getItem(CHOICES_KEY);
+const shouldShow = savedChoices === null ? true : savedChoices === 'true';
+document.body.classList.toggle('hide-choices', !shouldShow); toggleChoices.checked = shouldShow;
+toggleChoices.addEventListener('change', (e) => { const on = e.target.checked; document.body.classList.toggle('hide-choices', !on); localStorage.setItem(CHOICES_KEY, String(on)); });
 </script>
+
+<script>
+// (Optional) Disable context actions
+// document.addEventListener("contextmenu", e=>e.preventDefault(), false);
+// document.addEventListener("selectstart", e=>e.preventDefault(), false);
+// document.addEventListener("dragstart", e=>e.preventDefault(), false);
+// document.addEventListener("keydown", function(e){
+//   if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) { e.preventDefault(); }
+// }, false);
+</script>
+
 </body>
 </html>
