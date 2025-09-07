@@ -252,7 +252,7 @@
 
   <header>
     <h1 class="title">VIZKOR Flip Cards</h1>
-    <p class="subtitle">Korean BASIC Verb 145</p>
+    <p class="subtitle">Korean VERB (+conjugated)</p>
     <div class="progress" id="progress">&nbsp;</div>
 
     <!-- Top-level filters -->
@@ -279,7 +279,7 @@
   <section class="quiz" id="quiz">
     <div class="toggleRow">
       <input type="checkbox" id="toggleChoices" checked />
-      <label for="toggleChoices">Show choices (English meaning)</label>
+      <label for="toggleChoices">Show 4 Choices</label>
     </div>
     <div id="choicesGrid" class="choicesGrid" role="group" aria-label="Choices"></div>
   </section>
@@ -542,16 +542,16 @@ async function playKo(text){
 
       if(filterMode === '1'){
         subfilters.classList.add('active');
-        addSubBtn('all', 'All (Book 1)');
+        addSubBtn('all', 'All');
         addSubBtn('1-100', '1–100 (Basic)');
         addSubBtn('101-200', '101–200');
-        addSubBtn('201-288', '201–288 (Last)');
+        addSubBtn('201-288', '201–288');
       }else if(filterMode === '2'){
         subfilters.classList.add('active');
-        addSubBtn('all', 'All (Book 2)');
-        addSubBtn('1-100', '1–100 (Basic)');
+        addSubBtn('all', 'All');
+        addSubBtn('1-100', '1–100');
         addSubBtn('101-200', '101–200');
-        addSubBtn('201-339', '201–339 (Last)');
+        addSubBtn('201-339', '201–339');
       }
 
       function addSubBtn(code, label){
@@ -693,7 +693,10 @@ async function playKo(text){
     document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
 
     // Initialize default view
-    applyFilter('all');
+  // Initialize default view → Book 1, range 1–100 (Basic)
+applyFilter('1');
+applySubFilter('1-100');
+
   </script>
 
   <script>
