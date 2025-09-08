@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flip Cards – Sky Blue Freeze (Sequential + Autoplay + Per-form Buttons)</title>
+  <title>Flip Cards – Sky Blue Freeze (Sequential + Autoplay)</title>
   <style>
     /* ===== Sky Blue Freeze Theme ===== */
     :root{
@@ -61,11 +61,6 @@
       background:linear-gradient(180deg,#0b2a42,#08314e);
       color:var(--ice-1);
     }
-    /* Subfilters row */
-    .subfilters{
-      display:none; gap:8px; justify-content:center; align-items:center; margin:6px 0 0; flex-wrap:wrap;
-    }
-    .subfilters.active{ display:flex; }
 
     .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
     .flip{ perspective:1200px; width:100%; height:100%; }
@@ -208,42 +203,6 @@
       background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
       pointer-events:none;
     }
-	
-	
-	/* One-line subfilters (never wrap) */
-.subfilters{
-  display:none;
-  gap:8px;
-  align-items:center;
-  justify-content:center;   /* center on wide screens */
-  margin:6px 0 0;
-  flex-wrap: nowrap;        /* <<< no wrapping */
-  overflow-x: auto;         /* allow horizontal scroll if needed */
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  padding: 2px 6px 6px;     /* little space for scrollbar */
-}
-.subfilters.active{ display:flex; }
-
-/* Keep each button on one line and prevent shrinking */
-.subfilters .seg{
-  flex: 0 0 auto;           /* don’t shrink */
-  white-space: nowrap;      /* keep label in one line */
-}
-
-/* On mobile, left-align so scrolling starts from the first item */
-@media (max-width: 768px){
-  .subfilters{ justify-content: flex-start; }
-}
-
-/* (Optional) nicer thin scrollbar */
-.subfilters::-webkit-scrollbar{ height:6px }
-.subfilters::-webkit-scrollbar-thumb{
-  background: rgba(186,230,253,.35); border-radius:6px;
-}
-.subfilters::-webkit-scrollbar-track{ background: transparent }
-
-
   </style>
 </head>
 <body>
@@ -252,18 +211,15 @@
 
   <header>
     <h1 class="title">VIZKOR Flip Cards</h1>
-    <p class="subtitle">Korean VERB (+conjugated)</p>
+    <p class="subtitle">Korean ADJECTIVE (+conjugated)</p>
     <div class="progress" id="progress">&nbsp;</div>
 
-    <!-- Top-level filters -->
+    <!-- Top-level filters only -->
     <div class="filters" role="tablist" aria-label="Filter deck">
       <button class="seg active" data-mode="all" aria-pressed="true">All</button>
       <button class="seg" data-mode="1" aria-pressed="false">Book 1</button>
       <button class="seg" data-mode="2" aria-pressed="false">Book 2</button>
     </div>
-
-    <!-- Subfilters (dynamic per book) -->
-    <div id="subfilters" class="subfilters" role="tablist" aria-label="Range filter"></div>
   </header>
 
   <section class="stage">
@@ -322,10 +278,8 @@
 
     // Filters
     const filterButtons = document.querySelectorAll('.filters .seg');
-    const subfilters = document.getElementById('subfilters');
 
     let filterMode = 'all';     // 'all' | '1' | '2'
-    let subMode = 'all';        // 'all' | '1-100' | '101-200' | '201-288' | '201-339'
     let WORDS_POOL = [];        // active filtered set
 
     let isAnimating = false;
@@ -528,88 +482,15 @@ async function playKo(text){
       });
     }
 
-    function setActiveSubButton(mode){
-      [...subfilters.querySelectorAll('.seg')].forEach(btn=>{
-        const active = btn.dataset.sub === mode;
-        btn.classList.toggle('active', active);
-        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-      });
-    }
-
-    function buildSubfilters(){
-      subfilters.innerHTML = '';
-      subfilters.classList.remove('active');
-
-      if(filterMode === '1'){
-        subfilters.classList.add('active');
-        addSubBtn('all', 'All');
-        addSubBtn('1-100', '1–100 (Basic)');
-        addSubBtn('101-200', '101–200');
-        addSubBtn('201-288', '201–288');
-      }else if(filterMode === '2'){
-        subfilters.classList.add('active');
-        addSubBtn('all', 'All');
-        addSubBtn('1-100', '1–100');
-        addSubBtn('101-200', '101–200');
-        addSubBtn('201-339', '201–339');
-      }
-
-      function addSubBtn(code, label){
-        const b = document.createElement('button');
-        b.className = 'seg' + (subMode===code ? ' active':'');
-        b.dataset.sub = code;
-        b.setAttribute('aria-pressed', subMode===code ? 'true':'false');
-        b.textContent = label;
-        b.addEventListener('click', (e)=>{
-          e.preventDefault();
-          applySubFilter(code);
-        });
-        subfilters.appendChild(b);
-      }
-    }
-
-    function sliceByRange(list, start, end){
-      const s = Math.max(0, start);
-      const e = Math.min(end, list.length);
-      return (s < e) ? list.slice(s, e) : [];
-    }
-
     function getFilteredWords(){
       if(filterMode === 'all') return [...WORDS_MASTER];
-
       const bookNum = Number(filterMode);
-      const inBook = WORDS_MASTER.filter(w => Number(w.book) === bookNum);
-
-      if(subMode === 'all') return inBook;
-
-      // Fixed ranges; clamp to list length
-      if(bookNum === 1){
-        if(subMode === '1-100')   return sliceByRange(inBook, 0, 100);
-        if(subMode === '101-200') return sliceByRange(inBook, 100, 200);
-        if(subMode === '201-288') return sliceByRange(inBook, 200, 288);
-      }else if(bookNum === 2){
-        if(subMode === '1-100')   return sliceByRange(inBook, 0, 100);
-        if(subMode === '101-200') return sliceByRange(inBook, 100, 200);
-        if(subMode === '201-339') return sliceByRange(inBook, 200, 339);
-      }
-      return inBook; // fallback
+      return WORDS_MASTER.filter(w => Number(w.book) === bookNum);
     }
 
     function applyFilter(mode){
       filterMode = mode;
-      subMode = 'all';               // reset sub-range when switching books/top filter
       setActiveFilterButton(mode);
-      buildSubfilters();
-      WORDS_POOL = getFilteredWords();
-      index = 0;
-      finish.style.display = 'none';
-      queue = shuffle([...WORDS_POOL]);
-      if(queue.length){ showCard(queue[0]); } else { showEmpty(); }
-    }
-
-    function applySubFilter(mode){
-      subMode = mode;
-      setActiveSubButton(mode);
       WORDS_POOL = getFilteredWords();
       index = 0;
       finish.style.display = 'none';
@@ -692,11 +573,8 @@ async function playKo(text){
     document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
     document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
 
-    // Initialize default view
-  // Initialize default view → Book 1, range 1–100 (Basic)
-applyFilter('1');
-applySubFilter('1-100');
-
+    // Initialize default view → Book 1
+    applyFilter('1');
   </script>
 
   <script>
