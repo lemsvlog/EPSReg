@@ -42,6 +42,31 @@
     .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:600 }
     .progress{ margin-top:6px; font-weight:800; color:var(--ice-2) }
 
+    /* ===== Filter Segmented Buttons ===== */
+    .filters{
+      display:flex; gap:8px; justify-content:center; align-items:center;
+      margin:8px 0 0; flex-wrap:wrap;
+    }
+    .seg{
+      appearance:none; border:1px solid rgba(186,230,253,.35);
+      background:linear-gradient(180deg, #071c2c, #061725);
+      color:var(--ice-1); padding:8px 12px; border-radius:12px; font-weight:900;
+      cursor:pointer; box-shadow:0 6px 18px rgba(56,189,248,.20);
+      transition:filter .18s ease, transform .12s ease, box-shadow .18s ease;
+    }
+    .seg:hover{ filter:brightness(1.08); transform:translateY(-1px) }
+    .seg.active{
+      border-color:rgba(56,189,248,.9);
+      box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 28px rgba(56,189,248,.6);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+      color:var(--ice-1);
+    }
+    /* Subfilters row */
+    .subfilters{
+      display:none; gap:8px; justify-content:center; align-items:center; margin:6px 0 0; flex-wrap:wrap;
+    }
+    .subfilters.active{ display:flex; }
+
     .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
     .flip{ perspective:1200px; width:100%; height:100%; }
     .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
@@ -84,8 +109,8 @@
     .flip.animating{ pointer-events:none; }
     @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
     @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
-    .flip.fly-exit .card{ animation: flyOut .55s cubic-bezier(.2,.7,.2,1) forwards; }
-    .flip.fly-enter .card{ animation: flyIn .55s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-exit .card{ animation: flyOut .10s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .10s cubic-bezier(.2,.7,.2,1) forwards; }
 
     #flipToFront{
       background: linear-gradient(90deg, #a78bfa, #60a5fa) !important; color:#07162a !important; border:none !important;
@@ -174,6 +199,51 @@
       background:linear-gradient(180deg,#2b0a0a,#1a0707); border-color:rgba(255,99,132,.65);
       animation:shakeX .35s ease;
     }
+
+    /* ===== Page/Book tag (Front, top) ===== */
+    .meta-top{
+      position:absolute; top:8px; left:12px; right:12px; text-align:center;
+      font-weight:800; color:#000; opacity:.95; padding:4px 8px;
+      border-radius:10px; border:1px solid rgba(0,0,0,.06);
+      background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+      pointer-events:none;
+    }
+	
+	
+	/* One-line subfilters (never wrap) */
+.subfilters{
+  display:none;
+  gap:8px;
+  align-items:center;
+  justify-content:center;   /* center on wide screens */
+  margin:6px 0 0;
+  flex-wrap: nowrap;        /* <<< no wrapping */
+  overflow-x: auto;         /* allow horizontal scroll if needed */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 6px 6px;     /* little space for scrollbar */
+}
+.subfilters.active{ display:flex; }
+
+/* Keep each button on one line and prevent shrinking */
+.subfilters .seg{
+  flex: 0 0 auto;           /* don’t shrink */
+  white-space: nowrap;      /* keep label in one line */
+}
+
+/* On mobile, left-align so scrolling starts from the first item */
+@media (max-width: 768px){
+  .subfilters{ justify-content: flex-start; }
+}
+
+/* (Optional) nicer thin scrollbar */
+.subfilters::-webkit-scrollbar{ height:6px }
+.subfilters::-webkit-scrollbar-thumb{
+  background: rgba(186,230,253,.35); border-radius:6px;
+}
+.subfilters::-webkit-scrollbar-track{ background: transparent }
+
+
   </style>
 </head>
 <body>
@@ -182,8 +252,18 @@
 
   <header>
     <h1 class="title">VIZKOR Flip Cards</h1>
-    <p class="subtitle">Korean BASIC Verb 145</p>
+    <p class="subtitle">Korean VERB (+conjugated)</p>
     <div class="progress" id="progress">&nbsp;</div>
+
+    <!-- Top-level filters -->
+    <div class="filters" role="tablist" aria-label="Filter deck">
+      <button class="seg active" data-mode="all" aria-pressed="true">All</button>
+      <button class="seg" data-mode="1" aria-pressed="false">Book 1</button>
+      <button class="seg" data-mode="2" aria-pressed="false">Book 2</button>
+    </div>
+
+    <!-- Subfilters (dynamic per book) -->
+    <div id="subfilters" class="subfilters" role="tablist" aria-label="Range filter"></div>
   </header>
 
   <section class="stage">
@@ -195,12 +275,11 @@
     </div>
   </section>
 
- 
   <!-- ===== Choices UI (toggle + 4 boxes) ===== -->
   <section class="quiz" id="quiz">
     <div class="toggleRow">
       <input type="checkbox" id="toggleChoices" checked />
-      <label for="toggleChoices">Show choices (English meaning)</label>
+      <label for="toggleChoices">Show 4 Choices</label>
     </div>
     <div id="choicesGrid" class="choicesGrid" role="group" aria-label="Choices"></div>
   </section>
@@ -223,801 +302,411 @@
 
   <audio id="koAudio" preload="auto"></audio>
 
+  <script src="adjective.js"></script>
 
   <script>
-  // ===== Data =====
-// ===== Adjective Data =====
-const WORDS_MASTER = [
-  { ko:'좋다', en:'to be good', present:'좋아요', past:'좋았어요', future:'좋을 거예요' },
-  { ko:'아프다', en:'to be sick/hurt', present:'아파요', past:'아팠어요', future:'아플 거예요' },
-  { ko:'예쁘다', en:'to be pretty', present:'예뻐요', past:'예뻤어요', future:'예쁠 거예요' },
-  { ko:'많다', en:'to be many/much', present:'많아요', past:'많았어요', future:'많을 거예요' },
-  { ko:'피곤하다', en:'to be tired', present:'피곤해요', past:'피곤했어요', future:'피곤할 거예요' },
-  { ko:'맛있다', en:'to be delicious', present:'맛있어요', past:'맛있었어요', future:'맛있을 거예요' },
-  { ko:'재미있다', en:'to be interesting/fun', present:'재미있어요', past:'재미있었어요', future:'재미있을 거예요' },
-  { ko:'싸다', en:'to be cheap', present:'싸요', past:'쌌어요', future:'쌀 거예요' },
-  { ko:'비싸다', en:'to be expensive', present:'비싸요', past:'비쌌어요', future:'비쌀 거예요' },
-  { ko:'힘들다', en:'to be difficult/hard', present:'힘들어요', past:'힘들었어요', future:'힘들 거예요' },
-  { ko:'춥다', en:'to be cold (weather)', present:'추워요', past:'추웠어요', future:'추울 거예요' },
-  { ko:'덥다', en:'to be hot (weather)', present:'더워요', past:'더웠어요', future:'더울 거예요' },
-  { ko:'따뜻하다', en:'to be warm', present:'따뜻해요', past:'따뜻했어요', future:'따뜻할 거예요' },
-  { ko:'시원하다', en:'to be cool/refreshing', present:'시원해요', past:'시원했어요', future:'시원할 거예요' },
-  { ko:'친절하다', en:'to be kind', present:'친절해요', past:'친절했어요', future:'친절할 거예요' },
-  { ko:'바쁘다', en:'to be busy', present:'바빠요', past:'바빴어요', future:'바쁠 거예요' },
-  { ko:'슬프다', en:'to be sad', present:'슬퍼요', past:'슬펐어요', future:'슬플 거예요' },
-  { ko:'지루하다', en:'to be boring (person)', present:'지루해요', past:'지루했어요', future:'지루할 거예요' },
-  { ko:'재미없다', en:'to be uninteresting', present:'재미없어요', past:'재미없었어요', future:'재미없을 거예요' },
-  { ko:'밝다', en:'to be bright', present:'밝아요', past:'밝았어요', future:'밝을 거예요' },
-  { ko:'어둡다', en:'to be dark', present:'어두워요', past:'어두웠어요', future:'어두울 거예요' },
-  { ko:'어렵다', en:'to be difficult', present:'어려워요', past:'어려웠어요', future:'어려울 거예요' },
-  { ko:'쉽다', en:'to be easy', present:'쉬워요', past:'쉬웠어요', future:'쉬울 거예요' },
-  { ko:'가깝다', en:'to be close/near', present:'가까워요', past:'가까웠어요', future:'가까울 거예요' },
-  { ko:'멀다', en:'to be far', present:'멀어요', past:'멀었어요', future:'멀 거예요' },
-  { ko:'넓다', en:'to be spacious', present:'넓어요', past:'넓었어요', future:'넓을 거예요' },
-  { ko:'좁다', en:'to be narrow', present:'좁아요', past:'좁았어요', future:'좁을 거예요' },
-  { ko:'조용하다', en:'to be quiet', present:'조용해요', past:'조용했어요', future:'조용할 거예요' },
-  { ko:'시끄럽다', en:'to be noisy', present:'시끄러워요', past:'시끄러웠어요', future:'시끄러울 거예요' },
-  { ko:'깨끗하다', en:'to be clean', present:'깨끗해요', past:'깨끗했어요', future:'깨끗할 거예요' },
-  { ko:'더럽다', en:'to be dirty', present:'더러워요', past:'더러웠어요', future:'더러울 거예요' },
-  { ko:'맵다', en:'to be spicy', present:'매워요', past:'매웠어요', future:'매울 거예요' },
-  { ko:'달다', en:'to be sweet', present:'달아요', past:'달았어요', future:'달 거예요' },
-  { ko:'짜다', en:'to be salty', present:'짜요', past:'짰어요', future:'짤 거예요' },
-  { ko:'시다', en:'to be sour', present:'셔요', past:'셨어요', future:'실 거예요' },
-  { ko:'싱겁다', en:'to be bland', present:'싱거워요', past:'싱거웠어요', future:'싱거울 거예요' },
-  { ko:'뜨겁다', en:'to be hot (object)', present:'뜨거워요', past:'뜨거웠어요', future:'뜨거울 거예요' },
-  { ko:'차갑다', en:'to be cold (object)', present:'차가워요', past:'차가웠어요', future:'차가울 거예요' },
-  { ko:'아름답다', en:'to be beautiful', present:'아름다워요', past:'아름다웠어요', future:'아름다울 거예요' },
-  { ko:'멋있다', en:'to be good-looking/cool', present:'멋있어요', past:'멋있었어요', future:'멋있을 거예요' },
-  { ko:'잘생기다', en:'to be handsome', present:'잘생겼어요', past:'잘생겼어요', future:'잘생길 거예요' },
-  { ko:'작다', en:'to be small', present:'작아요', past:'작았어요', future:'작을 거예요' },
-  { ko:'길다', en:'to be long', present:'길어요', past:'길었어요', future:'길 거예요' },
-  { ko:'짧다', en:'to be short', present:'짧아요', past:'짧았어요', future:'짧을 거예요' },
-  { ko:'친하다', en:'to be close (relationship)', present:'친해요', past:'친했어요', future:'친할 거예요' },
-  { ko:'활발하다', en:'to be active/lively', present:'활발해요', past:'활발했어요', future:'활발할 거예요' },
-  { ko:'특별하다', en:'to be special', present:'특별해요', past:'특별했어요', future:'특별할 거예요' },
-  { ko:'편리하다', en:'to be convenient', present:'편리해요', past:'편리했어요', future:'편리할 거예요' },
-  { ko:'편안하다', en:'to be comfortable/peaceful', present:'편안해요', past:'편안했어요', future:'편안할 거예요' },
-  { ko:'필요하다', en:'to be necessary', present:'필요해요', past:'필요했어요', future:'필요할 거예요' },
-  { ko:'싱싱하다', en:'to be fresh', present:'싱싱해요', past:'싱싱했어요', future:'싱싱할 거예요' },
-  { ko:'어리다', en:'to be young', present:'어려요', past:'어렸어요', future:'어릴 거예요' },
-  { ko:'얌전하다', en:'to be gentle/quiet', present:'얌전해요', past:'얌전했어요', future:'얌전할 거예요' },
-  { ko:'어지럽다', en:'to be dizzy/messy', present:'어지러워요', past:'어지러웠어요', future:'어지러울 거예요' },
-  { ko:'정확하다', en:'to be accurate', present:'정확해요', past:'정확했어요', future:'정확할 거예요' },
-  { ko:'졸리다', en:'to be sleepy', present:'졸려요', past:'졸렸어요', future:'졸릴 거예요' },
-  { ko:'즐겁다', en:'to be enjoyable', present:'즐거워요', past:'즐거웠어요', future:'즐거울 거예요' },
-  { ko:'유명하다', en:'to be famous', present:'유명해요', past:'유명했어요', future:'유명할 거예요' },
-  { ko:'고급이다', en:'to be advanced/high-end', present:'고급이에요', past:'고급이었어요', future:'고급일 거예요' },
-  { ko:'가늘다', en:'to be thin (diameter)', present:'가늘어요', past:'가늘었어요', future:'가늘 거예요' },
-  { ko:'굵다', en:'to be thick (diameter)', present:'굵어요', past:'굵었어요', future:'굵을 거예요' },
-  { ko:'가렵다', en:'to be itchy', present:'가려워요', past:'가려웠어요', future:'가려울 거예요' },
-  { ko:'고소하다', en:'to be nutty', present:'고소해요', past:'고소했어요', future:'고소할 거예요' },
-  { ko:'궁금하다', en:'to be curious', present:'궁금해요', past:'궁금했어요', future:'궁금할 거예요' },
-  { ko:'느리다', en:'to be slow', present:'느려요', past:'느렸어요', future:'느릴 거예요' },
-  { ko:'느슨하다', en:'to be loose', present:'느슨해요', past:'느슨했어요', future:'느슨할 거예요' },
-  { ko:'무료이다', en:'to be free (no cost)', present:'무료예요', past:'무료였어요', future:'무료일 거예요' },
-  { ko:'부정적이다', en:'to be negative', present:'부정적이에요', past:'부정적이었어요', future:'부정적일 거예요' },
-  { ko:'불쾌하다', en:'to be unpleasant', present:'불쾌해요', past:'불쾌했어요', future:'불쾌할 거예요' },
-  { ko:'새롭다', en:'to be new', present:'새로워요', past:'새로웠어요', future:'새로울 거예요' },
-  { ko:'이르다', en:'to be early', present:'일러요', past:'일렀어요', future:'이를 거예요' },
-  { ko:'익숙하다', en:'to be familiar', present:'익숙해요', past:'익숙했어요', future:'익숙할 거예요' },
-  { ko:'일정하다', en:'to be consistent', present:'일정해요', past:'일정했어요', future:'일정할 거예요' },
-  { ko:'적다', en:'to be few/little', present:'적어요', past:'적었어요', future:'적을 거예요' },
-  { ko:'특별하다', en:'to be special', present:'특별해요', past:'특별했어요', future:'특별할 거예요' }, // (duplicate in list)
-  { ko:'효과적이다', en:'to be effective', present:'효과적이에요', past:'효과적이었어요', future:'효과적일 거예요' },
-  { ko:'하얗다', en:'to be white', present:'하얘요', past:'하얬어요', future:'하얄 거예요' },
-  { ko:'검다', en:'to be black', present:'검어요', past:'검었어요', future:'검을 거예요' },
-  { ko:'공통이다', en:'to be common', present:'공통이에요', past:'공통이었어요', future:'공통일 거예요' },
-  { ko:'단단하다', en:'to be solid', present:'단단해요', past:'단단했어요', future:'단단할 거예요' },
-  { ko:'무섭다', en:'to be scary', present:'무서워요', past:'무서웠어요', future:'무서울 거예요' },
-  { ko:'오래되다', en:'to be old (object)', present:'오래돼요', past:'오래됐어요', future:'오래될 거예요' },
-  { ko:'오염되다', en:'to be contaminated', present:'오염돼요', past:'오염됐어요', future:'오염될 거예요' },
-  { ko:'위험하다', en:'to be dangerous', present:'위험해요', past:'위험했어요', future:'위험할 거예요' },
-  { ko:'약하다', en:'to be weak', present:'약해요', past:'약했어요', future:'약할 거예요' },
-  { ko:'차가 막히다', en:'(traffic) be jammed', present:'차가 막혀요', past:'차가 막혔어요', future:'차가 막힐 거예요' },
-  { ko:'친하다', en:'to be close (relationship)', present:'친해요', past:'친했어요', future:'친할 거예요' }, // (duplicate in list)
-  { ko:'깨끗하다', en:'to be clean', present:'깨끗해요', past:'깨끗했어요', future:'깨끗할 거예요' }, // (duplicate in list)
-  { ko:'더럽다', en:'to be dirty', present:'더러워요', past:'더러웠어요', future:'더러울 거예요' },       // (duplicate in list)
-  { ko:'늘다', en:'to increase', present:'늘어요', past:'늘었어요', future:'늘 거예요' },
-  { ko:'빨갛다', en:'to be red', present:'빨개요', past:'빨갰어요', future:'빨갈 거예요' },
-  { ko:'파랗다', en:'to be blue', present:'파래요', past:'파랬어요', future:'파랄 거예요' },
-  { ko:'노랗다', en:'to be yellow', present:'노래요', past:'노랬어요', future:'노랄 거예요' },
-  { ko:'까맣다', en:'to be black (dark)', present:'까매요', past:'까맸어요', future:'까말 거예요' },
-  { ko:'빨리하다', en:'to do quickly', present:'빨리해요', past:'빨리했어요', future:'빨리할 거예요' },
-  { ko:'늘이다', en:'to lengthen', present:'늘여요', past:'늘였어요', future:'늘일 거예요' },
-  { ko:'묻다', en:'to ask', present:'물어요', past:'물었어요', future:'물을 거예요' },
-  { ko:'없애다', en:'to get rid of', present:'없애요', past:'없앴어요', future:'없앨 거예요' },
-  { ko:'얻다', en:'to obtain', present:'얻어요', past:'얻었어요', future:'얻을 거예요' },
-  { ko:'오르다', en:'to go up', present:'올라요', past:'올랐어요', future:'오를 거예요' },
-  { ko:'빠르다',   en:'to be fast', present:'빨라요', past:'빨랐어요', future:'빠를 거예요' } ,
-];
-  
+    // ===== State & Elements =====
+    let queue = []; let current = null; let index = 0; let audioReady = false;
+    const gate = document.getElementById('gate');
+    const finish = document.getElementById('finish');
+    const progressEl = document.getElementById('progress');
+    const flipWrap = document.getElementById('flipWrap');
+    const cardEl = document.getElementById('card');
+    const front = document.getElementById('front');
+    const back  = document.getElementById('back');
+    const player = document.getElementById('koAudio');
 
- // ===== English + Tagalog (single form per tense) =====
-// Format per verb: present: "EN/TL", past: "EN/TL", future: "EN/TL"
-// ===== 2) EN_TL_FORMS (single English form per tense + Tagalog gloss) =====
-// present: "EN/TL", past: "EN/TL", future: "EN/TL"
-const EN_TL_FORMS = {
-  'go up and down': {
-    present:'goes up and down/umaakyat at bumababa',
-    past:'went up and down/umakyat at bumaba',
-    future:'will go up and down/aakyat at bababa',
-  },
-  'cut out': {
-    present:'cuts out/pinuputol',
-    past:'cut out/pinutol',
-    future:'will cut out/puputulin',
-  },
-  'misunderstand': {
-    present:'misunderstands/nagkakamali ng intindi',
-    past:'misunderstood/nagkamali ng intindi',
-    future:'will misunderstand/magkakamali ng intindi',
-  },
-  'move or transfer': {
-    present:'moves or transfers/lumilipat o naililipat',
-    past:'moved or transferred/lumipat o nailipat',
-    future:'will move or transfer/lilipat o maililipat',
-  },
-  'weld': {
-    present:'welds/naghihinang',
-    past:'welded/naghinang',
-    future:'will weld/maghihinang',
-  },
-  'be hospitalized': {
-    present:'is hospitalized/nasa ospital',
-    past:'was hospitalized/na-ospital',
-    future:'will be hospitalized/ma-oospital',
-  },
-  'prove': {
-    present:'proves/pinatutunayan',
-    past:'proved/pinatunayan',
-    future:'will prove/patutunayan',
-  },
-  'lose': {
-    present:'loses/nawawala',
-    past:'lost/nawala',
-    future:'will lose/mawawala',
-  },
-  'measure': {
-    present:'measures/sinusukat',
-    past:'measured/sinukat',
-    future:'will measure/susukatin',
-  },
-  'recycle': {
-    present:'recycles/nagre-recycle',
-    past:'recycled/nag-recycle',
-    future:'will recycle/magre-recycle',
-  },
-  'stir': {
-    present:'stirs/hinahalo',
-    past:'stirred/hinalo',
-    future:'will stir/hahaluin',
-  },
-  'manipulate or operate': {
-    present:'manipulates or operates/minamanipula',
-    past:'manipulated or operated/minanipula',
-    future:'will manipulate or operate/mamanipulahin',
-  },
-  'respect': {
-    present:'respects/iginagalang',
-    past:'respected/iginalang',
-    future:'will respect/igagalang',
-  },
-  'take (picture) or stamp': {
-    present:'takes (a photo) or stamps/kumukuha ng litrato / tinatatakan',
-    past:'took (a photo) or stamped/kumuha ng litrato / tinatakan',
-    future:'will take (a photo) or stamp/kukuha ng litrato / tatatakan',
-  },
-  'steam': {
-    present:'steams/pinapasingaw',
-    past:'steamed/pinasingaw',
-    future:'will steam/papasingawin',
-  },
-  'get annoyed': {
-    present:'gets annoyed/naiinis o naiirita',
-    past:'got annoyed/nainis o nairita',
-    future:'will get annoyed/maiinis o maiirita',
-  },
-  'demolish': {
-    present:'demolishes/gingiba',
-    past:'demolished/giniba',
-    future:'will demolish/gigibain',
-  },
-  'conclude (agreement)': {
-    present:'concludes (an agreement)/nilalagdaan o pinipirmahan',
-    past:'concluded (an agreement)/nilagdaan o pinirmahan',
-    future:'will conclude (an agreement)/lalagdaan o pipirmahan',
-  },
-  'have indigestion': {
-    present:'has indigestion/hindi natutunawan',
-    past:'had indigestion/hindi natunawan',
-    future:'will have indigestion/hindi matutunawan',
-  },
-  'release goods': {
-    present:'releases goods/inilalabas ang mga kalakal',
-    past:'released goods/inilabas ang mga kalakal',
-    future:'will release goods/ilalabas ang mga kalakal',
-  },
-  'ship (products)': {
-    present:'ships (products)/ipinapadala ang produkto',
-    past:'shipped (products)/ipinadala ang produkto',
-    future:'will ship (products)/ipapadala ang produkto',
-  },
-  'play or hit': {
-    present:'plays or hits/tumutugtog o pinapalo',
-    past:'played or hit/tumugtog o pinalo',
-    future:'will play or hit/tutugtog o papaluin',
-  },
-  'interpret': {
-    present:'interprets/nag-i-interpret',
-    past:'interpreted/nag-interpret',
-    future:'will interpret/mag-i-interpret',
-  },
-  'refund': {
-    present:'refunds/ibinabalik ang bayad',
-    past:'refunded/ibinalik ang bayad',
-    future:'will refund/ibabalik ang bayad',
-  },
-  'transfer (transport)': {
-    present:'transfers (transport)/lumilipat ng sasakyan',
-    past:'transferred (transport)/lumipat ng sasakyan',
-    future:'will transfer (transport)/lilipat ng sasakyan',
-  },
-  'active': {
-    present:'is active/aktibo',
-    past:'was active/naging aktibo',
-    future:'will be active/magiging aktibo',
-  },
-  'train': {
-    present:'trains/nagsasanay',
-    past:'trained/nagsanay',
-    future:'will train/magsasanay',
-  },
+    // Choices elements
+    const choicesGrid = document.getElementById('choicesGrid');
+    const toggleChoices = document.getElementById('toggleChoices');
 
-  // adjectives & states
-  'common': { present:'is common/karaniwan', past:'was common/karaniwan', future:'will be common/magiging karaniwan' },
-  'solid': { present:'is solid/matigas', past:'was solid/matigas', future:'will be solid/magiging matigas' },
-  'thick': { present:'is thick/makapal', past:'was thick/makapal', future:'will be thick/magiging makapal' },
-  'slow': { present:'is slow/mabagal', past:'was slow/mabagal', future:'will be slow/magiging mabagal' },
-  'loose': { present:'is loose/maluwag', past:'was loose/maluwag', future:'will be loose/magiging maluwag' },
-  'dry': { present:'is dry/tuyo', past:'was dry/tuyo', future:'will be dry/magiging tuyo' },
-  'smooth': { present:'is smooth/makinis', past:'was smooth/makinis', future:'will be smooth/magiging makinis' },
-  'dry or barren': { present:'is dry or barren/tuyo o tigang', past:'was dry or barren/tuyo o tigang', future:'will be dry or barren/magiging tuyo o tigang' },
-  'scary': { present:'is scary/nakakatakot', past:'was scary/nakakatakot', future:'will be scary/magiging nakakatakot' },
-  'soft': { present:'is soft/malambot', past:'was soft/malambot', future:'will be soft/magiging malambot' },
-  'negative': { present:'is negative/negatibo', past:'was negative/negatibo', future:'will be negative/magiging negatibo' },
-  'unpleasant': { present:'is unpleasant/hindi kanais-nais', past:'was unpleasant/hindi kanais-nais', future:'will be unpleasant/magiging hindi kanais-nais' },
-  'lacking': { present:'is lacking/kulang', past:'was lacking/kulang', future:'will be lacking/magiging kulang' },
-  'fresh': { present:'is fresh/sariwa', past:'was fresh/sariwa', future:'will be fresh/magiging sariwa' },
-  'weak': { present:'is weak/mahina', past:'was weak/mahina', future:'will be weak/magiging mahina' },
-  'dark': { present:'is dark/madilim', past:'was dark/madilim', future:'will be dark/magiging madilim' },
-  'right or correct': { present:'is right or correct/tama o matuwid', past:'was right or correct/tama o matuwid', future:'will be right or correct/magiging tama o matuwid' },
-  'contaminated': { present:'is contaminated/kontaminado', past:'was contaminated/kontaminado', future:'will be contaminated/magiging kontaminado' },
-  'dangerous': { present:'is dangerous/mapanganib', past:'was dangerous/mapanganib', future:'will be dangerous/magiging mapanganib' },
-  'consistent': { present:'is consistent/pare-pareho', past:'was consistent/pare-pareho', future:'will be consistent/magiging pare-pareho' },
-  'accurate': { present:'is accurate/tumpak', past:'was accurate/tumpak', future:'will be accurate/magiging tumpak' },
-  'salty': { present:'is salty/maalat', past:'was salty/maalat', future:'will be salty/magiging maalat' },
-  'cold (object)': { present:'is cold/malamig', past:'was cold/malamig', future:'will be cold/magiging malamig' },
-  'cold (weather)': { present:'is cold/malamig (panahon)', past:'was cold/malamig (panahon)', future:'will be cold/magiging malamig (panahon)' },
-  'effective': { present:'is effective/epektibo', past:'was effective/epektibo', future:'will be effective/magiging epektibo' },
-  'cloudy': { present:'is cloudy/maulap', past:'was cloudy/maulap', future:'will be cloudy/magiging maulap' },
-  'itchy': { present:'feels itchy/makati', past:'felt itchy/makati', future:'will feel itchy/magiging makati' },
+    // Filters
+    const filterButtons = document.querySelectorAll('.filters .seg');
+    const subfilters = document.getElementById('subfilters');
 
-  'good': { present:'is good/mabuti', past:'was good/naging mabuti', future:'will be good/magiging mabuti' },
-  'bad': { present:'is bad/masama', past:'was bad/naging masama', future:'will be bad/magiging masama' },
-  'many or much': { present:'are many or much/marami', past:'were many or much/naging marami', future:'will be many or much/magiging marami' },
-  'few or little': { present:'are few or little/kakaunti', past:'were few or little/kakaunti', future:'will be few or little/magiging kakaunti' },
-  'cheap': { present:'is cheap/mura', past:'was cheap/mura', future:'will be cheap/magiging mura' },
-  'expensive': { present:'is expensive/mahal', past:'was expensive/mahal', future:'will be expensive/magiging mahal' },
-  'small': { present:'is small/maliit', past:'was small/maliit', future:'will be small/magiging maliit' },
-  'big or large': { present:'is big or large/malaki', past:'was big or large/naging malaki', future:'will be big or large/magiging malaki' },
-  'fast': { present:'is fast/mabilis', past:'was fast/mabilis', future:'will be fast/magiging mabilis' },
-  'easy': { present:'is easy/madali', past:'was easy/madali', future:'will be easy/magiging madali' },
-  'difficult or hard': { present:'is difficult or hard/mahirap', past:'was difficult or hard/mahirap', future:'will be difficult or hard/magiging mahirap' },
-  'hot (touch)': { present:'is hot/mainit (hawak)', past:'was hot/mainit (hawak)', future:'will be hot/magiging mainit (hawak)' },
-  'hot (weather)': { present:'is hot/mainit (panahon)', past:'was hot/mainit (panahon)', future:'will be hot/magiging mainit (panahon)' },
-  'cold (touch)': { present:'is cold/malamig (hawak)', past:'was cold/malamig (hawak)', future:'will be cold/magiging malamig (hawak)' },
-  'pretty': { present:'is pretty/maganda', past:'was pretty/maganda', future:'will be pretty/magiging maganda' },
-  'handsome': { present:'is handsome/gwapo', past:'was handsome/gwapo', future:'will be handsome/magiging gwapo' },
-  'cute': { present:'is cute/cute', past:'was cute/cute', future:'will be cute/magiging cute' },
-  'clean': { present:'is clean/malinis', past:'was clean/malinis', future:'will be clean/magiging malinis' },
-  'dirty': { present:'is dirty/marumi', past:'was dirty/marumi', future:'will be dirty/magiging marumi' },
-  'noisy': { present:'is noisy/maingay', past:'was noisy/maingay', future:'will be noisy/magiging maingay' },
-  'quiet': { present:'is quiet/tahimik', past:'was quiet/tahimik', future:'will be quiet/magiging tahimik' },
-  'long': { present:'is long/mahaba', past:'was long/mahaba', future:'will be long/magiging mahaba' },
-  'short': { present:'is short/maikli', past:'was short/maikli', future:'will be short/magiging maikli' },
-  'high or tall': { present:'is high or tall/mataas', past:'was high or tall/mataas', future:'will be high or tall/magiging mataas' },
-  'low': { present:'is low/mababa', past:'was low/mababa', future:'will be low/magiging mababa' },
-  'heavy': { present:'is heavy/mabigat', past:'was heavy/mabigat', future:'will be heavy/magiging mabigat' },
-  'light (weight)': { present:'is light/magaan', past:'was light/magaan', future:'will be light/magiging magaan' },
-  'hungry': { present:'is hungry/nagugutom', past:'was hungry/nagutom', future:'will be hungry/magugutom' },
-  'full (stomach)': { present:'is full/busog', past:'was full/nabusog', future:'will be full/magiging busog' },
-  'sick or painful': { present:'is sick or painful/masakit o may sakit', past:'was sick or painful/masakit o may sakit', future:'will be sick or painful/masasakit o magkakasakit' },
-  'healthy': { present:'is healthy/malusog', past:'was healthy/malusog', future:'will be healthy/magiging malusog' },
-  'interesting or fun': { present:'is interesting or fun/masaya o kawili-wili', past:'was interesting or fun/masaya o kawili-wili', future:'will be interesting or fun/magiging masaya o kawili-wili' },
-  'uninteresting or boring': { present:'is uninteresting or boring/hindi masaya o boring', past:'was uninteresting or boring/hindi masaya o boring', future:'will be uninteresting or boring/hindi magiging masaya o boring' },
-  'warm': { present:'is warm/mainit-init', past:'was warm/mainit-init', future:'will be warm/magiging mainit-init' },
-  'full (filled)': { present:'is full/puno', past:'was full/napuno', future:'will be full/mapupuno' },
-  'happy': { present:'is happy/masaya', past:'was happy/masaya', future:'will be happy/magiging masaya' },
-  'tired': { present:'is tired/pagod', past:'was tired/napagod', future:'will be tired/mapapagod' },
-  'sleepy': { present:'is sleepy/inaantok', past:'was sleepy/naantok', future:'will be sleepy/aantukin' },
-  'important': { present:'is important/mahalaga', past:'was important/mahalaga', future:'will be important/magiging mahalaga' },
-  'necessary': { present:'is necessary/kailangan', past:'was necessary/kailangan', future:'will be necessary/kakailanganin' },
-  'comfortable': { present:'is comfortable/komportable', past:'was comfortable/komportable', future:'will be comfortable/magiging komportable' },
-  'uncomfortable': { present:'is uncomfortable/hindi komportable', past:'was uncomfortable/hindi komportable', future:'will be uncomfortable/hindi magiging komportable' },
-  'near': { present:'is near/malapit', past:'was near/malapit', future:'will be near/magiging malapit' },
-  'far': { present:'is far/malayo', past:'was far/malayo', future:'will be far/magiging malayo' },
-  'wide or spacious': { present:'is wide or spacious/maluwang', past:'was wide or spacious/maluwang', future:'will be wide or spacious/magiging maluwang' },
-  'narrow': { present:'is narrow/makitid', past:'was narrow/makitid', future:'will be narrow/magiging makitid' },
-  'delicious': { present:'is delicious/masarap', past:'was delicious/masarap', future:'will be delicious/magiging masarap' },
-  'not delicious': { present:'is not delicious/hindi masarap', past:'was not delicious/hindi masarap', future:'will be not delicious/hindi magiging masarap' },
-  'hard or solid': { present:'is hard or solid/matigas', past:'was hard or solid/matigas', future:'will be hard or solid/magiging matigas' },
-  'new': { present:'is new/bago', past:'was new/bago', future:'will be new/magiging bago' },
-  'old (thing)': { present:'is old (thing)/luma', past:'was old (thing)/luma', future:'will be old (thing)/magiging luma' },
-  'young': { present:'is young/bata', past:'was young/bata', future:'will be young/magiging bata' },
-  'old (person)': { present:'is old (person)/matanda', past:'was old (person)/matanda', future:'will be old (person)/magiging matanda' },
-  'famous': { present:'is famous/sikat', past:'was famous/sikat', future:'will be famous/magiging sikat' },
-  'careful': { present:'is careful/maingat', past:'was careful/maingat', future:'will be careful/magiging maingat' },
-  'okay or fine': { present:'is okay or fine/ayos o okay', past:'was okay or fine/naging ayos o okay', future:'will be okay or fine/magiging ayos o okay' },
-  'simple': { present:'is simple/simple', past:'was simple/naging simple', future:'will be simple/magiging simple' },
-  'complicated': { present:'is complicated/komplikado', past:'was complicated/naging komplikado', future:'will be complicated/magiging komplikado' },
-  'sufficient': { present:'is sufficient/sapat', past:'was sufficient/naging sapat', future:'will be sufficient/magiging sapat' },
-  'possible': { present:'is possible/posible', past:'was possible/naging posible', future:'will be possible/magiging posible' },
-  'impossible': { present:'is impossible/imposible', past:'was impossible/naging imposible', future:'will be impossible/magiging imposible' },
-  'same': { present:'is same/pareho', past:'was same/naging pareho', future:'will be same/magiging pareho' },
-  'different': { present:'is different/iba', past:'was different/naging iba', future:'will be different/magiging iba' },
-  'similar': { present:'is similar/halos pareho', past:'was similar/naging halos pareho', future:'will be similar/magiging halos pareho' },
-  'strange': { present:'is strange/kakaiba', past:'was strange/naging kakaiba', future:'will be strange/magiging kakaiba' },
-  'normal': { present:'is normal/normal o karaniwan', past:'was normal/naging normal o karaniwan', future:'will be normal/magiging normal o karaniwan' },
-  'free or not busy': { present:'is free or not busy/walang ginagawa o libre', past:'was free or not busy/naging walang ginagawa o libre', future:'will be free or not busy/magiging walang ginagawa o libre' },
-  'late': { present:'is late/huli o late', past:'was late/naging huli o late', future:'will be late/magiging huli o late' },
-  'safe': { present:'is safe/ligtas', past:'was safe/naging ligtas', future:'will be safe/magiging ligtas' },
-  'sturdy or robust': { present:'is sturdy or robust/matibay', past:'was sturdy or robust/naging matibay', future:'will be sturdy or robust/magiging matibay' },
-  'slippery': { present:'is slippery/madulas', past:'was slippery/naging madulas', future:'will be slippery/magiging madulas' },
-  'sharp': { present:'is sharp/matalim', past:'was sharp/naging matalim', future:'will be sharp/magiging matalim' },
-  'empty': { present:'is empty/walang laman', past:'was empty/naging walang laman', future:'will be empty/magiging walang laman' },
-  'full': { present:'is full/puno', past:'was full/naging puno', future:'will be full/magiging puno' },
-  'clear (sky or water)': { present:'is clear/malinaw o maaliwalas', past:'was clear/naging malinaw o maaliwalas', future:'will be clear/magiging malinaw o maaliwalas' },
-  'humid': { present:'is humid/mahalumigmig', past:'was humid/naging mahalumigmig', future:'will be humid/magiging mahalumigmig' },
-  'damp': { present:'is damp/mamasa-masa', past:'was damp/naging mamasa-masa', future:'will be damp/magiging mamasa-masa' },
-  'wet': { present:'is wet/basa', past:'was wet/naging basa', future:'will be wet/magiging basa' },
-  'bitter': { present:'is bitter/mapait', past:'was bitter/naging mapait', future:'will be bitter/magiging mapait' },
-  'plain or light-tasting': { present:'is plain or light-tasting/banayad ang lasa', past:'was plain or light-tasting/naging banayad ang lasa', future:'will be plain or light-tasting/magiging banayad ang lasa' },
-  'greasy or oily': { present:'is greasy or oily/malangis o maumay', past:'was greasy or oily/naging malangis o maumay', future:'will be greasy or oily/magiging malangis o maumay' },
-  'rough': { present:'is rough/magaspang', past:'was rough/naging magaspang', future:'will be rough/magiging magaspang' },
-  'sticky': { present:'is sticky/malagkit', past:'was sticky/naging malagkit', future:'will be sticky/magiging malagkit' },
-  'tough or chewy': { present:'is tough or chewy/makunat', past:'was tough or chewy/naging makunat', future:'will be tough or chewy/magiging makunat' },
+    let filterMode = 'all';     // 'all' | '1' | '2'
+    let subMode = 'all';        // 'all' | '1-100' | '101-200' | '201-288' | '201-339'
+    let WORDS_POOL = [];        // active filtered set
 
-  // colors
-  'green': { present:'is green/berde', past:'was green/naging berde', future:'will be green/magiging berde' },
-  'purple': { present:'is purple/lila', past:'was purple/naging lila', future:'will be purple/magiging lila' },
-  'brown': { present:'is brown/kayumanggi', past:'was brown/naging kayumanggi', future:'will be brown/magiging kayumanggi' },
-  'gray': { present:'is gray/abo', past:'was gray/naging abo', future:'will be gray/magiging abo' },
-  'orange': { present:'is orange/kahel', past:'was orange/naging kahel', future:'will be orange/magiging kahel' },
-  'pink': { present:'is pink/rosas', past:'was pink/naging rosas', future:'will be pink/magiging rosas' },
+    let isAnimating = false;
 
-  // character traits
-  'sincere or diligent': { present:'is sincere or diligent/masipag o maaasahan', past:'was sincere or diligent/naging masipag o maaasahan', future:'will be sincere or diligent/magiging masipag o maaasahan' },
-  'diligent': { present:'is diligent/masipag', past:'was diligent/naging masipag', future:'will be diligent/magiging masipag' },
-  'lazy': { present:'is lazy/tamad', past:'was lazy/naging tamad', future:'will be lazy/magiging tamad' },
-  'honest': { present:'is honest/tapat', past:'was honest/naging tapat', future:'will be honest/magiging tapat' },
-  'unkind or impolite': { present:'is unkind or impolite/hindi magalang o bastos', past:'was unkind or impolite/naging hindi magalang o bastos', future:'will be unkind or impolite/magiging hindi magalang o bastos' },
-  'good':                   { present:'is good/mabuti',                    past:'was good/naging mabuti',                    future:'will be good/magiging mabuti' },
-  'sick or hurt':           { present:'is sick or hurt/may sakit',         past:'was sick or hurt/nagkasakit',               future:'will be sick or hurt/magkakasakit' },
-  'pretty':                 { present:'is pretty/maganda',                 past:'was pretty/naging maganda',                 future:'will be pretty/magiging maganda' },
-  'many or much':           { present:'is many or much/marami',            past:'was many or much/naging marami',            future:'will be many or much/magiging marami' },
-  'tired':                  { present:'is tired/pagod',                    past:'was tired/naging pagod',                    future:'will be tired/magiging pagod' },
-  'delicious':              { present:'is delicious/masarap',              past:'was delicious/naging masarap',              future:'will be delicious/magiging masarap' },
-  'interesting or fun':     { present:'is interesting or fun/interesante', past:'was interesting or fun/naging interesante', future:'will be interesting or fun/magiging interesante' },
-  'cheap':                  { present:'is cheap/mura',                     past:'was cheap/naging mura',                     future:'will be cheap/magiging mura' },
-  'expensive':              { present:'is expensive/mahal',                past:'was expensive/naging mahal',                future:'will be expensive/magiging mahal' },
-  'hard (tough)':           { present:'is hard (tough)/mahirap',           past:'was hard (tough)/naging mahirap',           future:'will be hard (tough)/magiging mahirap' },
-  'cold (weather)':         { present:'is cold (weather)/malamig',         past:'was cold (weather)/naging malamig',         future:'will be cold (weather)/magiging malamig' },
-  'hot (weather)':          { present:'is hot (weather)/mainit',           past:'was hot (weather)/naging mainit',           future:'will be hot (weather)/magiging mainit' },
-  'warm':                   { present:'is warm/mainit-init',               past:'was warm/naging mainit-init',               future:'will be warm/magiging mainit-init' },
-  'cool or refreshing':     { present:'is cool or refreshing/refreshing',  past:'was cool or refreshing/naging refreshing',  future:'will be cool or refreshing/magiging refreshing' },
-  'kind':                   { present:'is kind/mabait',                    past:'was kind/naging mabait',                    future:'will be kind/magiging mabait' },
-  'busy':                   { present:'is busy/abala',                     past:'was busy/naging abala',                     future:'will be busy/magiging abala' },
-  'sad':                    { present:'is sad/malungkot',                  past:'was sad/naging malungkot',                  future:'will be sad/magiging malungkot' },
-  'boring (person)':        { present:'is boring/nakakainip',              past:'was boring/naging nakakainip',              future:'will be boring/magiging nakakainip' },
-  'uninteresting (thing)':  { present:'is uninteresting/hindi interesante',past:'was uninteresting/hindi naging interesante',future:'will be uninteresting/hindi magiging interesante' },
-  'bright':                 { present:'is bright/maliwanag',               past:'was bright/naging maliwanag',               future:'will be bright/magiging maliwanag' },
-  'dark':                   { present:'is dark/madilim',                   past:'was dark/naging madilim',                   future:'will be dark/magiging madilim' },
-  'difficult':              { present:'is difficult/mahirap',              past:'was difficult/naging mahirap',              future:'will be difficult/magiging mahirap' },
-  'easy':                   { present:'is easy/madali',                    past:'was easy/naging madali',                    future:'will be easy/magiging madali' },
-  'close (near)':           { present:'is close/malapit',                  past:'was close/naging malapit',                  future:'will be close/magiging malapit' },
-  'far':                    { present:'is far/malayo',                     past:'was far/naging malayo',                     future:'will be far/magiging malayo' },
-  'spacious':               { present:'is spacious/maluwag',               past:'was spacious/naging maluwag',               future:'will be spacious/magiging maluwag' },
-  'narrow':                 { present:'is narrow/makitid',                 past:'was narrow/naging makitid',                 future:'will be narrow/magiging makitid' },
-  'quiet':                  { present:'is quiet/tahimik',                  past:'was quiet/naging tahimik',                  future:'will be quiet/magiging tahimik' },
-  'noisy':                  { present:'is noisy/maingay',                  past:'was noisy/naging maingay',                  future:'will be noisy/magiging maingay' },
-  'clean':                  { present:'is clean/malinis',                  past:'was clean/naging malinis',                  future:'will be clean/magiging malinis' },
-  'dirty':                  { present:'is dirty/marumi',                   past:'was dirty/naging marumi',                   future:'will be dirty/magiging marumi' },
-  'spicy':                  { present:'is spicy/maanghang',                past:'was spicy/naging maanghang',                future:'will be spicy/magiging maanghang' },
-  'sweet':                  { present:'is sweet/matamis',                  past:'was sweet/naging matamis',                  future:'will be sweet/magiging matamis' },
-  'salty':                  { present:'is salty/maalat',                   past:'was salty/naging maalat',                   future:'will be salty/magiging maalat' },
-  'sour':                   { present:'is sour/maasim',                    past:'was sour/naging maasim',                    future:'will be sour/magiging maasim' },
-  'bland':                  { present:'is bland/matabang',                 past:'was bland/naging matabang',                 future:'will be bland/magiging matabang' },
-  'hot (object)':           { present:'is hot/mainit',                     past:'was hot/naging mainit',                     future:'will be hot/magiging mainit' },
-  'cold (object)':          { present:'is cold/malamig',                   past:'was cold/naging malamig',                   future:'will be cold/magiging malamig' },
-  'beautiful':              { present:'is beautiful/maganda',              past:'was beautiful/naging maganda',              future:'will be beautiful/magiging maganda' },
-  'good-looking':           { present:'is good-looking/gwapo',             past:'was good-looking/naging gwapo',             future:'will be good-looking/magiging gwapo' },
-  'handsome':               { present:'is handsome/gwapo',                 past:'was handsome/naging gwapo',                 future:'will be handsome/magiging gwapo' },
-  'small':                  { present:'is small/maliit',                   past:'was small/naging maliit',                   future:'will be small/magiging maliit' },
-  'long':                   { present:'is long/mahaba',                    past:'was long/naging mahaba',                    future:'will be long/magiging mahaba' },
-  'short':                  { present:'is short/maikli',                   past:'was short/naging maikli',                   future:'will be short/magiging maikli' },
-  'close (relationship)':   { present:'is close (relationship)/malapit',   past:'was close (relationship)/naging malapit',   future:'will be close (relationship)/magiging malapit' },
-  'active or lively':       { present:'is active or lively/masigla',       past:'was active or lively/naging masigla',       future:'will be active or lively/magiging masigla' },
-  'special':                { present:'is special/espesyal',               past:'was special/naging espesyal',               future:'will be special/magiging espesyal' },
-  'convenient':             { present:'is convenient/maginhawa',           past:'was convenient/naging maginhawa',           future:'will be convenient/magiging maginhawa' },
-  'comfortable or peaceful':{ present:'is comfortable or peaceful/komportable', past:'was comfortable or peaceful/naging komportable', future:'will be comfortable or peaceful/magiging komportable' },
-  'necessary':              { present:'is necessary/kailangan',            past:'was necessary/naging kailangan',            future:'will be necessary/magiging kailangan' },
-  'fresh':                  { present:'is fresh/sariwa',                   past:'was fresh/naging sariwa',                   future:'will be fresh/magiging sariwa' },
-  'young':                  { present:'is young/bata',                     past:'was young/naging bata',                     future:'will be young/magiging bata' },
-  'quiet or gentle':        { present:'is quiet or gentle/mahinhin',       past:'was quiet or gentle/naging mahinhin',       future:'will be quiet or gentle/magiging mahinhin' },
-  'dizzy or messy':         { present:'is dizzy or messy/nahihilo',        past:'was dizzy or messy/naging nahilo',          future:'will be dizzy or messy/magiging mahihilo' },
-  'accurate':               { present:'is accurate/tumpak',                past:'was accurate/naging tumpak',                future:'will be accurate/magiging tumpak' },
-  'sleepy':                 { present:'is sleepy/inaantok',                past:'was sleepy/naging antok',                   future:'will be sleepy/magiging aantok' },
-  'enjoyable':              { present:'is enjoyable/kasiya-siya',          past:'was enjoyable/naging kasiya-siya',          future:'will be enjoyable/magiging kasiya-siya' },
-  'famous':                 { present:'is famous/sikat',                   past:'was famous/naging sikat',                   future:'will be famous/magiging sikat' },
-  'advanced':               { present:'is advanced/advanced',              past:'was advanced/naging advanced',              future:'will be advanced/magiging advanced' },
-  'thin (diameter)':        { present:'is thin/manipis',                   past:'was thin/naging manipis',                   future:'will be thin/magiging manipis' },
-  'thick (diameter)':       { present:'is thick/makapal',                  past:'was thick/naging makapal',                  future:'will be thick/magiging makapal' },
-  'itchy':                  { present:'is itchy/makati',                   past:'was itchy/naging makati',                   future:'will be itchy/magiging makati' },
-  'nutty (flavor)':         { present:'is nutty/may lasang mani',          past:'was nutty/naging may lasang mani',          future:'will be nutty/magiging may lasang mani' },
-  'curious':                { present:'is curious/mausisa',                past:'was curious/naging mausisa',                future:'will be curious/magiging mausisa' },
-  'slow':                   { present:'is slow/mabagal',                   past:'was slow/naging mabagal',                   future:'will be slow/magiging mabagal' },
-  'loose':                  { present:'is loose/maluwag',                  past:'was loose/naging maluwag',                  future:'will be loose/magiging maluwag' },
-  'free (no cost)':         { present:'is free/libre',                     past:'was free/naging libre',                     future:'will be free/magiging libre' },
-  'negative':               { present:'is negative/negatibo',              past:'was negative/naging negatibo',              future:'will be negative/magiging negatibo' },
-  'unpleasant':             { present:'is unpleasant/hindi kanais-nais',   past:'was unpleasant/hindi naging kanais-nais',   future:'will be unpleasant/hindi magiging kanais-nais' },
-  'new':                    { present:'is new/bago',                       past:'was new/naging bago',                       future:'will be new/magiging bago' },
-  'early':                  { present:'is early/maaga',                    past:'was early/naging maaga',                    future:'will be early/magiging maaga' },
-  'familiar':               { present:'is familiar/pamilyar',              past:'was familiar/naging pamilyar',              future:'will be familiar/magiging pamilyar' },
-  'consistent':             { present:'is consistent/pare-pareho',         past:'was consistent/naging pare-pareho',         future:'will be consistent/magiging pare-pareho' },
-  'white':                  { present:'is white/puti',                     past:'was white/naging puti',                     future:'will be white/magiging puti' },
-  'black':                  { present:'is black/itim',                     past:'was black/naging itim',                     future:'will be black/magiging itim' },
-  'common':                 { present:'is common/karaniwan',               past:'was common/naging karaniwan',               future:'will be common/magiging karaniwan' },
-  'solid':                  { present:'is solid/matigas',                  past:'was solid/naging matigas',                  future:'will be solid/magiging matigas' },
-  'scary':                  { present:'is scary/nakakatakot',              past:'was scary/naging nakakatakot',              future:'will be scary/magiging nakakatakot' },
-  'old (object)':           { present:'is old (object)/luma',              past:'was old (object)/naging luma',              future:'will be old (object)/magiging luma' },
-  'contaminated':           { present:'is contaminated/kontaminado',       past:'was contaminated/naging kontaminado',       future:'will be contaminated/magiging kontaminado' },
-  'dangerous':              { present:'is dangerous/mapanganib',           past:'was dangerous/naging mapanganib',           future:'will be dangerous/magiging mapanganib' },
-  'weak':                   { present:'is weak/mahina',                    past:'was weak/naging mahina',                    future:'will be weak/magiging mahina' },
-  'stuck in traffic':       { present:'is stuck in traffic/nakatigil sa trapiko', past:'was stuck in traffic/nakatigil sa trapiko', future:'will be stuck in traffic/makatigil sa trapiko' },
-  'increase (verb)':        { present:'increases/lumalaki',                past:'increased/lumaki',                          future:'will increase/lalaki' },
-  // (88–89 duplicate concepts already covered above: clean/dirty)
-  'red':                    { present:'is red/pula',                       past:'was red/naging pula',                       future:'will be red/magiging pula' },
-  'blue':                   { present:'is blue/asul',                      past:'was blue/naging asul',                      future:'will be blue/magiging asul' },
-  'yellow':                 { present:'is yellow/dilaw',                   past:'was yellow/naging dilaw',                   future:'will be yellow/magiging dilaw' },
-  // (94 duplicate of black handled above)
-  'do quickly (verb)':      { present:'does quickly/gumagawa nang mabilis', past:'did quickly/ginawa nang mabilis',          future:'will do quickly/gagawin nang mabilis' },
-  'stretch or lengthen':    { present:'stretches/inuunat',                 past:'stretched/inunat',                          future:'will stretch/iuunat' },
-  'ask (verb)':             { present:'asks/nagtatanong',                  past:'asked/nagtanong',                           future:'will ask/magtatanong' },
-  'get or obtain (verb)':   { present:'gets or obtains/nakukuha',          past:'got or obtained/nakuha',                    future:'will get or obtain/makukuha' },
-  'go up or climb (verb)':  { present:'goes up or climbs/umaakyat',        past:'went up or climbed/umakyat',                future:'will go up or climb/aakyat' },
-  'fast': { present:'is fast/mabilis', past:'was fast/naging mabilis', future:'will be fast/magiging mabilis' },
-};
-
-
-
-
-</script>
-
-<script>
-  // ===== State & Elements =====
-  let queue = []; let current = null; let index = 0; let audioReady = false;
-  const gate = document.getElementById('gate');
-  const finish = document.getElementById('finish');
-  const progressEl = document.getElementById('progress');
-  const flipWrap = document.getElementById('flipWrap');
-  const cardEl = document.getElementById('card');
-  const front = document.getElementById('front');
-  const back  = document.getElementById('back');
-  const player = document.getElementById('koAudio');
-
-  // Choices elements
-  const choicesGrid = document.getElementById('choicesGrid');
-  const toggleChoices = document.getElementById('toggleChoices');
-
-  let isAnimating = false;
-
-  // ===== Utils =====
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-  function updateProgress(){ progressEl.textContent = `${Math.min(index+1, queue.length)} / ${queue.length || WORDS_MASTER.length}`; }
-
-  // ===== TTS =====
-  const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
-  const audioCache = new Map();
-  const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
-  function speakWeb(text){
-    if(!('speechSynthesis' in window)) return;
-    const u = new SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = 0.95;
-    try{ speechSynthesis.cancel(); }catch(e){}
-    speechSynthesis.speak(u);
-  }
-  async function playKo(text){
-    if(!audioReady) return;
-    if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){ speakWeb(text); return; }
-    let url = audioCache.get(text);
-    if(!url){ url = koTtsUrl(text); audioCache.set(text, url); }
-    player.src = url;
-    try{ await player.play(); }catch(e){ console.warn("VoiceRSS play failed; falling back to Web Speech:", e); speakWeb(text); }
-  }
-
-  // ===== Smarter EN/TL lines builder =====
-  // Normalizes keys so "to be good" => "good", keeps parentheses, and "/" -> " or "
-  const normalizeForLookup = (en) => {
-    let s = en.trim().toLowerCase();
-    s = s.replace(/^to be\s+/, '').replace(/^to\s+/, ''); // strip "to be"/"to"
-    s = s.replace(/\s*\/\s*/g, ' or ').replace(/\s+/g,' ');
-    return s;
-  };
-
-  // Split a verb phrase into head verb + tail (for phrasal verbs like "cut out")
-  function splitVerbPhrase(s){
-    const m = s.match(/^([a-z]+)(.*)$/i);
-    if(!m) return [s, ''];
-    return [m[1].toLowerCase(), m[2] || ''];
-  }
-
-  const IRREGULAR_PAST = {
-    be:'was', have:'had', do:'did', go:'went', come:'came', make:'made',
-    take:'took', see:'saw', get:'got', give:'gave', find:'found', think:'thought',
-    tell:'told', become:'became', leave:'left', feel:'felt', put:'put', bring:'brought',
-    begin:'began', keep:'kept', hold:'held', write:'wrote', stand:'stood', hear:'heard',
-    mean:'meant', meet:'met', run:'ran', pay:'paid', sit:'sat', speak:'spoke',
-    lead:'led', read:'read', grow:'grew', lose:'lost', fall:'fell', send:'sent',
-    build:'built', spend:'spent', cut:'cut', rise:'rose', drive:'drove', buy:'bought',
-    wear:'wore', choose:'chose', eat:'ate', sleep:'slept', teach:'taught', sell:'sold',
-    fight:'fought', catch:'caught', draw:'drew', feed:'fed', fly:'flew', forget:'forgot',
-    forgive:'forgave', freeze:'froze'
-  };
-
-  function thirdPerson(base){
-    if(base === 'be') return 'is';
-    if(base === 'have') return 'has';
-    if(base === 'do') return 'does';
-    if(/(s|sh|ch|x|z)$/.test(base)) return base + 'es';
-    if(/[^aeiou]y$/.test(base)) return base.slice(0,-1) + 'ies';
-    return base + 's';
-  }
-  function pastTense(base){
-    if(base in IRREGULAR_PAST) return IRREGULAR_PAST[base];
-    if(base.endsWith('e')) return base + 'd';
-    if(/[^aeiou]y$/.test(base)) return base.slice(0,-1) + 'ied';
-    return base + 'ed';
-  }
-  function conjPresentPhrase(phrase){
-    const [v, tail] = splitVerbPhrase(phrase);
-    return thirdPerson(v) + tail;
-  }
-  function conjPastPhrase(phrase){
-    const [v, tail] = splitVerbPhrase(phrase);
-    return pastTense(v) + tail;
-  }
-
-  function englishLines(en){
-    const key = normalizeForLookup(en);
-    const isBePhrase = /^to be\b/i.test(en);
-
-    // 1) Try exact lookup (with variants)
-    let entry =
-      EN_TL_FORMS[key] ||
-      EN_TL_FORMS[key.replace(/\s*\(.*?\)\s*/,'')] ||
-      (key.includes(' or ') ? EN_TL_FORMS[key.split(' or ')[0]] : undefined);
-
-    if(entry) return entry; // Already "EN/TL" per tense (Tagalog included)
-
-    // 2) Fallback conjugation (no Tagalog if not in dict)
-    if(isBePhrase){
-      const base = en.replace(/^to be\s+/i,'').trim();
-      return {
-        present: `is ${base}`,
-        past:    `was ${base}`,
-        future:  `will be ${base}`,
-      };
-    }else{
-      const base = en.replace(/^to\s+/i,'').trim();
-      return {
-        present: conjPresentPhrase(base),
-        past:    conjPastPhrase(base),
-        future:  `will ${base}`,
-      };
+    // ===== Utils =====
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function updateProgress(){
+      const total = queue.length || (WORDS_POOL.length || WORDS_MASTER.length);
+      progressEl.textContent = `${Math.min(index+1, total)} / ${total}`;
     }
-  }
 
-  // ===== Choices (4 small boxes) =====
-  function generateChoicesFor(currentWord){
-    const correct = currentWord.en;
-    const pool = [];
-    for(const w of WORDS_MASTER){
-      if(w.en && w.en !== correct && !pool.includes(w.en)) pool.push(w.en);
+    // ===== TTS =====
+const VOICERSS_KEY = "YOUR_VOICERSS_KEY_HERE";
+const audioCache = new Map();
+const koTtsUrl = (text)=>`https://api.voicerss.org/?key=${VOICERSS_KEY}&hl=ko-kr&c=MP3&f=48khz_16bit_mono&src=${encodeURIComponent(text)}`;
+
+// NEW: normalize Korean for TTS (remove parentheses but keep the inside)
+function normalizeKoForTTS(text){
+  if(!text) return text;
+  let out = String(text);
+
+  // Combine content inside parentheses with surrounding text:
+  // "공부(하다)" -> "공부하다", "(을)" -> "을"
+  out = out.replace(/\s*\(([^)]+)\)\s*/g, '$1');
+
+  // Remove any stray parentheses that might remain
+  out = out.replace(/[()]/g, '');
+
+  // Optional: collapse extra spaces (safety)
+  out = out.replace(/\s{2,}/g, ' ').trim();
+
+  return out;
+}
+
+function speakWeb(text){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.95;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  speechSynthesis.speak(u);
+}
+
+// UPDATED: always TTS the normalized string (parentheses ignored)
+async function playKo(text){
+  if(!audioReady) return;
+
+  const spoken = normalizeKoForTTS(text);
+
+  if(!VOICERSS_KEY || VOICERSS_KEY === "YOUR_VOICERSS_KEY_HERE"){
+    speakWeb(spoken);
+    return;
+  }
+  let url = audioCache.get(spoken);
+  if(!url){
+    url = koTtsUrl(spoken);
+    audioCache.set(spoken, url);
+  }
+  player.src = url;
+  try{
+    await player.play();
+  }catch(e){
+    console.warn("VoiceRSS play failed; falling back to Web Speech:", e);
+    speakWeb(spoken);
+  }
+}
+
+
+    // ===== Choices (4 small boxes) =====
+    function getChoiceEnglish(word){
+      const raw = (word && word.en) ? String(word.en) : '';
+      return raw.split('/')[0].trim();
     }
-    shuffle(pool);
-    const distractors = pool.slice(0,3);
-    return shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
-  }
-
-  function renderChoicesFor(word){
-    choicesGrid.innerHTML = '';
-    if(!toggleChoices.checked) { choicesGrid.style.display = 'none'; return; }
-    choicesGrid.style.display = 'grid';
-    const options = generateChoicesFor(word);
-    let locked = false;
-
-    for(const opt of options){
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'choiceBtn';
-      btn.textContent = opt.text;
-      btn.dataset.correct = opt.correct ? '1' : '0';
-      btn.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        if(locked) return;
-        locked = true;
-        if(opt.correct){
-          btn.classList.add('correct');
-        }else{
-          btn.classList.add('wrong');
-          [...choicesGrid.children].forEach(ch=>{
-            if(ch.dataset.correct === '1'){ ch.classList.add('reveal'); }
-          });
-        }
-      });
-      choicesGrid.appendChild(btn);
-    }
-  }
-
-  toggleChoices.addEventListener('change', ()=>{
-    if(!current) return;
-    renderChoicesFor(current);
-  });
-
-  // ===== Rendering =====
-  function renderFront(w){
-    front.innerHTML = `
-      <div class="ko-row">
-        <div class="ko">${w.ko}</div>
-        <button class="play-base" id="playBaseFront" title="Play base" aria-label="Play base">🔊 Play</button>
-      </div>
-      <ul class="forms">
-        <li>
-          <span class="left"><b>Present</b> <span class="koform">${w.present}</span></span>
-          <button class="play-mini" data-tts="${w.present}" aria-label="Play Present">Play ▶</button>
-        </li>
-        <li>
-          <span class="left"><b>Past</b> <span class="koform">${w.past}</span></span>
-          <button class="play-mini" data-tts="${w.past}" aria-label="Play Past">Play ▶</button>
-        </li>
-        <li>
-          <span class="left"><b>Future</b> <span class="koform">${w.future}</span></span>
-          <button class="play-mini" data-tts="${w.future}" aria-label="Play Future">Play ▶</button>
-        </li>
-      </ul>
-      <div class="controls" style="margin-top:6px">
-        <button class="btn ghost" id="flipToBack"> FLIP the CARD</button>
-      </div>
-    `;
-    front.querySelector('#playBaseFront').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
-    front.querySelectorAll('.play-mini').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{ e.stopPropagation(); playKo(btn.dataset.tts); });
-    });
-    front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
-  }
-
-  function renderBack(w){
-    const lines = englishLines(w.en);
-    back.innerHTML = `
-      <div class="enhead">${w.ko} - ${w.en}</div>
-      <ul class="enlines">
-        <li><b>Present</b> <span class="koform">${w.present}</span> - ${lines.present}</li>
-        <li><b>Past</b>    <span class="koform">${w.past}</span>    - ${lines.past}</li>
-        <li><b>Future</b>  <span class="koform">${w.future}</span>  - ${lines.future}</li>
-      </ul>
-      <div class="controls" style="margin-top:6px">
-        <button class="btn ghost" id="flipToFront">◀ Back</button>
-        <button class="btn" id="nextBtn">Next ▶</button>
-        <button class="btn" id="playBaseBack">🔊 Play Base</button>
-      </div>
-    `;
-    back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
-    back.querySelector('#playBaseBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
-    back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
-  }
-
-  function showCard(w){
-    current = w;
-    renderFront(w);
-    renderBack(w);
-    flipWrap.classList.remove('flipped');
-    updateProgress();
-    renderChoicesFor(w);
-    playKo(w.ko);
-  }
-
-  // ===== Flow =====
-  function startRun(){
-    queue = shuffle([...WORDS_MASTER]);
-    index = 0;
-    finish.style.display = 'none';
-    showCard(queue[index]);
-  }
-
-  function nextCardAnimated(){
-    if(isAnimating) return;
-    isAnimating = true;
-    flipWrap.classList.add('animating','fly-exit');
-
-    const onExitEnd = (e)=>{
-      if(e.target !== cardEl) return;
-      flipWrap.removeEventListener('animationend', onExitEnd);
-      flipWrap.classList.remove('fly-exit');
-
-      index++;
-      if(index >= queue.length){
-        flipWrap.classList.remove('animating');
-        isAnimating = false;
-        finish.style.display = 'flex';
-        return;
+    function generateChoicesFor(currentWord){
+      const correct = getChoiceEnglish(currentWord);
+      const pool = [];
+      const source = (WORDS_POOL && WORDS_POOL.length) ? WORDS_POOL : WORDS_MASTER;
+      for(const w of source){
+        const eng = getChoiceEnglish(w);
+        if(eng && eng !== correct && !pool.includes(eng)) pool.push(eng);
       }
+      shuffle(pool);
+      const distractors = pool.slice(0,3);
+      return shuffle([correct, ...distractors]).map(text => ({ text, correct: text === correct }));
+    }
 
-      const w = queue[index];
+    function renderChoicesFor(word){
+      choicesGrid.innerHTML = '';
+      if(!toggleChoices.checked) { choicesGrid.style.display = 'none'; return; }
+      choicesGrid.style.display = 'grid';
+      const options = generateChoicesFor(word);
+      let locked = false;
+
+      for(const opt of options){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'choiceBtn';
+        btn.textContent = opt.text;
+        btn.dataset.correct = opt.correct ? '1' : '0';
+        btn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          if(locked) return;
+          locked = true;
+          if(opt.correct){
+            btn.classList.add('correct');
+          }else{
+            btn.classList.add('wrong');
+            [...choicesGrid.children].forEach(ch=>{ if(ch.dataset.correct === '1'){ ch.classList.add('reveal'); } });
+          }
+        });
+        choicesGrid.appendChild(btn);
+      }
+    }
+
+    toggleChoices.addEventListener('change', ()=>{
+      if(!current) return;
+      renderChoicesFor(current);
+    });
+
+    // ===== Rendering =====
+    function renderFront(w){
+      front.innerHTML = `
+        <div class="meta-top">Page ${w.page} • Book ${w.book}</div>
+        <div class="ko-row">
+          <div class="ko">${w.ko}</div>
+          <button class="play-base" id="playBaseFront" title="Play base" aria-label="Play base">🔊 Play</button>
+        </div>
+        <ul class="forms">
+          <li>
+            <span class="left"><b>Present</b> <span class="koform">${w.present.ko}</span></span>
+            <button class="play-mini" data-tts="${w.present.ko}" aria-label="Play Present">Play ▶</button>
+          </li>
+          <li>
+            <span class="left"><b>Past</b> <span class="koform">${w.past.ko}</span></span>
+            <button class="play-mini" data-tts="${w.past.ko}" aria-label="Play Past">Play ▶</button>
+          </li>
+          <li>
+            <span class="left"><b>Future</b> <span class="koform">${w.future.ko}</span></span>
+            <button class="play-mini" data-tts="${w.future.ko}" aria-label="Play Future">Play ▶</button>
+          </li>
+        </ul>
+        <div class="controls" style="margin-top:6px">
+          <button class="btn ghost" id="flipToBack"> FLIP the CARD</button>
+        </div>`;
+      front.querySelector('#playBaseFront').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+      front.querySelectorAll('.play-mini').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); playKo(btn.dataset.tts); });
+      });
+      front.querySelector('#flipToBack').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.add('flipped'); });
+    }
+
+    function renderBack(w){
+      const lines = { present: w.present.en, past: w.past.en, future: w.future.en };
+      back.innerHTML = `
+        <div class="enhead">${w.ko} - ${w.en}</div>
+        <ul class="enlines">
+          <li><b>Present</b> <span class="koform">${w.present.ko}</span> - ${lines.present}</li>
+          <li><b>Past</b>    <span class="koform">${w.past.ko}</span>    - ${lines.past}</li>
+          <li><b>Future</b>  <span class="koform">${w.future.ko}</span>  - ${lines.future}</li>
+        </ul>
+        <div class="controls" style="margin-top:6px">
+          <button class="btn ghost" id="flipToFront">◀ Back</button>
+          <button class="btn" id="nextBtn">Next ▶</button>
+          <button class="btn" id="playBaseBack">🔊 Play Base</button>
+        </div>`;
+      back.querySelector('#nextBtn').addEventListener('click', (e)=>{ e.stopPropagation(); nextCardAnimated(); });
+      back.querySelector('#playBaseBack').addEventListener('click', (e)=>{ e.stopPropagation(); playKo(w.ko); });
+      back.querySelector('#flipToFront').addEventListener('click', (e)=>{ e.stopPropagation(); flipWrap.classList.remove('flipped'); });
+    }
+
+    function showCard(w){
+      current = w;
       renderFront(w);
       renderBack(w);
       flipWrap.classList.remove('flipped');
       updateProgress();
-
       renderChoicesFor(w);
+      playKo(w.ko);
+    }
 
-      flipWrap.classList.add('fly-enter');
-      const onEnterEnd = (ev)=>{
-        if(ev.target !== cardEl) return;
-        flipWrap.removeEventListener('animationend', onEnterEnd);
-        flipWrap.classList.remove('fly-enter','animating');
-        isAnimating = false;
-        playKo(w.ko);
-      };
-      flipWrap.addEventListener('animationend', onEnterEnd);
-    };
-    flipWrap.addEventListener('animationend', onExitEnd);
-  }
+    function showEmpty(){
+      current = null;
+      flipWrap.classList.remove('flipped');
+      front.innerHTML = `
+        <div class="meta-top">No items for this filter</div>
+        <div class="ko-row" style="justify-content:center">
+          <div class="ko" style="color:#789; text-shadow:none">— Empty —</div>
+        </div>`;
+      back.innerHTML = '';
+      choicesGrid.innerHTML = '';
+      updateProgress();
+    }
 
-  // Click/tap behavior
-  flipWrap.addEventListener('click', ()=>{
-    if(!current) return;
-    if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
-    else nextCardAnimated();
-  });
+    // ===== Filter helpers =====
+    function setActiveFilterButton(mode){
+      filterButtons.forEach(btn=>{
+        const active = btn.dataset.mode === mode;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+    }
 
-  // Keyboard accessibility (fixed double-line bug)
-  cardEl.addEventListener('keydown', (e)=>{
-    if(e.code==='Enter' || e.code==='Space'){
-      e.preventDefault();
-      if(!flipWrap.classList.contains('flipped')) {
-        flipWrap.classList.add('flipped');
-      } else {
-        nextCardAnimated();
+    function setActiveSubButton(mode){
+      [...subfilters.querySelectorAll('.seg')].forEach(btn=>{
+        const active = btn.dataset.sub === mode;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+    }
+
+    function buildSubfilters(){
+      subfilters.innerHTML = '';
+      subfilters.classList.remove('active');
+
+      if(filterMode === '1'){
+        subfilters.classList.add('active');
+        addSubBtn('all', 'All');
+        addSubBtn('1-100', '1–100 (Basic)');
+        addSubBtn('101-200', '101–200');
+        addSubBtn('201-288', '201–288');
+      }else if(filterMode === '2'){
+        subfilters.classList.add('active');
+        addSubBtn('all', 'All');
+        addSubBtn('1-100', '1–100');
+        addSubBtn('101-200', '101–200');
+        addSubBtn('201-339', '201–339');
+      }
+
+      function addSubBtn(code, label){
+        const b = document.createElement('button');
+        b.className = 'seg' + (subMode===code ? ' active':'');
+        b.dataset.sub = code;
+        b.setAttribute('aria-pressed', subMode===code ? 'true':'false');
+        b.textContent = label;
+        b.addEventListener('click', (e)=>{
+          e.preventDefault();
+          applySubFilter(code);
+        });
+        subfilters.appendChild(b);
       }
     }
-  });
 
-  // Start / Restart
-  document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
-  document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
-</script>
+    function sliceByRange(list, start, end){
+      const s = Math.max(0, start);
+      const e = Math.min(end, list.length);
+      return (s < e) ? list.slice(s, e) : [];
+    }
 
-  <script>
-  // Disable right click
-  document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);
-  // Disable text selection
-  document.addEventListener("selectstart", function(e){ e.preventDefault(); }, false);
-  // Disable drag
-  document.addEventListener("dragstart", function(e){ e.preventDefault(); }, false);
-  // Disable certain keys
-  document.addEventListener("keydown", function(e){
-    if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) { e.preventDefault(); }
-  }, false);
+    function getFilteredWords(){
+      if(filterMode === 'all') return [...WORDS_MASTER];
+
+      const bookNum = Number(filterMode);
+      const inBook = WORDS_MASTER.filter(w => Number(w.book) === bookNum);
+
+      if(subMode === 'all') return inBook;
+
+      // Fixed ranges; clamp to list length
+      if(bookNum === 1){
+        if(subMode === '1-100')   return sliceByRange(inBook, 0, 100);
+        if(subMode === '101-200') return sliceByRange(inBook, 100, 200);
+        if(subMode === '201-288') return sliceByRange(inBook, 200, 288);
+      }else if(bookNum === 2){
+        if(subMode === '1-100')   return sliceByRange(inBook, 0, 100);
+        if(subMode === '101-200') return sliceByRange(inBook, 100, 200);
+        if(subMode === '201-339') return sliceByRange(inBook, 200, 339);
+      }
+      return inBook; // fallback
+    }
+
+    function applyFilter(mode){
+      filterMode = mode;
+      subMode = 'all';               // reset sub-range when switching books/top filter
+      setActiveFilterButton(mode);
+      buildSubfilters();
+      WORDS_POOL = getFilteredWords();
+      index = 0;
+      finish.style.display = 'none';
+      queue = shuffle([...WORDS_POOL]);
+      if(queue.length){ showCard(queue[0]); } else { showEmpty(); }
+    }
+
+    function applySubFilter(mode){
+      subMode = mode;
+      setActiveSubButton(mode);
+      WORDS_POOL = getFilteredWords();
+      index = 0;
+      finish.style.display = 'none';
+      queue = shuffle([...WORDS_POOL]);
+      if(queue.length){ showCard(queue[0]); } else { showEmpty(); }
+    }
+
+    // Wire top-level filters
+    filterButtons.forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        applyFilter(btn.dataset.mode);
+      });
+    });
+
+    // ===== Flow =====
+    function startRun(){
+      WORDS_POOL = getFilteredWords();
+      queue = shuffle([...WORDS_POOL]);
+      index = 0;
+      finish.style.display = 'none';
+      if(queue.length){ showCard(queue[index]); } else { showEmpty(); }
+    }
+
+    function nextCardAnimated(){
+      if(isAnimating) return;
+      isAnimating = true;
+      flipWrap.classList.add('animating','fly-exit');
+
+      const onExitEnd = (e)=>{
+        if(e.target !== cardEl) return;
+        flipWrap.removeEventListener('animationend', onExitEnd);
+        flipWrap.classList.remove('fly-exit');
+
+        index++;
+        if(index >= queue.length){
+          flipWrap.classList.remove('animating');
+          isAnimating = false;
+          finish.style.display = 'flex';
+          return;
+        }
+
+        const w = queue[index];
+        renderFront(w);
+        renderBack(w);
+        flipWrap.classList.remove('flipped');
+        updateProgress();
+        renderChoicesFor(w);
+
+        flipWrap.classList.add('fly-enter');
+        const onEnterEnd = (ev)=>{
+          if(ev.target !== cardEl) return;
+          flipWrap.removeEventListener('animationend', onEnterEnd);
+          flipWrap.classList.remove('fly-enter','animating');
+          isAnimating = false;
+          playKo(w.ko);
+        };
+        flipWrap.addEventListener('animationend', onEnterEnd);
+      };
+      flipWrap.addEventListener('animationend', onExitEnd);
+    }
+
+    // Click/tap behavior
+    flipWrap.addEventListener('click', ()=>{
+      if(!current) return;
+      if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+      else nextCardAnimated();
+    });
+
+    // Keyboard accessibility
+    cardEl.addEventListener('keydown', (e)=>{
+      if(e.code==='Enter' || e.code==='Space'){
+        e.preventDefault();
+        if(!flipWrap.classList.contains('flipped')) flipWrap.classList.add('flipped');
+        else nextCardAnimated();
+      }
+    });
+
+    // Start / Restart
+    document.getElementById('startBtn').addEventListener('click', ()=>{ audioReady = true; gate.style.display = 'none'; startRun(); });
+    document.getElementById('restartBtn').addEventListener('click', ()=>{ gate.style.display = 'none'; audioReady = true; startRun(); });
+
+    // Initialize default view
+  // Initialize default view → Book 1, range 1–100 (Basic)
+applyFilter('1');
+applySubFilter('1-100');
+
   </script>
 
+  <script>
+    // Disable right click / selection / drag / certain keys
+    document.addEventListener("contextmenu", e=>e.preventDefault(), false);
+    document.addEventListener("selectstart", e=>e.preventDefault(), false);
+    document.addEventListener("dragstart", e=>e.preventDefault(), false);
+    document.addEventListener("keydown", function(e){
+      if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) { e.preventDefault(); }
+    }, false);
+  </script>
 </body>
 </html>
