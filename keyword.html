@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EPS‑KLT Keyword List with Audio — Sample</title>
+  <style>
+    :root{
+      --bg:#0a1e2e; --panel:#10283f; --ink:#eaf6ff; --muted:#a9c3d9; --accent:#38bdf8; --ring:0 0 14px rgba(56,189,248,.45);
+      --ok:#16a34a; --btn:#13314b; --btn2:#103149;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Arial, sans-serif; background:linear-gradient(180deg,#06131f,#0a1e2e); color:var(--ink)}
+    header{position:sticky; top:0; z-index:10; backdrop-filter: blur(6px); background:rgba(10,30,46,.75); border-bottom:1px solid rgba(56,189,248,.25)}
+    .wrap{max-width: 920px; margin: 0 auto; padding: 18px 16px}
+    h1{margin:0 0 4px; font-weight:800; letter-spacing:.2px}
+    .sub{margin:0; color:var(--muted); font-size:.95rem}
+
+    /* list */
+    .item{background:var(--panel); border:1px solid rgba(56,189,248,.25); border-radius:16px; padding:16px; margin:14px 0; box-shadow: var(--ring)}
+    .topline{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .ko{font-size:1.35rem; font-weight:800}
+    .mean{color:var(--muted)}
+    .count{margin-left:auto; font-weight:700; background:#061926; padding:4px 10px; border-radius:999px; border:1px solid rgba(56,189,248,.35)}
+    .btns{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+    button{background:var(--btn); color:var(--ink); border:1px solid rgba(56,189,248,.35); padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700}
+    button:hover{background:var(--btn2)}
+    .row{margin:10px 0 6px}
+    .row.korean{font-size:1.05rem}
+    .lbl{display:inline-block; min-width:84px; color:var(--muted)}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
+    .footer-note{color:var(--muted); font-size:.9rem; margin:24px 0 40px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>EPS‑KLT Keyword List with Audio</h1>
+
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="list" aria-live="polite"></div>
+  </main>
+
+ <script src="keyword.js"></script>
+</body>
+</html>
