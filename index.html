@@ -298,9 +298,9 @@
     btn.addEventListener('click', ()=>{
       const isHidden = body.hasAttribute('hidden');
       if(isHidden){
-        body.removeAttribute('hidden'); btn.textContent='Hide'; btn.setAttribute('aria-expanded','true');
+        body.removeAttribute('hidden'); btn.textContent='Hide Announcement'; btn.setAttribute('aria-expanded','true');
       }else{
-        body.setAttribute('hidden',''); btn.textContent='Show'; btn.setAttribute('aria-expanded','false');
+        body.setAttribute('hidden',''); btn.textContent='Show Announcement'; btn.setAttribute('aria-expanded','false');
       }
     });
   })();
