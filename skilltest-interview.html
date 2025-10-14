@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Korean Interview — Flip Cards (Randomized 7)</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#10192b; --ink:#e8f0ff; --muted:#a9b4c7; --accent:#4cc9f0; --accent2:#22d3ee; --ring:#26324a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 15% -10%, #0f2240, transparent),
+                     radial-gradient(900px 600px at 100% 0%, #0c1a33, transparent),
+                     linear-gradient(180deg, #0b1220, #0b1220);
+       color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Helvetica,Arial,sans-serif;}
+  header{position:sticky;top:0;background:rgba(16,25,43,.8);backdrop-filter:blur(6px);border-bottom:1px solid var(--ring);z-index:5}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  h1{margin:8px 0 2px;font-size:20px;letter-spacing:.4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 10px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 10px}
+  button, .toggle{background:#0e223d;color:var(--ink);border:1px solid var(--ring);padding:10px 14px;border-radius:12px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+  button:hover{border-color:var(--accent)}
+  .toggle{display:flex;align-items:center;gap:8px}
+  .toggle input{accent-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:14px}
+  @media (max-width:1200px){.grid{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+
+  /* Card */
+  .card{perspective:1500px}
+  .inner{position:relative;width:100%;height:260px;transform-style:preserve-3d;transition:transform .6s;}
+  .face{position:absolute;inset:0;border:1px solid var(--ring);border-radius:16px;padding:14px;background:linear-gradient(145deg,#0f1b31,#0e182a);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .front{backface-visibility:hidden;display:flex;flex-direction:column;justify-content:space-between}
+  .back{transform:rotateY(180deg);backface-visibility:hidden;display:flex;flex-direction:column;gap:10px;overflow:auto}
+  .qidx{font-size:12px;color:var(--muted)}
+  .qko{font-size:18px;line-height:1.35}
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .pill{font-size:11px;border:1px solid var(--ring);padding:2px 8px;border-radius:999px;color:var(--muted)}
+  .txt{font-size:14px;line-height:1.45}
+  .muted{color:var(--muted)}
+  .flipbtn{margin-left:auto}
+  .flipped .inner{transform:rotateY(180deg)}
+  .kbadge{font-size:11px;color:#93c5fd}
+
+  /* Front question visibility toggle */
+  .hide-front-qs .qko{visibility:hidden;height:1.2em}
+
+  footer{color:var(--muted);font-size:12px;margin-top:18px}
+  .legend{display:flex;gap:10px;flex-wrap:wrap}
+  .clock{max-width:90%;height:auto}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>🧊 Korean Interview — Flip Cards</h1>
+      <p class="sub">
+       
+      </p>
+      <div class="toolbar">
+        <button id="btn-new">🔀 New Random Set</button>
+        <label class="toggle"><input type="checkbox" id="showFrontQ" checked> Show question text (front)</label>
+        <label class="toggle"><input type="checkbox" id="polite"> Use <span class="kbadge">polite</span> form on front</label>
+        <button id="btn-stop">🔇 Stop Speech</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="cards" class="grid"></div>
+
+    <footer>
+      <div class="legend">
+     
+      </div>
+    </footer>
+  </main>
+
+<script>
+// ===== Data (1..34) for personal Qs =====
+const Q = [
+  {id:1, koQFormal:"이름이 무엇입니까?", koQPolite:"이름이 뭐예요?", enQ:"What is your name?", koA:"제 이름은 ________입니다.", enA:"My name is ________."},
+  {id:2, koQFormal:"몇 살입니까?", koQPolite:"몇 살이에요?", enQ:"How old are you?", koA:"저는 ____살입니다.", enA:"I’m _____ years old."},
+  {id:3, koQFormal:"생일이 언제입니까?", koQPolite:"생일이 언제예요?", enQ:"When is your birthday?", koA:"제 생일은 ____년 __월 __일입니다.", enA:"My birthday is YYYY/MM/DD."},
+  {id:4, koQFormal:"어디에서 오셨습니까? / 고향이 어디십니까?", koQPolite:"어디에서 왔어요? / 고향이 어디예요?", enQ:"Where are you from / your hometown?", koA:"제 고향은 ______입니다. / 저는 ____에서 왔습니다.", enA:"My hometown is ____ / I am from ____."},
+  {id:5, koQFormal:"결혼했습니까?", koQPolite:"결혼했어요?", enQ:"Are you married?", koA:"아니요, 미혼입니다. / 아니요, 결혼하지 않았습니다. / 네, 결혼했습니다.", enA:"No, I’m single / No, not yet / Yes, I’m married."},
+  {id:6, koQFormal:"결혼은 언제 하셨습니까? / 언제 했습니까?", koQPolite:"결혼은 언제 했어요? / 언제 했어요?", enQ:"When did you get married?", koA:"____년 __월 __일입니다.", enA:"It was on YYYY/MM/DD."},
+  {id:7, koQFormal:"가족이 몇 명 있습니까?", koQPolite:"가족 몇 명 있어요?", enQ:"How many are you in the family?", koA:"우리 가족은 __명 있습니다.", enA:"We are __ in the family."},
+  {id:8, koQFormal:"아이가 몇 명 있습니까?", koQPolite:"아이가 몇 명 있어요?", enQ:"How many children do you have?", koA:"네, 아이가 __명 있습니다. / 아이가 없습니다.", enA:"I have __ children / I don’t have children."},
+  {id:9, koQFormal:"부모님이 있습니까?", koQPolite:"부모님이 있습니까?", enQ:"Do you have parents?", koA:"네, 부모님이 있습니다. / 저는 어머니와 함께 살고 있지만 아버지는 돌아가셨습니다. / 부모님이 돌아가셨습니다.", enA:"Yes… / I live with my mother; my father has passed away / Both parents have passed away."},
+  {id:10, koQFormal:"형제가 있습니까?", koQPolite:"형제가 있어요?", enQ:"Do you have brothers/siblings?", koA:"형제가 __명 있습니다. (__형/오빠, __남동생 등)", enA:"I have __ brother(s)."},
+  {id:11, koQFormal:"자매가 있습니까?", koQPolite:"자매가 있어요?", enQ:"Do you have sisters?", koA:"아니요, 자매가 없습니다. / 네, 자매가 __명 있습니다.", enA:"No, I don’t have a sister / Yes, I have __ sister(s)."},
+  {id:12, koQFormal:"취미가 무엇입니까?", koQPolite:"취미가 뭐예요?", enQ:"What is your hobby?", koA:"제 취미는 ________입니다.", enA:"My hobby is ______."},
+  {id:13, koQFormal:"무슨 운동을 좋아합니까?", koQPolite:"무슨 운동을 좋아해요?", enQ:"What sport/exercise do you like?", koA:"저는 ______을/를 좋아합니다.", enA:"I like ______."},
+  {id:14, koQFormal:"키가 얼마입니까? / 키가 몇 센티미터입니까?", koQPolite:"키가 얼마나 되세요? / 키가 몇 센티미터 되세요?", enQ:"How tall are you?", koA:"제 키는 ____센티미터입니다.", enA:"My height is ___ cm."},
+  {id:15, koQFormal:"몸무게가 몇 킬로그램입니까? / 몸무게가 얼마입니까?", koQPolite:"몸무게가 얼마예요?", enQ:"What is your weight?", koA:"제 몸무게는 ____킬로그램입니다.", enA:"My weight is ___ kg."},
+  {id:16, koQFormal:"어디에서 한국어를 배웠습니까?", koQPolite:"어디에서 한국어를 배웠습니까?", enQ:"Where did you learn Korean?", koA:"저는 혼자 공부했습니다. / 한국어 센터에서 배웠습니다.", enA:"I studied by myself / at a Korean center."},
+  {id:17, koQFormal:"얼마 동안 한국어를 배우고 있습니까?", koQPolite:"얼마 동안 한국어를 배우고 있어요?", enQ:"How long have you been learning Korean?", koA:"저는 한국어를 _____ 동안 공부했습니다.", enA:"I studied Korean for ______."},
+  {id:18, koQFormal:"이전에는 무엇을 하셨습니까?", koQPolite:"전에 뭐 했어요?", enQ:"What did you do before?", koA:"저는 학생이었습니다. / 저는 직원이었습니다.", enA:"I was a student / an employee."},
+  {id:19, koQFormal:"지금 무엇을 합니까? / 요즘 무엇을 합니까?", koQPolite:"요즘 뭐 해요?", enQ:"What do you do now/lately?", koA:"저는 요즘 한국어를 공부하고 있어요. / 한국어에 대해 더 공부하고 있습니다.", enA:"I’ve been studying Korean lately."},
+  {id:20, koQFormal:"오늘은 며칠입니까?", koQPolite:"오늘은 며칠이에요?", enQ:"What is the date today?", koA:"오늘은 ____년 __월 __일입니다.", enA:"Today is YYYY/MM/DD."},
+  {id:21, koQFormal:"어제는 며칠입니까?", koQPolite:"어제는 며칠이에요?", enQ:"What date was yesterday?", koA:"어제는 ____년 __월 __일입니다.", enA:"Yesterday was YYYY/MM/DD."},
+  {id:22, koQFormal:"내일은 며칠입니까?", koQPolite:"내일은 며칠이에요?", enQ:"What date is tomorrow?", koA:"내일은 ____년 __월 __일입니다.", enA:"Tomorrow is YYYY/MM/DD."},
+  {id:23, koQFormal:"오늘은 무슨 요일입니까?", koQPolite:"오늘은 무슨 요일이에요?", enQ:"What day is today?", koA:"오늘은 ______입니다.", enA:"Today is ______."},
+  {id:24, koQFormal:"어제는 무슨 요일입니까?", koQPolite:"어제는 무슨 요일입니까?", enQ:"What day was it yesterday?", koA:"어제는 ______이었습니다.", enA:"Yesterday was ______."},
+  {id:25, koQFormal:"내일은 무슨 요일입니까?", koQPolite:"내일은 무슨 요일입니까?", enQ:"What day is it tomorrow?", koA:"내일은 ______입니다.", enA:"Tomorrow is ______."},
+  {id:26, koQFormal:"아침 식사하셨습니까?", koQPolite:"아침 식사했어요?", enQ:"Did you have breakfast?", koA:"네, 아침에 먹었습니다. / 아니요, 아직 못 먹었습니다.", enA:"Yes, I ate / No, not yet."},
+  {id:27, koQFormal:"아침에 무엇을 먹었습니까?", koQPolite:"아침에 무엇을 먹었어요?", enQ:"What did you eat for breakfast?", koA:"저는 빵을 먹고 커피를 마셨습니다. / 밥하고 계란을 먹었습니다.", enA:"I ate bread and drank coffee / rice and egg."},
+  {id:28, koQFormal:"무슨 색깔을 좋아하십니까?", koQPolite:"무슨 색깔 좋아해요?", enQ:"What color do you like?", koA:"제가 좋아하는 색은 ______입니다.", enA:"The color I like is ______."},
+  {id:29, koQFormal:"왜 그 색을 좋아합니까?", koQPolite:"왜 그 색을 좋아해요?", enQ:"Why do you like that color?", koA:"제일 좋아하는 색이라서요.", enA:"Because it’s my favorite color."},
+  {id:30, koQFormal:"옷 색깔이 무엇입니까?", koQPolite:"옷 색깔이 뭐예요?", enQ:"What color are your clothes?", koA:"저는 ______ 옷을 입고 있습니다. / ______색 옷을 입습니다.", enA:"I’m wearing ______ clothes."},
+  {id:31, koQFormal:"어떤 계절을 가장 좋아합니까?", koQPolite:"어떤 계절을 가장 좋아해요?", enQ:"What season do you like the most?", koA:"저는 ______을/를 좋아합니다.", enA:"I like ______."},
+  {id:32, koQFormal:"왜 그 계절을 좋아합니까?", koQPolite:"왜 그 계절을 좋아해요?", enQ:"Why do you like that season?", koA:"___________________________.", enA:"Because ______."},
+  {id:33, koQFormal:"오늘 날씨가 어떻습니까?", koQPolite:"오늘 날씨가 어때요?", enQ:"How’s the weather today?", koA:"오늘 날씨는 ______입니다. (좋습니다/덥습니다/흐립니다/비가 옵니다)", enA:"The weather today is ______."},
+  {id:34, koQFormal:"지금 몇 시입니까?", koQPolite:"지금 몇 시예요?", enQ:"What time is it now?", koA:"____시 ____분입니다.", enA:"It’s __:__."},
+];
+
+// ===== Helpers: Korean numbers =====
+const sinoOnes = ["","일","이","삼","사","오","육","칠","팔","구"];
+const nativeOnes = ["","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"];
+const nativeTens = ["","열","스물","서른","마흔","쉰","예순","일흔","여든","아흔"];
+function toSino(n){
+  if(n<=0||n>99) return String(n);
+  const t = Math.floor(n/10), o = n%10;
+  if(t===0) return sinoOnes[o];
+  if(t===1) return "십"+(o? sinoOnes[o]:"");
+  return sinoOnes[t]+"십"+(o? sinoOnes[o]:"");
+}
+function toNative(n){
+  if(n<=0||n>99) return String(n);
+  const t = Math.floor(n/10), o = n%10;
+  if(t===0) return nativeOnes[o];
+  if(o===0) return nativeTens[t];
+  return nativeTens[t]+nativeOnes[o];
+}
+
+// ===== Random math builder (Card #5) =====
+function buildMathItem(){
+  const type = Math.floor(Math.random()*10)+1; // 1..10
+  let frontKoQ="", backKoQ="", backEnQ="", koA="", enA="", extraHTML="";
+
+  if(type===1){ // add 1..99
+    const a = Math.floor(Math.random()*99)+1, b = Math.floor(Math.random()*99)+1;
+    frontKoQ = `${toSino(a)} 더하기 ${toSino(b)}는 얼마입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `${a} + ${b} = ?`;
+    const s=a+b; koA=`${toSino(s)}입니다.`; enA=`It is ${s}.`;
+  } else if(type===2){ // sub 1..99, a>=b
+    let a = Math.floor(Math.random()*99)+1, b = Math.floor(Math.random()*99)+1; if(b>a){[a,b]=[b,a];}
+    frontKoQ = `${toSino(a)} 빼기 ${toSino(b)}는 얼마입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `${a} - ${b} = ?`;
+    const s=a-b; koA=`${toSino(s)}입니다.`; enA=`It is ${s}.`;
+  } else if(type===3){ // mul 1-digit × 1-digit
+    const a = Math.floor(Math.random()*9)+1, b = Math.floor(Math.random()*9)+1;
+    frontKoQ = `${toSino(a)} 곱하기 ${toSino(b)}는 얼마입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `${a} × ${b} = ?`;
+    const s=a*b; koA=`${toSino(s)}입니다.`; enA=`It is ${s}.`;
+  } else if(type===4){ // div whole number
+    const b = Math.floor(Math.random()*9)+1, q = Math.floor(Math.random()*9)+1, a=b*q;
+    frontKoQ = `${toSino(a)} 나누기 ${toSino(b)}는 얼마입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `${a} ÷ ${b} = ?`;
+    koA=`${toSino(q)}입니다.`; enA=`It is ${q}.`;
+  } else if(type===5){ // sino read 1..99
+    const n = Math.floor(Math.random()*99)+1;
+    frontKoQ = `이 숫자는 얼마입니까? (한자어 수)`;
+    backKoQ  = `이 숫자는 얼마입니까?`; backEnQ = `Sino-Korean reading of: ${n}`;
+    koA = `${toSino(n)}입니다.`; enA = `${n} (Sino-Korean).`;
+  } else if(type===6){ // native read 1..99
+    const n = Math.floor(Math.random()*99)+1;
+    frontKoQ = `또 다른 숫자는 무엇입니까? (고유어 수)`;
+    backKoQ  = `또 다른 숫자는 무엇입니까?`; backEnQ = `Native-Korean reading of: ${n}`;
+    koA = `${toNative(n)}입니다.`; enA = `${n} (Native).`;
+  } else if(type===7){ // km->m
+    const n = Math.floor(Math.random()*9)+1;
+    frontKoQ = `${toSino(n)} 킬로미터는 몇 미터입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `How many meters in ${n} km?`;
+    const ans = n*1000; koA=`${ans}미터입니다.`; enA=`${ans} meters.`;
+  } else if(type===8){ // cm->m
+    const n = Math.floor(Math.random()*99)+1;
+    frontKoQ = `${toSino(n)} 센티미터는 몇 미터입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `How many meters in ${n} cm?`;
+    const ans = (n/100).toFixed(2); koA=`${ans}미터입니다.`; enA=`${ans} meters.`;
+  } else if(type===9){ // kg->g
+    const n = Math.floor(Math.random()*9)+1;
+    frontKoQ = `${toSino(n)} 킬로그램은 몇 그램입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `How many grams in ${n} kg?`;
+    const ans = n*1000; koA=`${ans}그램입니다.`; enA=`${ans} grams.`;
+  } else { // g->kg
+    const n = Math.floor(Math.random()*99)+1;
+    frontKoQ = `${toSino(n)} 그램은 몇 킬로그램입니까?`;
+    backKoQ  = frontKoQ; backEnQ = `How many kilograms in ${n} g?`;
+    const ans = (n/1000).toFixed(3); koA=`${ans}킬로그램입니다.`; enA=`${ans} kilograms.`;
+  }
+
+  return { id:'M', frontKoQ, backKoQ, backEnQ, koA, enA };
+}
+
+// ===== Card #6: Work-related Q&A (random one) =====
+const WORK_QA = [
+  {
+    koQ: "직장 동료가 바쁘면 어떻게 할 것입니까?",
+    enQ: "What will you do if your co-worker is busy?",
+    koA: ["저는 동료를 돕기 위해 일을 빨리 마치겠습니다.","저는 동료를 도와서 빨리 끝내겠습니다."],
+    enA: ["I will finish my work quickly to help my co-worker.","I will help my co-workers so we can finish quickly."]
+  },
+  {
+    koQ: "회사가 바빠서 일이 많다면 어떻게 할 것입니까?",
+    enQ: "What will you do if the company is busy and there is a lot of work?",
+    koA: ["저는 많은 일을 끝내기 위해 추가 근무를 하겠습니다.","시간이 있으면 일을 끝내고, 필요하면 야근도 하겠습니다."],
+    enA: ["I will work overtime to finish a lot of work at the company.","If there is time, I will finish my work, and if needed, I will work overtime."]
+  },
+  {
+    koQ: "직장 동료와 어떻게 지낼 것입니까?",
+    enQ: "How will you get along with co-workers?",
+    koA: ["저는 동료들과 친해지려고 노력하겠습니다.","저는 서로 도우면서 지내겠습니다."],
+    enA: ["I will try to get along well with my co-worker.","I will get along by helping each other."]
+  },
+  {
+    koQ: "일을 하다가 실수를 했을 때 어떻게 할 것입니까?",
+    enQ: "What will you do if you make a mistake while working?",
+    koA: ["저는 상사에게 말하고 같은 실수를 반복하지 않겠다고 약속하겠습니다.","저는 상사에게 보고하고 지시대로 하겠습니다."],
+    enA: ["I will tell my boss and promise not to repeat the same mistake.","I will report it to my superior and follow the instructions."]
+  },
+  {
+    koQ: "불량품이 많을 때 어떻게 하시겠습니까?",
+    enQ: "What will you do if there are many defective products?",
+    koA: ["기계를 멈추고 상사에게 보고한 후 다음에는 더 조심하겠습니다.","상사에게 보고하고 원인을 확인하여 해결책을 찾겠습니다."],
+    enA: ["I will stop the machine, report to my boss, and be more careful next time.","I will report to my superior, check the cause, and find a solution."]
+  },
+  {
+    koQ: "당신 의견이 상사의 것과 다르다면 어떻게 하시겠습니까?",
+    enQ: "What will you do if your opinion is different from your boss’s?",
+    koA: ["저는 상사의 의견을 따르겠습니다.","저는 상사의 의견을 존중하겠습니다."],
+    enA: ["I will follow my boss’s opinion.","I will respect my superior’s opinion."]
+  },
+  {
+    koQ: "직장에서 사고가 나면 어떻게 하시겠습니까?",
+    enQ: "What will you do if an accident happens at work?",
+    koA: ["사고가 발생하면 즉시 상사에게 보고하겠습니다.","즉시 상사에게 보고하고 응급전화(119)에 연락하겠습니다."],
+    enA: ["I will report immediately to my boss if an accident occurs.","I will report to my superior and call the emergency hotline (119)."]
+  },
+  {
+    koQ: "왜 한국에 가고 싶습니까?",
+    enQ: "Why do you want to go to Korea?",
+    koA: ["가족들을 위해 한국에서 돈을 벌고 싶습니다.","한국에서 일하고 제 가족을 위해 돈을 벌고 싶습니다."],
+    enA: ["I want to earn money in Korea for my family.","I want to work in Korea and earn money for my family."]
+  },
+  {
+    koQ: "한국에 가면 무슨 일을 하고 싶습니까?",
+    enQ: "What job do you want to do in Korea?",
+    koA: ["저는 제조업에서 일하고 싶습니다.","한국에 가면 주어진 일이라면 무엇이든 열심히 하겠습니다."],
+    enA: ["I want to work in manufacturing.","If I go to Korea, I will work hard at any job that is given to me."]
+  },
+  {
+    koQ: "한국에 대해 아는 것이 있습니까?",
+    enQ: "Do you know anything about Korea?",
+    koA: ["네, 한국은 아름답고 발전된 나라입니다.","네, 한국에는 사계절이 있고 문화가 발달해 있습니다."],
+    enA: ["Yes, Korea is a beautiful and developed country.","Yes, Korea has four seasons, and its culture is well-developed."]
+  },
+  {
+    koQ: "한국에서 사용할 수 있는 기술이 있습니까?",
+    enQ: "Do you have skills you can use in Korea?",
+    koA: ["네, 저는 배우는 속도가 빠르고 여러 가지 일을 할 수 있습니다.","네, 어떤 일이든 배워서 열심히 할 수 있습니다."],
+    enA: ["Yes, I learn quickly and can do multiple tasks.","Yes, I can learn any job and work hard."]
+  },
+  {
+    koQ: "다른 사람보다 잘할 수 있는 기술이 있습니까?",
+    enQ: "Do you have any skills better than others?",
+    koA: ["네, 저는 빠르게 배우고 일을 잘하며 정확하게 수행할 수 있습니다.","네, 저는 누구보다 성실하게 일할 자신이 있습니다."],
+    enA: ["Yes, I learn fast, work well, and perform tasks accurately.","Yes, I am confident that I can work more diligently than anyone else."]
+  },
+  {
+    koQ: "당신이 한국에서 일할 자격이 있는 것은 무엇입니까?",
+    enQ: "What qualifies you to work in Korea?",
+    koA: ["저는 배우는 속도가 빠르고 성실하게 일합니다.","저는 성실하고 책임감 있게 일할 수 있습니다."],
+    enA: ["I learn quickly and work diligently.","I can work sincerely and responsibly."]
+  },
+  {
+    koQ: "왜 우리가 당신을 고용해야 합니까?",
+    enQ: "Why should we hire you?",
+    koA: ["아직 배울 것이 많지만 최선을 다해 성실히 일하겠습니다.","저는 헌신적이며 지시를 성실히 따를 수 있습니다."],
+    enA: ["I still have a lot to learn, but I will do my best and work hard.","I am dedicated and can follow instructions carefully."]
+  },
+  {
+    koQ: "공장에서 불이 나면 어떻게 하시겠습니까?",
+    enQ: "What will you do if there is a fire in the factory?",
+    koA: ["불이 나면 응급전화(119)에 연락하겠습니다.","즉시 상사에게 보고하고 119에 연락하며 안전하게 대피하겠습니다."],
+    enA: ["If there is a fire, I will call the emergency hotline (119).","I will immediately report to my superior, call 119, and evacuate safely."]
+  }
+];
+
+function buildWorkItem(){
+  const i = Math.floor(Math.random()*WORK_QA.length);
+  const it = WORK_QA[i];
+  return {
+    id:'W',
+    frontKoQ: it.koQ,
+    backKoQ: it.koQ,
+    backEnQ: it.enQ,
+    koAList: it.koA,
+    enAList: it.enA
+  };
+}
+
+// ===== Card #7: NCS / teamwork & communication Q&A =====
+const SOCIAL_QA = [
+  {
+    koQ:"다른 사람들과 지내는 것이 왜 중요하다고 생각하십니까?",
+    enQ:"Why do you think it is important to get along with others?",
+    koA:["다른 사람들과 잘 지내야 일을 잘할 수 있다고 생각합니다.","좋은 관계가 있어야 협력이 잘 된다고 생각합니다."],
+    enA:["I think getting along with others is important to work well.","I think good relationships are important for cooperation."]
+  },
+  {
+    koQ:"새로운 동료들과 잘 지내기 위해 어떤 노력을 할 수 있습니까?",
+    enQ:"What effort can you make to get along well with new colleagues?",
+    koA:["새로운 동료들을 존중하고 경청하면서 좋은 관계를 만들겠습니다.","팀워크를 중요하게 생각하며 서로 도우면서 잘 지내겠습니다."],
+    enA:["I will build good relationships by respecting and listening to my new colleagues.","I value teamwork and will get along well by helping each other."]
+  },
+  {
+    koQ:"문제가 생기면 해결책을 찾기 위해 어떻게 노력하시겠습니까?",
+    enQ:"How would you work to find a solution if a problem arises?",
+    koA:["문제가 생기면 원인을 확인하고 상사에게 보고한 후 해결책을 찾겠습니다.","침착하게 상황을 파악하고 동료들과 함께 해결하겠습니다."],
+    enA:["If a problem occurs, I will check the cause, report to my superior, and then find a solution.","I will calmly assess the situation and solve it together with my co-workers."]
+  },
+  {
+    koQ:"의사소통이 왜 중요한지 설명할 수 있습니까?",
+    enQ:"Can you explain why communication is important?",
+    koA:["협력이 가능하고 일이 더 원활하게 진행되기 때문에 중요하다고 생각합니다.","동료들과 신뢰를 쌓고 좋은 팀워크를 만들 수 있기 때문입니다."],
+    enA:["I think it is important because it makes cooperation possible and allows work to go more smoothly.","Because it builds trust with colleagues and creates good teamwork."]
+  },
+  {
+    koQ:"의사소통을 방해하는 요소들은 무엇이 있습니까?",
+    enQ:"What factors can interfere with communication?",
+    koA:["불분명한 표현과 오해가 의사소통을 어렵게 만든다고 생각합니다.","그런 요소들은 오해를 일으키고 의사소통 단절로 이어질 수 있습니다."],
+    enA:["I think unclear expressions and misunderstandings make communication difficult.","Such factors can cause misunderstandings and lead to communication breakdowns."]
+  },
+  {
+    koQ:"사람들 사이에서 지켜야 할 예절에 대해 잘 알고 있습니까?",
+    enQ:"Do you know the etiquette people should observe?",
+    koA:["네, 서로를 존중하고 예의 있게 행동하는 것이 중요하다는 것을 잘 알고 있습니다.","네, 인사와 예의 바른 태도 같은 기본적인 예절을 지켜야 한다고 알고 있습니다."],
+    enA:["Yes, I know it is important to respect each other and act politely.","Yes, I know we should observe basic manners like greetings and a polite attitude."]
+  },
+  {
+    koQ:"일하면서 정해진 시간을 잘 지키십니까?",
+    enQ:"Do you adhere well to the scheduled time while working?",
+    koA:["네, 일정을 잘 지키고 정해진 시간 안에 일을 마치도록 노력합니다.","네, 시간을 지키는 것이 책임이라고 생각하기 때문에 잘 지킵니다."],
+    enA:["Yes, I follow the schedule and make sure to finish my work on time.","Yes, I keep time well because I believe it is my responsibility."]
+  }
+];
+
+function buildSocialItem(){
+  const i = Math.floor(Math.random()*SOCIAL_QA.length);
+  const it = SOCIAL_QA[i];
+  return {
+    id:'S',
+    frontKoQ: it.koQ,
+    backKoQ: it.koQ,
+    backEnQ: it.enQ,
+    koAList: it.koA,
+    enAList: it.enA
+  };
+}
+
+// ===== Utility =====
+const rnd = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+// ===== TTS (KO only, manual) =====
+function speakKO(text, rate=1){
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR'; u.rate = rate; u.pitch = 1; u.volume = 1;
+  window.speechSynthesis.speak(u);
+}
+function stopSpeech(){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+
+// ===== Assembly of 7 cards =====
+function pickInterviewSet(){
+  const set = [];
+  set.push(Q[rnd(1,15)-1]);   // 1st: 1-15
+  set.push(Q[rnd(16,27)-1]);  // 2nd: 16-27
+  set.push(Q[rnd(28,33)-1]);  // 3rd: 28-33
+  set.push(Q[33]);            // 4th: #34
+  // ensure unique among first three
+  const ids = new Set();
+  for(let i=0;i<3;i++){
+    while(ids.has(set[i].id)){
+      if(i===0) set[i]=Q[rnd(1,15)-1];
+      if(i===1) set[i]=Q[rnd(16,27)-1];
+      if(i===2) set[i]=Q[rnd(28,33)-1];
+    }
+    ids.add(set[i].id);
+  }
+  return set;
+}
+
+// ===== Render =====
+const cardsEl = document.getElementById('cards');
+const btnNew  = document.getElementById('btn-new');
+const btnStop = document.getElementById('btn-stop');
+const politeChk = document.getElementById('polite');
+const showFrontQ = document.getElementById('showFrontQ');
+
+function render(){
+  stopSpeech();
+  const base = pickInterviewSet();     // 4 interview cards
+  const math = buildMathItem();        // #5
+  const work = buildWorkItem();        // #6
+  const social = buildSocialItem();    // #7
+  const set = [...base, math, work, social];
+
+  cardsEl.innerHTML = '';
+  document.body.classList.toggle('hide-front-qs', !showFrontQ.checked);
+
+  set.forEach((item, idx)=>{
+    const isMath = item.id==='M';
+    const isWork = item.id==='W';
+    const isSocial = item.id==='S';
+    const isClock = !isMath && !isWork && !isSocial && item.id===34;
+
+    const frontLine = isMath || isWork || isSocial
+      ? item.frontKoQ
+      : (politeChk.checked ? item.koQPolite : item.koQFormal);
+
+    // Prepare KO answer text
+    let koAnswer = "";
+    let enAnswer = "";
+    if(isMath){
+      koAnswer = item.koA;
+      enAnswer = item.enA;
+    } else if(isWork || isSocial){
+      koAnswer = item.koAList.join("<br>");
+      enAnswer = item.enAList.join("<br>");
+    } else {
+      koAnswer = item.koA;
+      enAnswer = item.enA || "";
+    }
+
+    // For #34, generate random time each render
+    let extraHTML = "";
+    if(isClock){
+      const h = Math.floor(Math.random()*12)+1;
+      const m = Math.floor(Math.random()*60);
+      koAnswer = `${h}시 ${m}분입니다.`;
+      extraHTML = `<canvas class="clock" width="240" height="240" style="align-self:center;border:1px solid var(--ring);border-radius:12px"></canvas>`;
+    }
+
+    const backKoQ = isMath || isWork || isSocial ? item.backKoQ : item.koQFormal;
+    const backEnQ = isMath || isWork || isSocial ? item.backEnQ : (item.enQ || "");
+
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `
+      <div class="inner">
+        <div class="face front">
+          <div class="row"><span class="pill">Card ${idx+1}</span> <span class="qidx">#${isMath?'Math':isWork?'Work':isSocial?'NCS':item.id}</span></div>
+          <div class="qko">${frontLine}</div>
+          <div class="row">
+            <button class="btn-play-front">▶ Play</button>
+            <button class="flipbtn">Flip ▶</button>
+          </div>
+        </div>
+        <div class="face back">
+          <div class="row"><span class="pill">Back</span> <span class="qidx">#${isMath?'Math':isWork?'Work':isSocial?'NCS':item.id}</span></div>
+          <div class="txt"><strong>Q (KO):</strong> ${backKoQ}</div>
+          <div class="txt muted"><strong>Q (EN):</strong> ${backEnQ}</div>
+          <div class="txt"><strong>A (KO):</strong> <span class="ako">${koAnswer}</span></div>
+          <div class="txt muted"><strong>A (EN):</strong> ${enAnswer}</div>
+          ${extraHTML}
+          <div class="row" style="margin-top:auto">
+            <button class="btn-play-back">▶ Play (KO)</button>
+            <button class="flipbtn">◀ Back</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const inner = card.querySelector('.inner');
+
+    // Flip by click (no autoplay)
+    card.addEventListener('click', (e)=>{
+      if(e.target.closest('button')) return;
+      card.classList.toggle('flipped');
+    });
+
+    // Flip buttons
+    card.querySelectorAll('.flipbtn').forEach(btn=>btn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      card.classList.toggle('flipped');
+    }));
+
+    // Play (KO only)
+    card.querySelector('.btn-play-front').addEventListener('click',(e)=>{
+      e.stopPropagation();
+      speakKO(frontLine,1);
+    });
+    card.querySelector('.btn-play-back').addEventListener('click',(e)=>{
+      e.stopPropagation();
+      // If multiple KO answers, read the first sentence/line
+      const ko = card.querySelector('.ako').textContent.split('\n')[0].split('·')[0];
+      speakKO(ko,1);
+    });
+
+    // Draw analog clock
+    if(isClock){
+      const canvas = card.querySelector('canvas.clock');
+      const ctx = canvas.getContext('2d');
+      const match = /([0-9]+)시\s+([0-9]+)분/.exec(card.querySelector('.ako').textContent);
+      const hh = match ? parseInt(match[1])%12 : 3;
+      const mm = match ? parseInt(match[2])%60 : 15;
+      const cx = canvas.width/2, cy = canvas.height/2, r = Math.min(cx,cy)-12;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.lineWidth = 6; ctx.strokeStyle = '#3b82f6';
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+      ctx.lineWidth = 2; ctx.strokeStyle = '#93c5fd';
+      for(let i=0;i<60;i++){
+        const ang=i*Math.PI/30, len=(i%5===0)?10:5;
+        const x1=cx+Math.cos(ang)*(r-4), y1=cy+Math.sin(ang)*(r-4);
+        const x2=cx+Math.cos(ang)*(r-4-len), y2=cy+Math.sin(ang)*(r-4-len);
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      }
+      const hourAng=((hh%12)+mm/60)*Math.PI/6, minAng=(mm)*Math.PI/30;
+      ctx.lineCap='round';
+      ctx.lineWidth=5; ctx.strokeStyle='#e5e7eb';
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(hourAng)*(r*0.55), cy+Math.sin(hourAng)*(r*0.55)); ctx.stroke();
+      ctx.lineWidth=3; ctx.strokeStyle='#e5e7eb';
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(minAng)*(r*0.8), cy+Math.sin(minAng)*(r*0.8)); ctx.stroke();
+      ctx.fillStyle='#e5e7eb'; ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2); ctx.fill();
+    }
+
+    cardsEl.appendChild(card);
+  });
+}
+
+document.getElementById('btn-new').addEventListener('click', render);
+document.getElementById('btn-stop').addEventListener('click', stopSpeech);
+document.getElementById('polite').addEventListener('change', render);
+document.getElementById('showFrontQ').addEventListener('change', render);
+window.addEventListener('load', render);
+</script>
+</body>
+</html>
+	
