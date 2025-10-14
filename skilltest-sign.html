@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Flip Cards — Signs (Image Front + Korean/English Back + TTS)</title>
+<style>
+  /* ===== Sky Blue Freeze Theme (compact) ===== */
+  :root{
+    --bg:#0b1220; --panel:#0f172a; --ink:#e6f0ff; --muted:#a9b4c7; --ring:#29314a;
+    --accent:#38bdf8; --accent2:#22d3ee; --good:#10b981; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:radial-gradient(1200px 800px at 15% -10%, #0e1c34, transparent),
+                     radial-gradient(1000px 600px at 100% 0%, #0b1326, transparent),
+                     var(--bg);color:var(--ink);
+       font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;}
+  header{display:flex;gap:.75rem;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #19223a;background:#0b1428cc;backdrop-filter:blur(6px);position:sticky;top:0;z-index:5}
+  header .left, header .right{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+  h1{font-size:16px;margin:0;color:var(--ink);font-weight:650;letter-spacing:.3px}
+  .pill{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--ring);background:#0d1b34;border-radius:999px;padding:6px 10px}
+  .pill input[type="checkbox"]{accent-color:var(--accent)}
+  .btn{appearance:none;border:1px solid var(--ring);background:#0e1a30;color:var(--ink);padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .btn:hover{border-color:#35507a}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001827;border:none}
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;max-width:1100px;margin:8px auto 90px;padding:12px} 
+  .board{display:grid;grid-template-columns:1fr;gap:16px}
+
+  /* Card 3D flip */
+  .stage{perspective: 1400px; display:grid; place-items:center;}
+  .card{width:min(92vw,820px);height:clamp(420px,68vh,760px);position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1);}  
+  .card.flipped{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 0 0 1px #1d2b48;background:#0e1b31}
+  .front{backface-visibility:hidden;display:grid;place-items:center;padding:12px;background:#0a1424}
+  .back{transform:rotateY(180deg);backface-visibility:hidden;display:flex;flex-direction:column}
+
+  /* Front image unified frame */
+  .imgwrap{width:min(92vw,720px);height:clamp(300px,56vh,560px);display:grid;place-items:center;background:#0b1528;border:1px solid #1b2a49;border-radius:14px;box-shadow:inset 0 0 0 1px #1d2b48,0 16px 40px rgba(0,0,0,.45);padding:8px} 
+  .imgwrap img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block} 
+
+  .back .info{display:flex;flex-direction:column;gap:10px;padding:18px}
+  .en{font-size: clamp(16px,2.2vw,20px); color:var(--muted);}
+  .ko{font-size: clamp(20px,3vw,30px); font-weight:800; letter-spacing:.2px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;padding:12px;justify-content:center}
+  .index{font-size:13px;color:var(--muted);text-align:center;padding-bottom:8px}
+
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .input{background:#0b162c;border:1px solid var(--ring);color:var(--ink);padding:10px 12px;border-radius:10px;min-width:240px}
+  .select{appearance:none}
+
+  .small{font-size:12px;color:var(--muted)}
+
+  /* Toolbar (desktop default) */
+  .toolbar{position:sticky;bottom:0;left:0;right:0;display:flex;gap:10px;justify-content:center;align-items:center;padding:10px;border-top:1px solid #1b2a49;background:#0b1428e6;backdrop-filter:blur(6px);z-index:6}
+  .toolbar .btn{min-width:120px} 
+
+  /* Mobile tweaks */
+  @media (max-width:640px){
+    header{gap:.5rem}
+    .btn{padding:14px 16px;font-size:16px;border-radius:14px;min-height:48px}
+    .card{height:64vh}
+    .ko{font-size: clamp(18px,5vw,26px)}
+    .en{font-size: clamp(14px,4vw,18px)}
+    .imgwrap{width:96vw;height:48vh;padding:8px}
+    .toolbar{position:sticky;bottom:0;left:0;right:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;border-top:1px solid #1b2a49;background:#0b1428e6;backdrop-filter:blur(6px)}
+    .toolbar .btn{width:100%}
+  }
+    .toolbar .btn{width:100%}
+  }
+    .btn{padding:12px 14px;font-size:15px;border-radius:12px}
+    .card{height:58vh}
+    .ko{font-size: clamp(18px,5vw,26px)}
+    .en{font-size: clamp(14px,4vw,18px)}
+    .front img{max-width:90%;max-height:70%}
+  }
+  
+
+</style>
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: linear-gradient(90deg, #67e8f9, #38bdf8);
+    color: #072235;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 0 0 0 10px;
+    box-shadow: 0 6px 18px rgba(56,189,248,.35);
+    z-index: 9999;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+  }
+  .floating-home:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 0 12px rgba(56,189,248,.55),
+                0 0 24px rgba(103,232,249,.45);
+    transform: translateY(-1px);
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="floating-home">Home</a>
+  <header>
+    <div class="left">
+      <h1>Flip Cards — Signs</h1>
+      <label class="pill"><input id="randomToggle" type="checkbox"/> <span>Random mode</span></label>
+      <label class="pill"><input id="autoplayToggle" type="checkbox" checked/> <span>Autoplay Korean TTS on flip</span></label>
+    </div>
+    <div class="right"></div>
+  </header>
+  <div class="toolbar">
+    <button class="btn ghost" id="prevBtn">◀ Prev</button>
+    <button class="btn" id="flipBtn">Flip / Play</button>
+    <button class="btn ghost" id="nextBtn">Next ▶</button>
+    <button class="btn primary" id="shuffleBtn">Shuffle All</button>
+  </div>
+  <main class="grid">
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="face front">
+          <!-- FRONT: your image goes here via JS; path pattern: sign/<English name>.png  -->
+          <div class="imgwrap"><img id="frontImg" alt="Sign" src=""/></div>
+        </div>
+        <div class="face back">
+          <div class="info">
+            <div class="en" id="enText">—</div>
+            <div class="ko" id="koText">—</div>
+            <div class="row">
+              <button class="btn" id="playBtn">▶ Play (Korean TTS)</button>
+              <span class="small" id="audioHint">(Uses browser Text‑to‑Speech)</span>
+            </div>
+          </div>
+          <div class="controls">
+            <select id="jumpSelect" class="input select" title="Jump to item"></select>
+          </div>
+          <div class="index" id="indexText">—</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<script>
+/**
+ * DATA SETUP
+ * Image path pattern:    sign/<English name>.png
+ * TTS is generated in the browser (no audio files needed).
+ */
+const IMAGE_PREFIX = 'sign/';
+
+const CARDS = [
+   { "ko": "경고: 생물학적 위해", "en": "BIOLOGICAL HAZZARD" },
+  { "ko": "경고: 전기", "en": "ELECTRICITY" },
+  { "ko": "경고: 추락", "en": "FALL" },
+  { "ko": "경고: 낙하물", "en": "FALLING OBJECTS" },
+  { "ko": "경고: 인화 물질", "en": "FLAMMABLE MATERIALS" },
+  { "ko": "공고: 지게차와 산업용 운반기계", "en": "FORKLIFT TRUCKS AND OTHER INDUSTRIAL VEHICLES" },
+  { "ko": "일반 경고표지", "en": "GENERAL WARNING SIGN" },
+  { "ko": "경고: 뜨거운 표면", "en": "HOT SURFACE" },
+  { "ko": "경고: 방사능 물질 또는 이온화 방사선", "en": "RADIOACTIVE MATERIALS OR IONIZING" },
+  { "ko": "경고: 바닥면 장애물", "en": "OBSTACLE ON FLOOR" },
+  { "ko": "경고: 미끄러운 표면", "en": "SLIPPERY SURFACE" },
+  { "ko": "경고: 독성물질", "en": "TOXIC SUBSTANCES" },
+  { "ko": "일반적인 강제 행동 표지", "en": "GENERAL MANDATORY SIGN" },
+  { "ko": "잠그시오", "en": "LOCK IT" },
+  { "ko": "사용설명서/책자를 참조하시오", "en": "REFER TO THE USER MANUAL" },
+  { "ko": "경적을 울리시오", "en": "SOUND HORN" },
+  { "ko": "전기플러그를 콘센트에서 분리하시오", "en": "UNPLUG ELECTRICAL" },
+  { "ko": "손잡이를 사용하시오", "en": "USE THE HANDRAIL" },
+  { "ko": "이 통로를 이용하시오", "en": "USE THIS PASSAGE" },
+  { "ko": "쓰레기통을 사용하시오", "en": "USE TRASH CAN" },
+  { "ko": "손을 씻으시오", "en": "WASH HANDS" },
+  { "ko": "귀마개를 착용하시오", "en": "WEAR EARPLUGS" },
+  { "ko": "마스크를 착용하시오", "en": "WEAR FACE MASK" },
+  { "ko": "얼굴보호구를 착용하시오", "en": "WEAR FACE PROTECTION" },
+  { "ko": "머리 보호구를 착용하시오", "en": "WEAR HEAD PROTECTION" },
+  { "ko": "가시성이 높은 옷을 착용하시오", "en": "WEAR HIGH VISIBILITY CLOTHING" },
+  { "ko": "불투명 보안대를 반드시 착용하시오", "en": "WEAR OPAQUE PROTECTIVE GOGGLES" },
+  { "ko": "방호복을 착용하시오", "en": "WEAR PROTECTING CLOTHING" },
+  { "ko": "보호용 앞치마 착용하시오", "en": "WEAR PROTECTIVE APRON" },
+  { "ko": "보호 장갑을 착용하시오", "en": "WEAR PROTECTIVE GLOVES" },
+  { "ko": "호흡기 보호 장치를 착용하시오", "en": "WEAR RESPIRATORY" },
+  { "ko": "보안경을 반드시 착용하시오", "en": "WEAR SAFETY GOGGLES" },
+  { "ko": "안전띠를 착용하시오", "en": "WEAR SAFETY HARNESS" },
+  { "ko": "안전화를 착용하시오", "en": "WEAR SAFETY SHOES" },
+  { "ko": "안전벨트를 착용하시오", "en": "WEAR SAFETYBELT" },
+  { "ko": "용접 마스크를 착용하시오", "en": "WEAR WELDING MASK" },
+  { "ko": "자동 심장 박동기", "en": "AUTOMATED EXTERNAL DEFIBRILLATOR" },
+  { "ko": "음료수", "en": "DRINKING WATER" },
+  { "ko": "비상 탈출용 호흡기", "en": "EMERGENCY ESCAPE BREATHING DEVICE" },
+  { "ko": "비상 전화", "en": "EMERGENCY TELEPHONE" },
+  { "ko": "응급처치", "en": "FIRST AID" },
+  { "ko": "구명 조끼", "en": "LIFE JACKET" },
+  { "ko": "구명 부이", "en": "LIFEBUOY" },
+  { "ko": "구급 가방", "en": "MEDICAL GRAB BAG" },
+  { "ko": "산소 호흡기", "en": "OXYGEN RESUSCITATOR" },
+  { "ko": "들것", "en": "STRETCHER" },
+  { "ko": "화재 경보기", "en": "FIRE ALARM" },
+  { "ko": "방화문", "en": "FIRE DOOR" },
+  { "ko": "화재 비상 전화", "en": "FIRE EMERGENCY PHONE" },
+  { "ko": "소화기", "en": "FIRE EXTINGUISHER" },
+  { "ko": "소방 호스릴(소화전)", "en": "FIRE HOSE STATION (FIRE HYDRANT)" },
+  { "ko": "소방 사다리", "en": "FIRE LADDER" },
+  { "ko": "소방장비", "en": "FIREFIGHTING EQUIPMENT" },
+  { "ko": "왼쪽을 당기면 열리는 문", "en": "DOOR THAT OPENS BY PULLING ON THE RIGHT SIDE" },
+  { "ko": "오른쪽으로 당기면 열리는 문", "en": "DOOR THAT OPENS BY PULLING ON THE RIGHT SIDE" },
+  { "ko": "왼쪽으로 미끄러져 열리는 문/왼쪽 미닫이 문", "en": "DOORS THAT OPENS BY SLIDING TO THE LEFT" },
+  { "ko": "오른쪽으로 밀면 열리는 문", "en": "DOOR THAT OPENS BY PUSHING ON THE RIGHT SIDE" },
+  { "ko": "왼쪽으로 밀면 열리는 문", "en": "DOOR THAT OPENS PUSHING ON THE LEFT SIDE" },
+  { "ko": "오른쪽으로 미끄러져 열리는 문/오른쪽 미닫이 문", "en": "DOORS THAT OPENS BY SLIDING TO THE RIGHT" },
+  { "ko": "비상구 (왼쪽)", "en": "EMERGENCY EXIT (LEFT)" },
+  { "ko": "비상구 (오른쪽)", "en": "EMERGENCY EXIT (RIGHT)" },
+  { "ko": "구조 창문", "en": "RESCUE WINDOW" },
+  { "ko": "탈출 사다리가 있는 비상 창문", "en": "EMERGENCY WINDOW WITH ESCAPE LADDER" },
+  { "ko": "탈출 사다리", "en": "ESCAPE LADDER" },
+  { "ko": "비상 망치", "en": "EMERGENCY HAMMER" },
+  { "ko": "시계 방향으로 돌리면 열림", "en": "TURN CLOCKWISE TO OPEN" },
+  { "ko": "시계 반대 방향으로 돌리면 열림", "en": "TURN COUNTERCLOCKWISE TO OPEN" },
+  { "ko": "일반적인 금지표지", "en": "GENERAL PROHIBITION SIGN" },
+  { "ko": "물을 마시지 마시오", "en": "DO NOT DRINK" },
+  { "ko": "물로 불을 끄지 마시오", "en": "DO NOT EXTINGUISH WITH WATER" },
+  { "ko": "손을 넣지 마시오(손 삽입 금지)", "en": "DO NOT INSERT HAND" },
+  { "ko": "기대지 마세요", "en": "DO NOT LEAN" },
+  { "ko": "트랙을 벗어나지 마시오", "en": "DO NOT LEAVE THE TOW-TRACK" },
+  { "ko": "스위치의 상태를 바꾸지 마시오", "en": "DO NOT MOVE THE SWITCH" },
+  { "ko": "의자를 흔들지 마시오", "en": "DO NOT SWING THE CHAIR" },
+  { "ko": "로프에 매듭을 짓지 마시오", "en": "DO NOT TIE KNOTS IN THE ROPE" },
+  { "ko": "만지지 마시오", "en": "DO NOT TOUCH" },
+  { "ko": "이 승강기를 승객용으로 사용하지 마시오", "en": "DO NOT USE THIS LIFT FOR PASSENGERS" },
+  { "ko": "휴대용 그라인더에 사용하지 마시오", "en": "DO NOT USE WITH HANDHELD GRINDER" },
+  { "ko": "장갑을 착용하지 마시오", "en": "DO NOT WEAR GLOVES" },
+  { "ko": "지게차, 산업용 차량 접근 금지", "en": "NO ENTRY FOR FORKLIFTS AND INDUSTRIAL VEHICLES" },
+  { "ko": "중독된 사람 금지", "en": "INTOXICATED PERSONS PROHIBITED" },
+  { "ko": "올라가지 마시오", "en": "NO CLIMBING" },
+  { "ko": "애견 금지", "en": "NO DOGS" },
+  { "ko": "식음료 금지", "en": "NO EATING OR DRINKING" },
+  { "ko": "통행 금지(통행하지 마시오)", "en": "NO ENTRY (DO NOT ENTER)" },
+  { "ko": "착화 금지: 화재, 발화원과 발연 금지", "en": "NO IGNITION NO FIRE, IGNITION SOURCES, OR SMOKING" },
+  { "ko": "사진 촬영 금지", "en": "NO PHOTOGRAPHY" },
+  { "ko": "밀지 마시오", "en": "NO PUSHING" },
+  { "ko": "달리기 금지", "en": "NO RUNNING" },
+  { "ko": "앉지 마시오", "en": "NO SITTING" },
+  { "ko": "금연(담배를 피우지 마시오)", "en": "NO SMOKING" },
+  { "ko": "수영 금지", "en": "NO SWIMMING" },
+  { "ko": "통행 금지(통행하지 마시오)", "en": "NO ENTRY" },
+  { "ko": "옥외용 신발 금지", "en": "OUTDOOR FOOTWEAR PROHIBITED" },
+  { "ko": "임산부 금지", "en": "PREGNANT WOMEN PROHIBITED" },
+  { "ko": "휴대폰 전원을 끄시오", "en": "TURN OFF YOUR CELLPHONE" }
+  // 👉 Add the rest of your items here, same format: { ko:'...', en:'...' }
+];
+
+/**
+ * UTILITIES
+ */
+const $ = sel => document.querySelector(sel);
+const cardEl = $('#card');
+const frontImg = $('#frontImg');
+const enText = $('#enText');
+const koText = $('#koText');
+const indexText = $('#indexText');
+const jumpSelect = $('#jumpSelect');
+const flipBtn = $('#flipBtn');
+const prevBtn = $('#prevBtn');
+const nextBtn = $('#nextBtn');
+const shuffleBtn = $('#shuffleBtn');
+const randomToggle = $('#randomToggle');
+const autoplayToggle = $('#autoplayToggle');
+const playBtn = $('#playBtn');
+
+let order = [...CARDS.keys()];
+let idx = 0; // current index within order[]
+let lastRandom = -1;
+
+// ===== Text-to-Speech (Korean) =====
+function speakKo(text){
+  if(!('speechSynthesis' in window)) return;
+  const synth = window.speechSynthesis;
+  if(synth.speaking) synth.cancel(); // stop any ongoing speech
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.95; // slightly slower for clarity
+  u.pitch = 1.0;
+  // Try to pick a Korean voice if available
+  const voices = synth.getVoices();
+  const koVoice = voices.find(v=>/ko/i.test(v.lang));
+  if(koVoice) u.voice = koVoice;
+  synth.speak(u);
+}
+window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined && window.speechSynthesis.getVoices();
+
+function preloadImages(){
+  order.forEach(i=>{
+    const img = new Image();
+    img.src = IMAGE_PREFIX + CARDS[i].en + '.png';
+  });
+}
+
+function updateJumpSelect(){
+  jumpSelect.innerHTML = order.map((i, n)=>{
+    const label = `${n+1}. ${CARDS[i].en}`;
+    return `<option value="${n}">${label}</option>`;
+  }).join('');
+}
+
+function loadCard(n){
+  idx = (n+order.length)%order.length;
+  const item = CARDS[order[idx]];
+  const imgSrc = IMAGE_PREFIX + item.en + '.png';
+  frontImg.src = imgSrc;
+  frontImg.alt = item.en;
+  enText.textContent = item.en;
+  koText.textContent = item.ko;
+  indexText.textContent = `${idx+1} / ${order.length}`;
+  jumpSelect.value = String(idx);
+  // Always show front when loading a new card
+  cardEl.classList.remove('flipped');
+}
+
+function flipCard(){
+  const willFlipToBack = !cardEl.classList.contains('flipped');
+  cardEl.classList.toggle('flipped');
+  if(willFlipToBack && autoplayToggle.checked){
+    setTimeout(()=>{ speakKo(koText.textContent); }, 220);
+  }
+}
+
+function playTTS(){
+  speakKo(koText.textContent);
+}
+
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function nextCard(){
+  if(randomToggle.checked){
+    let next;
+    if(order.length <= 1){ next = 0; }
+    else{
+      do{ next = Math.floor(Math.random()*order.length); } while(next === lastRandom);
+    }
+    lastRandom = next;
+    loadCard(next);
+  }else{
+    loadCard(idx+1);
+  }
+}
+
+function prevCard(){
+  if(randomToggle.checked){
+    nextCard();
+  }else{
+    loadCard(idx-1);
+  }
+}
+
+function shuffleAll(){
+  order = shuffleArray([...CARDS.keys()]);
+  updateJumpSelect();
+  loadCard(0);
+}
+
+// ===== event hooks =====
+flipBtn.addEventListener('click', flipCard);
+frontImg.addEventListener('click', flipCard); // tap image to flip
+playBtn.addEventListener('click', playTTS);
+nextBtn.addEventListener('click', nextCard);
+prevBtn.addEventListener('click', prevCard);
+jumpSelect.addEventListener('change', (e)=> loadCard(parseInt(e.target.value,10)||0));
+shuffleBtn.addEventListener('click', shuffleAll);
+
+// init
+preloadImages();
+updateJumpSelect();
+loadCard(0);
+
+// Optional: keyboard shortcuts
+window.addEventListener('keydown', (e)=>{
+  if(e.code==='Space'){e.preventDefault(); flipCard();}
+  if(e.code==='ArrowRight'){nextCard();}
+  if(e.code==='ArrowLeft'){prevCard();}
+});
+</script>
+</body>
+</html>
