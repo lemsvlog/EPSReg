@@ -57,8 +57,34 @@
     .card{ width:min(900px,100vw); margin:0 auto; }
   }
 </style>
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: linear-gradient(90deg, #67e8f9, #38bdf8);
+    color: #072235;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 0 0 0 10px;
+    box-shadow: 0 6px 18px rgba(56,189,248,.35);
+    z-index: 9999;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+  }
+  .floating-home:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 0 12px rgba(56,189,248,.55),
+                0 0 24px rgba(103,232,249,.45);
+    transform: translateY(-1px);
+  }
+</style>
 </head>
 <body>
+<a href="index.html" class="floating-home">Home</a>
   <header>
     <div class="wrap">
       <h1>EPS Tools Flip Cards — 90% Image</h1>
