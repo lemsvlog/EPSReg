@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Flip Card — One by One</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111a2b; --ink:#eaf2ff; --muted:#9fb0c9;
+    --accent:#38bdf8; --accent-2:#0ea5e9; --ring:0 0 0 2px rgba(56,189,248,.35);
+    --card:#0f172a; --card2:#0b1220;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:
+      radial-gradient(900px 500px at 10% -10%, #0f2240 0, transparent 60%),
+      radial-gradient(900px 500px at 100% 0, #0b1a33 0, transparent 60%),
+      var(--bg);
+    color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .wrap{width:min(900px,100%); padding:clamp(12px,3vw,24px)}
+  header{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px}
+  h1{font-size:clamp(16px,4vw,20px); margin:0; font-weight:800; letter-spacing:.3px}
+  .controls{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+  button,.toggle{
+    background:linear-gradient(180deg, var(--accent), var(--accent-2));
+    color:#00131f; border:none; padding:12px 16px; border-radius:14px; font-weight:800;
+    cursor:pointer; box-shadow:var(--ring); touch-action:manipulation;
+  }
+  .iconbtn{padding:12px 14px; min-width:48px}
+  .toggle{display:inline-flex; align-items:center; gap:8px}
+  .toggle input{
+    appearance:none; width:44px; height:26px; background:#0a1a2a; border:1px solid #1f3249;
+    border-radius:999px; position:relative; outline:none; cursor:pointer
+  }
+  .toggle input:before{
+    content:""; position:absolute; width:20px; height:20px; top:2px; left:2px; border-radius:50%;
+    background:#7aa7c7; transition:left .15s ease, background .15s ease
+  }
+  .toggle input:checked{background:#0b2a44}
+  .toggle input:checked:before{left:22px; background:#e5f7ff}
+  .stage{display:grid; gap:12px}
+  .progress{display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:clamp(12px,3.2vw,14px)}
+  .cardbox{
+    perspective:1200px; height:clamp(240px,50vh,420px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card{
+    width:min(680px,92vw);
+    height:100%;
+    border-radius:18px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 18px 42px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .face{
+    position:absolute; inset:0; border-radius:18px; padding:clamp(14px,4vw,24px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    backface-visibility:hidden;
+  }
+  .front{background:linear-gradient(180deg, var(--card), var(--card2))}
+  .back{background:linear-gradient(180deg, #0b1d34, #0a1628); transform:rotateY(180deg)}
+  .ko{font-weight:900; letter-spacing:.2px; line-height:1.2; font-size:clamp(20px,6vw,36px)}
+  .en{margin-top:10px; color:var(--muted); line-height:1.35; font-size:clamp(14px,4.5vw,18px)}
+  .hint{position:absolute; bottom:10px; left:0; right:0; font-size:clamp(11px,3.5vw,12px); color:#8fbad2}
+  .flipped{transform:rotateY(180deg)}
+  .nav{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px}
+  .nav .left{justify-self:start}
+  .nav .right{justify-self:end}
+  .nav button{width:100%; max-width:200px}
+  @media (hover:hover){
+    .card:hover{box-shadow:0 18px 42px rgba(0,0,0,.5), 0 0 0 3px rgba(56,189,248,.25), inset 0 0 0 1px rgba(255,255,255,.06)}
+  }
+  /* Safe area for iOS */
+  .wrap{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+</style>
+<style>
+  .floating-home {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: linear-gradient(90deg, #67e8f9, #38bdf8);
+    color: #072235;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 0 0 0 10px;
+    box-shadow: 0 6px 18px rgba(56,189,248,.35);
+    z-index: 9999;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+  }
+  .floating-home:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 0 12px rgba(56,189,248,.55),
+                0 0 24px rgba(103,232,249,.45);
+    transform: translateY(-1px);
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="floating-home">Home</a>
+  <div class="wrap">
+    <header>
+      <h1>Flip Card — 기본 지시 (Basic Commands)</h1>
+      <div class="controls">
+        <label class="toggle" title="Show/Hide English">
+          <input id="showEn" type="checkbox" />
+          <span>Show English</span>
+        </label>
+        <button id="shuffleBtn" class="iconbtn" title="Shuffle order">Shuffle</button>
+      </div>
+    </header>
+
+    <div class="stage" aria-live="polite">
+      <div class="progress"><span id="counter">1 / 17</span><span id="kohint">Tap card to flip</span></div>
+
+      <div class="cardbox">
+        <div id="card" class="card" role="button" aria-pressed="false" tabindex="0">
+          <div class="face front">
+            <div id="koFront" class="ko" lang="ko">…</div>
+            <div class="hint">Tap to flip</div>
+          </div>
+          <div class="face back">
+            <div id="koBack" class="ko" lang="ko">…</div>
+            <div id="enBack" class="en">…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button id="prevBtn" class="left">◀ Prev</button>
+        <button id="resetBtn">Reset Flip</button>
+        <button id="nextBtn" class="right">Next ▶</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const DATA = [
+  { ko:"왼손을 올리세요", en:"Raise your left hand" },
+  { ko:"오른손을 올리세요", en:"Raise your right hand" },
+  { ko:"양손 올리세요", en:"Raise both hands" },
+  { ko:"내리세요", en:"Bring it down" },
+  { ko:"위를 보세요", en:"Look above" },
+  { ko:"아래를 보세요", en:"Look down" },
+  { ko:"왼쪽을 보세요", en:"Look to the left" },
+  { ko:"오른쪽을 보세요", en:"Look to the right" },
+  { ko:"앞을 보세요", en:"Look ahead" },
+  { ko:"뒤를 보세요", en:"Look back" },
+  { ko:"뒤로 돌아서세요", en:"Turn back" },
+  { ko:"앞으로 돌아서세요", en:"Turn front" },
+  { ko:"왼쪽으로 가세요", en:"Go to the left" },
+  { ko:"오른쪽으로 가세요", en:"Go to the right" },
+  { ko:"이쪽으로 가세요", en:"Come over here" },
+  { ko:"의자에서 일어나세요", en:"Get up from the chair" },
+  { ko:"의자에 앉으세요", en:"Sit on the chair" },
+];
+
+const card = document.getElementById('card');
+const koFront = document.getElementById('koFront');
+const koBack  = document.getElementById('koBack');
+const enBack  = document.getElementById('enBack');
+const counter = document.getElementById('counter');
+const showEn  = document.getElementById('showEn');
+const shuffleBtn = document.getElementById('shuffleBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const resetBtn= document.getElementById('resetBtn');
+
+let order = [...DATA.keys()];
+let idx = 0;
+let showEnglish = false;
+
+function updateCounter(){
+  counter.textContent = `${idx+1} / ${order.length}`;
+}
+
+function loadCard(){
+  const item = DATA[ order[idx] ];
+  koFront.textContent = item.ko;
+  koBack.textContent  = item.ko;
+  enBack.textContent  = item.en;
+  // Apply global showEnglish state
+  card.classList.toggle('flipped', showEnglish);
+  card.setAttribute('aria-pressed', showEnglish ? 'true' : 'false');
+  updateCounter();
+}
+
+function flip(){
+  card.classList.toggle('flipped');
+  card.setAttribute('aria-pressed', card.classList.contains('flipped') ? 'true' : 'false');
+}
+
+function clampIdx(){
+  if(idx < 0) idx = 0;
+  if(idx >= order.length) idx = order.length - 1;
+}
+
+function next(){ idx++; clampIdx(); loadCard(); }
+function prev(){ idx--; clampIdx(); loadCard(); }
+
+function shuffle(){
+  // Fisher–Yates
+  for(let i=order.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [order[i],order[j]] = [order[j],order[i]];
+  }
+  idx = 0;
+  loadCard();
+}
+
+card.addEventListener('click', flip);
+card.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); }
+});
+
+showEn.addEventListener('change', (e)=>{
+  showEnglish = e.target.checked;
+  // Snap to state
+  card.classList.toggle('flipped', showEnglish);
+  card.setAttribute('aria-pressed', showEnglish ? 'true' : 'false');
+});
+
+shuffleBtn.addEventListener('click', shuffle);
+nextBtn.addEventListener('click', ()=>{ idx = Math.min(idx+1, order.length-1); loadCard(); });
+prevBtn.addEventListener('click', ()=>{ idx = Math.max(idx-1, 0); loadCard(); });
+resetBtn.addEventListener('click', ()=>{
+  card.classList.remove('flipped');
+  showEn.checked = false;
+  showEnglish = false;
+  card.setAttribute('aria-pressed','false');
+});
+
+loadCard();
+
+/* Optional: swipe gestures for mobile */
+let touchStartX=null;
+card.addEventListener('touchstart', (e)=>{ touchStartX = e.changedTouches[0].clientX; }, {passive:true});
+card.addEventListener('touchend', (e)=>{
+  if(touchStartX===null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 40){
+    if(dx < 0) next(); else prev();
+  }else{
+    flip();
+  }
+  touchStartX=null;
+});
+</script>
+</body>
+</html>
