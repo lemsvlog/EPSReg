@@ -284,8 +284,8 @@ function speakKo(text){
   if(synth.speaking) synth.cancel(); // stop any ongoing speech
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR';
-  u.rate = 0.95; // slightly slower for clarity
-  u.pitch = 1.0;
+  u.rate = 0.75; // slightly slower for clarity
+  u.pitch = .75;
   // Try to pick a Korean voice if available
   const voices = synth.getVoices();
   const koVoice = voices.find(v=>/ko/i.test(v.lang));
