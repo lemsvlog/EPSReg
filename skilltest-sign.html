@@ -278,13 +278,15 @@ let idx = 0; // current index within order[]
 let lastRandom = -1;
 
 // ===== Text-to-Speech (Korean) =====
+// Slightly slower than before per request
+const RATE_KO = 0.65; // ← adjust here if you want even slower/faster later
 function speakKo(text){
   if(!('speechSynthesis' in window)) return;
   const synth = window.speechSynthesis;
   if(synth.speaking) synth.cancel(); // stop any ongoing speech
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR';
-  u.rate = 0.75; // slightly slower for clarity
+  u.rate = RATE_KO; // was 0.75
   u.pitch = .75;
   // Try to pick a Korean voice if available
   const voices = synth.getVoices();
