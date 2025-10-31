@@ -82,9 +82,7 @@
   <header>
     <div class="wrap">
       <h1>🧊 Korean Interview — Flip Cards</h1>
-      <p class="sub">
-       
-      </p>
+      <p class="sub"></p>
       <div class="toolbar">
         <button id="btn-new">🔀 New Random Set</button>
         <label class="toggle"><input type="checkbox" id="showFrontQ" checked> Show question text (front)</label>
@@ -98,13 +96,235 @@
     <div id="cards" class="grid"></div>
 
     <footer>
-      <div class="legend">
-     
-      </div>
+      <div class="legend"></div>
     </footer>
   </main>
 
 <script>
+// ===================== NEW: Tunables =====================
+const RATE_DEFAULT = 1;     // default TTS rate
+const RATE_MATH    = 0.75;  // slower TTS for Card #5 (Math)
+
+// ===================== NEW: Optional .wav Audio Map =====================
+// HOW TO USE:
+// 1) For Cards #1–4 (personal interview questions): provide .wav for the *question only*
+//    Fill AUDIO.Q with keys 1..34 as needed, but only cards 1..4 will try to use these.
+//      e.g., Q1 question wav -> AUDIO.Q[1] = 'audio/q1.wav'
+// 2) Card #5 (Math) — unchanged; no external wavs are used (but TTS is slowed down).
+// 3) Cards #6 (Work) & #7 (NCS/Social): provide .wav for the *question and answers*.
+//    Keys are by index in the WORK_QA / SOCIAL_QA arrays (0-based).
+//      e.g., first Work item question -> AUDIO.W[0].q = 'audio/w0_q.wav'
+//            first Work item answers  -> AUDIO.W[0].a = ['audio/w0_a1.wav','audio/w0_a2.wav']
+//            first Social item question -> AUDIO.S[0].q = 'audio/s0_q.wav'
+//            first Social item answers  -> AUDIO.S[0].a = ['audio/s0_a1.wav']
+// If a file path is missing, the app falls back to built‑in TTS.
+const AUDIO = {
+  // =========================
+  // CARD #1–4 (INTERVIEW)
+  // Question-only audio; fallback = TTS.
+  // Tip: I listed ALL 1..34 so kahit anong lumabas sa unang 4 cards, may tugma.
+  // =========================
+  Q: {
+    // 1 이름이 무엇입니까? / 이름이 뭐예요?
+    1: 'audio/q1.wav',
+    // 2 몇 살입니까? / 몇 살이에요?
+    2: 'audio/q2.wav',
+    // 3 생일이 언제입니까? / 생일이 언제예요?
+    3: 'audio/q3.wav',
+    // 4 어디에서 오셨습니까? / 고향이 어디십니까?  |  어디에서 왔어요? / 고향이 어디예요?
+    4: 'audio/q4.wav',
+    // 5 결혼했습니까? / 결혼했어요?
+    5: 'audio/q5.wav',
+    // 6 결혼은 언제 하셨습니까? / 언제 했습니까?  |  결혼은 언제 했어요?
+    6: 'audio/q6.wav',
+    // 7 가족이 몇 명 있습니까? / 가족 몇 명 있어요?
+    7: 'audio/q7.wav',
+    // 8 아이가 몇 명 있습니까? / 아이가 몇 명 있어요?
+    8: 'audio/q8.wav',
+    // 9 부모님이 있습니까?
+    9: 'audio/q9.wav',
+    // 10 형제가 있습니까? / 형제가 있어요?
+    10: 'audio/q10.wav',
+    // 11 자매가 있습니까? / 자매가 있어요?
+    11: 'audio/q11.wav',
+    // 12 취미가 무엇입니까? / 취미가 뭐예요?
+    12: 'audio/q12.wav',
+    // 13 무슨 운동을 좋아합니까? / 무슨 운동을 좋아해요?
+    13: 'audio/q13.wav',
+    // 14 키가 얼마입니까? / 키가 몇 센티미터입니까?  |  키가 얼마나/몇 센티미터 되세요?
+    14: 'audio/q14.wav',
+    // 15 몸무게가 몇 킬로그램입니까? / 몸무게가 얼마입니까?  |  몸무게가 얼마예요?
+    15: 'audio/q15.wav',
+    // 16 어디에서 한국어를 배웠습니까?
+    16: 'audio/q16.wav',
+    // 17 얼마 동안 한국어를 배우고 있습니까? / … 배우고 있어요?
+    17: 'audio/q17.wav',
+    // 18 이전에는 무엇을 하셨습니까? / 전에 뭐 했어요?
+    18: 'audio/q18.wav',
+    // 19 지금/요즘 무엇을 합니까? / 요즘 뭐 해요?
+    19: 'audio/q19.wav',
+    // 20 오늘은 며칠입니까? / 오늘은 며칠이에요?
+    20: 'audio/q20.wav',
+    // 21 어제는 며칠입니까? / 어제는 며칠이에요?
+    21: 'audio/q21.wav',
+    // 22 내일은 며칠입니까? / 내일은 며칠이에요?
+    22: 'audio/q22.wav',
+    // 23 오늘은 무슨 요일입니까? / 오늘은 무슨 요일이에요?
+    23: 'audio/q23.wav',
+    // 24 어제는 무슨 요일입니까?
+    24: 'audio/q24.wav',
+    // 25 내일은 무슨 요일입니까?
+    25: 'audio/q25.wav',
+    // 26 아침 식사하셨습니까? / 아침 식사했어요?
+    26: 'audio/q26.wav',
+    // 27 아침에 무엇을 먹었습니까? / 아침에 무엇을 먹었어요?
+    27: 'audio/q27.wav',
+    // 28 무슨 색깔을 좋아하십니까? / 무슨 색깔 좋아해요?
+    28: 'audio/q28.wav',
+    // 29 왜 그 색을 좋아합니까? / 왜 그 색을 좋아해요?
+    29: 'audio/q29.wav',
+    // 30 옷 색깔이 무엇입니까? / 옷 색깔이 뭐예요?
+    30: 'audio/q30.wav',
+    // 31 어떤 계절을 가장 좋아합니까? / 어떤 계절을 가장 좋아해요?
+    31: 'audio/q31.wav',
+    // 32 왜 그 계절을 좋아합니까? / 왜 그 계절을 좋아해요?
+    32: 'audio/q32.wav',
+    // 33 오늘 날씨가 어떻습니까? / 오늘 날씨가 어때요?
+    33: 'audio/q33.wav',
+    // 34 지금 몇 시입니까? / 지금 몇 시예요?
+    34: 'audio/q34.wav'
+  },
+
+ W: {
+  // 0 직장 동료가 바쁘면 어떻게 할 것입니까?
+  // Answer 1: 저는 동료를 돕기 위해 일을 빨리 마치겠습니다.
+  // Answer 2: 저는 동료를 도와서 빨리 끝내겠습니다.
+  0: { q: 'audio/6_1.wav', a: ['audio/6_1a.wav','audio/6_1b.wav'] },
+
+  // 1 회사가 바빠서 일이 많다면 어떻게 할 것입니까?
+  // Answer 1: 저는 많은 일을 끝내기 위해 추가 근무를 하겠습니다.
+  // Answer 2: 시간이 있으면 일을 끝내고, 필요하면 야근도 하겠습니다.
+  1: { q: 'audio/6_2.wav', a: ['audio/6_2a.wav','audio/6_2b.wav'] },
+
+  // 2 직장 동료와 어떻게 지낼 것입니까?
+  // Answer 1: 저는 동료들과 친해지려고 노력하겠습니다.
+  // Answer 2: 저는 서로 도우면서 지내겠습니다.
+  2: { q: 'audio/6_3.wav', a: ['audio/6_3a.wav','audio/6_3b.wav'] },
+
+  // 3 일을 하다가 실수를 했을 때 어떻게 할 것입니까?
+  // Answer 1: 저는 상사에게 말하고 같은 실수를 반복하지 않겠다고 약속하겠습니다.
+  // Answer 2: 저는 상사에게 보고하고 지시대로 하겠습니다.
+  3: { q: 'audio/6_4.wav', a: ['audio/6_4a.wav','audio/6_4b.wav'] },
+
+  // 4 불량품이 많을 때 어떻게 하시겠습니까?
+  // Answer 1: 기계를 멈추고 상사에게 보고한 후 다음에는 더 조심하겠습니다.
+  // Answer 2: 상사에게 보고하고 원인을 확인하여 해결책을 찾겠습니다.
+  4: { q: 'audio/6_5.wav', a: ['audio/6_5a.wav','audio/6_5b.wav'] },
+
+  // 5 당신 의견이 상사의 것과 다르다면 어떻게 하시겠습니까?
+  // Answer 1: 저는 상사의 의견을 따르겠습니다.
+  // Answer 2: 저는 상사의 의견을 존중하겠습니다.
+  5: { q: 'audio/6_6.wav', a: ['audio/6_6a.wav','audio/6_6b.wav'] },
+
+  // 6 직장에서 사고가 나면 어떻게 하시겠습니까?
+  // Answer 1: 사고가 발생하면 즉시 상사에게 보고하겠습니다.
+  // Answer 2: 즉시 상사에게 보고하고 응급전화(119)에 연락하겠습니다.
+  6: { q: 'audio/6_7.wav', a: ['audio/6_7a.wav','audio/6_7b.wav'] },
+
+  // 7 왜 한국에 가고 싶습니까?
+  // Answer 1: 가족들을 위해 한국에서 돈을 벌고 싶습니다.
+  // Answer 2: 한국에서 일하고 제 가족을 위해 돈을 벌고 싶습니다.
+  7: { q: 'audio/6_8.wav', a: ['audio/6_8a.wav','audio/6_8b.wav'] },
+
+  // 8 한국에 가면 무슨 일을 하고 싶습니까?
+  // Answer 1: 저는 제조업에서 일하고 싶습니다.
+  // Answer 2: 한국에 가면 주어진 일이라면 무엇이든 열심히 하겠습니다.
+  8: { q: 'audio/6_9.wav', a: ['audio/6_9a.wav','audio/6_9b.wav'] },
+
+  // 9 한국에 대해 아는 것이 있습니까?
+  // Answer 1: 네, 한국은 아름답고 발전된 나라입니다.
+  // Answer 2: 네, 한국에는 사계절이 있고 문화가 발달해 있습니다.
+  9: { q: 'audio/6_10.wav', a: ['audio/6_10a.wav','audio/6_10b.wav'] },
+
+  // 10 한국에서 사용할 수 있는 기술이 있습니까?
+  // Answer 1: 네, 저는 배우는 속도가 빠르고 여러 가지 일을 할 수 있습니다.
+  // Answer 2: 네, 어떤 일이든 배워서 열심히 할 수 있습니다.
+  10:{ q: 'audio/6_11.wav', a: ['audio/6_11a.wav','audio/6_11b.wav'] },
+
+  // 11 다른 사람보다 잘할 수 있는 기술이 있습니까?
+  // Answer 1: 네, 저는 빠르게 배우고 일을 잘하며 정확하게 수행할 수 있습니다.
+  // Answer 2: 네, 저는 누구보다 성실하게 일할 자신이 있습니다.
+  11:{ q: 'audio/6_12.wav', a: ['audio/6_12a.wav','audio/6_12b.wav'] },
+
+  // 12 당신이 한국에서 일할 자격이 있는 것은 무엇입니까?
+  // Answer 1: 저는 배우는 속도가 빠르고 성실하게 일합니다.
+  // Answer 2: 저는 성실하고 책임감 있게 일할 수 있습니다.
+  12:{ q: 'audio/6_13.wav', a: ['audio/6_13a.wav','audio/6_13b.wav'] },
+
+  // 13 왜 우리가 당신을 고용해야 합니까?
+  // Answer 1: 아직 배울 것이 많지만 최선을 다해 성실히 일하겠습니다.
+  // Answer 2: 저는 헌신적이며 지시를 성실히 따를 수 있습니다.
+  13:{ q: 'audio/6_14.wav', a: ['audio/6_14a.wav','audio/6_14b.wav'] },
+
+  // 14 공장에서 불이 나면 어떻게 하시겠습니까?
+  // Answer 1: 불이 나면 응급전화(119)에 연락하겠습니다.
+  // Answer 2: 즉시 상사에게 보고하고 119에 연락하며 안전하게 대피하겠습니다.
+  14:{ q: 'audio/6_15.wav', a: ['audio/6_15a.wav','audio/6_15b.wav'] }
+},
+
+  
+  
+ S: {
+  // 0 다른 사람들과 지내는 것이 왜 중요하다고 생각하십니까?
+  // Answer 1: 다른 사람들과 잘 지내야 일을 잘할 수 있다고 생각합니다.
+  // Answer 2: 좋은 관계가 있어야 협력이 잘 된다고 생각합니다.
+  0: { q: 'audio/7_1.wav', a: ['audio/7_1a.wav','audio/7_1b.wav'] },
+
+  // 1 새로운 동료들과 잘 지내기 위해 어떤 노력을 할 수 있습니까?
+  // Answer 1: 새로운 동료들을 존중하고 경청하면서 좋은 관계를 만들겠습니다.
+  // Answer 2: 팀워크를 중요하게 생각하며 서로 도우면서 잘 지내겠습니다.
+  1: { q: 'audio/7_2.wav', a: ['audio/7_2a.wav','audio/7_2b.wav'] },
+
+  // 2 문제가 생기면 해결책을 찾기 위해 어떻게 노력하시겠습니까?
+  // Answer 1: 문제가 생기면 원인을 확인하고 상사에게 보고한 후 해결책을 찾겠습니다.
+  // Answer 2: 침착하게 상황을 파악하고 동료들과 함께 해결하겠습니다.
+  2: { q: 'audio/7_3.wav', a: ['audio/7_3a.wav','audio/7_3b.wav'] },
+
+  // 3 의사소통이 왜 중요한지 설명할 수 있습니까?
+  // Answer 1: 협력이 가능하고 일이 더 원활하게 진행되기 때문에 중요하다고 생각합니다.
+  // Answer 2: 동료들과 신뢰를 쌓고 좋은 팀워크를 만들 수 있기 때문입니다.
+  3: { q: 'audio/7_4.wav', a: ['audio/7_4a.wav','audio/7_4b.wav'] },
+
+  // 4 의사소통을 방해하는 요소들은 무엇이 있습니까?
+  // Answer 1: 불분명한 표현과 오해가 의사소통을 어렵게 만든다고 생각합니다.
+  // Answer 2: 그런 요소들은 오해를 일으키고 의사소통 단절로 이어질 수 있습니다.
+  4: { q: 'audio/7_5.wav', a: ['audio/7_5a.wav','audio/7_5b.wav'] },
+
+  // 5 사람들 사이에서 지켜야 할 예절에 대해 잘 알고 있습니까?
+  // Answer 1: 네, 서로를 존중하고 예의 있게 행동하는 것이 중요하다는 것을 잘 알고 있습니다.
+  // Answer 2: 네, 인사와 예의 바른 태도 같은 기본적인 예절을 지켜야 한다고 알고 있습니다.
+  5: { q: 'audio/7_6.wav', a: ['audio/7_6a.wav','audio/7_6b.wav'] },
+
+  // 6 일하면서 정해진 시간을 잘 지키십니까?
+  // Answer 1: 네, 일정을 잘 지키고 정해진 시간 안에 일을 마치도록 노력합니다.
+  // Answer 2: 네, 시간을 지키는 것이 책임이라고 생각하기 때문에 잘 지킵니다.
+  6: { q: 'audio/7_7.wav', a: ['audio/7_7a.wav','audio/7_7b.wav'] }
+}
+};
+
+let currentAudio = null;
+function playWav(src){
+  if(!src) return false;
+  try{
+    stopSpeech();
+    if(currentAudio){ try{ currentAudio.pause(); }catch(e){} }
+    const a = new Audio(src);
+    currentAudio = a;
+    a.play().catch(()=>{});
+    return true;
+  }catch(e){ return false; }
+}
+
 // ===== Data (1..34) for personal Qs =====
 const Q = [
   {id:1, koQFormal:"이름이 무엇입니까?", koQPolite:"이름이 뭐예요?", enQ:"What is your name?", koA:"제 이름은 ________입니다.", enA:"My name is ________."},
@@ -224,96 +444,51 @@ function buildMathItem(){
 
 // ===== Card #6: Work-related Q&A (random one) =====
 const WORK_QA = [
-  {
-    koQ: "직장 동료가 바쁘면 어떻게 할 것입니까?",
-    enQ: "What will you do if your co-worker is busy?",
+  { koQ: "직장 동료가 바쁘면 어떻게 할 것입니까?", enQ: "What will you do if your co-worker is busy?",
     koA: ["저는 동료를 돕기 위해 일을 빨리 마치겠습니다.","저는 동료를 도와서 빨리 끝내겠습니다."],
-    enA: ["I will finish my work quickly to help my co-worker.","I will help my co-workers so we can finish quickly."]
-  },
-  {
-    koQ: "회사가 바빠서 일이 많다면 어떻게 할 것입니까?",
-    enQ: "What will you do if the company is busy and there is a lot of work?",
+    enA: ["I will finish my work quickly to help my co-worker.","I will help my co-workers so we can finish quickly."] },
+  { koQ: "회사가 바빠서 일이 많다면 어떻게 할 것입니까?", enQ: "What will you do if the company is busy and there is a lot of work?",
     koA: ["저는 많은 일을 끝내기 위해 추가 근무를 하겠습니다.","시간이 있으면 일을 끝내고, 필요하면 야근도 하겠습니다."],
-    enA: ["I will work overtime to finish a lot of work at the company.","If there is time, I will finish my work, and if needed, I will work overtime."]
-  },
-  {
-    koQ: "직장 동료와 어떻게 지낼 것입니까?",
-    enQ: "How will you get along with co-workers?",
+    enA: ["I will work overtime to finish a lot of work at the company.","If there is time, I will finish my work, and if needed, I will work overtime."] },
+  { koQ: "직장 동료와 어떻게 지낼 것입니까?", enQ: "How will you get along with co-workers?",
     koA: ["저는 동료들과 친해지려고 노력하겠습니다.","저는 서로 도우면서 지내겠습니다."],
-    enA: ["I will try to get along well with my co-worker.","I will get along by helping each other."]
-  },
-  {
-    koQ: "일을 하다가 실수를 했을 때 어떻게 할 것입니까?",
-    enQ: "What will you do if you make a mistake while working?",
+    enA: ["I will try to get along well with my co-worker.","I will get along by helping each other."] },
+  { koQ: "일을 하다가 실수를 했을 때 어떻게 할 것입니까?", enQ: "What will you do if you make a mistake while working?",
     koA: ["저는 상사에게 말하고 같은 실수를 반복하지 않겠다고 약속하겠습니다.","저는 상사에게 보고하고 지시대로 하겠습니다."],
-    enA: ["I will tell my boss and promise not to repeat the same mistake.","I will report it to my superior and follow the instructions."]
-  },
-  {
-    koQ: "불량품이 많을 때 어떻게 하시겠습니까?",
-    enQ: "What will you do if there are many defective products?",
+    enA: ["I will tell my boss and promise not to repeat the same mistake.","I will report it to my superior and follow the instructions."] },
+  { koQ: "불량품이 많을 때 어떻게 하시겠습니까?", enQ: "What will you do if there are many defective products?",
     koA: ["기계를 멈추고 상사에게 보고한 후 다음에는 더 조심하겠습니다.","상사에게 보고하고 원인을 확인하여 해결책을 찾겠습니다."],
-    enA: ["I will stop the machine, report to my boss, and be more careful next time.","I will report to my superior, check the cause, and find a solution."]
-  },
-  {
-    koQ: "당신 의견이 상사의 것과 다르다면 어떻게 하시겠습니까?",
-    enQ: "What will you do if your opinion is different from your boss’s?",
+    enA: ["I will stop the machine, report to my boss, and be more careful next time.","I will report to my superior, check the cause, and find a solution."] },
+  { koQ: "당신 의견이 상사의 것과 다르다면 어떻게 하시겠습니까?", enQ: "What will you do if your opinion is different from your boss’s?",
     koA: ["저는 상사의 의견을 따르겠습니다.","저는 상사의 의견을 존중하겠습니다."],
-    enA: ["I will follow my boss’s opinion.","I will respect my superior’s opinion."]
-  },
-  {
-    koQ: "직장에서 사고가 나면 어떻게 하시겠습니까?",
-    enQ: "What will you do if an accident happens at work?",
+    enA: ["I will follow my boss’s opinion.","I will respect my superior’s opinion."] },
+  { koQ: "직장에서 사고가 나면 어떻게 하시겠습니까?", enQ: "What will you do if an accident happens at work?",
     koA: ["사고가 발생하면 즉시 상사에게 보고하겠습니다.","즉시 상사에게 보고하고 응급전화(119)에 연락하겠습니다."],
-    enA: ["I will report immediately to my boss if an accident occurs.","I will report to my superior and call the emergency hotline (119)."]
-  },
-  {
-    koQ: "왜 한국에 가고 싶습니까?",
-    enQ: "Why do you want to go to Korea?",
+    enA: ["I will report immediately to my boss if an accident occurs.","I will report to my superior and call the emergency hotline (119)."] },
+  { koQ: "왜 한국에 가고 싶습니까?", enQ: "Why do you want to go to Korea?",
     koA: ["가족들을 위해 한국에서 돈을 벌고 싶습니다.","한국에서 일하고 제 가족을 위해 돈을 벌고 싶습니다."],
-    enA: ["I want to earn money in Korea for my family.","I want to work in Korea and earn money for my family."]
-  },
-  {
-    koQ: "한국에 가면 무슨 일을 하고 싶습니까?",
-    enQ: "What job do you want to do in Korea?",
+    enA: ["I want to earn money in Korea for my family.","I want to work in Korea and earn money for my family."] },
+  { koQ: "한국에 가면 무슨 일을 하고 싶습니까?", enQ: "What job do you want to do in Korea?",
     koA: ["저는 제조업에서 일하고 싶습니다.","한국에 가면 주어진 일이라면 무엇이든 열심히 하겠습니다."],
-    enA: ["I want to work in manufacturing.","If I go to Korea, I will work hard at any job that is given to me."]
-  },
-  {
-    koQ: "한국에 대해 아는 것이 있습니까?",
-    enQ: "Do you know anything about Korea?",
+    enA: ["I want to work in manufacturing.","If I go to Korea, I will work hard at any job that is given to me."] },
+  { koQ: "한국에 대해 아는 것이 있습니까?", enQ: "Do you know anything about Korea?",
     koA: ["네, 한국은 아름답고 발전된 나라입니다.","네, 한국에는 사계절이 있고 문화가 발달해 있습니다."],
-    enA: ["Yes, Korea is a beautiful and developed country.","Yes, Korea has four seasons, and its culture is well-developed."]
-  },
-  {
-    koQ: "한국에서 사용할 수 있는 기술이 있습니까?",
-    enQ: "Do you have skills you can use in Korea?",
+    enA: ["Yes, Korea is a beautiful and developed country.","Yes, Korea has four seasons, and its culture is well-developed."] },
+  { koQ: "한국에서 사용할 수 있는 기술이 있습니까?", enQ: "Do you have skills you can use in Korea?",
     koA: ["네, 저는 배우는 속도가 빠르고 여러 가지 일을 할 수 있습니다.","네, 어떤 일이든 배워서 열심히 할 수 있습니다."],
-    enA: ["Yes, I learn quickly and can do multiple tasks.","Yes, I can learn any job and work hard."]
-  },
-  {
-    koQ: "다른 사람보다 잘할 수 있는 기술이 있습니까?",
-    enQ: "Do you have any skills better than others?",
+    enA: ["Yes, I learn quickly and can do multiple tasks.","Yes, I can learn any job and work hard."] },
+  { koQ: "다른 사람보다 잘할 수 있는 기술이 있습니까?", enQ: "Do you have any skills better than others?",
     koA: ["네, 저는 빠르게 배우고 일을 잘하며 정확하게 수행할 수 있습니다.","네, 저는 누구보다 성실하게 일할 자신이 있습니다."],
-    enA: ["Yes, I learn fast, work well, and perform tasks accurately.","Yes, I am confident that I can work more diligently than anyone else."]
-  },
-  {
-    koQ: "당신이 한국에서 일할 자격이 있는 것은 무엇입니까?",
-    enQ: "What qualifies you to work in Korea?",
+    enA: ["Yes, I learn fast, work well, and perform tasks accurately.","Yes, I am confident that I can work more diligently than anyone else."] },
+  { koQ: "당신이 한국에서 일할 자격이 있는 것은 무엇입니까?", enQ: "What qualifies you to work in Korea?",
     koA: ["저는 배우는 속도가 빠르고 성실하게 일합니다.","저는 성실하고 책임감 있게 일할 수 있습니다."],
-    enA: ["I learn quickly and work diligently.","I can work sincerely and responsibly."]
-  },
-  {
-    koQ: "왜 우리가 당신을 고용해야 합니까?",
-    enQ: "Why should we hire you?",
+    enA: ["I learn quickly and work diligently.","I can work sincerely and responsibly."] },
+  { koQ: "왜 우리가 당신을 고용해야 합니까?", enQ: "Why should we hire you?",
     koA: ["아직 배울 것이 많지만 최선을 다해 성실히 일하겠습니다.","저는 헌신적이며 지시를 성실히 따를 수 있습니다."],
-    enA: ["I still have a lot to learn, but I will do my best and work hard.","I am dedicated and can follow instructions carefully."]
-  },
-  {
-    koQ: "공장에서 불이 나면 어떻게 하시겠습니까?",
-    enQ: "What will you do if there is a fire in the factory?",
+    enA: ["I still have a lot to learn, but I will do my best and work hard.","I am dedicated and can follow instructions carefully."] },
+  { koQ: "공장에서 불이 나면 어떻게 하시겠습니까?", enQ: "What will you do if there is a fire in the factory?",
     koA: ["불이 나면 응급전화(119)에 연락하겠습니다.","즉시 상사에게 보고하고 119에 연락하며 안전하게 대피하겠습니다."],
-    enA: ["If there is a fire, I will call the emergency hotline (119).","I will immediately report to my superior, call 119, and evacuate safely."]
-  }
+    enA: ["If there is a fire, I will call the emergency hotline (119).","I will immediately report to my superior, call 119, and evacuate safely."] }
 ];
 
 function buildWorkItem(){
@@ -321,6 +496,7 @@ function buildWorkItem(){
   const it = WORK_QA[i];
   return {
     id:'W',
+    widx: i, // keep index for AUDIO.W lookup
     frontKoQ: it.koQ,
     backKoQ: it.koQ,
     backEnQ: it.enQ,
@@ -331,48 +507,27 @@ function buildWorkItem(){
 
 // ===== Card #7: NCS / teamwork & communication Q&A =====
 const SOCIAL_QA = [
-  {
-    koQ:"다른 사람들과 지내는 것이 왜 중요하다고 생각하십니까?",
-    enQ:"Why do you think it is important to get along with others?",
+  { koQ:"다른 사람들과 지내는 것이 왜 중요하다고 생각하십니까?", enQ:"Why do you think it is important to get along with others?",
     koA:["다른 사람들과 잘 지내야 일을 잘할 수 있다고 생각합니다.","좋은 관계가 있어야 협력이 잘 된다고 생각합니다."],
-    enA:["I think getting along with others is important to work well.","I think good relationships are important for cooperation."]
-  },
-  {
-    koQ:"새로운 동료들과 잘 지내기 위해 어떤 노력을 할 수 있습니까?",
-    enQ:"What effort can you make to get along well with new colleagues?",
+    enA:["I think getting along with others is important to work well.","I think good relationships are important for cooperation."] },
+  { koQ:"새로운 동료들과 잘 지내기 위해 어떤 노력을 할 수 있습니까?", enQ:"What effort can you make to get along well with new colleagues?",
     koA:["새로운 동료들을 존중하고 경청하면서 좋은 관계를 만들겠습니다.","팀워크를 중요하게 생각하며 서로 도우면서 잘 지내겠습니다."],
-    enA:["I will build good relationships by respecting and listening to my new colleagues.","I value teamwork and will get along well by helping each other."]
-  },
-  {
-    koQ:"문제가 생기면 해결책을 찾기 위해 어떻게 노력하시겠습니까?",
-    enQ:"How would you work to find a solution if a problem arises?",
+    enA:["I will build good relationships by respecting and listening to my new colleagues.","I value teamwork and will get along well by helping each other."] },
+  { koQ:"문제가 생기면 해결책을 찾기 위해 어떻게 노력하시겠습니까?", enQ:"How would you work to find a solution if a problem arises?",
     koA:["문제가 생기면 원인을 확인하고 상사에게 보고한 후 해결책을 찾겠습니다.","침착하게 상황을 파악하고 동료들과 함께 해결하겠습니다."],
-    enA:["If a problem occurs, I will check the cause, report to my superior, and then find a solution.","I will calmly assess the situation and solve it together with my co-workers."]
-  },
-  {
-    koQ:"의사소통이 왜 중요한지 설명할 수 있습니까?",
-    enQ:"Can you explain why communication is important?",
+    enA:["If a problem occurs, I will check the cause, report to my superior, and then find a solution.","I will calmly assess the situation and solve it together with my co-workers."] },
+  { koQ:"의사소통이 왜 중요한지 설명할 수 있습니까?", enQ:"Can you explain why communication is important?",
     koA:["협력이 가능하고 일이 더 원활하게 진행되기 때문에 중요하다고 생각합니다.","동료들과 신뢰를 쌓고 좋은 팀워크를 만들 수 있기 때문입니다."],
-    enA:["I think it is important because it makes cooperation possible and allows work to go more smoothly.","Because it builds trust with colleagues and creates good teamwork."]
-  },
-  {
-    koQ:"의사소통을 방해하는 요소들은 무엇이 있습니까?",
-    enQ:"What factors can interfere with communication?",
+    enA:["I think it is important because it makes cooperation possible and allows work to go more smoothly.","Because it builds trust with colleagues and creates good teamwork."] },
+  { koQ:"의사소통을 방해하는 요소들은 무엇이 있습니까?", enQ:"What factors can interfere with communication?",
     koA:["불분명한 표현과 오해가 의사소통을 어렵게 만든다고 생각합니다.","그런 요소들은 오해를 일으키고 의사소통 단절로 이어질 수 있습니다."],
-    enA:["I think unclear expressions and misunderstandings make communication difficult.","Such factors can cause misunderstandings and lead to communication breakdowns."]
-  },
-  {
-    koQ:"사람들 사이에서 지켜야 할 예절에 대해 잘 알고 있습니까?",
-    enQ:"Do you know the etiquette people should observe?",
+    enA:["I think unclear expressions and misunderstandings make communication difficult.","Such factors can cause misunderstandings and lead to communication breakdowns."] },
+  { koQ:"사람들 사이에서 지켜야 할 예절에 대해 잘 알고 있습니까?", enQ:"Do you know the etiquette people should observe?",
     koA:["네, 서로를 존중하고 예의 있게 행동하는 것이 중요하다는 것을 잘 알고 있습니다.","네, 인사와 예의 바른 태도 같은 기본적인 예절을 지켜야 한다고 알고 있습니다."],
-    enA:["Yes, I know it is important to respect each other and act politely.","Yes, I know we should observe basic manners like greetings and a polite attitude."]
-  },
-  {
-    koQ:"일하면서 정해진 시간을 잘 지키십니까?",
-    enQ:"Do you adhere well to the scheduled time while working?",
+    enA:["Yes, I know it is important to respect each other and act politely.","Yes, I know we should observe basic manners like greetings and a polite attitude."] },
+  { koQ:"일하면서 정해진 시간을 잘 지키십니까?", enQ:"Do you adhere well to the scheduled time while working?",
     koA:["네, 일정을 잘 지키고 정해진 시간 안에 일을 마치도록 노력합니다.","네, 시간을 지키는 것이 책임이라고 생각하기 때문에 잘 지킵니다."],
-    enA:["Yes, I follow the schedule and make sure to finish my work on time.","Yes, I keep time well because I believe it is my responsibility."]
-  }
+    enA:["Yes, I follow the schedule and make sure to finish my work on time.","Yes, I keep time well because I believe it is my responsibility."] }
 ];
 
 function buildSocialItem(){
@@ -380,6 +535,7 @@ function buildSocialItem(){
   const it = SOCIAL_QA[i];
   return {
     id:'S',
+    sidx: i, // keep index for AUDIO.S lookup
     frontKoQ: it.koQ,
     backKoQ: it.koQ,
     backEnQ: it.enQ,
@@ -392,13 +548,16 @@ function buildSocialItem(){
 const rnd = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 
 // ===== TTS (KO only, manual) =====
-function speakKO(text, rate=1){
+function speakKO(text, rate=RATE_DEFAULT){
   try{ window.speechSynthesis.cancel(); }catch(e){}
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR'; u.rate = rate; u.pitch = 1; u.volume = 1;
   window.speechSynthesis.speak(u);
 }
-function stopSpeech(){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+function stopSpeech(){
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  if(currentAudio){ try{ currentAudio.pause(); }catch(e){} }
+}
 
 // ===== Assembly of 7 cards =====
 function pickInterviewSet(){
@@ -476,6 +635,20 @@ function render(){
 
     const card = document.createElement('div');
     card.className='card';
+
+    // Back face controls: W/S get two play buttons (Q and A1/A2). Others: one button (A only)
+    const backControls = (isWork || isSocial)
+      ? `<div class="row" style="margin-top:auto">
+           <button class="btn-play-back-q">▶ Play Q (KO)</button>
+           <button class="btn-play-back-a1">▶ Play A1 (KO)</button>
+           <button class="btn-play-back-a2">▶ Play A2 (KO)</button>
+           <button class="flipbtn">◀ Back</button>
+         </div>`
+      : `<div class="row" style="margin-top:auto">
+           <button class="btn-play-back">▶ Play (KO)</button>
+           <button class="flipbtn">◀ Back</button>
+         </div>`;
+
     card.innerHTML = `
       <div class="inner">
         <div class="face front">
@@ -493,10 +666,7 @@ function render(){
           <div class="txt"><strong>A (KO):</strong> <span class="ako">${koAnswer}</span></div>
           <div class="txt muted"><strong>A (EN):</strong> ${enAnswer}</div>
           ${extraHTML}
-          <div class="row" style="margin-top:auto">
-            <button class="btn-play-back">▶ Play (KO)</button>
-            <button class="flipbtn">◀ Back</button>
-          </div>
+          ${backControls}
         </div>
       </div>
     `;
@@ -515,19 +685,94 @@ function render(){
       card.classList.toggle('flipped');
     }));
 
-    // Play (KO only)
+    // ====== Play (front) — Question only ======
     card.querySelector('.btn-play-front').addEventListener('click',(e)=>{
       e.stopPropagation();
-      speakKO(frontLine,1);
-    });
-    card.querySelector('.btn-play-back').addEventListener('click',(e)=>{
-      e.stopPropagation();
-      // If multiple KO answers, read the first sentence/line
-      const ko = card.querySelector('.ako').textContent.split('\n')[0].split('·')[0];
-      speakKO(ko,1);
+      let usedWav = false;
+      if(!isMath){
+        if(isWork && typeof item.widx === 'number'){
+          const ent = AUDIO.W[item.widx];
+          usedWav = ent && ent.q ? playWav(ent.q) : false;
+        } else if(isSocial && typeof item.sidx === 'number'){
+          const ent = AUDIO.S[item.sidx];
+          usedWav = ent && ent.q ? playWav(ent.q) : false;
+        } else if(!isWork && !isSocial && item.id>=1 && item.id<=34){
+          // Only Cards #1–4 will actually be in the front chunk for interview; but safe to check.
+          const qsrc = AUDIO.Q[item.id];
+          usedWav = qsrc ? playWav(qsrc) : false;
+        }
+      }
+      if(!usedWav){
+        // NEW: Slow down for Math card
+        speakKO(frontLine, isMath ? RATE_MATH : RATE_DEFAULT);
+      }
     });
 
-    // Draw analog clock
+    // ====== Play (back) ======
+    const playBackAnswerTTS = ()=>{
+      // If multiple KO answers, read the first sentence/line
+      const koRaw = (isWork || isSocial) ? (item.koAList && item.koAList[0]) : card.querySelector('.ako').textContent;
+      const ko = (koRaw || '').split('\n')[0].split('·')[0];
+      speakKO(ko, isMath ? RATE_MATH : RATE_DEFAULT);
+    };
+
+    // Case: work/social get separate buttons for Q and A1/A2 (NEW)
+    if(isWork || isSocial){
+      const btnQ  = card.querySelector('.btn-play-back-q');
+      const btnA1 = card.querySelector('.btn-play-back-a1');
+      const btnA2 = card.querySelector('.btn-play-back-a2');
+
+      btnQ.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        let usedWav = false;
+        if(isWork){
+          const ent = AUDIO.W[item.widx];
+          usedWav = ent && ent.q ? playWav(ent.q) : false;
+        } else {
+          const ent = AUDIO.S[item.sidx];
+          usedWav = ent && ent.q ? playWav(ent.q) : false;
+        }
+        if(!usedWav) speakKO(backKoQ, RATE_DEFAULT);
+      });
+
+      btnA1.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        let usedWav = false;
+        if(isWork){
+          const ent = AUDIO.W[item.widx];
+          usedWav = ent && Array.isArray(ent.a) && ent.a[0] ? playWav(ent.a[0]) : false;
+        } else {
+          const ent = AUDIO.S[item.sidx];
+          usedWav = ent && Array.isArray(ent.a) && ent.a[0] ? playWav(ent.a[0]) : false;
+        }
+        if(!usedWav){
+          const ko = (item.koAList && item.koAList[0]) || '';
+          speakKO(ko, RATE_DEFAULT);
+        }
+      });
+
+      btnA2.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        let usedWav = false;
+        if(isWork){
+          const ent = AUDIO.W[item.widx];
+          usedWav = ent && Array.isArray(ent.a) && ent.a[1] ? playWav(ent.a[1]) : false;
+        } else {
+          const ent = AUDIO.S[item.sidx];
+          usedWav = ent && Array.isArray(ent.a) && ent.a[1] ? playWav(ent.a[1]) : false;
+        }
+        if(!usedWav){
+          const ko = (item.koAList && (item.koAList[1] || item.koAList[0])) || '';
+          speakKO(ko, RATE_DEFAULT);
+        }
+      });
+    } else {
+      // Other cards: single back play (answer)
+      const btnBack = card.querySelector('.btn-play-back');
+      btnBack.addEventListener('click',(e)=>{ e.stopPropagation(); playBackAnswerTTS(); });
+    }
+
+    // Draw analog clock for Card #34
     if(isClock){
       const canvas = card.querySelector('canvas.clock');
       const ctx = canvas.getContext('2d');
@@ -547,9 +792,9 @@ function render(){
       }
       const hourAng=((hh%12)+mm/60)*Math.PI/6, minAng=(mm)*Math.PI/30;
       ctx.lineCap='round';
-      ctx.lineWidth=5; ctx.strokeStyle='#e5e7eb';
+      ctx.lineWidth = 5; ctx.strokeStyle='#e5e7eb';
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(hourAng)*(r*0.55), cy+Math.sin(hourAng)*(r*0.55)); ctx.stroke();
-      ctx.lineWidth=3; ctx.strokeStyle='#e5e7eb';
+      ctx.lineWidth = 3; ctx.strokeStyle='#e5e7eb';
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(minAng)*(r*0.8), cy+Math.sin(minAng)*(r*0.8)); ctx.stroke();
       ctx.fillStyle='#e5e7eb'; ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2); ctx.fill();
     }
@@ -566,5 +811,3 @@ window.addEventListener('load', render);
 </script>
 </body>
 </html>
-
-	
