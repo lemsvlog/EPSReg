@@ -578,19 +578,60 @@
       out = out.replace(/\s*\(([^)]+)\)\s*/g, "$1").replace(/[()]/g, "");
       return out.replace(/\s{2,}/g, " ").trim();
     }
+	
+	let cachedVoices = [];
 
-    function speakKo(text){
-      if(!audioReady) return;
-      if(!("speechSynthesis" in window)) return;
+function refreshVoices(){
+  try { cachedVoices = speechSynthesis.getVoices() || []; } catch (_) { cachedVoices = []; }
+}
 
-      const spoken = normalizeKoForTTS(text);
-      try{ speechSynthesis.cancel(); }catch(_){}
+function pickKoVoice(){
+  // prefer ko-KR then any ko
+  return (
+    cachedVoices.find(v => (v.lang || "").toLowerCase() === "ko-kr") ||
+    cachedVoices.find(v => (v.lang || "").toLowerCase().startsWith("ko")) ||
+    null
+  );
+}
 
-      const u = new SpeechSynthesisUtterance(spoken);
-      u.lang = "ko-KR";
-      u.rate = 0.69; // ✅ slower
-      speechSynthesis.speak(u);
-    }
+function ensureVoicesReady(){
+  return new Promise((resolve) => {
+    if (!("speechSynthesis" in window)) return resolve();
+
+    refreshVoices();
+    if (cachedVoices.length) return resolve();
+
+    const done = () => { refreshVoices(); resolve(); };
+
+    // Safari iOS fires this late
+    speechSynthesis.addEventListener("voiceschanged", done, { once: true });
+
+    // safety timeout
+    setTimeout(done, 500);
+  });
+}
+
+
+   function speakKo(text){
+  if(!audioReady) return;
+  if(!("speechSynthesis" in window)) return;
+
+  const spoken = normalizeKoForTTS(text);
+
+  try { speechSynthesis.cancel(); } catch(_) {}
+
+  const u = new SpeechSynthesisUtterance(spoken);
+  u.lang = "ko-KR";
+  u.rate = 0.85;   // speed
+  u.pitch = 1.0;
+  u.volume = 1.0;
+
+  const koVoice = pickKoVoice();
+  if (koVoice) u.voice = koVoice;
+
+  speechSynthesis.speak(u);
+}
+
 
     function renderFront(c){
       els.front.innerHTML = `
@@ -729,11 +770,12 @@
         }
       });
 
-      els.startBtn.addEventListener("click", ()=>{
-        audioReady = true;
-        els.gate.style.display = "none";
-        startRun();
-      });
+      els.startBtn.addEventListener("click", async ()=>{
+  audioReady = true;
+  els.gate.style.display = "none";
+  await ensureVoicesReady();
+  startRun(); // autoplay happens inside showCard()
+});
 
       els.restartBtn.addEventListener("click", ()=>{
         audioReady = true;
