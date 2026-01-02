@@ -1,0 +1,758 @@
+<!-- File: sentence-flipcards.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VIZKOR Flip Cards — Sentences (Basic/Intermediate/Advanced)</title>
+  <style>
+    :root{
+      --bg-1:#03121f; --bg-2:#0a1e2e;
+      --ice-1:#ecfeff; --ice-2:#dbeafe; --ice-3:#bae6fd;
+      --text:#eef6ff; --muted:#a9c3d9;
+      --accent:#38bdf8; --accent-2:#0ea5e9;
+      --cyan:#67e8f9; --cyan-2:#22d3ee; --navy:#0b2440;
+      --ring:0 0 18px rgba(56,189,248,.55), 0 0 32px rgba(103,232,249,.35);
+      --border:1px solid rgba(186,230,253,.30);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; color:var(--text);
+      min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:12px;
+      background:
+        radial-gradient(1200px 800px at 5% -10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(1200px 800px at 120% 110%, rgba(103,232,249,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg-1), #061a2b 65%, #04121e);
+      position:relative; isolation:isolate; padding:22px 16px 42px;
+    }
+    body::before{
+      content:""; position:fixed; inset:-20%;
+      background: conic-gradient(from 200deg at 60% 40%, rgba(186,230,253,.12), rgba(34,211,238,.10), rgba(56,189,248,.14), rgba(186,230,253,.10), rgba(34,211,238,.10));
+      filter:blur(48px); animation: drift 20s linear infinite; z-index:-1; opacity:.9;
+    }
+    @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(-3%,1%,0) rotate(10deg) scale(1.05)}100%{transform:translate3d(0,0,0) rotate(0) scale(1)}}
+
+    header{text-align:center}
+    .title{
+      margin:0; font-size:2.2rem; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+      background:linear-gradient(180deg, var(--ice-1), var(--ice-2) 55%, var(--ice-3));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 10px rgba(255,255,255,.75),0 0 24px rgba(56,189,248,.45);
+    }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-weight:700 }
+    .progress{ margin-top:6px; font-weight:900; color:var(--ice-2) }
+
+    .filters{
+      display:flex; gap:8px; justify-content:center; align-items:center;
+      margin:10px 0 0; flex-wrap:wrap;
+    }
+    .seg{
+      appearance:none; border:1px solid rgba(186,230,253,.35);
+      background:linear-gradient(180deg, #071c2c, #061725);
+      color:var(--ice-1); padding:8px 12px; border-radius:12px; font-weight:900;
+      cursor:pointer; box-shadow:0 6px 18px rgba(56,189,248,.20);
+      transition:filter .18s ease, transform .12s ease, box-shadow .18s ease;
+      white-space:nowrap;
+    }
+    .seg:hover{ filter:brightness(1.08); transform:translateY(-1px) }
+    .seg.active{
+      border-color:rgba(56,189,248,.9);
+      box-shadow:0 0 0 3px rgba(56,189,248,.8), 0 0 28px rgba(56,189,248,.6);
+      background:linear-gradient(180deg,#0b2a42,#08314e);
+      color:var(--ice-1);
+    }
+
+    .stage{ width:min(520px, 94vw); height:400px; display:flex; align-items:center; justify-content:center; margin-top:10px; }
+    .flip{ perspective:1200px; width:100%; height:100%; }
+    .card{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .75s cubic-bezier(.2,.7,.2,1); }
+    .flipped .card{ transform:rotateY(180deg); }
+
+    .face{
+      position:absolute; inset:0; border-radius:18px; backface-visibility:hidden; overflow:hidden;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+      text-align:center; padding:18px;
+    }
+    .front{ color:#0c253a; background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.88)); border:1px solid rgba(255,255,255,.65); box-shadow:0 12px 26px rgba(2,12,22,.45); }
+    .back{ transform:rotateY(180deg); background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94)); border:var(--border); box-shadow:var(--ring); }
+
+    .meta-top{
+      position:absolute; top:8px; left:12px; right:12px; text-align:center;
+      font-weight:900; color:#000; opacity:.95; padding:4px 8px;
+      border-radius:10px; border:1px solid rgba(0,0,0,.06);
+      background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+      pointer-events:none;
+    }
+    .ko{
+      font-size:2.25rem; font-weight:900; letter-spacing:.4px;
+      text-shadow:0 1px 0 rgba(255,255,255,.7); color:#0c253a;
+      line-height:1.18;
+      padding:0 10px;
+    }
+    .enhead{
+      font-size:1.15rem; font-weight:900; color:var(--ice-1);
+      width:min(460px,96%); text-align:left;
+    }
+    .enlines{ width:min(460px,96%); margin:6px auto 0; padding:0; list-style:none; text-align:left; }
+    .enlines li{
+      padding:10px 12px; margin:10px 0; border-radius:12px;
+      background:linear-gradient(180deg, #071c2c, #061725);
+      border:1px solid rgba(186,230,253,.2); color:var(--ice-2);
+    }
+    .enlines b{ color:var(--ice-3) }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:0 }
+    .btn{
+      appearance:none; border:none; cursor:pointer; font-weight:900; letter-spacing:.3px;
+      border-radius:12px; padding:10px 14px; color:#072235;
+      background:linear-gradient(90deg, var(--cyan), var(--accent));
+      box-shadow:0 6px 18px rgba(56,189,248,.35);
+      transition:transform .12s ease, filter .2s ease, box-shadow .2s ease;
+      text-transform:uppercase;
+    }
+    .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--ring) }
+    .ghost{ background:transparent; color:var(--ice-2); border:1px solid rgba(186,230,253,.35) }
+
+    /* ✅ darker FLIP text (front button) */
+    #flipToBack{
+      color:#04121e !important;
+      border-color:rgba(4,18,30,.25) !important;
+    }
+    #flipToBack:hover{ color:#03121f !important; }
+
+    .play-base{
+      appearance:none; border:none; cursor:pointer; border-radius:12px; padding:10px 14px;
+      font-weight:900; color:#072235;
+      background:linear-gradient(90deg, var(--cyan), var(--accent));
+      box-shadow:0 6px 18px rgba(56,189,248,.35);
+    }
+    .play-base:hover{ filter:brightness(1.08) }
+
+    .gate, .finish{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background: rgba(1,7,13,.55); backdrop-filter: blur(6px) saturate(130%);
+      -webkit-backdrop-filter: blur(6px) saturate(130%); z-index:5;
+    }
+    .panel{
+      width:min(520px,92vw);
+      background: linear-gradient(180deg, rgba(10,30,46,.86), rgba(7,22,36,.94));
+      border:var(--border); border-radius:16px; padding:20px; text-align:center; box-shadow:var(--ring);
+    }
+    .panel h2{ margin:0 0 8px; font-size:22px; font-weight:900; color:var(--ice-1) }
+    .panel p{ margin:6px 0 14px; color:var(--muted); font-weight:650 }
+
+    .floating-home{
+      position: fixed; top: 0; right: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--accent));
+      color: #072235; font-size: 14px; font-weight: 800; text-decoration: none;
+      padding: 8px 16px; border-radius: 0 0 0 10px; box-shadow: 0 6px 18px rgba(56,189,248,.35);
+      z-index: 9999; transition: all 0.25s ease;
+      backdrop-filter: blur(8px) saturate(140%); -webkit-backdrop-filter: blur(8px) saturate(140%);
+    }
+    .floating-home:hover{ filter:brightness(1.12); box-shadow: 0 0 12px rgba(56,189,248,.55), 0 0 24px rgba(103,232,249,.45); transform: translateY(-1px); }
+
+    .flip.animating{ pointer-events:none; }
+    @keyframes flyOut{ from{opacity:1; transform:translate3d(0,0,0) scale(1)} to{opacity:0; transform:translate3d(60vw,-6vh,0) rotate(8deg) scale(.96)} }
+    @keyframes flyIn{ from{opacity:0; transform:translate3d(-60vw,6vh,0) rotate(-6deg) scale(.96)} to{opacity:1; transform:translate3d(0,0,0) rotate(0) scale(1)} }
+    .flip.fly-exit .card{ animation: flyOut .10s cubic-bezier(.2,.7,.2,1) forwards; }
+    .flip.fly-enter .card{ animation: flyIn .10s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    @media (max-width:768px){ .stage{ height:420px } .ko{ font-size:2.45rem } }
+  </style>
+</head>
+
+<body>
+  <a href="index.html" class="floating-home">Home</a>
+
+  <header>
+    <h1 class="title">VIZKOR Flip Cards</h1>
+    <p class="subtitle">Korean Sentences • Basic / Intermediate / Advanced</p>
+    <div class="progress" id="progress">&nbsp;</div>
+
+    <div class="filters" role="tablist" aria-label="Difficulty">
+      <button class="seg active" data-level="basic" aria-pressed="true">Basic (2 words)</button>
+      <button class="seg" data-level="intermediate" aria-pressed="false">Intermediate (3–4)</button>
+      <button class="seg" data-level="advanced" aria-pressed="false">Advanced (5–7)</button>
+    </div>
+  </header>
+
+  <section class="stage">
+    <div class="flip" id="flipWrap" aria-live="polite">
+      <div class="card" id="card" tabindex="0" aria-label="Flip card">
+        <section class="face front" id="front"></section>
+        <section class="face back" id="back"></section>
+      </div>
+    </div>
+  </section>
+
+  <div class="gate" id="gate">
+    <div class="panel">
+      <h2>Start Practice</h2>
+      <p>Click Start to enable audio. Each card autoplays the Korean sentence once.</p>
+      <div class="controls">
+        <button class="btn" id="startBtn">Start (Enable Audio)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="finish" id="finish" style="display:none">
+    <div class="panel">
+      <h2>Finished! 🎉</h2>
+      <p>Naubos na lahat sa level na ito. Restart to reshuffle.</p>
+      <div class="controls">
+        <button class="btn" id="restartBtn">Restart (Shuffle)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CARDS = [
+      { level:"basic", ko:"밥 먹어요", en:"Eat rice", tl:"Kumakain ng kanin" },
+      { level:"basic", ko:"물 마셔요", en:"Drink water", tl:"Umiinom ng tubig" },
+      { level:"basic", ko:"커피 마셔요", en:"Drink coffee", tl:"Umiinom ng kape" },
+      { level:"basic", ko:"학교 가요", en:"Go to school", tl:"Pumupunta sa school" },
+      { level:"basic", ko:"회사 가요", en:"Go to work", tl:"Pumupunta sa trabaho" },
+      { level:"basic", ko:"집에 가요", en:"Go home", tl:"Umuuwi" },
+      { level:"basic", ko:"여기 와요", en:"Come here", tl:"Halika dito" },
+      { level:"basic", ko:"영화 봐요", en:"Watch a movie", tl:"Nanood ng movie" },
+      { level:"basic", ko:"책 읽어요", en:"Read a book", tl:"Nagbabasa ng libro" },
+      { level:"basic", ko:"글 써요", en:"Write", tl:"Nagsusulat" },
+      { level:"basic", ko:"공부해요", en:"Study", tl:"Nag-aaral" },
+      { level:"basic", ko:"일해요", en:"Work", tl:"Nagtatrabaho" },
+      { level:"basic", ko:"운동해요", en:"Exercise", tl:"Nag-eexercise" },
+      { level:"basic", ko:"요리해요", en:"Cook", tl:"Nagluluto" },
+      { level:"basic", ko:"쇼핑해요", en:"Shop", tl:"Namimili" },
+      { level:"basic", ko:"빨래해요", en:"Do laundry", tl:"Naglalaba" },
+      { level:"basic", ko:"청소해요", en:"Clean", tl:"Naglilinis" },
+      { level:"basic", ko:"설거지해요", en:"Wash dishes", tl:"Naghuhugas ng pinggan" },
+      { level:"basic", ko:"샤워해요", en:"Shower", tl:"Naliligo (shower)" },
+      { level:"basic", ko:"산책해요", en:"Take a walk", tl:"Naglalakad-lakad" },
+      { level:"basic", ko:"전화해요", en:"Call", tl:"Tumatawag" },
+      { level:"basic", ko:"운전해요", en:"Drive", tl:"Nagda-drive" },
+      { level:"basic", ko:"사진 찍어요", en:"Take a photo", tl:"Kumukuha ng litrato" },
+      { level:"basic", ko:"춤 춰요", en:"Dance", tl:"Sumayaw" },
+      { level:"basic", ko:"노래해요", en:"Sing", tl:"Kumakanta" },
+      { level:"basic", ko:"수영해요", en:"Swim", tl:"Lumalangoy" },
+      { level:"basic", ko:"등산해요", en:"Hike", tl:"Nagha-hike" },
+      { level:"basic", ko:"여행해요", en:"Travel", tl:"Nagbibiyahe" },
+      { level:"basic", ko:"기도해요", en:"Pray", tl:"Nagdadasal" },
+      { level:"basic", ko:"초대해요", en:"Invite", tl:"Nag-iimbita" },
+      { level:"basic", ko:"예약해요", en:"Reserve", tl:"Nagbo-book / reserve" },
+      { level:"basic", ko:"주문해요", en:"Order", tl:"Umu-order" },
+      { level:"basic", ko:"출발해요", en:"Depart", tl:"Umalis (alis na)" },
+      { level:"basic", ko:"도착해요", en:"Arrive", tl:"Dumating" },
+      { level:"basic", ko:"기다려요", en:"Wait", tl:"Naghihintay" },
+      { level:"basic", ko:"만나요", en:"Meet", tl:"Nakikipagkita" },
+      { level:"basic", ko:"줘요", en:"Give", tl:"Nagbibigay" },
+      { level:"basic", ko:"받아요", en:"Receive", tl:"Tumatanggap" },
+      { level:"basic", ko:"도와요", en:"Help", tl:"Tumulong" },
+      { level:"basic", ko:"웃어요", en:"Laugh", tl:"Tumatawa" },
+      { level:"basic", ko:"울어요", en:"Cry", tl:"Umiiyak" },
+      { level:"basic", ko:"쉬어요", en:"Rest", tl:"Nagpapahinga" },
+      { level:"basic", ko:"열어요", en:"Open", tl:"Binubuksan" },
+      { level:"basic", ko:"닫아요", en:"Close", tl:"Isinasara" },
+      { level:"basic", ko:"켜요", en:"Turn on", tl:"Binubuksan (switch on)" },
+      { level:"basic", ko:"꺼요", en:"Turn off", tl:"Pinapatay (switch off)" },
+      { level:"basic", ko:"바꿔요", en:"Change", tl:"Binabago / pinapalitan" },
+      { level:"basic", ko:"씻어요", en:"Wash", tl:"Naghuhugas" },
+      { level:"basic", ko:"옷 입어요", en:"Wear clothes", tl:"Nagsusuot ng damit" },
+      { level:"basic", ko:"옷 벗어요", en:"Take off clothes", tl:"Nag-aalis ng damit" },
+	  { level:"basic", ko:"버스 타요", en:"Ride the bus", tl:"Sumasakay ng bus" },
+  { level:"basic", ko:"택시 타요", en:"Ride a taxi", tl:"Sumasakay ng taxi" },
+  { level:"basic", ko:"지하철 타요", en:"Ride the subway", tl:"Sumasakay ng subway" },
+  { level:"basic", ko:"기차 타요", en:"Ride the train", tl:"Sumasakay ng tren" },
+  { level:"basic", ko:"자전거 타요", en:"Ride a bicycle", tl:"Sumasakay ng bisikleta" },
+  { level:"basic", ko:"비행기 타요", en:"Ride an airplane", tl:"Sumasakay ng eroplano" },
+  { level:"basic", ko:"신발 신어요", en:"Put on shoes", tl:"Nagsusuot ng sapatos" },
+  { level:"basic", ko:"모자 써요", en:"Wear a hat", tl:"Nagsusuot ng sombrero" },
+  { level:"basic", ko:"가방 들어요", en:"Hold a bag", tl:"Humahawak ng bag" },
+  { level:"basic", ko:"창문 열어요", en:"Open the window", tl:"Binubuksan ang bintana" },
+  { level:"basic", ko:"창문 닫아요", en:"Close the window", tl:"Isinasara ang bintana" },
+  { level:"basic", ko:"불 켜요", en:"Turn on the light", tl:"Binubuksan ang ilaw" },
+  { level:"basic", ko:"불 꺼요", en:"Turn off the light", tl:"Pinapatay ang ilaw" },
+  { level:"basic", ko:"라면 먹어요", en:"Eat ramyeon", tl:"Kumakain ng ramen" },
+  { level:"basic", ko:"김밥 먹어요", en:"Eat gimbap", tl:"Kumakain ng gimbap" },
+  { level:"basic", ko:"치킨 먹어요", en:"Eat chicken", tl:"Kumakain ng chicken" },
+  { level:"basic", ko:"빵 먹어요", en:"Eat bread", tl:"Kumakain ng tinapay" },
+  { level:"basic", ko:"국 먹어요", en:"Eat soup", tl:"Kumakain ng sabaw" },
+  { level:"basic", ko:"우유 마셔요", en:"Drink milk", tl:"Umiinom ng gatas" },
+  { level:"basic", ko:"식혜 마셔요", en:"Drink sikhye", tl:"Umiinom ng sikhye" },
+  { level:"basic", ko:"라면 끓여요", en:"Boil ramyeon", tl:"Nagpapakulo ng ramen" },
+  { level:"basic", ko:"고기 구워요", en:"Grill meat", tl:"Nag-iihaw ng karne" },
+  { level:"basic", ko:"야채 씻어요", en:"Wash vegetables", tl:"Naghuhugas ng gulay" },
+  { level:"basic", ko:"사과 먹어요", en:"Eat an apple", tl:"Kumakain ng mansanas" },
+  { level:"basic", ko:"바나나 먹어요", en:"Eat a banana", tl:"Kumakain ng saging" },
+  { level:"basic", ko:"신문 읽어요", en:"Read a newspaper", tl:"Nagbabasa ng dyaryo" },
+  { level:"basic", ko:"이메일 보내요", en:"Send an email", tl:"Nagpapadala ng email" },
+  { level:"basic", ko:"메시지 보내요", en:"Send a message", tl:"Nagpapadala ng mensahe" },
+  { level:"basic", ko:"문구점 가요", en:"Go to the stationery store", tl:"Pumupunta sa stationery store" },
+  { level:"basic", ko:"은행 가요", en:"Go to the bank", tl:"Pumupunta sa bangko" },
+  { level:"basic", ko:"약국 가요", en:"Go to the pharmacy", tl:"Pumupunta sa botika" },
+  { level:"basic", ko:"병원 가요", en:"Go to the hospital", tl:"Pumupunta sa ospital" },
+  { level:"basic", ko:"시장 가요", en:"Go to the market", tl:"Pumupunta sa palengke" },
+  { level:"basic", ko:"공원 가요", en:"Go to the park", tl:"Pumupunta sa park" },
+  { level:"basic", ko:"도서관 가요", en:"Go to the library", tl:"Pumupunta sa library" },
+  { level:"basic", ko:"식당 가요", en:"Go to a restaurant", tl:"Pumupunta sa restaurant" },
+  { level:"basic", ko:"커피숍 가요", en:"Go to a coffee shop", tl:"Pumupunta sa coffee shop" },
+  { level:"basic", ko:"우체국 가요", en:"Go to the post office", tl:"Pumupunta sa post office" },
+  { level:"basic", ko:"노래방 가요", en:"Go to karaoke", tl:"Pumupunta sa karaoke" },
+  { level:"basic", ko:"축구 해요", en:"Play soccer", tl:"Naglalaro ng soccer" },
+  { level:"basic", ko:"탁구 쳐요", en:"Play table tennis", tl:"Naglalaro ng table tennis" },
+  { level:"basic", ko:"테니스 쳐요", en:"Play tennis", tl:"Naglalaro ng tennis" },
+  { level:"basic", ko:"기타 쳐요", en:"Play the guitar", tl:"Tumutugtog ng gitara" },
+  { level:"basic", ko:"피아노 쳐요", en:"Play the piano", tl:"Tumutugtog ng piano" },
+  { level:"basic", ko:"전화 받아요", en:"Answer the phone", tl:"Sumasagot sa tawag" },
+  { level:"basic", ko:"선물 사요", en:"Buy a gift", tl:"Bumibili ng regalo" },
+  { level:"basic", ko:"책 사요", en:"Buy a book", tl:"Bumibili ng libro" },
+  { level:"basic", ko:"빵 사요", en:"Buy bread", tl:"Bumibili ng tinapay" },
+  { level:"basic", ko:"옷 다려요", en:"Iron clothes", tl:"Nagpa-plantsa ng damit" },
+
+
+      { level:"intermediate", ko:"저는 밥 먹어요", en:"I eat rice", tl:"Kumakain ako ng kanin" },
+      { level:"intermediate", ko:"저는 물 마셔요", en:"I drink water", tl:"Umiinom ako ng tubig" },
+      { level:"intermediate", ko:"저는 커피 마셔요", en:"I drink coffee", tl:"Umiinom ako ng kape" },
+      { level:"intermediate", ko:"저는 학교 가요", en:"I go to school", tl:"Pumupunta ako sa school" },
+      { level:"intermediate", ko:"저는 회사 가요", en:"I go to work", tl:"Pumupunta ako sa trabaho" },
+      { level:"intermediate", ko:"저는 집에 가요", en:"I go home", tl:"Umuuwi ako" },
+      { level:"intermediate", ko:"저는 여기 와요", en:"I come here", tl:"Pupunta ako dito" },
+      { level:"intermediate", ko:"저는 영화 봐요", en:"I watch a movie", tl:"Nanood ako ng movie" },
+      { level:"intermediate", ko:"저는 책 읽어요", en:"I read a book", tl:"Nagbabasa ako ng libro" },
+      { level:"intermediate", ko:"저는 글 써요", en:"I write", tl:"Nagsusulat ako" },
+      { level:"intermediate", ko:"저는 공부해요", en:"I study", tl:"Nag-aaral ako" },
+      { level:"intermediate", ko:"저는 일해요", en:"I work", tl:"Nagtatrabaho ako" },
+      { level:"intermediate", ko:"저는 운동해요", en:"I exercise", tl:"Nag-eexercise ako" },
+      { level:"intermediate", ko:"저는 요리해요", en:"I cook", tl:"Nagluluto ako" },
+      { level:"intermediate", ko:"저는 쇼핑해요", en:"I shop", tl:"Namimili ako" },
+      { level:"intermediate", ko:"저는 빨래해요", en:"I do laundry", tl:"Naglalaba ako" },
+      { level:"intermediate", ko:"저는 청소해요", en:"I clean", tl:"Naglilinis ako" },
+      { level:"intermediate", ko:"저는 설거지해요", en:"I wash dishes", tl:"Naghuhugas ako ng pinggan" },
+      { level:"intermediate", ko:"저는 샤워해요", en:"I shower", tl:"Naliligo ako (shower)" },
+      { level:"intermediate", ko:"저는 산책해요", en:"I take a walk", tl:"Naglalakad-lakad ako" },
+      { level:"intermediate", ko:"저는 전화해요", en:"I call", tl:"Tumatawag ako" },
+      { level:"intermediate", ko:"저는 운전해요", en:"I drive", tl:"Nagda-drive ako" },
+      { level:"intermediate", ko:"저는 사진 찍어요", en:"I take photos", tl:"Kumukuha ako ng litrato" },
+      { level:"intermediate", ko:"저는 춤 춰요", en:"I dance", tl:"Sumasayaw ako" },
+      { level:"intermediate", ko:"저는 노래해요", en:"I sing", tl:"Kumakanta ako" },
+      { level:"intermediate", ko:"저는 수영해요", en:"I swim", tl:"Lumalangoy ako" },
+      { level:"intermediate", ko:"저는 여행해요", en:"I travel", tl:"Nagbibiyahe ako" },
+      { level:"intermediate", ko:"저는 기도해요", en:"I pray", tl:"Nagdadasal ako" },
+      { level:"intermediate", ko:"저는 주문해요", en:"I order", tl:"Umu-order ako" },
+      { level:"intermediate", ko:"저는 예약해요", en:"I reserve", tl:"Nagre-reserve ako" },
+      { level:"intermediate", ko:"저는 출발해요", en:"I depart", tl:"Aalis ako" },
+      { level:"intermediate", ko:"저는 도착해요", en:"I arrive", tl:"Dumating ako" },
+      { level:"intermediate", ko:"저는 기다려요", en:"I wait", tl:"Naghihintay ako" },
+      { level:"intermediate", ko:"저는 친구 만나요", en:"I meet a friend", tl:"Nakikipagkita ako sa kaibigan" },
+      { level:"intermediate", ko:"저는 선물 줘요", en:"I give a gift", tl:"Nagbibigay ako ng regalo" },
+      { level:"intermediate", ko:"저는 돈 받아요", en:"I receive money", tl:"Tumatanggap ako ng pera" },
+      { level:"intermediate", ko:"저는 도와줘요", en:"I help you", tl:"Tinutulungan kita" },
+      { level:"intermediate", ko:"저는 웃어요", en:"I laugh", tl:"Tumatawa ako" },
+      { level:"intermediate", ko:"저는 울어요", en:"I cry", tl:"Umiiyak ako" },
+      { level:"intermediate", ko:"저는 쉬어요", en:"I rest", tl:"Nagpapahinga ako" },
+      { level:"intermediate", ko:"저는 문 열어요", en:"I open the door", tl:"Binubuksan ko ang pinto" },
+      { level:"intermediate", ko:"저는 문 닫아요", en:"I close the door", tl:"Isinasara ko ang pinto" },
+      { level:"intermediate", ko:"저는 불 켜요", en:"I turn on the light", tl:"Binubuksan ko ang ilaw" },
+      { level:"intermediate", ko:"저는 불 꺼요", en:"I turn off the light", tl:"Pinapatay ko ang ilaw" },
+      { level:"intermediate", ko:"저는 옷 입어요", en:"I wear clothes", tl:"Nagsusuot ako ng damit" },
+      { level:"intermediate", ko:"저는 옷 벗어요", en:"I take off clothes", tl:"Nag-aalis ako ng damit" },
+      { level:"intermediate", ko:"저는 이를 씻어요", en:"I wash teeth", tl:"Nagsisipilyo ako" },
+      { level:"intermediate", ko:"저는 손 씻어요", en:"I wash hands", tl:"Naghuhugas ako ng kamay" },
+      { level:"intermediate", ko:"저는 집 청소해요", en:"I clean the house", tl:"Naglilinis ako ng bahay" },
+      { level:"intermediate", ko:"저는 책상 정리해요", en:"I organize the desk", tl:"Inaayos ko ang desk" },
+	  { level:"intermediate", ko:"저는 버스 타요", en:"I ride the bus", tl:"Sumasakay ako ng bus" },
+  { level:"intermediate", ko:"저는 지하철 타요", en:"I ride the subway", tl:"Sumasakay ako ng subway" },
+  { level:"intermediate", ko:"저는 택시 타요", en:"I ride a taxi", tl:"Sumasakay ako ng taxi" },
+  { level:"intermediate", ko:"저는 기차 타요", en:"I ride the train", tl:"Sumasakay ako ng tren" },
+  { level:"intermediate", ko:"저는 자전거 타요", en:"I ride a bicycle", tl:"Sumasakay ako ng bisikleta" },
+  { level:"intermediate", ko:"저는 우체국 가요", en:"I go to the post office", tl:"Pumupunta ako sa post office" },
+  { level:"intermediate", ko:"저는 은행 가요", en:"I go to the bank", tl:"Pumupunta ako sa bangko" },
+  { level:"intermediate", ko:"저는 약국 가요", en:"I go to the pharmacy", tl:"Pumupunta ako sa botika" },
+  { level:"intermediate", ko:"저는 병원 가요", en:"I go to the hospital", tl:"Pumupunta ako sa ospital" },
+  { level:"intermediate", ko:"저는 도서관 가요", en:"I go to the library", tl:"Pumupunta ako sa library" },
+  { level:"intermediate", ko:"저는 공원 가요", en:"I go to the park", tl:"Pumupunta ako sa park" },
+  { level:"intermediate", ko:"저는 시장 가요", en:"I go to the market", tl:"Pumupunta ako sa palengke" },
+  { level:"intermediate", ko:"저는 문구점 가요", en:"I go to the stationery store", tl:"Pumupunta ako sa stationery store" },
+  { level:"intermediate", ko:"저는 노래방 가요", en:"I go to karaoke", tl:"Pumupunta ako sa karaoke" },
+  { level:"intermediate", ko:"저는 커피숍 가요", en:"I go to a coffee shop", tl:"Pumupunta ako sa coffee shop" },
+  { level:"intermediate", ko:"저는 식당 가요", en:"I go to a restaurant", tl:"Pumupunta ako sa restaurant" },
+  { level:"intermediate", ko:"저는 오늘 일해요", en:"I work today", tl:"Nagtatrabaho ako ngayon" },
+  { level:"intermediate", ko:"저는 오늘 쉬어요", en:"I rest today", tl:"Nagpapahinga ako ngayon" },
+  { level:"intermediate", ko:"저는 오늘 공부해요", en:"I study today", tl:"Nag-aaral ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 공부해요", en:"I study now", tl:"Nag-aaral ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 일해요", en:"I work now", tl:"Nagtatrabaho ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 쉬어요", en:"I rest now", tl:"Nagpapahinga ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 산책해요", en:"I take a walk now", tl:"Naglalakad-lakad ako ngayon" },
+  { level:"intermediate", ko:"저는 오늘 운동해요", en:"I exercise today", tl:"Nag-eexercise ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 요리해요", en:"I cook now", tl:"Nagluluto ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 청소해요", en:"I clean now", tl:"Naglilinis ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 빨래해요", en:"I do laundry now", tl:"Naglalaba ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 설거지해요", en:"I wash dishes now", tl:"Naghuhugas ako ng pinggan ngayon" },
+  { level:"intermediate", ko:"저는 지금 샤워해요", en:"I shower now", tl:"Naliligo ako (shower) ngayon" },
+  { level:"intermediate", ko:"저는 오늘 쇼핑해요", en:"I shop today", tl:"Namimili ako ngayon" },
+  { level:"intermediate", ko:"저는 지금 쇼핑해요", en:"I shop now", tl:"Namimili ako ngayon" },
+  { level:"intermediate", ko:"저는 오늘 사진 찍어요", en:"I take photos today", tl:"Kumukuha ako ng litrato ngayon" },
+  { level:"intermediate", ko:"저는 지금 사진 찍어요", en:"I take photos now", tl:"Kumukuha ako ng litrato ngayon" },
+  { level:"intermediate", ko:"저는 오늘 신문 읽어요", en:"I read the newspaper today", tl:"Nagbabasa ako ng dyaryo ngayon" },
+  { level:"intermediate", ko:"저는 지금 신문 읽어요", en:"I read the newspaper now", tl:"Nagbabasa ako ng dyaryo ngayon" },
+  { level:"intermediate", ko:"저는 오늘 라면 먹어요", en:"I eat ramyeon today", tl:"Kumakain ako ng ramen ngayon" },
+  { level:"intermediate", ko:"저는 김밥 먹어요", en:"I eat gimbap", tl:"Kumakain ako ng gimbap" },
+  { level:"intermediate", ko:"저는 치킨 먹어요", en:"I eat chicken", tl:"Kumakain ako ng chicken" },
+  { level:"intermediate", ko:"저는 빵 먹어요", en:"I eat bread", tl:"Kumakain ako ng tinapay" },
+  { level:"intermediate", ko:"저는 우유 마셔요", en:"I drink milk", tl:"Umiinom ako ng gatas" },
+  { level:"intermediate", ko:"저는 식혜 마셔요", en:"I drink sikhye", tl:"Umiinom ako ng sikhye" },
+  { level:"intermediate", ko:"저는 물 많이 마셔요", en:"I drink a lot of water", tl:"Umiinom ako ng maraming tubig" },
+  { level:"intermediate", ko:"저는 커피 많이 마셔요", en:"I drink a lot of coffee", tl:"Umiinom ako ng maraming kape" },
+  { level:"intermediate", ko:"저는 문을 열어요", en:"I open the door", tl:"Binubuksan ko ang pinto" },
+  { level:"intermediate", ko:"저는 창문을 열어요", en:"I open the window", tl:"Binubuksan ko ang bintana" },
+  { level:"intermediate", ko:"저는 창문을 닫아요", en:"I close the window", tl:"Isinasara ko ang bintana" },
+  { level:"intermediate", ko:"저는 불을 켜요", en:"I turn on the light", tl:"Binubuksan ko ang ilaw" },
+  { level:"intermediate", ko:"저는 불을 꺼요", en:"I turn off the light", tl:"Pinapatay ko ang ilaw" },
+  { level:"intermediate", ko:"저는 선물 사요", en:"I buy a gift", tl:"Bumibili ako ng regalo" },
+  { level:"intermediate", ko:"저는 친구 도와요", en:"I help a friend", tl:"Tinutulungan ko ang kaibigan" },
+
+      { level:"advanced", ko:"저는 오늘 공원에 같이 가요", en:"I go to the park together today", tl:"Pupunta ako sa park ngayon kasama" },
+      { level:"advanced", ko:"저는 지금 커피를 천천히 마셔요", en:"I drink coffee slowly now", tl:"Umiinom ako ng kape nang dahan-dahan ngayon" },
+      { level:"advanced", ko:"저는 어제 영화를 재미있게 봤어요", en:"I watched a movie and it was fun yesterday", tl:"Nanood ako ng movie kahapon, masaya" },
+      { level:"advanced", ko:"저는 내일 친구를 만날 거예요", en:"I will meet a friend tomorrow", tl:"Makikipagkita ako sa kaibigan bukas" },
+      { level:"advanced", ko:"저는 오늘 학교에 일찍 가요", en:"I go to school early today", tl:"Maaga akong papasok sa school ngayon" },
+      { level:"advanced", ko:"저는 오늘 회사에 늦게 가요", en:"I go to work late today", tl:"Mahuhuli ako sa trabaho ngayon" },
+      { level:"advanced", ko:"저는 지금 집에서 책을 읽어요", en:"I read a book at home now", tl:"Nagbabasa ako ng libro sa bahay ngayon" },
+      { level:"advanced", ko:"저는 오늘 도서관에서 공부해요", en:"I study at the library today", tl:"Nag-aaral ako sa library ngayon" },
+      { level:"advanced", ko:"저는 내일 식당에서 밥 먹을 거예요", en:"I will eat at a restaurant tomorrow", tl:"Kakain ako sa restaurant bukas" },
+      { level:"advanced", ko:"저는 지금 물을 많이 마셔요", en:"I drink a lot of water now", tl:"Umiinom ako ng maraming tubig ngayon" },
+      { level:"advanced", ko:"저는 오늘 집을 깨끗하게 청소해요", en:"I clean the house neatly today", tl:"Nililinis ko ang bahay nang maayos ngayon" },
+      { level:"advanced", ko:"저는 오늘 빨래를 먼저 할 거예요", en:"I will do laundry first today", tl:"Maglalaba muna ako ngayon" },
+      { level:"advanced", ko:"저는 어제 설거지를 너무 많이 했어요", en:"I washed dishes too much yesterday", tl:"Sobrang naghugas ako ng pinggan kahapon" },
+      { level:"advanced", ko:"저는 오늘 샤워를 빨리 할 거예요", en:"I will shower quickly today", tl:"Maliligo ako (shower) nang mabilis ngayon" },
+      { level:"advanced", ko:"저는 지금 공원에서 산책해요", en:"I’m walking in the park now", tl:"Naglalakad-lakad ako sa park ngayon" },
+      { level:"advanced", ko:"저는 오늘 버스를 타고 가요", en:"I go by bus today", tl:"Sasakay ako ng bus ngayon" },
+      { level:"advanced", ko:"저는 지금 지하철을 타요", en:"I ride the subway now", tl:"Sasakay ako ng subway ngayon" },
+      { level:"advanced", ko:"저는 오늘 택시를 타요", en:"I take a taxi today", tl:"Sasakay ako ng taxi ngayon" },
+      { level:"advanced", ko:"저는 내일 운전해서 회사에 가요", en:"I drive to work tomorrow", tl:"Magda-drive ako papuntang trabaho bukas" },
+      { level:"advanced", ko:"저는 지금 전화해서 물어봐요", en:"I call now and ask", tl:"Tatawag ako ngayon para magtanong" },
+      { level:"advanced", ko:"저는 오늘 사진을 많이 찍어요", en:"I take many photos today", tl:"Kumukuha ako ng maraming litrato ngayon" },
+      { level:"advanced", ko:"저는 오늘 음악을 크게 들어요", en:"I listen to music loudly today", tl:"Nakikinig ako ng music nang malakas ngayon" },
+      { level:"advanced", ko:"저는 지금 조용히 책을 읽어요", en:"I read quietly now", tl:"Tahimik akong nagbabasa ngayon" },
+      { level:"advanced", ko:"저는 오늘 친구에게 선물 줘요", en:"I give a gift to a friend today", tl:"Bibigyan ko ng regalo ang kaibigan ngayon" },
+      { level:"advanced", ko:"저는 어제 친구에게 도움을 줬어요", en:"I helped a friend yesterday", tl:"Tumulong ako sa kaibigan kahapon" },
+      { level:"advanced", ko:"저는 지금 새로운 것을 배워요", en:"I’m learning something new now", tl:"May bagong akong natutunan ngayon" },
+      { level:"advanced", ko:"저는 오늘 한국어를 열심히 공부해요", en:"I study Korean hard today", tl:"Nag-aaral ako ng Korean nang mabuti ngayon" },
+      { level:"advanced", ko:"저는 내일 일을 시작할 거예요", en:"I will start work tomorrow", tl:"Magsisimula ako magtrabaho bukas" },
+      { level:"advanced", ko:"저는 오늘 일을 끝낼 거예요", en:"I will finish work today", tl:"Tatapusin ko ang trabaho ngayon" },
+      { level:"advanced", ko:"저는 어제 너무 피곤해서 잤어요", en:"I was so tired yesterday and slept", tl:"Pagod na pagod ako kahapon kaya natulog" },
+      { level:"advanced", ko:"저는 오늘 저녁에 일찍 잘 거예요", en:"I will sleep early tonight", tl:"Matutulog ako nang maaga mamayang gabi" },
+      { level:"advanced", ko:"저는 지금 물건을 조심히 만져요", en:"I touch the item carefully now", tl:"Hinahawakan ko nang maingat ngayon" },
+      { level:"advanced", ko:"저는 오늘 문을 열고 들어가요", en:"I open the door and go in today", tl:"Binubuksan ko ang pinto at pumapasok ngayon" },
+      { level:"advanced", ko:"저는 지금 문을 닫고 나가요", en:"I close the door and go out now", tl:"Isinasara ko ang pinto at lalabas ngayon" },
+      { level:"advanced", ko:"저는 오늘 불을 켜고 공부해요", en:"I turn on the light and study", tl:"Binubuksan ko ang ilaw at nag-aaral" },
+      { level:"advanced", ko:"저는 지금 불을 꺼야 돼요", en:"I must turn off the light now", tl:"Kailangan kong patayin ang ilaw ngayon" },
+      { level:"advanced", ko:"저는 오늘 옷을 입고 나가요", en:"I wear clothes and go out today", tl:"Nagsusuot ako at lalabas ngayon" },
+      { level:"advanced", ko:"저는 지금 옷을 벗고 쉬어요", en:"I take off clothes and rest now", tl:"Nag-aalis ako ng damit at nagpapahinga ngayon" },
+      { level:"advanced", ko:"저는 오늘 시장에서 장을 봐요", en:"I do groceries at the market today", tl:"Mamamalengke ako ngayon" },
+      { level:"advanced", ko:"저는 내일 슈퍼마켓에 갈 거예요", en:"I will go to the supermarket tomorrow", tl:"Pupunta ako sa supermarket bukas" },
+      { level:"advanced", ko:"저는 지금 약국에 가야 돼요", en:"I need to go to the pharmacy now", tl:"Kailangan kong pumunta sa botika ngayon" },
+      { level:"advanced", ko:"저는 오늘 은행에서 돈을 받아요", en:"I receive money at the bank today", tl:"Kumukuha ako ng pera sa bangko ngayon" },
+      { level:"advanced", ko:"저는 오늘 우체국에서 보내요", en:"I send it at the post office", tl:"Ipinapadala ko sa post office ngayon" },
+      { level:"advanced", ko:"저는 내일 병원에 갈 거예요", en:"I will go to the hospital tomorrow", tl:"Pupunta ako sa ospital bukas" },
+      { level:"advanced", ko:"저는 지금 화장실에 가요", en:"I go to the bathroom now", tl:"Pupunta ako sa CR ngayon" },
+      { level:"advanced", ko:"저는 오늘 식당에서 주문할 거예요", en:"I will order at a restaurant today", tl:"Umu-order ako sa restaurant ngayon" },
+      { level:"advanced", ko:"저는 지금 커피숍에서 쉬어요", en:"I rest at a coffee shop now", tl:"Nagpapahinga ako sa coffee shop ngayon" },
+      { level:"advanced", ko:"저는 오늘 공항에서 출발해요", en:"I depart at the airport today", tl:"Aalis ako sa airport ngayon" },
+      { level:"advanced", ko:"저는 어제 기차역에서 도착했어요", en:"I arrived at the train station yesterday", tl:"Dumating ako sa istasyon ng tren kahapon" },
+      { level:"advanced", ko:"저는 오늘 친구랑 같이 노래해요", en:"I sing together with a friend today", tl:"Kumakanta ako kasama ang kaibigan ngayon" },
+	  { level:"advanced", ko:"저는 오늘 아침에 밥을 먹어요", en:"I eat rice this morning", tl:"Kumakain ako ng kanin ngayong umaga" },
+  { level:"advanced", ko:"저는 지금 집에서 커피를 마셔요", en:"I drink coffee at home now", tl:"Umiinom ako ng kape sa bahay ngayon" },
+  { level:"advanced", ko:"저는 오늘 점심에 김밥을 먹어요", en:"I eat gimbap for lunch today", tl:"Kumakain ako ng gimbap sa tanghali ngayon" },
+  { level:"advanced", ko:"저는 오늘 저녁에 국을 먹어요", en:"I eat soup for dinner today", tl:"Kumakain ako ng sabaw sa hapunan ngayon" },
+  { level:"advanced", ko:"저는 지금 물을 천천히 마셔요", en:"I drink water slowly now", tl:"Umiinom ako ng tubig nang dahan-dahan ngayon" },
+  { level:"advanced", ko:"저는 오늘 공원에서 같이 산책해요", en:"I walk together in the park today", tl:"Naglalakad-lakad kami sa park ngayon" },
+  { level:"advanced", ko:"저는 오늘 도서관에서 열심히 공부해요", en:"I study hard at the library today", tl:"Nag-aaral ako nang mabuti sa library ngayon" },
+  { level:"advanced", ko:"저는 지금 사무실에서 일을 하고 있어요", en:"I am working at the office now", tl:"Nagtatrabaho ako sa opisina ngayon" },
+  { level:"advanced", ko:"저는 오늘 회사에 일찍 출근해요", en:"I go to work early today", tl:"Maaga akong papasok sa trabaho ngayon" },
+  { level:"advanced", ko:"저는 오늘 회사에서 늦게 퇴근해요", en:"I leave work late today", tl:"Late akong uuwi galing trabaho ngayon" },
+  { level:"advanced", ko:"저는 지금 시장에서 장을 봐요", en:"I buy groceries at the market now", tl:"Namamalengke ako ngayon" },
+  { level:"advanced", ko:"저는 오늘 슈퍼마켓에서 빵을 사요", en:"I buy bread at the supermarket today", tl:"Bumibili ako ng tinapay sa supermarket ngayon" },
+  { level:"advanced", ko:"저는 오늘 우체국에서 편지를 보내요", en:"I send a letter at the post office today", tl:"Nagpapadala ako ng sulat sa post office ngayon" },
+  { level:"advanced", ko:"저는 지금 은행에서 돈을 받아요", en:"I receive money at the bank now", tl:"Tumatanggap ako ng pera sa bangko ngayon" },
+  { level:"advanced", ko:"저는 오늘 약국에 먼저 가요", en:"I go to the pharmacy first today", tl:"Pupunta muna ako sa botika ngayon" },
+  { level:"advanced", ko:"저는 지금 병원에 바로 가요", en:"I go to the hospital right now", tl:"Pupunta ako sa ospital ngayon din" },
+  { level:"advanced", ko:"저는 오늘 친구랑 노래방에 가요", en:"I go to karaoke with a friend today", tl:"Pupunta ako sa karaoke kasama ang kaibigan ngayon" },
+  { level:"advanced", ko:"저는 오늘 친구랑 같이 영화를 봐요", en:"I watch a movie with a friend today", tl:"Nanood ako ng movie kasama ang kaibigan ngayon" },
+  { level:"advanced", ko:"저는 어제 영화관에서 영화를 봤어요", en:"I watched a movie at the cinema yesterday", tl:"Nanood ako ng movie sa sinehan kahapon" },
+  { level:"advanced", ko:"저는 내일 공항에서 출발할 거예요", en:"I will depart from the airport tomorrow", tl:"Aalis ako sa airport bukas" },
+  { level:"advanced", ko:"저는 내일 기차역에 도착할 거예요", en:"I will arrive at the train station tomorrow", tl:"Dumating ako sa istasyon ng tren bukas" },
+  { level:"advanced", ko:"저는 오늘 버스를 타고 가요", en:"I go by bus today", tl:"Sasakay ako ng bus ngayon" },
+  { level:"advanced", ko:"저는 지금 지하철을 타고 가요", en:"I go by subway now", tl:"Sasakay ako ng subway ngayon" },
+  { level:"advanced", ko:"저는 오늘 택시를 타고 와요", en:"I come by taxi today", tl:"Sasakay ako ng taxi papunta dito ngayon" },
+  { level:"advanced", ko:"저는 지금 사진을 많이 찍어요", en:"I take many photos now", tl:"Kumukuha ako ng maraming litrato ngayon" },
+  { level:"advanced", ko:"저는 오늘 친구에게 선물을 줘요", en:"I give a gift to a friend today", tl:"Nagbibigay ako ng regalo sa kaibigan ngayon" },
+  { level:"advanced", ko:"저는 어제 친구에게 도움을 줬어요", en:"I helped a friend yesterday", tl:"Tumulong ako sa kaibigan kahapon" },
+  { level:"advanced", ko:"저는 지금 새로운 것을 배워요", en:"I learn something new now", tl:"May bagong akong natutunan ngayon" },
+  { level:"advanced", ko:"저는 오늘 한국어를 다시 공부해요", en:"I study Korean again today", tl:"Nag-aaral ulit ako ng Korean ngayon" },
+  { level:"advanced", ko:"저는 내일 일을 시작할 거예요", en:"I will start work tomorrow", tl:"Magsisimula ako magtrabaho bukas" },
+  { level:"advanced", ko:"저는 오늘 일을 끝낼 거예요", en:"I will finish work today", tl:"Tatapusin ko ang trabaho ngayon" },
+  { level:"advanced", ko:"저는 어제 너무 피곤해서 잤어요", en:"I was so tired yesterday that I slept", tl:"Pagod na pagod ako kahapon kaya natulog" },
+  { level:"advanced", ko:"저는 오늘 저녁에 일찍 잘 거예요", en:"I will sleep early tonight", tl:"Matutulog ako nang maaga mamayang gabi" },
+  { level:"advanced", ko:"저는 지금 물건을 조심히 만져요", en:"I touch the item carefully now", tl:"Hinahawakan ko nang maingat ngayon" },
+  { level:"advanced", ko:"저는 지금 문을 조용히 닫아요", en:"I close the door quietly now", tl:"Isinasara ko ang pinto nang tahimik ngayon" },
+  { level:"advanced", ko:"저는 오늘 창문을 열고 쉬어요", en:"I open the window and rest today", tl:"Binubuksan ko ang bintana at nagpapahinga ngayon" },
+  { level:"advanced", ko:"저는 지금 불을 켜고 읽어요", en:"I turn on the light and read now", tl:"Binubuksan ko ang ilaw at nagbabasa ngayon" },
+  { level:"advanced", ko:"저는 오늘 불을 끄고 잘 거예요", en:"I will turn off the light and sleep today", tl:"Papakayin ko ang ilaw at matutulog ngayon" },
+  { level:"advanced", ko:"저는 지금 옷을 벗고 쉬어요", en:"I take off clothes and rest now", tl:"Nag-aalis ako ng damit at nagpapahinga ngayon" },
+  { level:"advanced", ko:"저는 오늘 옷을 입고 나가요", en:"I wear clothes and go out today", tl:"Nagsusuot ako at lalabas ngayon" },
+  { level:"advanced", ko:"저는 내일 친구를 만나서 말해요", en:"I meet a friend tomorrow and talk", tl:"Makikipagkita ako sa kaibigan bukas at magsasalita" },
+  { level:"advanced", ko:"저는 지금 천천히 걸어서 가요", en:"I go by walking slowly now", tl:"Naglalakad ako nang dahan-dahan ngayon" },
+  { level:"advanced", ko:"저는 오늘 빨리 걸어서 가요", en:"I go by walking quickly today", tl:"Naglalakad ako nang mabilis ngayon" },
+  { level:"advanced", ko:"저는 어제 늦게 집에 갔어요", en:"I went home late yesterday", tl:"Late akong umuwi kahapon" },
+  { level:"advanced", ko:"저는 내일 일찍 집에 갈 거예요", en:"I will go home early tomorrow", tl:"Maaga akong uuwi bukas" },
+  { level:"advanced", ko:"저는 오늘 식당에서 먼저 계산해요", en:"I pay first at the restaurant today", tl:"Magbabayad muna ako sa restaurant ngayon" },
+  { level:"advanced", ko:"저는 지금 식당에서 주문하고 기다려요", en:"I order and wait at the restaurant now", tl:"Umu-order ako at naghihintay sa restaurant ngayon" },
+  { level:"advanced", ko:"저는 오늘 친구를 같이 도와줘요", en:"I help my friend together today", tl:"Tinutulungan ko ang kaibigan ngayon" },
+  { level:"advanced", ko:"저는 오늘 집을 깨끗하게 청소해요", en:"I clean the house neatly today", tl:"Nililinis ko ang bahay nang maayos ngayon" },
+  { level:"advanced", ko:"저는 오늘 빨래를 먼저 할 거예요", en:"I will do laundry first today", tl:"Maglalaba muna ako ngayon" },
+    ];
+
+    const WORD_RULES = {
+      basic: { min: 2, max: 2 },
+      intermediate: { min: 3, max: 4 },
+      advanced: { min: 5, max: 7 },
+    };
+
+    const els = {
+      gate: document.getElementById("gate"),
+      finish: document.getElementById("finish"),
+      startBtn: document.getElementById("startBtn"),
+      restartBtn: document.getElementById("restartBtn"),
+      progress: document.getElementById("progress"),
+      flipWrap: document.getElementById("flipWrap"),
+      cardEl: document.getElementById("card"),
+      front: document.getElementById("front"),
+      back: document.getElementById("back"),
+      filterButtons: Array.from(document.querySelectorAll(".filters .seg")),
+    };
+
+    let audioReady = false;
+    let isAnimating = false;
+
+    let currentLevel = "basic";
+    let queue = [];
+    let index = 0;
+    let current = null;
+
+    function shuffle(a){
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function wordCountKo(text){
+      return String(text).trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    function filterByLevel(level){
+      const rule = WORD_RULES[level];
+      return CARDS
+        .filter(c => c.level === level)
+        .filter(c => {
+          const n = wordCountKo(c.ko);
+          return n >= rule.min && n <= rule.max;
+        });
+    }
+
+    function setActiveLevelButton(level){
+      els.filterButtons.forEach(btn=>{
+        const active = btn.dataset.level === level;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
+    function updateProgress(){
+      const total = queue.length || 0;
+      els.progress.textContent = total ? `${Math.min(index+1, total)} / ${total}` : "0 / 0";
+    }
+
+    function normalizeKoForTTS(text){
+      if(!text) return text;
+      let out = String(text);
+      out = out.replace(/\s*\(([^)]+)\)\s*/g, "$1").replace(/[()]/g, "");
+      return out.replace(/\s{2,}/g, " ").trim();
+    }
+
+    function speakKo(text){
+      if(!audioReady) return;
+      if(!("speechSynthesis" in window)) return;
+
+      const spoken = normalizeKoForTTS(text);
+      try{ speechSynthesis.cancel(); }catch(_){}
+
+      const u = new SpeechSynthesisUtterance(spoken);
+      u.lang = "ko-KR";
+      u.rate = 0.69; // ✅ slower
+      speechSynthesis.speak(u);
+    }
+
+    function renderFront(c){
+      els.front.innerHTML = `
+        <div class="meta-top">${currentLevel.toUpperCase()} • ${wordCountKo(c.ko)} words</div>
+        <div class="ko">${c.ko}</div>
+        <div class="controls">
+          <button class="play-base" id="replayFront" type="button">🔊 Play</button>
+          <button class="btn ghost" id="flipToBack" type="button">FLIP</button>
+        </div>
+      `;
+      els.front.querySelector("#replayFront").addEventListener("click",(e)=>{ e.stopPropagation(); speakKo(c.ko); });
+      els.front.querySelector("#flipToBack").addEventListener("click",(e)=>{ e.stopPropagation(); els.flipWrap.classList.add("flipped"); });
+    }
+
+    function renderBack(c){
+      els.back.innerHTML = `
+        <div class="enhead">${c.ko}</div>
+        <ul class="enlines">
+          <li><b>English</b><br>${escapeHtml(c.en)}</li>
+          <li><b>Tagalog</b><br>${escapeHtml(c.tl)}</li>
+        </ul>
+        <div class="controls" style="margin-top:4px">
+          <button class="btn ghost" id="flipToFront" type="button">◀ BACK</button>
+          <button class="btn" id="nextBtn" type="button">NEXT ▶</button>
+          <button class="btn ghost" id="replayBack" type="button">🔊 REPLAY</button>
+        </div>
+      `;
+      els.back.querySelector("#flipToFront").addEventListener("click",(e)=>{ e.stopPropagation(); els.flipWrap.classList.remove("flipped"); });
+      els.back.querySelector("#nextBtn").addEventListener("click",(e)=>{ e.stopPropagation(); nextCardAnimated(); });
+      els.back.querySelector("#replayBack").addEventListener("click",(e)=>{ e.stopPropagation(); speakKo(c.ko); });
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function showCard(c){
+      current = c;
+      renderFront(c);
+      renderBack(c);
+      els.flipWrap.classList.remove("flipped");
+      updateProgress();
+      speakKo(c.ko);
+    }
+
+    function showEmpty(){
+      current = null;
+      els.flipWrap.classList.remove("flipped");
+      els.front.innerHTML = `
+        <div class="meta-top">Empty</div>
+        <div class="ko" style="color:#789; text-shadow:none">— No cards —</div>
+      `;
+      els.back.innerHTML = ``;
+      els.finish.style.display = "none";
+      els.progress.textContent = "0 / 0";
+    }
+
+    function startRun(){
+      els.finish.style.display = "none";
+      queue = shuffle(filterByLevel(currentLevel));
+      index = 0;
+      if(queue.length) showCard(queue[index]);
+      else showEmpty();
+    }
+
+    function nextCardAnimated(){
+      if(isAnimating) return;
+      isAnimating = true;
+
+      els.flipWrap.classList.add("animating","fly-exit");
+
+      const onExitEnd = (e)=>{
+        if(e.target !== els.cardEl) return;
+        els.flipWrap.removeEventListener("animationend", onExitEnd);
+        els.flipWrap.classList.remove("fly-exit");
+
+        index++;
+        if(index >= queue.length){
+          els.flipWrap.classList.remove("animating");
+          isAnimating = false;
+          els.finish.style.display = "flex";
+          return;
+        }
+
+        const c = queue[index];
+        renderFront(c);
+        renderBack(c);
+        els.flipWrap.classList.remove("flipped");
+        updateProgress();
+
+        els.flipWrap.classList.add("fly-enter");
+        const onEnterEnd = (ev)=>{
+          if(ev.target !== els.cardEl) return;
+          els.flipWrap.removeEventListener("animationend", onEnterEnd);
+          els.flipWrap.classList.remove("fly-enter","animating");
+          isAnimating = false;
+          speakKo(c.ko);
+        };
+        els.flipWrap.addEventListener("animationend", onEnterEnd);
+      };
+
+      els.flipWrap.addEventListener("animationend", onExitEnd);
+    }
+
+    function applyLevel(level){
+      currentLevel = level;
+      setActiveLevelButton(level);
+      startRun();
+    }
+
+    function wireEvents(){
+      els.filterButtons.forEach(btn=>{
+        btn.addEventListener("click",(e)=>{
+          e.preventDefault();
+          applyLevel(btn.dataset.level);
+        });
+      });
+
+      els.flipWrap.addEventListener("click", ()=>{
+        if(!current) return;
+        if(!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
+        else nextCardAnimated();
+      });
+
+      els.cardEl.addEventListener("keydown",(e)=>{
+        if(e.code === "Enter" || e.code === "Space"){
+          e.preventDefault();
+          if(!current) return;
+          if(!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
+          else nextCardAnimated();
+        }
+      });
+
+      els.startBtn.addEventListener("click", ()=>{
+        audioReady = true;
+        els.gate.style.display = "none";
+        startRun();
+      });
+
+      els.restartBtn.addEventListener("click", ()=>{
+        audioReady = true;
+        els.gate.style.display = "none";
+        startRun();
+      });
+    }
+
+    wireEvents();
+    applyLevel("basic");
+  </script>
+
+  <script>
+    document.addEventListener("contextmenu", e=>e.preventDefault(), false);
+    document.addEventListener("selectstart", e=>e.preventDefault(), false);
+    document.addEventListener("dragstart", e=>e.preventDefault(), false);
+    document.addEventListener("keydown", function(e){
+      if (e.key === "F12" || (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))) e.preventDefault();
+    }, false);
+  </script>
+</body>
+</html>
