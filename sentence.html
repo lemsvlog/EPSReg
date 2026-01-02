@@ -511,118 +511,128 @@
     ];
 
     const WORD_RULES = {
-      basic: { min: 2, max: 2 },
-      intermediate: { min: 3, max: 4 },
-      advanced: { min: 5, max: 7 },
-    };
+  basic: { min: 2, max: 2 },
+  intermediate: { min: 3, max: 4 },
+  advanced: { min: 5, max: 7 },
+};
 
-    const els = {
-      gate: document.getElementById("gate"),
-      finish: document.getElementById("finish"),
-      startBtn: document.getElementById("startBtn"),
-      restartBtn: document.getElementById("restartBtn"),
-      progress: document.getElementById("progress"),
-      flipWrap: document.getElementById("flipWrap"),
-      cardEl: document.getElementById("card"),
-      front: document.getElementById("front"),
-      back: document.getElementById("back"),
-      filterButtons: Array.from(document.querySelectorAll(".filters .seg")),
-    };
+const els = {
+  gate: document.getElementById("gate"),
+  finish: document.getElementById("finish"),
+  startBtn: document.getElementById("startBtn"),
+  restartBtn: document.getElementById("restartBtn"),
+  progress: document.getElementById("progress"),
+  flipWrap: document.getElementById("flipWrap"),
+  cardEl: document.getElementById("card"),
+  front: document.getElementById("front"),
+  back: document.getElementById("back"),
+  filterButtons: Array.from(document.querySelectorAll(".filters .seg")),
+};
 
-    let audioReady = false;
-    let isAnimating = false;
+let audioReady = false;
+let isAnimating = false;
 
-    let currentLevel = "basic";
-    let queue = [];
-    let index = 0;
-    let current = null;
+let currentLevel = "basic";
+let queue = [];
+let index = 0;
+let current = null;
 
-    function shuffle(a){
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
-    }
-
-    function wordCountKo(text){
-      return String(text).trim().split(/\s+/).filter(Boolean).length;
-    }
-
-    function filterByLevel(level){
-      const rule = WORD_RULES[level];
-      return CARDS
-        .filter(c => c.level === level)
-        .filter(c => {
-          const n = wordCountKo(c.ko);
-          return n >= rule.min && n <= rule.max;
-        });
-    }
-
-    function setActiveLevelButton(level){
-      els.filterButtons.forEach(btn=>{
-        const active = btn.dataset.level === level;
-        btn.classList.toggle("active", active);
-        btn.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-    }
-
-    function updateProgress(){
-      const total = queue.length || 0;
-      els.progress.textContent = total ? `${Math.min(index+1, total)} / ${total}` : "0 / 0";
-    }
-
-    function normalizeKoForTTS(text){
-      if(!text) return text;
-      let out = String(text);
-      out = out.replace(/\s*\(([^)]+)\)\s*/g, "$1").replace(/[()]/g, "");
-      return out.replace(/\s{2,}/g, " ").trim();
-    }
-	
-	let cachedVoices = [];
-
-function refreshVoices(){
-  try { cachedVoices = speechSynthesis.getVoices() || []; } catch (_) { cachedVoices = []; }
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-function pickKoVoice(){
-  // prefer ko-KR then any ko
+function wordCountKo(text) {
+  return String(text).trim().split(/\s+/).filter(Boolean).length;
+}
+
+function filterByLevel(level) {
+  const rule = WORD_RULES[level];
+  return CARDS.filter((c) => c.level === level).filter((c) => {
+    const n = wordCountKo(c.ko);
+    return n >= rule.min && n <= rule.max;
+  });
+}
+
+function setActiveLevelButton(level) {
+  els.filterButtons.forEach((btn) => {
+    const active = btn.dataset.level === level;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
+function updateProgress() {
+  const total = queue.length || 0;
+  els.progress.textContent = total ? `${Math.min(index + 1, total)} / ${total}` : "0 / 0";
+}
+
+function normalizeKoForTTS(text) {
+  if (!text) return text;
+  let out = String(text);
+  out = out.replace(/\s*\(([^)]+)\)\s*/g, "$1").replace(/[()]/g, "");
+  return out.replace(/\s{2,}/g, " ").trim();
+}
+
+// ===== iOS / Mobile TTS Fix =====
+const TTS_RATE = 0.85; // slower audio (lower = slower)
+let cachedVoices = [];
+
+function refreshVoices() {
+  try {
+    cachedVoices = speechSynthesis.getVoices() || [];
+  } catch (_) {
+    cachedVoices = [];
+  }
+}
+
+function pickKoVoice() {
   return (
-    cachedVoices.find(v => (v.lang || "").toLowerCase() === "ko-kr") ||
-    cachedVoices.find(v => (v.lang || "").toLowerCase().startsWith("ko")) ||
+    cachedVoices.find((v) => (v.lang || "").toLowerCase() === "ko-kr") ||
+    cachedVoices.find((v) => (v.lang || "").toLowerCase().startsWith("ko")) ||
     null
   );
 }
 
-function ensureVoicesReady(){
-  return new Promise((resolve) => {
-    if (!("speechSynthesis" in window)) return resolve();
+// no-await version (iOS loses gesture if you await)
+function ensureVoicesReadyNoAwait() {
+  if (!("speechSynthesis" in window)) return;
+  refreshVoices();
+  if (cachedVoices.length) return;
 
-    refreshVoices();
-    if (cachedVoices.length) return resolve();
-
-    const done = () => { refreshVoices(); resolve(); };
-
-    // Safari iOS fires this late
-    speechSynthesis.addEventListener("voiceschanged", done, { once: true });
-
-    // safety timeout
-    setTimeout(done, 500);
-  });
+  const done = () => refreshVoices();
+  speechSynthesis.addEventListener("voiceschanged", done, { once: true });
+  setTimeout(done, 600);
 }
 
+// prime speech on iOS so first utterance won’t be silent
+function primeTTS() {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(" ");
+    u.lang = "ko-KR";
+    u.volume = 0;
+    speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+  } catch (_) {}
+}
 
-   function speakKo(text){
-  if(!audioReady) return;
-  if(!("speechSynthesis" in window)) return;
+function speakKo(text) {
+  if (!audioReady) return;
+  if (!("speechSynthesis" in window)) return;
 
   const spoken = normalizeKoForTTS(text);
 
-  try { speechSynthesis.cancel(); } catch(_) {}
+  try {
+    speechSynthesis.cancel();
+  } catch (_) {}
 
   const u = new SpeechSynthesisUtterance(spoken);
   u.lang = "ko-KR";
-  u.rate = 0.85;   // speed
+  u.rate = TTS_RATE;
   u.pitch = 1.0;
   u.volume = 1.0;
 
@@ -630,162 +640,196 @@ function ensureVoicesReady(){
   if (koVoice) u.voice = koVoice;
 
   speechSynthesis.speak(u);
+  try {
+    speechSynthesis.resume();
+  } catch (_) {}
 }
 
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-    function renderFront(c){
-      els.front.innerHTML = `
-        <div class="meta-top">${currentLevel.toUpperCase()} • ${wordCountKo(c.ko)} words</div>
-        <div class="ko">${c.ko}</div>
-        <div class="controls">
-          <button class="play-base" id="replayFront" type="button">🔊 Play</button>
-          <button class="btn ghost" id="flipToBack" type="button">FLIP</button>
-        </div>
-      `;
-      els.front.querySelector("#replayFront").addEventListener("click",(e)=>{ e.stopPropagation(); speakKo(c.ko); });
-      els.front.querySelector("#flipToBack").addEventListener("click",(e)=>{ e.stopPropagation(); els.flipWrap.classList.add("flipped"); });
+function renderFront(c) {
+  els.front.innerHTML = `
+    <div class="meta-top">${currentLevel.toUpperCase()} • ${wordCountKo(c.ko)} words</div>
+    <div class="ko">${c.ko}</div>
+    <div class="controls">
+      <button class="play-base" id="replayFront" type="button">🔊 Play</button>
+      <button class="btn ghost" id="flipToBack" type="button">FLIP</button>
+    </div>
+  `;
+  els.front.querySelector("#replayFront").addEventListener("click", (e) => {
+    e.stopPropagation();
+    speakKo(c.ko);
+  });
+  els.front.querySelector("#flipToBack").addEventListener("click", (e) => {
+    e.stopPropagation();
+    els.flipWrap.classList.add("flipped");
+  });
+}
+
+function renderBack(c) {
+  els.back.innerHTML = `
+    <div class="enhead">${c.ko}</div>
+    <ul class="enlines">
+      <li><b>English</b><br>${escapeHtml(c.en)}</li>
+      <li><b>Tagalog</b><br>${escapeHtml(c.tl)}</li>
+    </ul>
+    <div class="controls" style="margin-top:4px">
+      <button class="btn ghost" id="flipToFront" type="button">◀ BACK</button>
+      <button class="btn" id="nextBtn" type="button">NEXT ▶</button>
+      <button class="btn ghost" id="replayBack" type="button">🔊 REPLAY</button>
+    </div>
+  `;
+  els.back.querySelector("#flipToFront").addEventListener("click", (e) => {
+    e.stopPropagation();
+    els.flipWrap.classList.remove("flipped");
+  });
+  els.back.querySelector("#nextBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    nextCardAnimated();
+  });
+  els.back.querySelector("#replayBack").addEventListener("click", (e) => {
+    e.stopPropagation();
+    speakKo(c.ko);
+  });
+}
+
+// ✅ IMPORTANT: showCard doesn’t auto-speak unless caller requests autoplay
+function showCard(c, autoplay = false) {
+  current = c;
+  renderFront(c);
+  renderBack(c);
+  els.flipWrap.classList.remove("flipped");
+  updateProgress();
+  if (autoplay) speakKo(c.ko);
+}
+
+function showEmpty() {
+  current = null;
+  els.flipWrap.classList.remove("flipped");
+  els.front.innerHTML = `
+    <div class="meta-top">Empty</div>
+    <div class="ko" style="color:#789; text-shadow:none">— No cards —</div>
+  `;
+  els.back.innerHTML = ``;
+  els.finish.style.display = "none";
+  els.progress.textContent = "0 / 0";
+}
+
+function startRun(autoplay = false) {
+  els.finish.style.display = "none";
+  queue = shuffle(filterByLevel(currentLevel));
+  index = 0;
+  if (queue.length) showCard(queue[index], autoplay);
+  else showEmpty();
+}
+
+// ✅ iOS fix: speak must happen inside click stack, NOT inside animationend
+let pendingNext = null;
+
+function nextCardAnimated() {
+  if (isAnimating) return;
+
+  const nextIndex = index + 1;
+  if (nextIndex >= queue.length) {
+    els.finish.style.display = "flex";
+    return;
+  }
+
+  pendingNext = queue[nextIndex];
+
+  // Speak now (still a user gesture because this function is called from a click)
+  speakKo(pendingNext.ko);
+
+  isAnimating = true;
+  els.flipWrap.classList.add("animating", "fly-exit");
+
+  const onExitEnd = (e) => {
+    if (e.target !== els.cardEl) return;
+    els.flipWrap.removeEventListener("animationend", onExitEnd);
+    els.flipWrap.classList.remove("fly-exit");
+
+    index = nextIndex;
+    const c = pendingNext;
+    pendingNext = null;
+
+    renderFront(c);
+    renderBack(c);
+    els.flipWrap.classList.remove("flipped");
+    updateProgress();
+
+    els.flipWrap.classList.add("fly-enter");
+    const onEnterEnd = (ev) => {
+      if (ev.target !== els.cardEl) return;
+      els.flipWrap.removeEventListener("animationend", onEnterEnd);
+      els.flipWrap.classList.remove("fly-enter", "animating");
+      isAnimating = false;
+      // no speak here (not a user gesture)
+    };
+    els.flipWrap.addEventListener("animationend", onEnterEnd);
+  };
+
+  els.flipWrap.addEventListener("animationend", onExitEnd);
+}
+
+function applyLevel(level) {
+  currentLevel = level;
+  setActiveLevelButton(level);
+  // clicking difficulty is a gesture → safe to autoplay
+  startRun(true);
+}
+
+function wireEvents() {
+  els.filterButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      applyLevel(btn.dataset.level);
+    });
+  });
+
+  els.flipWrap.addEventListener("click", () => {
+    if (!current) return;
+    if (!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
+    else nextCardAnimated();
+  });
+
+  els.cardEl.addEventListener("keydown", (e) => {
+    if (e.code === "Enter" || e.code === "Space") {
+      e.preventDefault();
+      if (!current) return;
+      if (!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
+      else nextCardAnimated();
     }
+  });
 
-    function renderBack(c){
-      els.back.innerHTML = `
-        <div class="enhead">${c.ko}</div>
-        <ul class="enlines">
-          <li><b>English</b><br>${escapeHtml(c.en)}</li>
-          <li><b>Tagalog</b><br>${escapeHtml(c.tl)}</li>
-        </ul>
-        <div class="controls" style="margin-top:4px">
-          <button class="btn ghost" id="flipToFront" type="button">◀ BACK</button>
-          <button class="btn" id="nextBtn" type="button">NEXT ▶</button>
-          <button class="btn ghost" id="replayBack" type="button">🔊 REPLAY</button>
-        </div>
-      `;
-      els.back.querySelector("#flipToFront").addEventListener("click",(e)=>{ e.stopPropagation(); els.flipWrap.classList.remove("flipped"); });
-      els.back.querySelector("#nextBtn").addEventListener("click",(e)=>{ e.stopPropagation(); nextCardAnimated(); });
-      els.back.querySelector("#replayBack").addEventListener("click",(e)=>{ e.stopPropagation(); speakKo(c.ko); });
-    }
+  // ✅ NO await (await breaks iOS gesture)
+  els.startBtn.addEventListener("click", () => {
+    audioReady = true;
+    els.gate.style.display = "none";
+    primeTTS();
+    ensureVoicesReadyNoAwait();
+    startRun(false);
+    if (current) speakKo(current.ko); // speak inside click gesture
+  });
 
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+  els.restartBtn.addEventListener("click", () => {
+    audioReady = true;
+    els.gate.style.display = "none";
+    primeTTS();
+    ensureVoicesReadyNoAwait();
+    startRun(false);
+    if (current) speakKo(current.ko);
+  });
+}
 
-    function showCard(c){
-      current = c;
-      renderFront(c);
-      renderBack(c);
-      els.flipWrap.classList.remove("flipped");
-      updateProgress();
-      speakKo(c.ko);
-    }
-
-    function showEmpty(){
-      current = null;
-      els.flipWrap.classList.remove("flipped");
-      els.front.innerHTML = `
-        <div class="meta-top">Empty</div>
-        <div class="ko" style="color:#789; text-shadow:none">— No cards —</div>
-      `;
-      els.back.innerHTML = ``;
-      els.finish.style.display = "none";
-      els.progress.textContent = "0 / 0";
-    }
-
-    function startRun(){
-      els.finish.style.display = "none";
-      queue = shuffle(filterByLevel(currentLevel));
-      index = 0;
-      if(queue.length) showCard(queue[index]);
-      else showEmpty();
-    }
-
-    function nextCardAnimated(){
-      if(isAnimating) return;
-      isAnimating = true;
-
-      els.flipWrap.classList.add("animating","fly-exit");
-
-      const onExitEnd = (e)=>{
-        if(e.target !== els.cardEl) return;
-        els.flipWrap.removeEventListener("animationend", onExitEnd);
-        els.flipWrap.classList.remove("fly-exit");
-
-        index++;
-        if(index >= queue.length){
-          els.flipWrap.classList.remove("animating");
-          isAnimating = false;
-          els.finish.style.display = "flex";
-          return;
-        }
-
-        const c = queue[index];
-        renderFront(c);
-        renderBack(c);
-        els.flipWrap.classList.remove("flipped");
-        updateProgress();
-
-        els.flipWrap.classList.add("fly-enter");
-        const onEnterEnd = (ev)=>{
-          if(ev.target !== els.cardEl) return;
-          els.flipWrap.removeEventListener("animationend", onEnterEnd);
-          els.flipWrap.classList.remove("fly-enter","animating");
-          isAnimating = false;
-          speakKo(c.ko);
-        };
-        els.flipWrap.addEventListener("animationend", onEnterEnd);
-      };
-
-      els.flipWrap.addEventListener("animationend", onExitEnd);
-    }
-
-    function applyLevel(level){
-      currentLevel = level;
-      setActiveLevelButton(level);
-      startRun();
-    }
-
-    function wireEvents(){
-      els.filterButtons.forEach(btn=>{
-        btn.addEventListener("click",(e)=>{
-          e.preventDefault();
-          applyLevel(btn.dataset.level);
-        });
-      });
-
-      els.flipWrap.addEventListener("click", ()=>{
-        if(!current) return;
-        if(!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
-        else nextCardAnimated();
-      });
-
-      els.cardEl.addEventListener("keydown",(e)=>{
-        if(e.code === "Enter" || e.code === "Space"){
-          e.preventDefault();
-          if(!current) return;
-          if(!els.flipWrap.classList.contains("flipped")) els.flipWrap.classList.add("flipped");
-          else nextCardAnimated();
-        }
-      });
-
-      els.startBtn.addEventListener("click", async ()=>{
-  audioReady = true;
-  els.gate.style.display = "none";
-  await ensureVoicesReady();
-  startRun(); // autoplay happens inside showCard()
-});
-
-      els.restartBtn.addEventListener("click", ()=>{
-        audioReady = true;
-        els.gate.style.display = "none";
-        startRun();
-      });
-    }
-
-    wireEvents();
-    applyLevel("basic");
+wireEvents();
+applyLevel("basic");
   </script>
 
   <script>
