@@ -54,20 +54,16 @@
     return m?m[1]:'';
   }
 
-  // Splits: [Korean term/phrase] [English meaning] [page].
-  // Unlike the previous parser, Korean phrases may contain spaces (피해를 주다, 몇 시, ...).
   function splitRawLine(line0){
     const line=clean(line0); if(!line)return null;
     const pm=line.match(/^(.*?)\s+(\d+)$/); if(!pm)return null;
     const page=Number(pm[2]), body=clean(pm[1]);
     let parts=body.split(/\s+/);
-    // Remove accidental standalone Hangul-jamo prefixes found in some legacy RAW lines (e.g. "ㅋ 칼", "ㅈ 자다").
     if(parts.length>2 && /^[ㄱ-ㅎㅏ-ㅣ]$/.test(parts[0]))parts=parts.slice(1);
     let split=-1;
     for(let i=1;i<parts.length;i++){
       if(/[A-Za-z]/.test(parts[i])){split=i;break}
     }
-    // Most entries are Hangul + English. For rare mixed/Latin terms, retain the first token as the headword.
     if(split<0){
       if(parts.length<2)return null;
       split=1;
@@ -115,11 +111,7 @@
     for(const x of arr||[]){
       if(!x?.ko||!x?.en)continue;
       const meaning=splitBilingualMeaning(x.en,x.tl);
-      out.push({
-        ko:clean(x.ko),en:meaning.en,tl:meaning.tl,page:Number(x.page)||0,
-        book:x.book?`B${Number(x.book)}`:'GENERAL',pos,source,
-        present:x.present||null,past:x.past||null,future:x.future||null
-      });
+      out.push({ko:clean(x.ko),en:meaning.en,tl:meaning.tl,page:Number(x.page)||0,book:x.book?`B${Number(x.book)}`:'GENERAL',pos,source,present:x.present||null,past:x.past||null,future:x.future||null});
     }
     return dedupe(out,x=>[koKey(x.ko),x.book,x.page].join('|'));
   }
@@ -175,11 +167,9 @@
     for(const b of base){
       const matches=byKo.get(koKey(b.ko))||[];
       const exact=matches.length?[...matches].sort((x,y)=>candidateScore(b,y)-candidateScore(b,x))[0]:null;
-      if(exact){
-        out.push({...b,...exact,ko:b.ko,en:b.en,book:b.book,page:b.page||exact.page||0,source:b.source,detailSource:exact.source});
-      }else out.push(b);
+      if(exact)out.push({...b,...exact,ko:b.ko,en:b.en,book:b.book,page:b.page||exact.page||0,source:b.source,detailSource:exact.source});
+      else out.push(b);
     }
-    // Keep useful supplemental records that do not exist in the official RAW lists.
     for(const d of detail){
       const exists=out.some(x=>koKey(x.ko)===koKey(d.ko)&&x.book===d.book&&x.pos===d.pos&&(!x.page||!d.page||x.page===d.page));
       if(!exists)out.push(d);
@@ -194,9 +184,9 @@
     const nouns=parseNouns(n);
     const verbs=parseMaster(v,'Verb','verb.js');
     let adjectives=parseMaster(a,'Adjective','adjective.js');
-    // Prevent action verbs accidentally duplicated in adjective.js from appearing as adjectives.
     const verbIdentity=new Set(verbs.map(x=>[koKey(x.ko),x.book,x.page].join('|')));
-    adjectives=adjectives.filter(x=>!verbIdentity.has([koKey(x.ko),x.book,x.page].join('|'))||/^to be\b/i.test(x.en));
+    const adjectiveExclusions=new Set(['청소(하다)']);
+    adjectives=adjectives.filter(x=>!adjectiveExclusions.has(x.ko)&&(!verbIdentity.has([koKey(x.ko),x.book,x.page].join('|'))||/^to be\b/i.test(x.en)));
     const adverbs=parseAdverbs(ad),expressions=parseGreetings(g),keywords=parseKeywords(k),sentences=parseSentences(s);
     const vocab=merge(raw,[nouns,verbs,adjectives,adverbs,expressions,keywords]);
 
