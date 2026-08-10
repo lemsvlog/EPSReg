@@ -1,15 +1,32 @@
-/* VIZKOR V2.1 — corrected repository-driven data sync. */
+/* VIZKOR V2.2 — corrected repository-driven data sync + exact main feature parity. */
 (()=>{
   'use strict';
   const BASE='../';
-  const VERSION='2.1.0';
-  const CACHE_KEY='vizkor_v21_data_cache';
+  const VERSION='2.2.0';
+  const CACHE_KEY='vizkor_v22_data_cache';
   const status={state:'loading',version:VERSION,sources:{},counts:{},warnings:[],diagnostics:{}};
   window.VIZKOR_REPO_STATUS=status;
 
   const clean=s=>String(s??'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();
   const koKey=s=>clean(s).replace(/\s+/g,'').replace(/[·•]/g,'').toLowerCase();
   const fire=()=>window.dispatchEvent(new CustomEvent('vizkor:data-ready',{detail:status}));
+
+  const V2_ANIMAL_SUPPLEMENT=[
+    {ko:'새',en:'bird',tl:'ibon'},
+    {ko:'개',en:'dog',tl:'aso'},
+    {ko:'강아지',en:'puppy',tl:'tuta'},
+    {ko:'송아지',en:'calf',tl:'guya'},
+    {ko:'병아리',en:'chick',tl:'sisiw'},
+    {ko:'고양이',en:'cat',tl:'pusa'},
+    {ko:'원숭이',en:'monkey',tl:'unggoy'},
+    {ko:'사자',en:'lion',tl:'leon'},
+    {ko:'염소',en:'goat',tl:'kambing'},
+    {ko:'양',en:'sheep',tl:'tupa'},
+    {ko:'생선',en:'fish (as food)',tl:'isda'},
+    {ko:'새우',en:'shrimp',tl:'hipon'},
+    {ko:'게',en:'crab',tl:'alimango/alimasag'},
+    {ko:'뱀',en:'snake',tl:'ahas'}
+  ];
 
   async function text(path){
     try{
@@ -97,6 +114,18 @@
     return dedupe(out,x=>[koKey(x.ko),x.book,x.page,x.en].join('|'));
   }
 
+  function augmentAnimals(nouns){
+    const out=[...nouns];
+    const animalKo=new Set(out.filter(x=>x.category==='Animals').map(x=>koKey(x.ko)));
+    for(const x of V2_ANIMAL_SUPPLEMENT){
+      if(animalKo.has(koKey(x.ko)))continue;
+      out.push({...x,page:0,book:'GENERAL',pos:'Noun',category:'Animals',source:'VIZKOR V2 Supplemental Animals',supplemental:true});
+      animalKo.add(koKey(x.ko));
+    }
+    status.diagnostics.animals={original:nouns.filter(x=>x.category==='Animals').length,expanded:out.filter(x=>x.category==='Animals').length};
+    return out;
+  }
+
   function splitBilingualMeaning(value,explicitTl=''){
     let en=clean(value),tl=clean(explicitTl);
     if(!tl){
@@ -146,7 +175,7 @@
     return arr.filter(x=>{const k=keyFn(x);if(seen.has(k))return false;seen.add(k);return true});
   }
 
-  const commonWords=s=>new Set(clean(s).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!['the','and','with','for','from','into','one','this','that','thing','thing'].includes(w)));
+  const commonWords=s=>new Set(clean(s).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!['the','and','with','for','from','into','one','this','that','thing'].includes(w)));
   function overlap(a,b){const A=commonWords(a),B=commonWords(b);let n=0;for(const w of A)if(B.has(w))n++;return n}
   function candidateScore(base,d){
     let score=0;
@@ -181,7 +210,7 @@
     const paths=['book1.html','book2.html','noun.js','verb.js','adjective.js','adverb.html','greetings.html','sentence.html','keyword.js'];
     const [b1,b2,n,v,a,ad,g,s,k]=await Promise.all(paths.map(text));
     const b1raw=parseRaw(b1,'B1'),b2raw=parseRaw(b2,'B2'),raw=[...b1raw,...b2raw];
-    const nouns=parseNouns(n);
+    const nouns=augmentAnimals(parseNouns(n));
     const verbs=parseMaster(v,'Verb','verb.js');
     let adjectives=parseMaster(a,'Adjective','adjective.js');
     const verbIdentity=new Set(verbs.map(x=>[koKey(x.ko),x.book,x.page].join('|')));
@@ -192,7 +221,7 @@
 
     const byBook={B1:vocab.filter(x=>x.book==='B1').length,B2:vocab.filter(x=>x.book==='B2').length,GENERAL:vocab.filter(x=>x.book==='GENERAL').length};
     const byPos={};for(const x of vocab)byPos[x.pos]=(byPos[x.pos]||0)+1;
-    let payload={vocab,sentences,nouns,verbs,adjectives,adverbs,expressions,keywords,meta:{version:VERSION,byBook,byPos}};
+    let payload={vocab,sentences,nouns,verbs,adjectives,adverbs,expressions,keywords,meta:{version:VERSION,byBook,byPos,featureParity:true}};
     if(raw.length){
       window.VIZKOR_DATA=payload;
       try{const encoded=JSON.stringify(payload);if(encoded.length<4000000)localStorage.setItem(CACHE_KEY,encoded)}catch(_e){}
@@ -201,10 +230,14 @@
       try{const cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(cached?.vocab?.length){payload=cached;window.VIZKOR_DATA=cached;status.state='ready';status.cached=true;status.warnings.push('Using the last successful V2 data cache because Book 1/2 could not be fetched.')}}catch(_e){}
       if(!window.VIZKOR_DATA){window.VIZKOR_DATA=payload;status.state='error';status.warnings.push('Book 1/Book 2 RAW vocabulary did not load.')}
     }
-    status.counts={raw:raw.length,b1Raw:b1raw.length,b2Raw:b2raw.length,vocab:window.VIZKOR_DATA.vocab?.length||0,nouns:window.VIZKOR_DATA.nouns?.length||0,verbs:window.VIZKOR_DATA.verbs?.length||0,adjectives:window.VIZKOR_DATA.adjectives?.length||0,adverbs:window.VIZKOR_DATA.adverbs?.length||0,expressions:window.VIZKOR_DATA.expressions?.length||0,keywords:window.VIZKOR_DATA.keywords?.length||0,sentences:window.VIZKOR_DATA.sentences?.length||0};
+    status.counts={raw:raw.length,b1Raw:b1raw.length,b2Raw:b2raw.length,vocab:window.VIZKOR_DATA.vocab?.length||0,nouns:window.VIZKOR_DATA.nouns?.length||0,animals:window.VIZKOR_DATA.nouns?.filter(x=>x.category==='Animals').length||0,verbs:window.VIZKOR_DATA.verbs?.length||0,adjectives:window.VIZKOR_DATA.adjectives?.length||0,adverbs:window.VIZKOR_DATA.adverbs?.length||0,expressions:window.VIZKOR_DATA.expressions?.length||0,keywords:window.VIZKOR_DATA.keywords?.length||0,sentences:window.VIZKOR_DATA.sentences?.length||0};
     status.lastSync=new Date().toISOString();
     fire();
   }
 
   sync().catch(e=>{status.state='error';status.error=String(e);status.warnings.push(String(e));fire()});
+
+  if(!document.querySelector('script[data-vizkor-feature-parity]')){
+    const s=document.createElement('script');s.src='feature-parity.js?v='+VERSION;s.dataset.vizkorFeatureParity='1';document.head.appendChild(s);
+  }
 })();
