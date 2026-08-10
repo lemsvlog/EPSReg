@@ -1,35 +1,90 @@
-/* VIZKOR V2: syncs the existing EPSReg learning banks into one reviewer. */
+/* VIZKOR V2 — repository-driven full data sync. Branch-only preview build. */
 (()=>{
- const BASE='../', status={state:'loading',sources:{},added:0}; window.VIZKOR_REPO_STATUS=status;
- const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
- const split=s=>{s=clean(s);const p=s.lastIndexOf(' / ');return p>0?[s.slice(0,p).trim(),s.slice(p+3).trim()]:[s,'']};
- const dedupe=a=>{const m=new Map();for(const v of a){if(!v?.ko||!v?.en)continue;const k=clean(v.ko)+'|'+clean(v.en);if(!m.has(k))m.set(k,v)}return [...m.values()]};
- async function text(path){try{const r=await fetch(BASE+path,{cache:'no-store'});if(!r.ok)throw Error(r.status);const t=await r.text();status.sources[path]={ok:true,bytes:t.length};return t}catch(e){status.sources[path]={ok:false,error:String(e)};return ''}}
- function balanced(t,marker){let p=t.indexOf(marker),s=t.indexOf('[',p);if(p<0||s<0)return '';let d=0,q=null,esc=false;for(let i=s;i<t.length;i++){let c=t[i];if(q){if(esc){esc=false;continue}if(c==='\\'){esc=true;continue}if(c===q)q=null;continue}if(c==='"'||c==="'"){q=c;continue}if(c==='[')d++;else if(c===']'&&--d===0)return t.slice(s,i+1)}return ''}
- function noun(t){const out=[];const re=/\{\s*"ko"\s*:\s*"((?:\\.|[^"\\])*)"\s*,\s*"en"\s*:\s*"((?:\\.|[^"\\])*)"\s*,\s*"tl"\s*:\s*"((?:\\.|[^"\\])*)"\s*,\s*"page"\s*:\s*(\d+)\s*,\s*"book"\s*:\s*(\d+)\s*\}/g;let m;while((m=re.exec(t)))out.push({ko:m[1],en:m[2],tl:m[3],page:+m[4],book:'B'+m[5],pos:'Noun',source:'noun.js'});return out}
- function master(t,pos,source){const raw=balanced(t,'const WORDS_MASTER');if(!raw)return [];let a=[];try{a=JSON.parse(raw)}catch{return []}return a.map(o=>{let [en,tl]=split(o.en);return {ko:clean(o.ko),en,tl,page:+o.page||0,book:'B'+(+o.book||1),pos,source,present:o.present||null,past:o.past||null,future:o.future||null}})}
- function loose(t,pos,source){const out=[];const re=/\{\s*(?:level\s*:\s*(["'])(.*?)\1\s*,\s*)?ko\s*:\s*(["'])(.*?)\3\s*,\s*en\s*:\s*(["'])(.*?)\5\s*,\s*tl\s*:\s*(["'])(.*?)\7\s*\}/g;let m;while((m=re.exec(t)))out.push({ko:clean(m[4]),en:clean(m[6]),tl:clean(m[8]),book:'B1',pos,source,level:m[2]||''});return out}
- function jsonish(t,pos,source){const out=[];const re=/\{\s*"ko"\s*:\s*"((?:\\.|[^"\\])*)"\s*,\s*"en"\s*:\s*"((?:\\.|[^"\\])*)"(?:\s*,\s*"tl"\s*:\s*"((?:\\.|[^"\\])*)")?/g;let m;while((m=re.exec(t)))out.push({ko:m[1],en:m[2],tl:m[3]||'',book:'B1',pos,source});return out}
- async function sync(){const files=['noun.js','verb.js','adjective.js','adverb.html','greetings.html','sentence.html','keyword.js'];const [n,v,a,ad,g,s,k]=await Promise.all(files.map(text));let vocab=dedupe([...noun(n),...master(v,'Verb','verb.js'),...master(a,'Adjective','adjective.js'),...loose(ad,'Adverb','adverb.html'),...loose(g,'Expression','greetings.html'),...jsonish(k,'EPS Keyword','keyword.js')]);let sentences=dedupe(loose(s,'Sentence','sentence.html'));window.VIZKOR_DATA={vocab,sentences};status.added=vocab.length;status.state='ready';status.lastSync=new Date().toISOString();window.dispatchEvent(new CustomEvent('vizkor:data-ready',{detail:status}))}
- sync().catch(e=>{status.state='error';status.error=String(e);window.dispatchEvent(new CustomEvent('vizkor:data-ready',{detail:status}))});
-
- /* Integrated original-module hub — V2 only. Original/root files are untouched. */
- const MODULES=[
-  ['Vocabulary','📘','Book 1 Vocabulary','book1.html'],['Vocabulary','📗','Book 2 Vocabulary','book2.html'],['Vocabulary','📚','Vocabulary Hub','vocabulary.html'],['Vocabulary','🧩','Nouns','noun.HTML'],['Vocabulary','🏃','Verbs','Verbbasic.html'],['Vocabulary','✨','Adjectives','adjective.html'],['Vocabulary','⚡','Adverbs','adverb.html'],
-  ['Practice','🔢','Numbers','number.html'],['Practice','👋','Greetings','greetings.html'],['Practice','💬','Sentences','sentence.html'],['Reading','📖','Reading Guide','readingguide.html'],['Reading','🔑','EPS Keywords','keyword.html'],
-  ['Skills Test','🗣️','Command Test','skilltest-command.html'],['Skills Test','🎤','Interview Test','skilltest-interview.html'],['Skills Test','🚧','Sign Test','skilltest-sign.html'],['Skills Test','🛠️','Tools Test','skilltest-tools.html'],
-  ['EPS Tools','🇰🇷','EPS / DMW','epsdmw.html'],['EPS Tools','🧭','Guide','guide.html'],['EPS Tools','❓','What / Help','what.html']
- ].map(x=>({group:x[0],icon:x[1],name:x[2],path:x[3]}));
- function mountModuleHub(){
-  if(document.getElementById('v2ModuleHub'))return;
-  const st=document.createElement('style');st.textContent=`#v2ModuleNav{border-top:1px solid rgba(255,255,255,.16)!important;margin-top:8px!important;padding-top:11px!important;font-weight:800!important;color:#fff!important}#v2ModuleHub{position:fixed;inset:0;z-index:9999;background:rgba(3,12,27,.72);backdrop-filter:blur(7px);display:none;align-items:stretch;justify-content:center;padding:18px}#v2ModuleHub.open{display:flex}.v2mh-shell{width:min(1500px,100%);height:calc(100vh - 36px);background:#f4f8ff;border-radius:22px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.34);display:grid;grid-template-columns:280px 1fr}.v2mh-side{background:linear-gradient(180deg,#0d47a1,#092f70);color:#fff;padding:15px;overflow:auto}.v2mh-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 4px 13px;position:sticky;top:0;background:#0d47a1;z-index:2}.v2mh-head b{font-size:17px}.v2mh-close{border:0;background:rgba(255,255,255,.16);color:#fff;width:36px;height:36px;border-radius:10px;font-size:20px;cursor:pointer}.v2mh-group{font-size:10px;text-transform:uppercase;letter-spacing:.09em;opacity:.62;margin:17px 8px 7px;font-weight:900}.v2mh-btn{display:flex;width:100%;align-items:center;gap:10px;border:0;background:transparent;color:#dbeafe;padding:10px 11px;border-radius:11px;text-align:left;cursor:pointer}.v2mh-btn:hover,.v2mh-btn.active{background:rgba(255,255,255,.14);color:#fff}.v2mh-icon{font-size:19px;width:24px;text-align:center}.v2mh-main{min-width:0;background:#fff;display:grid;grid-template-rows:58px 1fr}.v2mh-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;border-bottom:1px solid #d9e4f3;background:#fff;color:#10213d}.v2mh-title b,.v2mh-title small{display:block}.v2mh-title small{color:#6b7b91;margin-top:2px}.v2mh-actions{display:flex;gap:7px}.v2mh-actions a,.v2mh-actions button{border:1px solid #d9e4f3;background:#eef5ff;color:#10213d;border-radius:10px;padding:8px 10px;text-decoration:none;cursor:pointer;font-weight:700}#v2ModuleFrame{width:100%;height:100%;border:0;background:#fff}@media(max-width:800px){#v2ModuleHub{padding:0}.v2mh-shell{height:100vh;border-radius:0;grid-template-columns:1fr}.v2mh-side{position:absolute;z-index:3;width:min(300px,86vw);height:100vh;transform:translateX(-105%);transition:.2s;box-shadow:10px 0 30px rgba(0,0,0,.25)}.v2mh-shell.menu-open .v2mh-side{transform:translateX(0)}.v2mh-main{height:100vh}.v2mh-mobile-menu{display:inline-block!important}}@media(min-width:801px){.v2mh-mobile-menu{display:none!important}}`;
-  document.head.appendChild(st);
-  const hub=document.createElement('div');hub.id='v2ModuleHub';let last='';const menu=MODULES.map((m,i)=>{let g='';if(m.group!==last){last=m.group;g=`<div class="v2mh-group">${m.group}</div>`}return `${g}<button class="v2mh-btn" data-module="${i}"><span class="v2mh-icon">${m.icon}</span><span>${m.name}</span></button>`}).join('');
-  hub.innerHTML=`<div class="v2mh-shell" id="v2mhShell"><aside class="v2mh-side"><div class="v2mh-head"><div><b>VIZKOR Modules</b><div style="font-size:11px;opacity:.65">Original features inside V2</div></div><button class="v2mh-close" id="v2mhClose">×</button></div>${menu}</aside><section class="v2mh-main"><header class="v2mh-top"><button class="v2mh-mobile-menu" id="v2mhMenu" style="border:1px solid #d9e4f3;background:#eef5ff;border-radius:10px;padding:8px 10px">☰</button><div class="v2mh-title"><b id="v2mhTitle">Book 1 Vocabulary</b><small>Runs inside V2 without changing the original page</small></div><div class="v2mh-actions"><button id="v2mhReload">↻</button><a id="v2mhOpen" href="../book1.html" target="_blank" rel="noopener">Open ↗</a></div></header><iframe id="v2ModuleFrame" title="VIZKOR module" src="../book1.html"></iframe></section></div>`;document.body.appendChild(hub);
-  const shell=hub.querySelector('#v2mhShell'),frame=hub.querySelector('#v2ModuleFrame'),title=hub.querySelector('#v2mhTitle'),open=hub.querySelector('#v2mhOpen');function choose(i){const m=MODULES[+i];if(!m)return;hub.querySelectorAll('.v2mh-btn').forEach(b=>b.classList.toggle('active',b.dataset.module==i));title.textContent=m.name;frame.src='../'+m.path;open.href='../'+m.path;shell.classList.remove('menu-open')}
-  hub.querySelectorAll('.v2mh-btn').forEach(b=>b.onclick=()=>choose(b.dataset.module));hub.querySelector('#v2mhClose').onclick=()=>hub.classList.remove('open');hub.querySelector('#v2mhReload').onclick=()=>{try{frame.contentWindow.location.reload()}catch{frame.src=frame.src}};hub.querySelector('#v2mhMenu').onclick=()=>shell.classList.toggle('menu-open');hub.onclick=e=>{if(e.target===hub)hub.classList.remove('open')};document.addEventListener('keydown',e=>{if(e.key==='Escape')hub.classList.remove('open')});
-  const nav=document.getElementById('nav');if(nav){const btn=document.createElement('button');btn.id='v2ModuleNav';btn.innerHTML='🧩 All Original Modules';btn.onclick=()=>{hub.classList.add('open');choose(0)};nav.appendChild(btn)}
-  const old=document.querySelector('[data-v="original"]');if(old){old.textContent='🧩 All Original Modules';old.removeAttribute('data-v');old.onclick=()=>{hub.classList.add('open');choose(0)}}
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountModuleHub);else mountModuleHub();
+  const BASE='../';
+  const status={state:'loading',sources:{},counts:{}};
+  window.VIZKOR_REPO_STATUS=status;
+  const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+  const fire=()=>window.dispatchEvent(new CustomEvent('vizkor:data-ready',{detail:status}));
+  async function text(path){
+    try{const r=await fetch(BASE+path+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const t=await r.text();status.sources[path]={ok:true,bytes:t.length};return t}
+    catch(e){status.sources[path]={ok:false,error:String(e)};return ''}
+  }
+  function balanced(t,marker,open='[',close=']'){
+    const p=t.indexOf(marker); if(p<0)return '';
+    const s=t.indexOf(open,p); if(s<0)return '';
+    let d=0,q=null,esc=false,line=false,block=false;
+    for(let i=s;i<t.length;i++){
+      const c=t[i],n=t[i+1];
+      if(line){if(c==='\n')line=false;continue}
+      if(block){if(c==='*'&&n==='/'){block=false;i++}continue}
+      if(q){if(esc){esc=false;continue}if(c==='\\'){esc=true;continue}if(c===q)q=null;continue}
+      if(c==='/'&&n==='/'){line=true;i++;continue}
+      if(c==='/'&&n==='*'){block=true;i++;continue}
+      if(c==='"'||c==="'"||c==='`'){q=c;continue}
+      if(c===open)d++; else if(c===close&&--d===0)return t.slice(s,i+1);
+    }
+    return '';
+  }
+  function jsExpr(raw,fallback){if(!raw)return fallback;try{return Function('"use strict";return ('+raw+')')()}catch(e){return fallback}}
+  function rawBlock(html){const m=html.match(/const\s+RAW\s*=\s*`([\s\S]*?)`\s*;/);return m?m[1]:''}
+  function parseRaw(html,book){
+    const raw=rawBlock(html),out=[];
+    for(const line0 of raw.split(/\r?\n/)){
+      const line=clean(line0); if(!line)continue;
+      const m=line.match(/^(.*?)\s+(\d+)$/); if(!m)continue;
+      const page=+m[2],body=m[1];
+      const firstSpace=body.indexOf(' '); if(firstSpace<1)continue;
+      const ko=clean(body.slice(0,firstSpace)),en=clean(body.slice(firstSpace+1));
+      if(ko&&en)out.push({ko,en,tl:'',page,book,pos:'Vocabulary',source:book==='B1'?'book1.html':'book2.html'});
+    }
+    return out;
+  }
+  function parseNouns(t){
+    const obj=jsExpr(balanced(t,'const CATEGORIZED_NOUNS','{','}'),{}),out=[];
+    for(const [key,cat] of Object.entries(obj||{})){
+      if(key==='all'||!Array.isArray(cat?.data))continue;
+      for(const x of cat.data){if(!x?.ko||!x?.en)continue;out.push({ko:clean(x.ko),en:clean(x.en),tl:clean(x.tl),page:+x.page||0,book:'B'+(+x.book||1),pos:'Noun',category:cat?.name?.en||key,source:'noun.js'})}
+    }
+    return out;
+  }
+  function parseMaster(t,pos,source){
+    const arr=jsExpr(balanced(t,'const WORDS_MASTER','[',']'),[]),out=[];
+    for(const x of arr||[]){if(!x?.ko||!x?.en)continue;let en=clean(x.en),tl='';const slash=en.lastIndexOf(' / ');if(slash>0){tl=en.slice(slash+3).trim();en=en.slice(0,slash).trim()}
+      out.push({ko:clean(x.ko),en,tl,page:+x.page||0,book:x.book?'B'+x.book:'GENERAL',pos,source,present:x.present||null,past:x.past||null,future:x.future||null});}
+    return out;
+  }
+  function parseAdverbs(t){
+    const arr=jsExpr(balanced(t,'const WORDS_MASTER','[',']'),[]);return (arr||[]).filter(x=>x?.ko&&x?.en).map(x=>({ko:clean(x.ko),en:clean(x.en),tl:clean(x.tl),book:'GENERAL',page:0,pos:'Adverb',source:'adverb.html'}));
+  }
+  function parseGreetings(t){
+    const obj=jsExpr(balanced(t,'const DATA','{','}'),{}),out=[];
+    for(const [category,rows] of Object.entries(obj||{}))for(const row of rows||[]){if(Array.isArray(row)&&row[0]&&row[1])out.push({ko:clean(row[0]),en:clean(row[1]),tl:'',book:'GENERAL',page:0,pos:'Expression',category,source:'greetings.html'})}
+    return out;
+  }
+  function parseSentences(t){
+    const arr=jsExpr(balanced(t,'const CARDS','[',']'),[]);return (arr||[]).filter(x=>x?.ko&&x?.en).map(x=>({level:clean(x.level||'basic'),ko:clean(x.ko),en:clean(x.en),tl:clean(x.tl),source:'sentence.html'}));
+  }
+  function parseKeywords(t){
+    const arr=jsExpr(balanced(t,'const ITEMS','[',']'),[]);return (arr||[]).filter(x=>x?.ko&&x?.en).map(x=>({ko:clean(x.ko),en:clean(x.en),tl:clean(x.tl),book:'GENERAL',page:0,pos:'EPS Keyword',source:'keyword.js',count:+x.count||0,koSentence:clean(x.koSentence),enSentence:clean(x.enSentence),tlSentence:clean(x.tlSentence)}));
+  }
+  function key(x){return clean(x.ko).replace(/\s+/g,'')}
+  function merge(base,detailSets){
+    const detail=[].concat(...detailSets),byKo=new Map();
+    for(const d of detail){const k=key(d);if(!byKo.has(k))byKo.set(k,[]);byKo.get(k).push(d)}
+    const out=[];
+    for(const b of base){const matches=byKo.get(key(b))||[];const exact=matches.find(x=>x.book===b.book)||matches[0];out.push(exact?{...b,...exact,book:b.book,page:b.page||exact.page||0,en:b.en||exact.en}:b)}
+    for(const d of detail){if(!out.some(x=>key(x)===key(d)&&x.book===d.book&&x.pos===d.pos))out.push(d)}
+    const seen=new Set();return out.filter(x=>{if(!x.ko||!x.en)return false;const k=[clean(x.ko),clean(x.en),x.book,x.pos].join('|');if(seen.has(k))return false;seen.add(k);return true})
+  }
+  async function sync(){
+    const paths=['book1.html','book2.html','noun.js','verb.js','adjective.js','adverb.html','greetings.html','sentence.html','keyword.js'];
+    const [b1,b2,n,v,a,ad,g,s,k]=await Promise.all(paths.map(text));
+    const raw=[...parseRaw(b1,'B1'),...parseRaw(b2,'B2')];
+    const nouns=parseNouns(n),verbs=parseMaster(v,'Verb','verb.js'),adjs=parseMaster(a,'Adjective','adjective.js'),adverbs=parseAdverbs(ad),expressions=parseGreetings(g),keywords=parseKeywords(k),sentences=parseSentences(s);
+    const vocab=merge(raw,[nouns,verbs,adjs,adverbs,expressions,keywords]);
+    window.VIZKOR_DATA={vocab,sentences,nouns,verbs,adjectives:adjs,adverbs,expressions,keywords};
+    status.counts={raw:raw.length,vocab:vocab.length,nouns:nouns.length,verbs:verbs.length,adjectives:adjs.length,adverbs:adverbs.length,expressions:expressions.length,keywords:keywords.length,sentences:sentences.length};
+    status.state='ready';status.lastSync=new Date().toISOString();fire();
+  }
+  sync().catch(e=>{status.state='error';status.error=String(e);fire()});
 })();
