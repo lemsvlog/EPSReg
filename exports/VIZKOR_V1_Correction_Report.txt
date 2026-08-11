@@ -1,0 +1,61 @@
+﻿VIZKOR VERSION 1 — CORRECTION REPORT
+========================================================================================
+Corrections/normalizations logged: 47
+Spelling/format replacements: 4
+Semantic corrections: 14
+Category overrides: 8
+Exact duplicates removed during export: 13
+Misclassified adjective/action-verb entries removed: 1
+RAW stray-Jamo cleanups: 28
+
+CORRECTION LOG
+----------------------------------------------------------------------------------------
+Noun 마당 (Book 1, p.121): yard / bakuran / People & Relationships → yard / bakuran / Home & Household
+Noun 창문 (Book 1, p.121): window / bintana / People & Relationships → window / bintana / Home & Household
+Noun 피자 (Book 1, p.121): pizza / pizza / People & Relationships → pizza / pizza / Food & Drinks
+Noun 의사 (Book 2, p.50): opinion / opinyon / Occupations & Professions → intention / opinion / intensiyon / opinyon / Abstract Concepts & Communication — Homograph; this Book 2 entry is not “doctor”.
+Noun 의사 (Book 1, p.54): doctor / doktor / Occupations & Professions → doctor / physician / doktor / manggagamot / Occupations & Professions
+Noun 신문 (Book 1, p.84): newspaper / pahayagan / Food & Drinks → newspaper / pahayagan / Media & Reading
+Noun 영화 (Book 1, p.84): movie / pelikula / Food & Drinks → movie / pelikula / Culture & Entertainment
+Noun 책 (Book 1, p.84): book / libro / Food & Drinks → book / libro / Education & Study
+Noun 색깔 (Book 1, p.194): colors / mga kulay / Colors → color / kulay / Colors
+Noun 교실 (Book 1, p.231): class / klase / Education & Study → classroom / silid-aralan / Education & Study
+Noun 프로그램 (Book 1, p.291): programs / mga programa / Education & Study → program / programa / Education & Study
+Noun 콘도 (Book 1, p.211): membership resort condo / membership resort / Travel & Tourism → condominium / resort condo / condominium / resort condo / Travel & Tourism
+Noun 산: “moumtain” → “mountain”
+Noun 여행지 (Book 1, p.214): travel destinations / mga destinasyon sa paglalakbay / Travel & Tourism → travel destination / destinasyon sa paglalakbay / Travel & Tourism
+Noun 법률 (Book 1, p.291): legal / legal / Attributes & Conditions → law / legislation / batas / lehislasyon / Public Services & Legal
+Noun 수저: “spoon and chopstiks” → “spoon and chopsticks”
+Removed from Adjectives: 청소(하다) — to clean; it is an action verb.
+RAW 칼: removed stray leading Jamo “ㅋ”
+RAW 자다: removed stray leading Jamo “ㅈ”
+RAW 사: removed stray leading Jamo “ㅅ”
+RAW 나: removed stray leading Jamo “ㄴ”
+RAW 라면: removed stray leading Jamo “ㄹ”
+RAW 가격: removed stray leading Jamo “ㄱ”
+RAW 바꾸다: removed stray leading Jamo “ㅂ”
+RAW 차가 막히다: removed stray leading Jamo “ㅊ”
+RAW 타고 가다: removed stray leading Jamo “ㅌ”
+RAW 하나: removed stray leading Jamo “ㅎ”
+RAW 산: “moumtain” → “mountain”
+RAW 마늘: removed stray leading Jamo “ㅁ”
+RAW 파: removed stray leading Jamo “ㅍ”
+RAW 다: removed stray leading Jamo “ㄷ”
+RAW 아기: removed stray leading Jamo “ㅇ”
+RAW 수저: “spoon and chopstiks” → “spoon and chopsticks”
+RAW 아까: removed stray leading Jamo “ㅇ”
+RAW 라벨: removed stray leading Jamo “ㄹ”
+RAW 하: removed stray leading Jamo “ㅎ”
+RAW 사각형: removed stray leading Jamo “ㅅ”
+RAW 자: removed stray leading Jamo “ㅈ”
+RAW 가공(하다): removed stray leading Jamo “ㄱ”
+RAW 마감재: removed stray leading Jamo “ㅁ”
+RAW 다녀오다: removed stray leading Jamo “ㄷ”
+RAW 나누다: removed stray leading Jamo “ㄴ”
+RAW 파다: removed stray leading Jamo “ㅍ”
+RAW 캐다: removed stray leading Jamo “ㅋ”
+RAW 바가지: removed stray leading Jamo “ㅂ”
+RAW 차광막: removed stray leading Jamo “ㅊ”
+RAW 타다: removed stray leading Jamo “ㅌ”
+
+NOTE: This corrected file deliberately keeps legitimate homographs and flags conflicting V1 glosses instead of guessing.
