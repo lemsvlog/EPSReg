@@ -8,11 +8,11 @@ SUMMARY
 Corrected noun entries: 1564
 Verb entries: 627
 Corrected adjective/descriptive entries: 150
-Adverb entries: 0
+Adverb entries: 80
 Greetings / Expressions: 337
 EPS Keywords: 81
-Other Book 1 + Book 2 headwords: 95
-Approx. unique Korean headwords: 2786
+Other Book 1 + Book 2 headwords: 60
+Approx. unique Korean headwords: 2820
 Automatic/curated corrections logged: 47
 
 ################################################################################################
@@ -2474,8 +2474,88 @@ PART 3 — ADJECTIVES / DESCRIPTIVE VERBS (150)
 0150. 부담없다 — to be burden-free | Tagalog: walang pasanin | Book 2, Page 310 | Present: 부담없어요 | Past: 부담없었어요 | Future: 부담없을 거예요
 
 ################################################################################################
-PART 4 — ADVERBS (0)
+PART 4 — ADVERBS (80)
 ################################################################################################
+0001. 빨리 — quickly | Tagalog: mabilis
+0002. 자주 — often | Tagalog: madalas
+0003. 가끔 — sometimes | Tagalog: minsan
+0004. 지금 — now | Tagalog: ngayon
+0005. 아직 — still / not yet | Tagalog: hindi pa
+0006. 벌써 — already | Tagalog: tapos na
+0007. 다시 — again | Tagalog: ulit
+0008. 많이 — a lot | Tagalog: marami
+0009. 잘 — well | Tagalog: maayos / mabuti
+0010. 천천히 — slowly | Tagalog: dahan-dahan
+0011. 항상 — always | Tagalog: palagi
+0012. 먼저 — first | Tagalog: una
+0013. 제일 — the most | Tagalog: pinaka
+0014. 아주 — very | Tagalog: napaka
+0015. 너무 — too much / very | Tagalog: masyado
+0016. 꼭 — surely | Tagalog: tiyak
+0017. 정말 — really | Tagalog: talaga
+0018. 조금 — a little | Tagalog: kaunti
+0019. 좀 — a bit | Tagalog: medyo
+0020. 같이 — together | Tagalog: kasama
+0021. 곧 — soon | Tagalog: malapit na
+0022. 나중에 — later | Tagalog: mamaya
+0023. 아까 — earlier | Tagalog: kanina
+0024. 미리 — in advance | Tagalog: maaga
+0025. 특히 — especially | Tagalog: lalo na
+0026. 우선 — first of all | Tagalog: una sa lahat
+0027. 모두 — all | Tagalog: lahat
+0028. 보통 — usually | Tagalog: karaniwan
+0029. 별로 — not really (w/ 안) | Tagalog: hindi naman
+0030. 서로 — each other | Tagalog: isa’t isa
+0031. 언제나 — always | Tagalog: palagi
+0032. 오래 — long (time) | Tagalog: matagal
+0033. 멀리 — far | Tagalog: malayo
+0034. 조용히 — quietly | Tagalog: tahimik
+0035. 자꾸 — repeatedly | Tagalog: paulit-ulit
+0036. 제대로 — properly | Tagalog: nang maayos
+0037. 점점 — gradually | Tagalog: unti-unti
+0038. 직접 — directly | Tagalog: direkta
+0039. 또 — also | Tagalog: din
+0040. 주로 — mainly | Tagalog: pangunahin
+0041. 쯤 — about / around | Tagalog: humigit-kumulang
+0042. 갑자기 — suddenly | Tagalog: bigla
+0043. 따로 — separately | Tagalog: hiwalay
+0044. 그냥 — just | Tagalog: basta
+0045. 그동안 — in the meantime | Tagalog: samantala
+0046. 그래도 — still / even though | Tagalog: gayonpaman
+0047. 덜 — less | Tagalog: mas kaunti
+0048. 빠짐없이 — without exception | Tagalog: walang labis / kulang
+0049. 정확히 — accurately | Tagalog: tumpak
+0050. 혼자 — alone | Tagalog: mag-isa
+0051. 함부로 — carelessly | Tagalog: pabaya
+0052. 곧장 — straight / directly | Tagalog: diretso agad
+0053. 급히 — hastily | Tagalog: dali-dali
+0054. 날마다 — every day | Tagalog: araw-araw
+0055. 대체로 — generally | Tagalog: sa pangkalahatan
+0056. 당장 — immediately | Tagalog: mismong ngayon
+0057. 막 — just / randomly | Tagalog: basta na lang
+0058. 반드시 — absolutely | Tagalog: talagang / tiyak
+0059. 살짝 — slightly | Tagalog: bahagya
+0060. 아마 — probably | Tagalog: marahil
+0061. 역시 — as expected | Tagalog: gaya ng inaasahan
+0062. 종종 — occasionally | Tagalog: paminsan-minsan
+0063. 줄곧 — continuously | Tagalog: tuloy-tuloy
+0064. 차례로 — in order | Tagalog: ayon sa pagkakasunod
+0065. 충분히 — sufficiently | Tagalog: sapat
+0066. 최근 — recently | Tagalog: kamakailan
+0067. 최소한 — at least | Tagalog: kahit papaano
+0068. 최대한 — as much as possible | Tagalog: pinaka kaya
+0069. 흔히 — often / commonly | Tagalog: madalas
+0070. 혹시 — perhaps | Tagalog: baka
+0071. 현재 — currently | Tagalog: kasalukuyan
+0072. 확실히 — surely | Tagalog: tiyak
+0073. 훨씬 — much (more) | Tagalog: mas higit
+0074. 모두들 — all (people) | Tagalog: lahat sila
+0075. 몰래 — secretly | Tagalog: palihim
+0076. 무조건 — unconditionally | Tagalog: walang kondisyon
+0077. 서로서로 — with each other | Tagalog: isa’t isa
+0078. 슬슬 — slowly / gently | Tagalog: dahan-dahan lang
+0079. 억지로 — forcibly | Tagalog: pilit
+0080. 혹은 — or | Tagalog: o / kaya
 
 ################################################################################################
 PART 5 — GREETINGS / EXPRESSIONS (337)
@@ -3018,7 +3098,7 @@ PART 6 — EPS KEYWORDS (81)
 0081. 문제 — Problem | Tagalog: Problema | Frequency: 20
 
 ################################################################################################
-PART 7 — OTHER / ADDITIONAL BOOK 1 + BOOK 2 VOCABULARY (95)
+PART 7 — OTHER / ADDITIONAL BOOK 1 + BOOK 2 VOCABULARY (60)
 ################################################################################################
 These V1 Book 1/Book 2 RAW headwords were not already present in the structured banks.
 
@@ -3037,86 +3117,51 @@ These V1 Book 1/Book 2 RAW headwords were not already present in the structured 
 0013. 작년 — last year | Book 1, Page 94
 0014. 지난달 — last month | Book 1, Page 94
 0015. 지난주 — last week | Book 1, Page 94
-0016. 보통 — usually | Book 1, Page 101
-0017. 요즘 — these days | Book 1, Page 101
-0018. 청소(하다) — clean, to clean | Book 1, Page 104
-0019. 너무 — too (much) | Book 1, Page 111
-0020. 조금 — a little | Book 1, Page 111
-0021. 별로 — not really | Book 1, Page 114
-0022. 정말 — really/truly | Book 1, Page 114
-0023. 좀 — please | Book 1, Page 131
-0024. 잘 — well | Book 1, Page 141
-0025. 같이 — together | Book 1, Page 151
-0026. 그래서 — so | Book 1, Page 151
-0027. 따로 — separately | Book 1, Page 151
-0028. 갑자기 — suddenly | Book 1, Page 154
-0029. 그러면 — then | Book 1, Page 154
-0030. 천천히 — slowly | Book 1, Page 154
-0031. 쯤 — about/approximately | Book 1, Page 161
-0032. 그쪽 — over there | Book 1, Page 181
-0033. 이쪽 — this way | Book 1, Page 181
-0034. 저쪽 — that way | Book 1, Page 181
-0035. 근처 — nearby | Book 1, Page 184
-0036. 하나 — sky blue | Book 1, Page 194
-0037. 그래요? — really? | Book 1, Page 211
-0038. 꼭 — definitely | Book 1, Page 214
-0039. 바다 — sea | Book 1, Page 214
-0040. 아주 — very | Book 1, Page 214
-0041. 주로 — mainly | Book 1, Page 220
-0042. 한번 — once | Book 1, Page 231
-0043. 에스엔에스 — (SNS) social media, social networking service (SNS) | Book 1, Page 244
-0044. 국제 특급 우편 — (EMS) Express Mail Service (EMS) | Book 1, Page 271
-0045. 계좌 번호 — account number | Book 1, Page 281
-0046. 현금인출기 — (ATM) automated teller machine | Book 1, Page 284
-0047. 다 — all | Book 1, Page 291
-0048. 모든 — all | Book 1, Page 294
-0049. 무료 — free | Book 1, Page 294
-0050. 베란다 — veranda | Book 1, Page 301
-0051. 돌잔치 — first birthday party | Book 1, Page 314
-0052. 아직 — not yet | Book 1, Page 314
-0053. 잠깐 — for a moment | Book 1, Page 331
-0054. 또 — also | Book 1, Page 334
-0055. 안전(하다) — safety, to be safe | Book 2, Page 17
-0056. 긍정적 — to be positive | Book 2, Page 20
-0057. 참 — really | Book 2, Page 20
-0058. 함부로 — carelessly | Book 2, Page 20
-0059. 항상 — always | Book 2, Page 20
-0060. 다른 — other/different | Book 2, Page 27
-0061. 혼자 — alone | Book 2, Page 27
-0062. 끼리 — together (between group members) | Book 2, Page 30
-0063. 미리 — in advance | Book 2, Page 30
-0064. 가끔 — sometimes | Book 2, Page 40
-0065. 그래도 — still, even though | Book 2, Page 40
-0066. 자꾸 — repeatedly | Book 2, Page 40
-0067. 깜짝 — with a startle | Book 2, Page 47
-0068. 성차별적 — sexist | Book 2, Page 47
-0069. 아까 — earlier | Book 2, Page 47
-0070. 곧 — soon | Book 2, Page 60
-0071. 특히 — especially | Book 2, Page 60
-0072. 아무리 — no matter how | Book 2, Page 77
-0073. 우선 — first of all | Book 2, Page 77
-0074. 하 — down | Book 2, Page 77
-0075. 사각형 — quadrilateral | Book 2, Page 90
-0076. 자 — ruler | Book 2, Page 107
-0077. 주기적 — periodic | Book 2, Page 117
-0078. 마감재 — finish (coating) | Book 2, Page 130
-0079. 꽉 — tightly | Book 2, Page 137
-0080. 충분히 — sufficiently | Book 2, Page 137
-0081. 어서 — quickly | Book 2, Page 147
-0082. 가까이 — nearby | Book 2, Page 150
-0083. 살짝 — lightly | Book 2, Page 160
-0084. 나중에 — later | Book 2, Page 167
-0085. 바가지 — bowl with handle | Book 2, Page 167
-0086. 차광막 — shade cloth | Book 2, Page 177
-0087. 골고루 — evenly | Book 2, Page 187
-0088. 임시로 — temporarily | Book 2, Page 190
-0089. 정기적 — regular | Book 2, Page 190
-0090. 그냥 — just | Book 2, Page 238
-0091. 위험(하다) — risk, to be dangerous | Book 2, Page 238
-0092. 반드시 — absolutely | Book 2, Page 250
-0093. 훨씬 — much (more) | Book 2, Page 280
-0094. 실제로 — in reality | Book 2, Page 290
-0095. 정확히 — accurately | Book 2, Page 297
+0016. 요즘 — these days | Book 1, Page 101
+0017. 청소(하다) — clean, to clean | Book 1, Page 104
+0018. 그래서 — so | Book 1, Page 151
+0019. 그러면 — then | Book 1, Page 154
+0020. 그쪽 — over there | Book 1, Page 181
+0021. 이쪽 — this way | Book 1, Page 181
+0022. 저쪽 — that way | Book 1, Page 181
+0023. 근처 — nearby | Book 1, Page 184
+0024. 하나 — sky blue | Book 1, Page 194
+0025. 그래요? — really? | Book 1, Page 211
+0026. 바다 — sea | Book 1, Page 214
+0027. 한번 — once | Book 1, Page 231
+0028. 에스엔에스 — (SNS) social media, social networking service (SNS) | Book 1, Page 244
+0029. 국제 특급 우편 — (EMS) Express Mail Service (EMS) | Book 1, Page 271
+0030. 계좌 번호 — account number | Book 1, Page 281
+0031. 현금인출기 — (ATM) automated teller machine | Book 1, Page 284
+0032. 다 — all | Book 1, Page 291
+0033. 모든 — all | Book 1, Page 294
+0034. 무료 — free | Book 1, Page 294
+0035. 베란다 — veranda | Book 1, Page 301
+0036. 돌잔치 — first birthday party | Book 1, Page 314
+0037. 잠깐 — for a moment | Book 1, Page 331
+0038. 안전(하다) — safety, to be safe | Book 2, Page 17
+0039. 긍정적 — to be positive | Book 2, Page 20
+0040. 참 — really | Book 2, Page 20
+0041. 다른 — other/different | Book 2, Page 27
+0042. 끼리 — together (between group members) | Book 2, Page 30
+0043. 깜짝 — with a startle | Book 2, Page 47
+0044. 성차별적 — sexist | Book 2, Page 47
+0045. 아무리 — no matter how | Book 2, Page 77
+0046. 하 — down | Book 2, Page 77
+0047. 사각형 — quadrilateral | Book 2, Page 90
+0048. 자 — ruler | Book 2, Page 107
+0049. 주기적 — periodic | Book 2, Page 117
+0050. 마감재 — finish (coating) | Book 2, Page 130
+0051. 꽉 — tightly | Book 2, Page 137
+0052. 어서 — quickly | Book 2, Page 147
+0053. 가까이 — nearby | Book 2, Page 150
+0054. 바가지 — bowl with handle | Book 2, Page 167
+0055. 차광막 — shade cloth | Book 2, Page 177
+0056. 골고루 — evenly | Book 2, Page 187
+0057. 임시로 — temporarily | Book 2, Page 190
+0058. 정기적 — regular | Book 2, Page 190
+0059. 위험(하다) — risk, to be dangerous | Book 2, Page 238
+0060. 실제로 — in reality | Book 2, Page 290
 
 ################################################################################################
 REVIEW NOTE — HOMOGRAPHS / CONFLICTING V1 GLOSSES
