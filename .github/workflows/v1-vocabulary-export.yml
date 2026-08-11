@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/generate-v1-vocabulary.mjs'
+      - 'scripts/generate-v1-vocabulary-corrected.mjs'
       - '.github/workflows/v1-vocabulary-export.yml'
       - 'noun.js'
       - 'verb.js'
@@ -30,14 +31,16 @@ jobs:
           node-version: '20'
       - name: Generate organized Version 1 vocabulary TXT
         run: node scripts/generate-v1-vocabulary.mjs
-      - name: Commit export if changed
+      - name: Generate corrected Version 1 master TXT
+        run: node scripts/generate-v1-vocabulary-corrected.mjs
+      - name: Commit exports if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add exports/VIZKOR_V1_All_Vocabulary_Organized.txt
+          git add exports/VIZKOR_V1_All_Vocabulary_Organized.txt exports/VIZKOR_V1_All_Vocabulary_CORRECTED.txt exports/VIZKOR_V1_Correction_Report.txt
           if git diff --cached --quiet; then
             echo "No export changes"
           else
-            git commit -m "Generate Version 1 vocabulary Notepad export"
+            git commit -m "Generate corrected Version 1 vocabulary exports"
             git push
           fi
