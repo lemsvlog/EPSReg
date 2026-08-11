@@ -1,0 +1,43 @@
+name: Generate V1 Vocabulary Export
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/generate-v1-vocabulary.mjs'
+      - '.github/workflows/v1-vocabulary-export.yml'
+      - 'noun.js'
+      - 'verb.js'
+      - 'adjective.js'
+      - 'adverb.html'
+      - 'greetings.html'
+      - 'keyword.js'
+      - 'book1.html'
+      - 'book2.html'
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate organized Version 1 vocabulary TXT
+        run: node scripts/generate-v1-vocabulary.mjs
+      - name: Commit export if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add exports/VIZKOR_V1_All_Vocabulary_Organized.txt
+          if git diff --cached --quiet; then
+            echo "No export changes"
+          else
+            git commit -m "Generate Version 1 vocabulary Notepad export"
+            git push
+          fi
