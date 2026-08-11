@@ -1,0 +1,90 @@
+﻿VIZKOR V1 — FULL VOCABULARY AUDIT
+==========================================================================================
+Nouns: 1564
+Verbs: 627
+Adjectives: 151
+Adverbs: 80
+
+
+##########################################################################################
+1. CONFLICTING NOUN GLOSSES / DUPLICATE HEADWORDS
+##########################################################################################
+1. 일 | Book 1, Page 94
+   - Time, Dates & Numbers: day | araw
+   - Time, Dates & Numbers: one | isa
+
+##########################################################################################
+2. KNOWN/SUSPICIOUS CATEGORY MISMATCHES
+##########################################################################################
+1. 마당 — yard | People & Relationships | Book 1, Page 121 | people/home/food mixed into relationship chapter
+2. 창문 — window | People & Relationships | Book 1, Page 121 | people/home/food mixed into relationship chapter
+3. 피자 — pizza | People & Relationships | Book 1, Page 121 | people/home/food mixed into relationship chapter
+4. 의사 — opinion | Occupations & Professions | Book 2, Page 50 | 의사 (意思) is intention/mind, not physician
+5. 신문 — newspaper | Food & Drinks | Book 1, Page 84 | non-food objects mixed into food/drink chapter
+6. 영화 — movie | Food & Drinks | Book 1, Page 84 | non-food objects mixed into food/drink chapter
+7. 책 — book | Food & Drinks | Book 1, Page 84 | non-food objects mixed into food/drink chapter
+8. 교실 — class | Education & Study | Book 1, Page 231 | 교실 normally means classroom in school-room context
+9. 법률 — legal | Attributes & Conditions | Book 1, Page 291 | 법률 is law/legislation, not an attribute
+
+##########################################################################################
+3. ENGLISH/TAGALOG TYPO PATTERNS
+##########################################################################################
+1. 산 — moumtain | bundok | contains “moumtain”
+2. 수저 — spoon and chopstiks | kutsara at chopsticks | contains “chopstiks”
+
+##########################################################################################
+4. VERB ↔ ADJECTIVE OVERLAPS
+##########################################################################################
+None.
+
+##########################################################################################
+5. SUSPICIOUS ADJECTIVE ENTRIES (ACTION-LIKE ENGLISH)
+##########################################################################################
+1. 청소(하다) — to clean / maglinis | Book 1, Page 104
+
+##########################################################################################
+6. SUSPICIOUS VERB ENTRIES (DESCRIPTIVE “TO BE…”)
+##########################################################################################
+1. 발급받다 — to be issued / ilabas | Book 2, Page 297
+2. 입원(하다) — to be hospitalized / maospital | Book 2, Page 307
+
+##########################################################################################
+7. ADVERB POS / MEANING REVIEW
+##########################################################################################
+1. 미리 — in advance | maaga | in advance / beforehand (Tagalog should not simply be “maaga”)
+2. 쯤 — about / around | humigit-kumulang | bound noun/particle-like expression: about/around; not a normal adverb
+3. 그동안 — in the meantime | samantala | better gloss: during that time / meanwhile
+4. 그래도 — still / even though | gayonpaman | better gloss: even so / nevertheless
+5. 빠짐없이 — without exception | walang labis / kulang | without exception / without missing anything
+6. 함부로 — carelessly | pabaya | better gloss: carelessly / recklessly / thoughtlessly
+7. 당장 — immediately | mismong ngayon | right away / immediately
+8. 막 — just / randomly | basta na lang | context-dependent: just now / recklessly / indiscriminately
+9. 반드시 — absolutely | talagang / tiyak | certainly / without fail
+10. 혹시 — perhaps | baka | better gloss: by any chance / perhaps
+11. 무조건 — unconditionally | walang kondisyon | unconditionally / no matter what
+12. 슬슬 — slowly / gently | dahan-dahan lang | gradually / slowly; often “about time to…”
+13. 혹은 — or | o / kaya | conjunction: or / alternatively; not an adverb
+
+##########################################################################################
+8. NUMBER/TIME STATIC CHECKS
+##########################################################################################
+PASS — hour Korean attributive forms
+PASS — 20 before counters uses 스무
+PASS — 1–4 before counters use 한/두/세/네
+PASS — minutes use Sino-Korean
+PASS — hours duration use native
+PASS — date uses Sino year/month/day
+
+##########################################################################################
+9. DATA COMPLETENESS / EMPTY FIELDS
+##########################################################################################
+Noun: 0 entries missing Korean or English.
+Verb: 0 entries missing Korean or English.
+Adjective: 0 entries missing Korean or English.
+Adverb: 0 entries missing Korean or English.
+
+##########################################################################################
+10. SUMMARY
+##########################################################################################
+This report intentionally flags questionable items; it does not automatically rewrite ambiguous Korean homographs.
+Use curated fixes plus safe structural rules to build the corrected production datasets.

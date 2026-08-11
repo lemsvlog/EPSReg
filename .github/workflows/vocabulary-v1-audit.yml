@@ -1,0 +1,48 @@
+name: Audit V1 Vocabulary
+
+on:
+  push:
+    branches: [agent/vocabulary-v1-full-correction]
+    paths:
+      - 'scripts/audit-vocabulary-v1.mjs'
+      - 'scripts/audit-vocabulary-v1-crosscheck.mjs'
+      - 'scripts/audit-vocabulary-v1-pos.mjs'
+      - '.github/workflows/vocabulary-v1-audit.yml'
+      - 'noun.js'
+      - 'verb.js'
+      - 'adjective.js'
+      - 'adverb.html'
+      - 'number.html'
+      - 'book1.html'
+      - 'book2.html'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run structural V1 vocabulary audit
+        run: node scripts/audit-vocabulary-v1.mjs
+      - name: Run Book 1/2 cross-source audit
+        run: node scripts/audit-vocabulary-v1-crosscheck.mjs
+      - name: Run POS cross-audit
+        run: node scripts/audit-vocabulary-v1-pos.mjs
+      - name: Commit audit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add exports/VIZKOR_V1_Full_Vocabulary_Audit.txt exports/VIZKOR_V1_Cross_Source_Audit.txt exports/VIZKOR_V1_POS_Audit.txt
+          if git diff --cached --quiet; then
+            echo "No audit changes"
+          else
+            git commit -m "Generate deep V1 vocabulary audits"
+            git push
+          fi

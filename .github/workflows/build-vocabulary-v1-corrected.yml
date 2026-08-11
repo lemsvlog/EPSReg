@@ -1,0 +1,49 @@
+name: Build Corrected V1 Vocabulary Site
+
+on:
+  push:
+    branches: [agent/vocabulary-v1-full-correction]
+    paths:
+      - 'scripts/build-vocabulary-v1-corrected-site.mjs'
+      - 'scripts/fix-and-validate-vocabulary-v1-build.mjs'
+      - '.github/workflows/build-vocabulary-v1-corrected.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate corrected vocabulary banks and page wiring
+        shell: bash
+        run: |
+          set +e
+          node scripts/build-vocabulary-v1-corrected-site.mjs > /tmp/vizkor-build.log 2>&1
+          CODE=$?
+          cat /tmp/vizkor-build.log
+          if [ "$CODE" -ne 0 ]; then
+            if ! grep -q "adverb.html does not load corrected bank" /tmp/vizkor-build.log; then
+              exit "$CODE"
+            fi
+            echo "Known legacy adverb whitespace wiring issue detected; applying robust wiring fix."
+          fi
+      - name: Fix legacy adverb wiring and run strict validation
+        run: node scripts/fix-and-validate-vocabulary-v1-build.mjs
+      - name: Commit generated corrected banks and page wiring
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vocab-corrected/noun.js vocab-corrected/verb.js vocab-corrected/adjective.js vocab-corrected/adverb.js vocab-corrected/other.js noun.HTML Verbbasic.html adjective.html adverb.html vocabulary.html other-vocabulary.html exports/VIZKOR_V1_Corrected_Site_Validation.txt
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+          else
+            git commit -m "Build corrected Version 1 vocabulary site"
+            git push
+          fi

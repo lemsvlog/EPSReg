@@ -1,0 +1,45 @@
+﻿VIZKOR V1 — PART-OF-SPEECH CROSS AUDIT
+============================================================================================
+
+############################################################################################
+1. NOUN BANK ENTRIES ALSO PRESENT IN OTHER POS BANKS
+############################################################################################
+1. 모두 — noun-bank: everyone | Work & Career | B2 p37
+   Adverb: all | B0 p0
+2. 그동안 — noun-bank: in the meantime | Work & Career | B2 p147
+   Adverb: in the meantime | B0 p0
+3. 서로 — noun-bank: each other | Attributes & Conditions | B2 p20
+   Adverb: each other | B0 p0
+4. 빠짐없이 — noun-bank: without exception, perfectly | Attributes & Conditions | B2 p70
+   Adverb: without exception | B0 p0
+5. 제대로 — noun-bank: properly | Attributes & Conditions | B2 p77
+   Adverb: properly | B0 p0
+6. 덜 — noun-bank: less | Attributes & Conditions | B2 p110
+   Adverb: less | B0 p0
+
+############################################################################################
+2. GRAMMAR/PARTICLE-LIKE ENTRIES INSIDE NOUN BANK
+############################################################################################
+1. 에게/한테 — to (someone) | Work & Career | B2 p40
+
+############################################################################################
+3. ADJECTIVE/ADVERB-LIKE ENGLISH GLOSSES INSIDE NOUN BANK
+############################################################################################
+1. 전동식 — motor operated | Technology & Modern Life | B2 p217
+2. 고급 — advanced | Education & Study | B1 p291
+3. 중급 — intermediate | Education & Study | B1 p291
+4. 초급 — beginner | Education & Study | B1 p291
+5. 실내 — indoor | Travel & Tourism | B1 p220
+6. 실외 — outdoor | Travel & Tourism | B1 p220
+7. 공용 — communal | Work & Career | B2 p27
+8. 성적 — sexual | Work & Career | B2 p47
+9. 적정 — appropriate | Work & Career | B2 p117
+10. 야외용 — outdoor | Work & Career | B2 p240
+11. 제대로 — properly | Attributes & Conditions | B2 p77
+12. 법률 — legal | Attributes & Conditions | B1 p291
+
+############################################################################################
+4. NOTES
+############################################################################################
+Cross-POS presence is not automatically an error: Korean words can function as multiple parts of speech.
+Entries should only be moved when the specific Book/Page sense is clearly non-nominal.

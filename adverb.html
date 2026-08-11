@@ -220,56 +220,11 @@
 
   <audio id="koAudio" preload="auto"></audio>
 
+  <script src="vocab-corrected/adverb.js"></script>
+
   <script>
   // ===== DATA (Adverbs) =====
-  const WORDS_MASTER = [
-    // Core
-    { ko:'빨리', en:'quickly', tl:'mabilis' }, { ko:'자주', en:'often', tl:'madalas' },
-    { ko:'가끔', en:'sometimes', tl:'minsan' }, { ko:'지금', en:'now', tl:'ngayon' },
-    { ko:'아직', en:'still / not yet', tl:'hindi pa' }, { ko:'벌써', en:'already', tl:'tapos na' },
-    { ko:'다시', en:'again', tl:'ulit' }, { ko:'많이', en:'a lot', tl:'marami' },
-    { ko:'잘', en:'well', tl:'maayos / mabuti' }, { ko:'천천히', en:'slowly', tl:'dahan-dahan' },
-    { ko:'항상', en:'always', tl:'palagi' }, { ko:'먼저', en:'first', tl:'una' },
-    { ko:'제일', en:'the most', tl:'pinaka' }, { ko:'아주', en:'very', tl:'napaka' },
-    { ko:'너무', en:'too much / very', tl:'masyado' }, { ko:'꼭', en:'surely', tl:'tiyak' },
-    { ko:'정말', en:'really', tl:'talaga' }, { ko:'조금', en:'a little', tl:'kaunti' },
-    { ko:'좀', en:'a bit', tl:'medyo' },
-
-    // Secondary
-    { ko:'같이', en:'together', tl:'kasama' }, { ko:'곧', en:'soon', tl:'malapit na' },
-    { ko:'나중에', en:'later', tl:'mamaya' }, { ko:'아까', en:'earlier', tl:'kanina' },
-    { ko:'미리', en:'in advance', tl:'maaga' }, { ko:'특히', en:'especially', tl:'lalo na' },
-    { ko:'우선', en:'first of all', tl:'una sa lahat' }, { ko:'모두', en:'all', tl:'lahat' },
-    { ko:'보통', en:'usually', tl:'karaniwan' }, { ko:'별로', en:'not really (w/ 안)', tl:'hindi naman' },
-    { ko:'서로', en:'each other', tl:'isa’t isa' }, { ko:'언제나', en:'always', tl:'palagi' },
-    { ko:'오래', en:'long (time)', tl:'matagal' }, { ko:'멀리', en:'far', tl:'malayo' },
-    { ko:'조용히', en:'quietly', tl:'tahimik' }, { ko:'자꾸', en:'repeatedly', tl:'paulit-ulit' },
-    { ko:'제대로', en:'properly', tl:'nang maayos' }, { ko:'점점', en:'gradually', tl:'unti-unti' },
-    { ko:'직접', en:'directly', tl:'direkta' }, { ko:'또', en:'also', tl:'din' },
-    { ko:'주로', en:'mainly', tl:'pangunahin' }, { ko:'쯤', en:'about / around', tl:'humigit-kumulang' },
-
-    // Extended
-    { ko:'갑자기', en:'suddenly', tl:'bigla' }, { ko:'따로', en:'separately', tl:'hiwalay' },
-    { ko:'그냥', en:'just', tl:'basta' }, { ko:'그동안', en:'in the meantime', tl:'samantala' },
-    { ko:'그래도', en:'still / even though', tl:'gayonpaman' }, { ko:'덜', en:'less', tl:'mas kaunti' },
-    { ko:'빠짐없이', en:'without exception', tl:'walang labis / kulang' }, { ko:'정확히', en:'accurately', tl:'tumpak' },
-    { ko:'혼자', en:'alone', tl:'mag-isa' }, { ko:'함부로', en:'carelessly', tl:'pabaya' },
-    { ko:'곧장', en:'straight / directly', tl:'diretso agad' }, { ko:'급히', en:'hastily', tl:'dali-dali' },
-    { ko:'날마다', en:'every day', tl:'araw-araw' }, { ko:'대체로', en:'generally', tl:'sa pangkalahatan' },
-    { ko:'당장', en:'immediately', tl:'mismong ngayon' }, { ko:'막', en:'just / randomly', tl:'basta na lang' },
-    { ko:'반드시', en:'absolutely', tl:'talagang / tiyak' }, { ko:'살짝', en:'slightly', tl:'bahagya' },
-    { ko:'아마', en:'probably', tl:'marahil' }, { ko:'역시', en:'as expected', tl:'gaya ng inaasahan' },
-    { ko:'종종', en:'occasionally', tl:'paminsan-minsan' }, { ko:'줄곧', en:'continuously', tl:'tuloy-tuloy' },
-    { ko:'차례로', en:'in order', tl:'ayon sa pagkakasunod' }, { ko:'충분히', en:'sufficiently', tl:'sapat' },
-    { ko:'최근', en:'recently', tl:'kamakailan' }, { ko:'최소한', en:'at least', tl:'kahit papaano' },
-    { ko:'최대한', en:'as much as possible', tl:'pinaka kaya' }, { ko:'흔히', en:'often / commonly', tl:'madalas' },
-    { ko:'혹시', en:'perhaps', tl:'baka' }, { ko:'현재', en:'currently', tl:'kasalukuyan' },
-    { ko:'확실히', en:'surely', tl:'tiyak' }, { ko:'훨씬', en:'much (more)', tl:'mas higit' },
-    { ko:'모두들', en:'all (people)', tl:'lahat sila' }, { ko:'몰래', en:'secretly', tl:'palihim' },
-    { ko:'무조건', en:'unconditionally', tl:'walang kondisyon' }, { ko:'서로서로', en:'with each other', tl:'isa’t isa' },
-    { ko:'슬슬', en:'slowly / gently', tl:'dahan-dahan lang' }, { ko:'억지로', en:'forcibly', tl:'pilit' },
-    { ko:'혹은', en:'or', tl:'o / kaya' },
-  ];
+  const WORDS_MASTER = window.VIZKOR_ADVERBS_CORRECTED || [];
 
   // ===== STATE =====
   let queue = [];

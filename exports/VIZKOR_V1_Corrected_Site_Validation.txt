@@ -1,0 +1,21 @@
+﻿VIZKOR V1 — CORRECTED VOCABULARY SITE VALIDATION
+============================================================================================
+Corrected Nouns: 1559
+Verbs: 627
+Adjectives / Descriptive Verbs: 150
+Adverbs: 79
+Other / Particles: 3
+
+PASS — noun.HTML loads corrected noun bank
+PASS — Verbbasic.html loads corrected verb bank
+PASS — adjective.html loads corrected adjective bank
+PASS — adverb.html loads corrected adverb bank
+PASS — OTHER / PARTICLES preserves non-noun/non-adverb items
+PASS — NUMBER/TIME core native/Sino rules preserved
+PASS — 청소(하다) removed from Adjectives
+PASS — 쯤 moved from Adverb to Auxiliary particle
+PASS — 에게/한테 moved from Noun to Particle
+PASS — 성적 (sexual, B2 p47) moved from Noun to Modifier
+PASS — clear duplicate adverbs removed from Noun bank
+
+NOTE: This validates the corrections surfaced by the V1 structural, cross-source and POS audits. It does not claim every one of the thousands of vocabulary entries was independently dictionary-verified one by one.
