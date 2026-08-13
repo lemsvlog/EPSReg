@@ -1,0 +1,24 @@
+/* VIZKOR modern preview theme — intentionally conservative to preserve module behavior */
+html.vizkor-modern-module{background:#f4f7fb!important;color-scheme:light}
+html.vizkor-modern-module body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;background:linear-gradient(180deg,#f7faff 0%,#eef4fb 100%)!important;color:#10223b!important;min-height:100vh!important}
+html.vizkor-modern-module body::before{opacity:.12!important;filter:blur(70px)!important}
+html.vizkor-modern-module header{background:rgba(255,255,255,.94)!important;border-bottom:1px solid #dfe8f3!important;box-shadow:0 8px 24px rgba(20,49,91,.06)!important;backdrop-filter:blur(14px)!important}
+html.vizkor-modern-module header *{text-shadow:none!important}
+html.vizkor-modern-module .brand .title-main,
+html.vizkor-modern-module .title-main{background:none!important;-webkit-text-fill-color:#174ea6!important;color:#174ea6!important;text-shadow:none!important;letter-spacing:.02em!important}
+html.vizkor-modern-module .brand .title-sub,
+html.vizkor-modern-module .title-sub{color:#6e829d!important;text-shadow:none!important}
+html.vizkor-modern-module .floating-home{display:none!important}
+html.vizkor-modern-module input,
+html.vizkor-modern-module select,
+html.vizkor-modern-module textarea{border-radius:11px!important;border-color:#d7e2ef!important;box-shadow:none!important;background:#fff!important;color:#10223b!important}
+html.vizkor-modern-module button,
+html.vizkor-modern-module .btn{border-radius:10px!important;box-shadow:none!important}
+html.vizkor-modern-module a{transition:filter .15s ease,transform .15s ease}
+html.vizkor-modern-module .container{max-width:1180px!important}
+html.vizkor-modern-module footer{box-shadow:0 12px 34px rgba(20,49,91,.1)!important}
+html.vizkor-modern-module ::-webkit-scrollbar{width:9px;height:9px}
+html.vizkor-modern-module ::-webkit-scrollbar-track{background:#eef3f8}
+html.vizkor-modern-module ::-webkit-scrollbar-thumb{background:#b8c8dc;border-radius:20px;border:2px solid #eef3f8}
+html.vizkor-modern-module ::selection{background:#cfe2ff;color:#153766}
+@media(max-width:800px){html.vizkor-modern-module body{padding-bottom:12px!important}html.vizkor-modern-module header{position:relative!important;top:auto!important}}
