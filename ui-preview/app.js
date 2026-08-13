@@ -3,6 +3,7 @@
 
   const ROUTES = {
     home:{title:'Dashboard',url:null,group:'Overview',desc:'VIZKOR learning dashboard',icon:'⌂'},
+    lab:{title:'Learning Lab',url:'learning-lab/index.html',group:'Smart Study',desc:'Smart review, Korean analyzer, 1K+ sentence ladder, grammar, listening and progress',icon:'★'},
     guide:{title:'Reading Exam Guide',url:'../guide.html',group:'Learn',desc:'Read this first for exam preparation',icon:'◉'},
     vocabulary:{title:'Flipcard Vocabulary',url:'../vocabulary.html',group:'Learn',desc:'Vocabulary hub with all existing flipcard categories',icon:'▦'},
     book1:{title:'EPS Book 1 Vocabulary',url:'../book1.html',group:'Learn',desc:'Existing EPS Book 1 vocabulary list',icon:'1'},
@@ -41,8 +42,8 @@
   function loadState(){
     try{
       const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      return {lastRoute:raw.lastRoute || 'guide', visited:raw.visited || {}, history:Array.isArray(raw.history)?raw.history:[]};
-    }catch{return {lastRoute:'guide',visited:{},history:[]};}
+      return {lastRoute:raw.lastRoute || 'lab', visited:raw.visited || {}, history:Array.isArray(raw.history)?raw.history:[]};
+    }catch{return {lastRoute:'lab',visited:{},history:[]};}
   }
   function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{}}
   function nowLabel(ts){
@@ -83,7 +84,9 @@
   function escapeHtml(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function normalizePath(href=''){
     try{
-      const u=new URL(href,location.href); const name=u.pathname.split('/').pop().toLowerCase();
+      const u=new URL(href,location.href);
+      if(u.pathname.includes('/learning-lab/')) return 'lab';
+      const name=u.pathname.split('/').pop().toLowerCase();
       const map={
         'index.html':'home','guide.html':'guide','vocabulary.html':'vocabulary','book1.html':'book1','book2.html':'book2','greetings.html':'greetings','sentence.html':'sentence',
         'noun.html':'noun','verbbasic.html':'verb','adjective.html':'adjective','adverb.html':'adverb','number.html':'number','readingguide.html':'readingguide','keyword.html':'keyword',
@@ -120,6 +123,7 @@
     els.frameLoading.style.display='none';
     try{
       const doc=els.frame.contentDocument; if(!doc) return;
+      if(currentRoute==='lab') return;
       doc.documentElement.classList.add('vizkor-modern-module');
       if(!doc.getElementById('vizkorPreviewTheme')){
         const link=doc.createElement('link');link.id='vizkorPreviewTheme';link.rel='stylesheet';link.href=new URL('module-theme.css',location.href).href;doc.head.appendChild(link);
@@ -130,6 +134,26 @@
       },true);
       const title=doc.title?.trim(); if(title && currentRoute!=='home') els.moduleCrumb.textContent=ROUTES[currentRoute]?.title || title;
     }catch(err){console.warn('Preview frame theming skipped:',err);}
+  }
+
+  function injectLearningLabEntry(){
+    const nav = document.getElementById('navGroups');
+    if(nav && !nav.querySelector('[data-route="lab"]')){
+      const group=document.createElement('div');group.className='nav-group';
+      group.innerHTML='<div class="nav-label">Smart Study</div><button class="nav-item" data-route="lab"><span class="nav-icon">★</span><span>Learning Lab</span></button>';
+      const overview=nav.querySelector('.nav-group');
+      if(overview?.nextSibling) nav.insertBefore(group,overview.nextSibling); else nav.appendChild(group);
+    }
+    const grid=document.querySelector('.module-grid');
+    if(grid && !grid.querySelector('[data-route="lab"]')){
+      const card=document.createElement('button');card.className='module-card';card.dataset.route='lab';
+      card.innerHTML='<div class="module-icon blue-bg">★</div><div><strong>Learning Lab</strong><span>Smart review, analyzer, 1K+ sentences & grammar</span></div><i>→</i>';
+      grid.prepend(card);
+    }
+    const heroActions=document.querySelector('.hero-actions');
+    if(heroActions && !heroActions.querySelector('[data-route="lab"]')){
+      const btn=document.createElement('button');btn.className='secondary-btn';btn.dataset.route='lab';btn.textContent='Open Learning Lab';heroActions.appendChild(btn);
+    }
   }
 
   function openSidebar(){els.sidebar.classList.add('open');els.sidebarBackdrop.classList.add('show');}
@@ -148,7 +172,7 @@
   els.frame.addEventListener('load',injectFrameTheme);
   els.reloadFrame.addEventListener('click',()=>{if(currentRoute!=='home'){els.frameLoading.style.display='flex';els.frame.contentWindow?.location.reload();}});
   els.openOriginal.addEventListener('click',()=>{const r=ROUTES[currentRoute];if(r?.url)window.open(r.url,'_blank','noopener');});
-  els.continueBtn.addEventListener('click',()=>showRoute(state.lastRoute && ROUTES[state.lastRoute] ? state.lastRoute : 'guide'));
+  els.continueBtn.addEventListener('click',()=>showRoute(state.lastRoute && ROUTES[state.lastRoute] ? state.lastRoute : 'lab'));
   els.menuBtn.addEventListener('click',openSidebar);els.sidebarClose.addEventListener('click',closeSidebar);els.sidebarBackdrop.addEventListener('click',closeSidebar);els.mobileMore.addEventListener('click',openSidebar);
   els.searchTrigger.addEventListener('click',openSearch);els.searchClose.addEventListener('click',closeSearch);els.moduleSearch.addEventListener('input',e=>renderSearch(e.target.value));
   els.searchModal.addEventListener('click',e=>{if(e.target===els.searchModal)closeSearch();});
@@ -156,6 +180,6 @@
   window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openSearch();}if(e.key==='Escape'){closeSearch();els.accountModal.hidden=true;closeSidebar();}});
   window.addEventListener('hashchange',()=>{const route=location.hash.replace('#','')||'home';if(route!==currentRoute)showRoute(route,{push:false});});
 
-  bindRouteButtons();renderProgress();
+  injectLearningLabEntry();bindRouteButtons();renderProgress();
   const initial=location.hash.replace('#','');showRoute(ROUTES[initial]?initial:'home',{push:false});
 })();
