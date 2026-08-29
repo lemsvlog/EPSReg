@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "== Installing Java 17 and utilities =="
-dnf install -y java-17-amazon-corretto-headless curl unzip >/dev/null
+dnf install -y java-17-amazon-corretto-headless >/dev/null
 
 JAVA_BIN="$(rpm -ql java-17-amazon-corretto-headless | grep '/bin/java$' | head -1)"
 export JAVA_HOME="$(dirname "$(dirname "$JAVA_BIN")")"
