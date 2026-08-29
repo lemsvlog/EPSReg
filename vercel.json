@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "echo APK-build-preview",
-  "buildCommand": "bash korean-lock-build/build-vercel-apk.sh",
+  "installCommand": "echo diagnostic-preview",
+  "buildCommand": "bash korean-lock-build/debug-vercel.sh",
   "outputDirectory": "korean-lock-build/apk-output"
 }
