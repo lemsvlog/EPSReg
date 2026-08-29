@@ -2,7 +2,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
@@ -11,14 +10,14 @@
         android:theme="@android:style/Theme.Material.NoActionBar">
 
         <activity
-            android:name="com.vizkor.koreanlockstudy.MainActivity$StudyLockActivity"
+            android:name=".StudyLockActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTop"
             android:showWhenLocked="true"/>
 
         <activity
-            android:name="com.vizkor.koreanlockstudy.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -27,16 +26,11 @@
         </activity>
 
         <service
-            android:name="com.vizkor.koreanlockstudy.MainActivity$ScreenMonitorService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="User-enabled Korean study screen shown when the locked screen wakes."/>
-        </service>
+            android:name=".ScreenMonitorService"
+            android:exported="false"/>
 
         <receiver
-            android:name="com.vizkor.koreanlockstudy.MainActivity$BootReceiver"
+            android:name=".BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
