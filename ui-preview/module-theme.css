@@ -1,0 +1,419 @@
+/* VIZKOR modern preview theme — conservative base + clean mobile-first flipcards */
+html.vizkor-modern-module{background:#f4f7fb!important;color-scheme:light}
+html.vizkor-modern-module body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;background:linear-gradient(180deg,#f8faff 0%,#f1f5fb 100%)!important;color:#10223b!important;min-height:100vh!important}
+html.vizkor-modern-module body::before{opacity:.04!important;filter:blur(90px)!important;animation:none!important}
+html.vizkor-modern-module header{background:transparent!important;border-bottom:0!important;box-shadow:none!important;backdrop-filter:none!important}
+html.vizkor-modern-module header *{text-shadow:none!important}
+html.vizkor-modern-module .brand .title-main,
+html.vizkor-modern-module .title-main{background:none!important;-webkit-text-fill-color:#174ea6!important;color:#174ea6!important;text-shadow:none!important;letter-spacing:.02em!important}
+html.vizkor-modern-module .brand .title-sub,
+html.vizkor-modern-module .title-sub{color:#6e829d!important;text-shadow:none!important}
+html.vizkor-modern-module .floating-home{display:none!important}
+html.vizkor-modern-module input,
+html.vizkor-modern-module select,
+html.vizkor-modern-module textarea{border-radius:11px!important;border-color:#d7e2ef!important;box-shadow:none!important;background:#fff!important;color:#10223b!important}
+html.vizkor-modern-module button,
+html.vizkor-modern-module .btn{border-radius:10px!important;box-shadow:none!important}
+html.vizkor-modern-module a{transition:filter .15s ease,transform .15s ease}
+html.vizkor-modern-module .container{max-width:1180px!important}
+html.vizkor-modern-module footer{box-shadow:0 12px 34px rgba(20,49,91,.1)!important}
+html.vizkor-modern-module ::-webkit-scrollbar{width:8px;height:8px}
+html.vizkor-modern-module ::-webkit-scrollbar-track{background:#eef3f8}
+html.vizkor-modern-module ::-webkit-scrollbar-thumb{background:#c3cfdd;border-radius:20px;border:2px solid #eef3f8}
+html.vizkor-modern-module ::selection{background:#cfe2ff;color:#153766}
+
+/* =========================================================
+   CLEAN FLIPCARD SYSTEM
+   Applies only to modules that use .stage > .flip.
+   Existing JS, controls, filters, audio and flip behavior stay intact.
+   ========================================================= */
+
+html.vizkor-modern-module body:has(.stage .flip){
+  padding:14px 14px 34px!important;
+  gap:10px!important;
+  align-items:center!important;
+  overflow-x:hidden!important;
+}
+
+html.vizkor-modern-module body:has(.stage .flip) > header{
+  width:min(660px,100%)!important;
+  padding:4px 4px 0!important;
+  margin:0 auto!important;
+  text-align:left!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .title{
+  margin:0!important;
+  font-size:clamp(1.35rem,5vw,1.9rem)!important;
+  line-height:1.1!important;
+  letter-spacing:-.02em!important;
+  text-transform:none!important;
+  color:#10223b!important;
+  background:none!important;
+  -webkit-text-fill-color:#10223b!important;
+  text-shadow:none!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .subtitle{
+  margin:5px 0 0!important;
+  color:#718198!important;
+  font-size:.9rem!important;
+  font-weight:650!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .progress{
+  display:inline-flex!important;
+  margin-top:7px!important;
+  padding:5px 9px!important;
+  border-radius:999px!important;
+  background:#eaf2ff!important;
+  color:#245eb7!important;
+  font-size:.78rem!important;
+  font-weight:850!important;
+  line-height:1!important;
+}
+
+/* toolbar / filters */
+html.vizkor-modern-module body:has(.stage .flip) .toolbar{
+  width:min(660px,100%)!important;
+  margin:2px auto 0!important;
+  padding:11px!important;
+  gap:9px!important;
+  border:1px solid #dce6f1!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:0 7px 24px rgba(26,61,107,.06)!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .toolbar label{
+  margin:0!important;
+  color:#52667f!important;
+  font-size:.8rem!important;
+  font-weight:750!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .toolbar select{
+  min-height:44px!important;
+  padding:9px 38px 9px 11px!important;
+  border:1px solid #dbe4ee!important;
+  border-radius:11px!important;
+  background-color:#fff!important;
+  color:#162b46!important;
+  font-size:.9rem!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .book-tabs,
+html.vizkor-modern-module body:has(.stage .flip) .filters,
+html.vizkor-modern-module body:has(.stage .flip) .subfilters{
+  gap:6px!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .tab,
+html.vizkor-modern-module body:has(.stage .flip) .seg{
+  min-height:38px!important;
+  padding:7px 11px!important;
+  border:1px solid #dce5ef!important;
+  border-radius:10px!important;
+  background:#f7f9fc!important;
+  color:#52667f!important;
+  box-shadow:none!important;
+  font-size:.79rem!important;
+  font-weight:800!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .tab.active,
+html.vizkor-modern-module body:has(.stage .flip) .seg.active{
+  border-color:#2563eb!important;
+  background:#2563eb!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) input[type="checkbox"]{
+  width:18px!important;
+  height:18px!important;
+  accent-color:#2563eb!important;
+}
+
+/* stage/card */
+html.vizkor-modern-module .stage:has(.flip){
+  width:min(660px,100%)!important;
+  height:590px!important;
+  margin:4px auto 0!important;
+  align-items:stretch!important;
+}
+html.vizkor-modern-module .stage .flip{
+  width:100%!important;
+  height:100%!important;
+  perspective:1500px!important;
+}
+html.vizkor-modern-module .stage .flip > .card{
+  width:100%!important;
+  height:100%!important;
+}
+html.vizkor-modern-module .stage .face{
+  border-radius:22px!important;
+  padding:22px!important;
+  gap:12px!important;
+  border:1px solid #dce5ef!important;
+  box-shadow:0 12px 34px rgba(27,57,98,.08)!important;
+  overflow:auto!important;
+  scrollbar-width:thin!important;
+}
+html.vizkor-modern-module .stage .front{
+  background:#fff!important;
+  color:#10223b!important;
+}
+html.vizkor-modern-module .stage .back{
+  background:#fff!important;
+  color:#10223b!important;
+}
+html.vizkor-modern-module .stage .meta-top{
+  top:15px!important;
+  bottom:auto!important;
+  color:#7a899b!important;
+  font-size:.75rem!important;
+  font-weight:750!important;
+}
+html.vizkor-modern-module .stage .front:has(.meta-top){padding-top:50px!important}
+
+/* Korean text */
+html.vizkor-modern-module .stage .ko{
+  color:#0e1f35!important;
+  font-size:clamp(2.6rem,8vw,4rem)!important;
+  line-height:1.02!important;
+  letter-spacing:-.035em!important;
+  text-shadow:none!important;
+}
+html.vizkor-modern-module .stage .ko-big{
+  color:#0e1f35!important;
+  font-size:clamp(2rem,7vw,3.15rem)!important;
+  line-height:1.08!important;
+  letter-spacing:-.025em!important;
+}
+html.vizkor-modern-module .stage .koform{
+  color:#173252!important;
+  font-size:1.13rem!important;
+  font-weight:650!important;
+}
+html.vizkor-modern-module .stage .enhead{
+  width:100%!important;
+  color:#52667f!important;
+  font-size:.78rem!important;
+  text-transform:uppercase!important;
+  letter-spacing:.08em!important;
+  margin:3px 0 0!important;
+}
+html.vizkor-modern-module .stage .meta{
+  color:#7b899b!important;
+  font-size:.76rem!important;
+}
+
+/* noun image */
+html.vizkor-modern-module .stage .img-wrap{
+  width:100%!important;
+  max-width:520px!important;
+  height:240px!important;
+  margin:2px auto!important;
+  border:1px solid #e0e7ef!important;
+  border-radius:16px!important;
+  background:#f7f9fc!important;
+  box-shadow:none!important;
+}
+html.vizkor-modern-module .stage .img-wrap img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:#f7f9fc!important;
+}
+
+/* multiple-choice answers */
+html.vizkor-modern-module .stage .choices,
+html.vizkor-modern-module .stage .quiz{
+  width:100%!important;
+  max-width:540px!important;
+  gap:8px!important;
+  margin:3px auto 0!important;
+}
+html.vizkor-modern-module .stage .choice{
+  min-height:52px!important;
+  padding:11px 12px 11px 46px!important;
+  display:flex!important;
+  align-items:center!important;
+  text-align:left!important;
+  border:1px solid #dce5ef!important;
+  border-radius:12px!important;
+  background:#f9fbfd!important;
+  color:#172b44!important;
+  box-shadow:none!important;
+  font-size:.92rem!important;
+  line-height:1.25!important;
+  font-weight:700!important;
+}
+html.vizkor-modern-module .stage .choice:hover{
+  transform:none!important;
+  border-color:#9ebbe3!important;
+  background:#f4f8ff!important;
+  box-shadow:none!important;
+}
+html.vizkor-modern-module .stage .choice .badge{
+  left:11px!important;
+  top:50%!important;
+  width:26px!important;
+  height:26px!important;
+  border-radius:8px!important;
+  background:#e7efff!important;
+  color:#245eb7!important;
+  box-shadow:none!important;
+  font-size:.78rem!important;
+}
+html.vizkor-modern-module .stage .choice.correct{
+  background:#f0fdf4!important;
+  border-color:#79c894!important;
+  box-shadow:0 0 0 2px rgba(22,163,74,.08)!important;
+}
+html.vizkor-modern-module .stage .choice.wrong{
+  background:#fff5f5!important;
+  border-color:#ef9a9a!important;
+  box-shadow:0 0 0 2px rgba(220,38,38,.06)!important;
+}
+
+/* verb/adjective form rows and meaning rows */
+html.vizkor-modern-module .stage .forms,
+html.vizkor-modern-module .stage .enlines{
+  width:100%!important;
+  max-width:540px!important;
+  margin:3px auto!important;
+}
+html.vizkor-modern-module .stage .forms li,
+html.vizkor-modern-module .stage .enlines li{
+  min-height:46px!important;
+  margin:6px 0!important;
+  padding:10px 11px!important;
+  border:1px solid #e0e7ef!important;
+  border-radius:11px!important;
+  background:#f8fafc!important;
+  color:#2d425c!important;
+  box-shadow:none!important;
+}
+html.vizkor-modern-module .stage .forms b,
+html.vizkor-modern-module .stage .enlines b{
+  color:#174ea6!important;
+}
+
+/* all flip buttons */
+html.vizkor-modern-module .stage .play-base,
+html.vizkor-modern-module .stage .play-mini,
+html.vizkor-modern-module .stage .btn,
+html.vizkor-modern-module body:has(.stage .flip) .panel .btn{
+  border:1px solid #cfe0f7!important;
+  border-radius:11px!important;
+  background:#eaf2ff!important;
+  color:#174ea6!important;
+  box-shadow:none!important;
+  font-weight:800!important;
+}
+html.vizkor-modern-module .stage .play-base{
+  min-width:46px!important;
+  min-height:42px!important;
+}
+html.vizkor-modern-module .stage .play-mini{
+  min-width:40px!important;
+  min-height:36px!important;
+  padding:7px 9px!important;
+}
+html.vizkor-modern-module .stage #flipToBack,
+html.vizkor-modern-module .stage #flipToFront{
+  min-height:44px!important;
+  padding:9px 16px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:#2563eb!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  transform:none!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+  animation:none!important;
+}
+html.vizkor-modern-module .stage #flipToBack::before,
+html.vizkor-modern-module .stage #flipToBack::after{display:none!important}
+html.vizkor-modern-module .stage #flipToBack:hover,
+html.vizkor-modern-module .stage #flipToFront:hover{
+  filter:brightness(.97)!important;
+  transform:none!important;
+  box-shadow:none!important;
+}
+html.vizkor-modern-module .stage .controls{
+  gap:8px!important;
+  width:100%!important;
+}
+
+/* start / finish overlays */
+html.vizkor-modern-module body:has(.stage .flip) .gate,
+html.vizkor-modern-module body:has(.stage .flip) .finish{
+  background:rgba(25,43,67,.28)!important;
+  backdrop-filter:blur(7px)!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .panel{
+  width:min(460px,92vw)!important;
+  padding:22px!important;
+  border:1px solid #dce5ef!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 22px 60px rgba(23,49,84,.16)!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .panel h2{
+  color:#10223b!important;
+  font-size:1.25rem!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .panel p{
+  color:#6d7f95!important;
+  font-size:.9rem!important;
+  line-height:1.5!important;
+}
+html.vizkor-modern-module body:has(.stage .flip) .panel .btn{
+  min-height:44px!important;
+  padding:9px 16px!important;
+  background:#2563eb!important;
+  color:#fff!important;
+  border-color:#2563eb!important;
+}
+
+/* PHONE — large, readable and tap-friendly */
+@media(max-width:800px){
+  html.vizkor-modern-module body{padding-bottom:12px!important}
+  html.vizkor-modern-module header{position:relative!important;top:auto!important}
+  html.vizkor-modern-module body:has(.stage .flip){padding:10px 8px 26px!important;gap:8px!important}
+  html.vizkor-modern-module body:has(.stage .flip) > header,
+  html.vizkor-modern-module body:has(.stage .flip) .toolbar,
+  html.vizkor-modern-module .stage:has(.flip){width:100%!important;max-width:none!important}
+  html.vizkor-modern-module body:has(.stage .flip) .toolbar{padding:9px!important;border-radius:14px!important}
+  html.vizkor-modern-module body:has(.stage .flip) .book-tabs,
+  html.vizkor-modern-module body:has(.stage .flip) .filters,
+  html.vizkor-modern-module body:has(.stage .flip) .subfilters{
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    justify-content:flex-start!important;
+    padding-bottom:2px!important;
+    scrollbar-width:none!important;
+  }
+  html.vizkor-modern-module body:has(.stage .flip) .book-tabs::-webkit-scrollbar,
+  html.vizkor-modern-module body:has(.stage .flip) .filters::-webkit-scrollbar,
+  html.vizkor-modern-module body:has(.stage .flip) .subfilters::-webkit-scrollbar{display:none!important}
+  html.vizkor-modern-module body:has(.stage .flip) .tab,
+  html.vizkor-modern-module body:has(.stage .flip) .seg{flex:0 0 auto!important;white-space:nowrap!important}
+  html.vizkor-modern-module .stage:has(.flip){height:620px!important;margin-top:2px!important}
+  html.vizkor-modern-module .stage .face{padding:16px 12px!important;border-radius:18px!important;gap:9px!important}
+  html.vizkor-modern-module .stage .front:has(.meta-top){padding-top:44px!important}
+  html.vizkor-modern-module .stage .meta-top{top:12px!important;font-size:.7rem!important}
+  html.vizkor-modern-module .stage .ko{font-size:clamp(2.65rem,13vw,4rem)!important}
+  html.vizkor-modern-module .stage .ko-big{font-size:clamp(2rem,10vw,3rem)!important}
+  html.vizkor-modern-module .stage .ko-row{width:100%!important;max-width:540px!important}
+  html.vizkor-modern-module .stage .img-wrap{height:225px!important;border-radius:14px!important}
+  html.vizkor-modern-module .stage .choices,
+  html.vizkor-modern-module .stage .quiz{grid-template-columns:1fr!important;gap:7px!important}
+  html.vizkor-modern-module .stage .choice{min-height:49px!important;padding:10px 10px 10px 44px!important;font-size:.91rem!important}
+  html.vizkor-modern-module .stage .choice .badge{left:10px!important;width:25px!important;height:25px!important}
+  html.vizkor-modern-module .stage .forms li{align-items:flex-start!important;gap:7px!important}
+  html.vizkor-modern-module .stage .forms .left{min-width:0!important}
+  html.vizkor-modern-module .stage .play-mini{flex:0 0 40px!important}
+  html.vizkor-modern-module .stage .controls .btn{min-height:42px!important}
+}
+
+@media(max-width:430px){
+  html.vizkor-modern-module .stage:has(.flip){height:600px!important}
+  html.vizkor-modern-module .stage .img-wrap{height:205px!important}
+  html.vizkor-modern-module .stage .face{padding-left:10px!important;padding-right:10px!important}
+}

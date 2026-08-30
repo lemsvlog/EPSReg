@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#174ea6">
+  <title>VIZKOR Learning Center — Modern UI Preview</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="VIZKOR navigation">
+      <div class="brand-block">
+        <div class="brand-logo-wrap"><img src="../vizkor.png" alt="VIZKOR" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="brand-fallback">V</div></div>
+        <div class="brand-copy"><strong>VIZKOR</strong><span>Korean Learning Center</span></div>
+        <button class="icon-btn sidebar-close" id="sidebarClose" aria-label="Close menu">×</button>
+      </div>
+
+      <nav class="nav-groups" id="navGroups">
+        <div class="nav-group">
+          <div class="nav-label">Overview</div>
+          <button class="nav-item active" data-route="home"><span class="nav-icon">⌂</span><span>Dashboard</span></button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-label">Learn</div>
+          <button class="nav-item" data-route="guide"><span class="nav-icon">◉</span><span>Reading Exam Guide</span></button>
+          <button class="nav-item" data-route="vocabulary"><span class="nav-icon">▦</span><span>Flipcard Vocabulary</span></button>
+          <button class="nav-item" data-route="book1"><span class="nav-icon">1</span><span>EPS Book 1</span></button>
+          <button class="nav-item" data-route="book2"><span class="nav-icon">2</span><span>EPS Book 2</span></button>
+          <button class="nav-item" data-route="greetings"><span class="nav-icon">✦</span><span>Greetings & Phrases</span></button>
+          <button class="nav-item" data-route="sentence"><span class="nav-icon">한</span><span>Sentence Analyzer</span></button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-label">Vocabulary</div>
+          <button class="nav-item" data-route="noun"><span class="nav-icon">N</span><span>Nouns</span></button>
+          <button class="nav-item" data-route="verb"><span class="nav-icon">V</span><span>Verbs</span></button>
+          <button class="nav-item" data-route="adjective"><span class="nav-icon">A</span><span>Adjectives</span></button>
+          <button class="nav-item" data-route="adverb"><span class="nav-icon">D</span><span>Adverbs</span></button>
+          <button class="nav-item" data-route="number"><span class="nav-icon">#</span><span>Numbers & Time</span></button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-label">Exam Prep</div>
+          <button class="nav-item" data-route="readingguide"><span class="nav-icon">✓</span><span>Exam Reading Guide</span></button>
+          <button class="nav-item" data-route="keyword"><span class="nav-icon">K</span><span>Exam Keywords</span></button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-label">Skill Test</div>
+          <button class="nav-item" data-route="skillInterview"><span class="nav-icon">Q</span><span>Interview</span></button>
+          <button class="nav-item" data-route="skillCommand"><span class="nav-icon">⌁</span><span>Commands</span></button>
+          <button class="nav-item" data-route="skillTools"><span class="nav-icon">⚒</span><span>Tools</span></button>
+          <button class="nav-item" data-route="skillSigns"><span class="nav-icon">!</span><span>Signs / Prohibitions</span></button>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="guest-card">
+          <div class="avatar">G</div>
+          <div><strong>Guest Preview</strong><span>Local activity saving</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+          <div class="page-heading"><span class="eyebrow">VIZKOR Learning Center</span><h1 id="pageTitle">Dashboard</h1></div>
+        </div>
+        <div class="topbar-actions">
+          <button class="search-trigger" id="searchTrigger"><span>⌕</span><span class="search-label">Search modules</span><kbd>Ctrl K</kbd></button>
+          <button class="account-btn" id="accountBtn"><span class="account-avatar">G</span><span class="account-copy"><strong>Guest</strong><small>Preview mode</small></span></button>
+        </div>
+      </header>
+
+      <section class="dashboard-view" id="dashboardView">
+        <div class="hero-card">
+          <div class="hero-content">
+            <div class="hero-kicker">안녕하세요 👋</div>
+            <h2>Study Korean with a cleaner, faster VIZKOR.</h2>
+            <p>Same learning modules and practice tools you already have—now inside one organized dashboard. Nothing from the original site is removed in this preview.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" id="continueBtn">Continue learning</button>
+              <button class="secondary-btn" data-route="vocabulary">Open vocabulary</button>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="korean-orb orb-one">한</div>
+            <div class="korean-orb orb-two">국</div>
+            <div class="korean-orb orb-three">어</div>
+            <div class="hero-ring ring-one"></div><div class="hero-ring ring-two"></div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <article class="stat-card"><div class="stat-icon blue">◫</div><div><span>Modules opened</span><strong id="visitedCount">0</strong></div></article>
+          <article class="stat-card"><div class="stat-icon cyan">↗</div><div><span>Preview progress</span><strong id="progressPercent">0%</strong></div></article>
+          <article class="stat-card"><div class="stat-icon violet">◷</div><div><span>Last activity</span><strong id="lastActivity">—</strong></div></article>
+          <article class="stat-card"><div class="stat-icon green">✓</div><div><span>Original features</span><strong>Preserved</strong></div></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel quick-panel">
+            <div class="panel-head"><div><span class="section-kicker">Quick access</span><h3>Start learning</h3></div><button class="text-btn" data-route="vocabulary">View vocabulary →</button></div>
+            <div class="module-grid">
+              <button class="module-card" data-route="guide"><div class="module-icon blue-bg">읽</div><div><strong>Reading Guide</strong><span>Exam reading preparation</span></div><i>→</i></button>
+              <button class="module-card" data-route="vocabulary"><div class="module-icon cyan-bg">가</div><div><strong>Flipcards</strong><span>Noun, verb, adjective & more</span></div><i>→</i></button>
+              <button class="module-card" data-route="book1"><div class="module-icon violet-bg">01</div><div><strong>EPS Book 1</strong><span>Vocabulary list</span></div><i>→</i></button>
+              <button class="module-card" data-route="book2"><div class="module-icon indigo-bg">02</div><div><strong>EPS Book 2</strong><span>Vocabulary list</span></div><i>→</i></button>
+              <button class="module-card" data-route="greetings"><div class="module-icon rose-bg">안</div><div><strong>Greetings</strong><span>Situational phrases</span></div><i>→</i></button>
+              <button class="module-card" data-route="sentence"><div class="module-icon green-bg">문</div><div><strong>Sentence Analyzer</strong><span>Analyze Korean sentences</span></div><i>→</i></button>
+            </div>
+          </section>
+
+          <aside class="panel progress-panel">
+            <div class="panel-head compact"><div><span class="section-kicker">Your activity</span><h3>Learning progress</h3></div></div>
+            <div class="progress-ring-wrap"><div class="progress-ring" id="progressRing" style="--progress:0"><div><strong id="ringPercent">0%</strong><span>explored</span></div></div></div>
+            <div class="recent-list" id="recentList"><div class="recent-empty">Open a module and it will appear here.</div></div>
+            <div class="guest-note">Preview currently saves only visited modules and your last page in this browser. Google account score syncing comes in the next phase.</div>
+          </aside>
+        </div>
+
+        <section class="panel roadmap-panel">
+          <div class="panel-head"><div><span class="section-kicker">Ready for expansion</span><h3>Features we can add after you approve the UI</h3></div></div>
+          <div class="roadmap-grid">
+            <div class="roadmap-item"><div class="roadmap-icon google">G</div><div><strong>Google Login</strong><span>One account across phone and PC</span></div><em>Next phase</em></div>
+            <div class="roadmap-item"><div class="roadmap-icon cloud">☁</div><div><strong>Cloud Progress</strong><span>Save scores, completed practice and history</span></div><em>Next phase</em></div>
+            <div class="roadmap-item"><div class="roadmap-icon exam">✓</div><div><strong>Updated EPS Exam</strong><span>New exam simulator and question bank</span></div><em>Next phase</em></div>
+            <div class="roadmap-item"><div class="roadmap-icon admin">⚙</div><div><strong>Teacher / Admin</strong><span>Add questions and manage content</span></div><em>Next phase</em></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="module-view" id="moduleView" hidden>
+        <div class="module-toolbar">
+          <div class="breadcrumb"><button data-route="home">Dashboard</button><span>›</span><strong id="moduleCrumb">Module</strong></div>
+          <div class="module-toolbar-actions"><button class="small-btn" id="reloadFrame">↻ Reload</button><button class="small-btn" id="openOriginal">↗ Open separately</button></div>
+        </div>
+        <div class="frame-shell"><div class="frame-loading" id="frameLoading"><div class="spinner"></div><span>Loading original VIZKOR module…</span></div><iframe id="moduleFrame" title="VIZKOR learning module" referrerpolicy="same-origin"></iframe></div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <button class="mobile-nav-item active" data-route="home"><span>⌂</span><small>Home</small></button>
+    <button class="mobile-nav-item" data-route="guide"><span>◉</span><small>Learn</small></button>
+    <button class="mobile-nav-item" data-route="vocabulary"><span>▦</span><small>Vocab</small></button>
+    <button class="mobile-nav-item" data-route="readingguide"><span>✓</span><small>Exam</small></button>
+    <button class="mobile-nav-item" id="mobileMore"><span>☰</span><small>More</small></button>
+  </nav>
+
+  <div class="search-modal" id="searchModal" hidden>
+    <div class="search-dialog">
+      <div class="search-box"><span>⌕</span><input id="moduleSearch" placeholder="Search VIZKOR modules…" autocomplete="off"><button id="searchClose">×</button></div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <div class="account-modal" id="accountModal" hidden>
+    <div class="account-dialog"><button class="modal-close" id="accountClose">×</button><div class="big-avatar">G</div><h3>Guest Preview</h3><p>The redesigned UI can support Google Login and cloud progress. I kept this preview in guest/local mode first so no account setup is required yet.</p><div class="account-feature"><span>✓</span> Last opened module saved locally</div><div class="account-feature"><span>✓</span> Visited modules saved locally</div><div class="account-feature pending"><span>○</span> Google account sync — next phase</div><div class="account-feature pending"><span>○</span> Practice scores across devices — next phase</div></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
