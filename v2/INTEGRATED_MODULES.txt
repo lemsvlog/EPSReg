@@ -1,0 +1,6 @@
+VIZKOR V2 integrated-module update
+
+This file exists only under /v2/.
+No root/original HTML page was modified by this update.
+
+The V2 module hub embeds the existing original pages inside the V2 interface so their existing functionality can be used without leaving V2.
