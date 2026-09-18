@@ -1066,36 +1066,59 @@ footer div:last-child { /* Created by text */
 
 <script>
   // Disable right-click & common view-source shortcuts
-  document.addEventListener('contextmenu', e => e.preventDefault());
+  // Right-click and Ctrl+C are allowed only inside fill-up fields.
+  document.addEventListener('contextmenu', function(e) {
+    const editable = e.target.matches('input, textarea') || e.target.isContentEditable;
+    if (!editable) e.preventDefault();
+  });
   document.addEventListener('keydown', function(e) {
+    const editable = e.target.matches('input, textarea') || e.target.isContentEditable;
+    const key = e.key.toLowerCase();
     if (
-      (e.ctrlKey && ['u','s','c','p'].includes(e.key.toLowerCase())) ||
-      (e.ctrlKey && e.shiftKey && ['i','j'].includes(e.key.toLowerCase())) ||
+      (e.ctrlKey && ['u','s','p'].includes(key)) ||
+      (!editable && e.ctrlKey && key === 'c') ||
+      (e.ctrlKey && e.shiftKey && ['i','j'].includes(key)) ||
       (e.key === 'F12')
     ) { e.preventDefault(); return false; }
   });
 </script>
   <script>
-// Disable right click
+// Enable copy/paste/cut, right-click, and text selection only in fill-up fields.
+function isEditableField(target) {
+  return target && (target.matches("input, textarea") || target.isContentEditable);
+}
+
+// Keep right click blocked outside form fields.
 document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
+  if (!isEditableField(e.target)) {
+    e.preventDefault();
+  }
 }, false);
 
-// Disable text selection
+// Keep text selection blocked outside form fields.
 document.addEventListener("selectstart", function(e){
-  e.preventDefault();
+  if (!isEditableField(e.target)) {
+    e.preventDefault();
+  }
 }, false);
 
-// Disable drag (para hindi madrag palabas yung image/text)
+// Keep drag blocked outside form fields.
 document.addEventListener("dragstart", function(e){
-  e.preventDefault();
+  if (!isEditableField(e.target)) {
+    e.preventDefault();
+  }
 }, false);
 
-// Disable certain keys (F12, Ctrl+U, Ctrl+S, Ctrl+C, Ctrl+X, Ctrl+V)
+// Keep F12, Ctrl+U and Ctrl+S blocked.
+// Allow Ctrl+C, Ctrl+X and Ctrl+V only inside form fields.
 document.addEventListener("keydown", function(e){
+  const key = e.key.toLowerCase();
+  const editable = isEditableField(e.target);
+
   if (
-    e.key === "F12" || 
-    (e.ctrlKey && ["u","s","c","x","v"].includes(e.key.toLowerCase()))
+    e.key === "F12" ||
+    (e.ctrlKey && ["u","s"].includes(key)) ||
+    (!editable && e.ctrlKey && ["c","x","v"].includes(key))
   ) {
     e.preventDefault();
   }
